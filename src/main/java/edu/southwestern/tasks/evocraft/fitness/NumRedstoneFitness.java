@@ -10,17 +10,18 @@ public class NumRedstoneFitness extends TypeCountFitness{
 
 	@Override
 	public double fitnessFromBlocks(MinecraftCoordinates corner, List<Block> blocks) {
-		TypeCountFitness redstone = new TypeCountFitness(BlockType.REDSTONE_BLOCK.ordinal());
-		double total = redstone.fitnessFromBlocks(corner,blocks);
+		
+		TypeCountFitness piston = new TypeCountFitness(BlockType.REDSTONE_BLOCK.ordinal());
+		double total = piston.fitnessFromBlocks(corner,blocks);
 		return total;
 		
-//		int redstoneCount = 0;
+//		int pistonCount = 0;
 //		// increases count only if redstone block
 //		for(Block b : blocks) {
-//			if(b.type() == BlockType.REDSTONE_BLOCK.ordinal()) {
-//				redstoneCount++;
+//			if(b.type() == BlockType.PISTON.ordinal()||b.type() == BlockType.STICKY_PISTON.ordinal()) {
+//				pistonCount++;
 //			}
 //		}
-//		return redstoneCount;
+//		return pistonCount;
 	}
 }
