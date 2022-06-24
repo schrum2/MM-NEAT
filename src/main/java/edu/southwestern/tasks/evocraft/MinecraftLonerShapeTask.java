@@ -66,9 +66,9 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		 */
 
 		internalMinecraftShapeTask = new MinecraftShapeTask<T>() {
-			public int getStartingX() { return - Parameters.parameters.integerParameter("minecraftXRange") - Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER); }
+			public int getStartingX() { return super.getStartingX() - Parameters.parameters.integerParameter("minecraftXRange") - Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER); }
 
-			public int getStartingZ() { return - Parameters.parameters.integerParameter("minecraftZRange") - Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength")*2, MinecraftClient.BUFFER); }
+			public int getStartingZ() { return super.getStartingZ() - Parameters.parameters.integerParameter("minecraftZRange") - Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength")*2, MinecraftClient.BUFFER); }
 		};
 
 		// Creates a new blocking queue to use with parallelism
@@ -311,6 +311,8 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					interactive.add(new Block(diamondBlock,BlockType.DIAMOND_BLOCK, Orientation.WEST));
 					MinecraftCoordinates emeraldBlock = corners.t2.add(new MinecraftCoordinates(MinecraftUtilClass.getRanges().x(),-1,-1));
 					interactive.add(new Block(emeraldBlock,BlockType.EMERALD_BLOCK, Orientation.WEST));
+					MinecraftCoordinates obsidianBlock = corners.t2.sub(new MinecraftCoordinates(1,1,-MinecraftUtilClass.getRanges().z()));
+					interactive.add(new Block(obsidianBlock,BlockType.OBSIDIAN, Orientation.WEST));
 					blocksToMonitor.add(new Triple<>(diamondBlock,emeraldBlock,index1D));
 					MinecraftClient.getMinecraftClient().spawnBlocks(interactive);
 				}

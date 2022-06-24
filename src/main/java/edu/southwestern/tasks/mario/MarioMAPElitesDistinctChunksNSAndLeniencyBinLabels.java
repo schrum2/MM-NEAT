@@ -59,6 +59,8 @@ public class MarioMAPElitesDistinctChunksNSAndLeniencyBinLabels extends BaseBinL
 		@SuppressWarnings("unchecked")
 		ArrayList<double[]> lastLevelStats = (ArrayList<double[]>) keys.get("Level Stats");		
 		int numDistinctSegments = (int) keys.get("Distinct Segments");
+		// If the level has too many segments, then simply put it at the maximum possible value for that dimension.
+		if(numDistinctSegments > binsPerDimension) numDistinctSegments = binsPerDimension;
 		
 		double leniencySum = MarioLevelTask.sumStatScore(lastLevelStats, MarioLevelTask.LENIENCY_STAT_INDEX);
 		double negativeSpaceSum = MarioLevelTask.sumStatScore(lastLevelStats, MarioLevelTask.NEGATIVE_SPACE_STAT_INDEX);
@@ -70,6 +72,9 @@ public class MarioMAPElitesDistinctChunksNSAndLeniencyBinLabels extends BaseBinL
 		int leniencySumIndex = Math.min(Math.max((int)((leniencySum*(BINS_PER_DIMENSION/2)+0.5)*BINS_PER_DIMENSION),0), BINS_PER_DIMENSION-1); //LEANIENCY BIN INDEX
 		int negativeSpaceSumIndex = Math.min((int)(negativeSpaceSum*NEGATIVE_SPACE_SCALE*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1); //negative space index
 
+		assert numDistinctSegments < dimensionSizes()[0] : numDistinctSegments+":"+keys;
+		assert negativeSpaceSumIndex < dimensionSizes()[1] : negativeSpaceSumIndex+":"+keys;
+		assert leniencySumIndex < dimensionSizes()[2] : leniencySumIndex+":"+keys;
 	
 		return new int[] {numDistinctSegments, negativeSpaceSumIndex, leniencySumIndex};
 	}

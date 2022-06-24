@@ -8,6 +8,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
@@ -41,6 +43,63 @@ public class OldLevelParser {
 			'b', // 12: Bottom of bullet bill
 	};
 
+	
+    private static final java.util.Map<Integer, Integer> prettyTiles = new HashMap<>();
+    
+    static {
+        prettyTiles.put(0, 0); //solid
+        prettyTiles.put(1, 1); //breakable
+        prettyTiles.put(2, 0); //passable
+        prettyTiles.put(3, 1); //question with coin
+        prettyTiles.put(4, 1); //question with power up
+        prettyTiles.put(5, 1); //goomba
+        prettyTiles.put(6, 1); //tube
+        prettyTiles.put(7, 1); //tube
+        prettyTiles.put(8, 1); //pipe
+        prettyTiles.put(9, 1); //pipe
+        prettyTiles.put(10, 0); //coin
+        prettyTiles.put(11, 1); //bullet bill
+        prettyTiles.put(12, 1); //bullet bill
+    }
+    
+    public static final java.util.Map<Integer, Double> leniencyTiles = new HashMap<>();
+    
+    static {
+        leniencyTiles.put(0, 0.0); //solid
+        leniencyTiles.put(1, 0.0); //breakable
+        leniencyTiles.put(2, 0.0); //passable
+        leniencyTiles.put(3, 1.0); //question with coin
+        leniencyTiles.put(4, 1.0); //question with power up
+        leniencyTiles.put(5, -1.0); //goomba
+        leniencyTiles.put(6, -0.5); //tube
+        leniencyTiles.put(7, -0.5); //tube
+        leniencyTiles.put(8, -0.5); //pipe
+        leniencyTiles.put(9, -0.5); //pipe
+        leniencyTiles.put(10, 0.0); //coin
+        leniencyTiles.put(11, -0.5); //bullet bill
+        leniencyTiles.put(12, -0.5); //bullet bill
+    }
+    
+    public static final java.util.Map<Integer, Integer> negativeSpaceTiles = new HashMap<>();
+    
+    static {
+        negativeSpaceTiles.put(0, 1); //solid
+        negativeSpaceTiles.put(1, 1); //breakable
+        negativeSpaceTiles.put(2, 0); //passable
+        negativeSpaceTiles.put(3, 1); //question with coin
+        negativeSpaceTiles.put(4, 1); //question with power up
+        negativeSpaceTiles.put(5, 0); //goomba
+        negativeSpaceTiles.put(6, 1); //tube
+        negativeSpaceTiles.put(7, 1); //tube
+        negativeSpaceTiles.put(8, 1); //pipe
+        negativeSpaceTiles.put(9, 1); //pipe
+        negativeSpaceTiles.put(10, 0); //coin
+        negativeSpaceTiles.put(11, 1); //bullet bill
+        negativeSpaceTiles.put(12, 1); //bullet bill
+    }
+    	
+	
+	
 	public static int indexOfBlock(char c) {
 		// There is only one enemy in the encoding, but it is mapped to an enemy
 		// of a random type. So all enemies need to map back to the one enemy tile index.
@@ -244,7 +303,7 @@ public class OldLevelParser {
 					//System.out.println("j: "+j+" i:"+i);
 					//set passable tile: everything not set is passable
 				}else{
-					int encoded = codeParser(code);
+					int encoded = codeParser( code ); 
 					if(encoded !=0){
 						level.setBlock(j+BUFFER_WIDTH, i, (byte) encoded);
 						//System.out.println("j: "+j+" i:"+i+" encoded: "+encoded);
@@ -320,14 +379,20 @@ public class OldLevelParser {
             // System.out.println(line);
         }
 
+        HashMap<Character,Integer> map = new HashMap<>();
+        for(int i = 0; i < BLOCK_INDEX.length; i++) {
+        	map.put(BLOCK_INDEX[i], i);
+        }
+        
         int[][] a = new int[lines.size()][width];
         if(DEBUG) System.out.println("Arrays length: " + a.length);
         for (int y = 0; y < lines.size(); y++) {
         	if(DEBUG) System.out.println("Processing line: " + lines.get(y));
             for (int x = 0; x < width; x++) {
             	try { // Added error checking to deal with unrecognized tile types
-            		a[y][x] = codeParserASCII(""+lines.get(y).charAt(x));
-            	} catch(Exception e) {
+            		//a[y][x] = codeParserASCII(""+lines.get(y).charAt(x));
+            		a[y][x] = indexOfBlock(lines.get(y).charAt(x));
+                } catch(Exception e) {
             		System.out.println("Problem on ");
             		System.out.println("\ty = " + y);
             		System.out.println("\tx = " + x);
@@ -339,6 +404,43 @@ public class OldLevelParser {
 
         return a;
     }
+
+    public static ArrayList<double[]> getLevelStats(List<List<Integer>> oneLevel, int segmentWidth){
+        if (oneLevel.get(0).size()%segmentWidth!=0){
+        	System.out.println("getLevelStats: Level not multiple of segment width!");
+            return null;
+        }      
+        ArrayList<double[]> statList = new ArrayList<>();
+        int height = oneLevel.size();
+        
+        // Loop through each segment
+        int numSegments = oneLevel.get(0).size()/segmentWidth;
+        for(int l=0; l<numSegments; l++){
+            double[] vals = {0,0,0};
+            int gapCount = 0;
+            for(int i=0; i<height-1;i++){ // Loop from top to bottom
+            	// Loop from left to right through the tiles in this particular segment
+                for(int j=l*segmentWidth;j<(l+1)*segmentWidth;j++){
+                    int code = oneLevel.get(i).get(j); // Get number code for tile
+                    vals[0] +=prettyTiles.get(code);
+                    vals[1] +=leniencyTiles.get(code);
+                    vals[2] +=negativeSpaceTiles.get(code);
+                    if(code==2 && i==height-1){ // Magic numbers?
+                        gapCount++;
+                    }
+                }
+            }
+            vals[0]/= segmentWidth*height;
+            vals[2]/= segmentWidth*height;
+
+            vals[1]+=gapCount*-0.5;
+            vals[1]/=segmentWidth*height;
+            statList.add(vals);
+        }
+                
+        return statList;
+    }
+
 
 
 }
