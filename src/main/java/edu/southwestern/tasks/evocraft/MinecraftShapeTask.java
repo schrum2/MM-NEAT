@@ -234,6 +234,13 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			// Map contains all required properties now
 			HashMap<String,Object> behaviorMap = minecraftBinLabels.behaviorMapFromScores(propertyScores);
 			
+			// For the directional binning scheme
+			if(centerOfMassBeforeAndAfter != null) {
+				behaviorMap.put("x-movement", centerOfMassBeforeAndAfter.t2.x - centerOfMassBeforeAndAfter.t1.x);
+				behaviorMap.put("y-movement", centerOfMassBeforeAndAfter.t2.y - centerOfMassBeforeAndAfter.t1.y);
+				behaviorMap.put("z-movement", centerOfMassBeforeAndAfter.t2.z - centerOfMassBeforeAndAfter.t1.z);
+			}
+			
 			double binScore = qualityScore(fitnessScores); 
 			behaviorMap.put("binScore", binScore); // Quality Score!				
 
