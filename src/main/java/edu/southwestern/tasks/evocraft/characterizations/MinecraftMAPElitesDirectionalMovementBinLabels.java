@@ -1,5 +1,6 @@
 package edu.southwestern.tasks.evocraft.characterizations;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -28,7 +29,7 @@ public class MinecraftMAPElitesDirectionalMovementBinLabels extends MinecraftMAP
 
 	@Override
 	public String[] dimensions() {
-		return null;
+		return new String[] {"x-movement", "y-movement", "z-movement"};
 	}
 	
 	public HashMap<String,Object> behaviorMapFromScores(double[] fitnessScores) {
@@ -49,8 +50,8 @@ public class MinecraftMAPElitesDirectionalMovementBinLabels extends MinecraftMAP
 
 	@Override
 	public List<MinecraftFitnessFunction> properties() {
-		// TODO Auto-generated method stub
-		return null;
+		// Return an empty list since the properties for this approach are not derived from fitness functions
+		return new ArrayList<>(0);
 	}
 
 }
