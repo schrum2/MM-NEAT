@@ -24,18 +24,19 @@ public class MinecraftMAPElitesDirectionalMovementBinLabels extends MinecraftMAP
 	@Override
 	public List<String> binLabels() {
 		if(labels == null) {
-			int xDim = Parameters.parameters.integerParameter("minecraftXRange");
-			int yDim = Parameters.parameters.integerParameter("minecraftYRange");
-			int zDim = Parameters.parameters.integerParameter("minecraftZRange");
+			MinecraftCoordinates reservedSpace = MinecraftUtilClass.reservedSpace();
+			int xDim = reservedSpace.x();
+			int yDim = reservedSpace.y();
+			int zDim = reservedSpace.z();
 			
 			int size = xDim*yDim*zDim; // size is the total possible volume
 			
 			labels = new ArrayList<String>(size);
 			
 			// go through all possible bins+1 since both 0 and 1000 blocks are both possibilities (i < size would just give a range of 0-999)
-			for(int i = 1; i <= size; i++) labels.add(i + "Blocks");
+			for(int i = 1; i <= size; i++) labels.add(i + "DirectionalMovement");
 		}
-		return null;
+		return labels;
 	}
 
 	@Override
