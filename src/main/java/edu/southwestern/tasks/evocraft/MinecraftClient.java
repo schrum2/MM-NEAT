@@ -674,7 +674,7 @@ public class MinecraftClient extends Comm {
 		//System.out.println("ENDS:"+end);
 		for(int x=0;x<=end.x();x+=100) {
 			for(int z=0;z<=end.z();z+=100) {
-				for(int y=5;y<=end.y();y+=100) {
+				for(int y=GROUND_LEVEL;y<=end.y();y+=100) {
 					fillCube(x,y,z,x+100,y+100,z+100, BlockType.AIR);
 				}
 			}
