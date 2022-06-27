@@ -141,6 +141,10 @@ public class LevelParser {
 //        return createLevel(level);        
 //    }
     
+    public static final int LEVEL_STATS_DECORATION_INDEX = 0;
+    public static final int LEVEL_STATS_LENIENCY_INDEX = 1;
+    public static final int LEVEL_STATS_SPACE_COVERAGE_INDEX = 2;
+
     /**
      * Collects information about decoration, leniency, and space coverage.
      * Written by Vanessa.
@@ -155,35 +159,65 @@ public class LevelParser {
             return null;
         }      
         ArrayList<double[]> statList = new ArrayList<>();
-        int height = oneLevel.size();
         
         // Loop through each segment
         int numSegments = oneLevel.get(0).size()/segmentWidth;
         for(int l=0; l<numSegments; l++){
-            double[] vals = {0,0,0};
-            int gapCount = 0;
-            for(int i=0; i<height-1;i++){ // Loop from top to bottom
-            	// Loop from left to right through the tiles in this particular segment
-                for(int j=l*segmentWidth;j<(l+1)*segmentWidth;j++){
-                    int code = oneLevel.get(i).get(j); // Get number code for tile
-                    vals[0] +=prettyTiles.get(code);
-                    vals[1] +=leniencyTiles.get(code);
-                    vals[2] +=negativeSpaceTiles.get(code);
-                    if(code==2 && i==height-1){ // Magic numbers?
-                        gapCount++;
-                    }
-                }
-            }
-            vals[0]/= segmentWidth*height;
-            vals[2]/= segmentWidth*height;
-
-            vals[1]+=gapCount*-0.5;
-            vals[1]/=segmentWidth*height;
+            int segmentStart = l*segmentWidth;
+			int segmentEnd = (l+1)*segmentWidth; // Actually start of next segment
+            double[] vals = getSegmentStats(oneLevel, segmentWidth, segmentStart, segmentEnd);
             statList.add(vals);
         }
                 
         return statList;
     }
+
+    /**
+     * Assume whole level is one segment and get the decoration, leniency, and space coverage stats
+     * 
+     * @param oneLevel oneLevel Mario level as a list of list of ints
+     * @return array of decoration, leniency, and space coverage
+     */
+	public static double[] getWholeLevelStats(List<List<Integer>> oneLevel) {
+		return getSegmentStats(oneLevel, oneLevel.get(0).size(), 0, oneLevel.get(0).size());
+	}
+
+	/**
+	 * Get the stats associated with one segment, or with a whole level that is treated like a single segment.
+	 * The stats collected are decoration percentage, leniency, and space coverage
+	 * 
+	 * @param oneLevel Mario level as a list of list of ints
+	 * @param segmentWidth Width of the segment being checked
+	 * @param segmentStart Index in each row that starts the segment
+	 * @param segmentEnd Index in each row that is the start of the next segment (1 greater than last index of current segment)
+	 * @return array of decoration, leniency, and space coverage
+	 */
+	public static double[] getSegmentStats(List<List<Integer>> oneLevel, int segmentWidth, int segmentStart, int segmentEnd) {
+		assert segmentWidth == segmentEnd - segmentStart;
+		double[] vals = {0,0,0};
+        int height = oneLevel.size();
+		int gapCount = 0;
+		for(int i=0; i<height-1;i++){ // Loop from top to bottom
+			// Loop from left to right through the tiles in this particular segment
+			for(int j=segmentStart;j<segmentEnd;j++){
+		        int code = oneLevel.get(i).get(j); // Get number code for tile
+		        vals[LEVEL_STATS_DECORATION_INDEX] +=prettyTiles.get(code);
+		        vals[LEVEL_STATS_LENIENCY_INDEX] +=leniencyTiles.get(code);
+		        vals[LEVEL_STATS_SPACE_COVERAGE_INDEX] +=negativeSpaceTiles.get(code);
+		        if(code==2 && i==height-1){ // Magic numbers?
+		            gapCount++;
+		        }
+		    }
+		}
+		// Average across total number of tiles, compute percentage
+		vals[LEVEL_STATS_DECORATION_INDEX]/= segmentWidth*height;
+		vals[LEVEL_STATS_SPACE_COVERAGE_INDEX]/= segmentWidth*height;
+		// Gaps make the level less lenient
+		vals[LEVEL_STATS_LENIENCY_INDEX]+=gapCount*-0.5;
+		// Average across total number of tiles, compute percentage
+		vals[LEVEL_STATS_LENIENCY_INDEX]/=segmentWidth*height;
+		return vals;
+	}
     
 
     /**
