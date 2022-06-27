@@ -36,6 +36,8 @@ import edu.southwestern.tasks.evocraft.shapegeneration.ShapeGenerator;
 import edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.datastructures.Triple;
+import edu.southwestern.util.datastructures.Vertex;
 
 
 public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTask, BoundedTask {
@@ -219,6 +221,8 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		//System.out.println(genome.getId() + ":" + blocks);
 		MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
 		double[] fitnessScores = calculateFitnessScores(corner,fitnessFunctions);
+		// It is possible this is not even being used (null result), but the call is needed to prevent deadlock otherwise
+		Triple<Vertex, Vertex, Double> centerOfMassBeforeAndAfter = ChangeCenterOfMassFitness.getPreviouslyComputedResult(corner);
 		Score<T> score = new Score<T>(genome, fitnessScores);
 		if(MMNEAT.usingDiversityBinningScheme) {
 			//System.out.println("evaluate "+genome.getId() + " at " + corner + ": scores = "+ Arrays.toString(fitnessScores));
