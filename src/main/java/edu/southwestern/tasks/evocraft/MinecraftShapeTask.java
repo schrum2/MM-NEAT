@@ -308,7 +308,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 
 	/**
 	 * Generate a given number of spawn corners for shapes based on given starting x/y/z coordinates
-	 * and x/y/z-ranges for shape generation.
+	 * and x/y/z-ranges for shape generation. All 3 can be altered with command line params
 	 * 
 	 * @param size Size of population, and thus number of corners to create
 	 * @param startingX x-coordinate of corner for first shape
@@ -321,7 +321,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		int count = 0;
 		int extraSpace = Parameters.parameters.integerParameter("extraSpaceBetweenMinecraftShapes");
 
-		// If placing diagonally, decrease the z coordinate
+		// If placing diagonally, decrease the x and z coordinates. Increase the Y
 		if(Parameters.parameters.booleanParameter("displayDiagonally")) {
 			for(int i = 0; i < size; i++) {
 				MinecraftCoordinates corner = new MinecraftCoordinates(startingX - count*(ranges.x() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")),startingY+count*(ranges.y() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")), startingZ - count*(ranges.z() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")));
@@ -353,6 +353,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 					//"io:false", "netio:false", 
 					"mating:true", "fs:false", 
 					//"startX:-10", "startY:15", "startZ:10",
+					//"displayDiagonally:false",
 					//"genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype",
 					"vectorPresenceThresholdForEachBlock:true",
 					"voxelExpressionThreshold:0.5",
