@@ -66,9 +66,9 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		 */
 
 		internalMinecraftShapeTask = new MinecraftShapeTask<T>() {
-			public int getStartingX() { return super.getStartingX() - Parameters.parameters.integerParameter("minecraftXRange") - Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER); }
-			//public int getStartingY() { return super.getStartingX() - Parameters.parameters.integerParameter("minecraftXRange") - Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER); }
-			public int getStartingZ() { return super.getStartingZ() - Parameters.parameters.integerParameter("minecraftZRange") - Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength")*2, MinecraftClient.BUFFER); }
+			public int getStartingX() { return Parameters.parameters.integerParameter("startX") - Parameters.parameters.integerParameter("minecraftXRange") - Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER); }
+			public int getStartingY() { return Parameters.parameters.integerParameter("startY");}
+			public int getStartingZ() { return Parameters.parameters.integerParameter("startZ") - Parameters.parameters.integerParameter("minecraftZRange") - Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength")*2, MinecraftClient.BUFFER); }
 		};
 
 		// Creates a new blocking queue to use with parallelism
@@ -78,7 +78,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		championCoords = new HashSet<Pair<MinecraftCoordinates,Integer>>();
 		
 		// Generates the corners for all of the shapes and then adds them into the blocking queue
-		parallelShapeCorners = MinecraftShapeTask.getShapeCorners(Parameters.parameters.integerParameter("threads"),internalMinecraftShapeTask.getStartingX(),internalMinecraftShapeTask.getStartingZ(),MinecraftUtilClass.getRanges());
+		parallelShapeCorners = MinecraftShapeTask.getShapeCorners(Parameters.parameters.integerParameter("threads"),internalMinecraftShapeTask.getStartingX(),internalMinecraftShapeTask.getStartingY(),internalMinecraftShapeTask.getStartingZ(),MinecraftUtilClass.getRanges());
 		for(MinecraftCoordinates corner : parallelShapeCorners) {
 			try {
 				coordinateQueue.put(corner);
@@ -509,6 +509,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					"interactWithMapElitesInWorld:true",
 					//"io:false", "netio:false", 
 					"mating:true", "fs:false",
+					//"startX:-10", "startY:5", "startZ:10",
 					"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet",
 					//"minecraftTypeCountFitness:true",
 					"minecraftDiversityBlockFitness:true",
@@ -522,7 +523,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					"ea:edu.southwestern.evolution.mapelites.MAPElites", 
 					"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
 					"steadyStateIndividualsPerGeneration:100", 
-					//FOR TESTING
+					//"extraSpaceBetweenMinecraftShapes:0",
 					"spaceBetweenMinecraftShapes:5","parallelMAPElitesInitialize:false",
 					"minecraftXRange:2","minecraftYRange:2","minecraftZRange:2",
 					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGenerator",
