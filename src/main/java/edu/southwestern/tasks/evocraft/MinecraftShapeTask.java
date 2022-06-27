@@ -45,6 +45,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	ArrayList<MinecraftFitnessFunction> fitnessFunctions;
 	private ArrayList<MinecraftCoordinates> corners;
 	private int startingX;
+	private int startingY;
 	private int startingZ;
 	
 	@SuppressWarnings("unchecked")
@@ -108,11 +109,14 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			MMNEAT.registerFitnessFunction(ff.getClass().getSimpleName());
 		}		
 		
-		startingX = 0;
-		startingZ = 0;
+		startingX = Parameters.parameters.integerParameter("startX");
+		startingY = Parameters.parameters.integerParameter("startY");
+		startingZ = Parameters.parameters.integerParameter("startZ");
 	}
 	
 	public int getStartingX() { return startingX; }
+	
+	public int getStartingY() { return startingY; }
 	
 	public int getStartingZ() { return startingZ; }
 		
@@ -176,7 +180,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		MinecraftClient client = MinecraftClient.getMinecraftClient();		
 		// Avoid recalculating the same corners every time
 		if(corners == null) {
-			corners = getShapeCorners(population.size(), startingX, startingZ, MinecraftUtilClass.getRanges());
+			corners = getShapeCorners(population.size(), startingX, startingY, startingZ, MinecraftUtilClass.getRanges());
 		}
 
 		// Must clear the space where shapes are placed
@@ -310,23 +314,24 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	}
 
 	/**
-	 * Generate a given number of spawn corners for shapes based on given starting x/z coordinates
-	 * (starting y is assumed to be relative to the ground), and x/y/z-ranges for shape generation.
+	 * Generate a given number of spawn corners for shapes based on given starting x/y/z coordinates
+	 * and x/y/z-ranges for shape generation. All 3 can be altered with command line params
 	 * 
 	 * @param size Size of population, and thus number of corners to create
 	 * @param startingX x-coordinate of corner for first shape
+	 * @param startingY y-coordinate of corner for first shape
 	 * @param startingZ z-coordinate of corner for first shape
 	 * @param ranges size of generated shapes in x/y/z dimensions
 	 */
-	public static ArrayList<MinecraftCoordinates> getShapeCorners(int size, int startingX, int startingZ, MinecraftCoordinates ranges) {
+	public static ArrayList<MinecraftCoordinates> getShapeCorners(int size, int startingX, int startingY, int startingZ, MinecraftCoordinates ranges) {
 		ArrayList<MinecraftCoordinates> corners = new ArrayList<>(size);
 		int count = 0;
 		int extraSpace = Parameters.parameters.integerParameter("extraSpaceBetweenMinecraftShapes");
 
-		// If placing diagonally, decrease the z coordinate
+		// If placing diagonally, decrease the x and z coordinates. Increase the Y
 		if(Parameters.parameters.booleanParameter("displayDiagonally")) {
 			for(int i = 0; i < size; i++) {
-				MinecraftCoordinates corner = new MinecraftCoordinates(startingX - count*(ranges.x() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")), MinecraftClient.GROUND_LEVEL+1+count*(ranges.y() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")), startingZ - count*(ranges.z() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")));
+				MinecraftCoordinates corner = new MinecraftCoordinates(startingX - count*(ranges.x() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")),startingY+count*(ranges.y() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")), startingZ - count*(ranges.z() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")));
 				corner = corner.add(new MinecraftCoordinates(count*-extraSpace,0,count*-extraSpace));
 				System.out.println(corner);
 				corners.add(corner);
@@ -335,7 +340,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		// Otherwise, generate in line
 		}else {
 			for(int i = 0; i < size; i++) {
-				MinecraftCoordinates corner = new MinecraftCoordinates(startingX + count*(ranges.x() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")), MinecraftClient.GROUND_LEVEL+1, startingZ);
+				MinecraftCoordinates corner = new MinecraftCoordinates(startingX + count*(ranges.x() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")), startingY, startingZ);
 				corner = corner.add(new MinecraftCoordinates(count*extraSpace,0,count*extraSpace));
 				
 				corners.add(corner);
@@ -347,14 +352,16 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	}
 
 	public static void main(String[] args) {
-		int seed = 4;
+		int seed = 7;
 		try {
 			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:20", "maxGens:150",
 					"base:minecraft", "log:Minecraft-CenterOfMassVectors", "saveTo:CenterOfMassVectors",
 					"io:true", "netio:true", 
 					//"io:false", "netio:false", 
 					"mating:true", "fs:false", 
-					"genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype",
+					//"startX:-10", "startY:15", "startZ:10",
+					//"displayDiagonally:false",
+					//"genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype",
 					"vectorPresenceThresholdForEachBlock:true",
 					"voxelExpressionThreshold:0.5",
 					"launchMinecraftServerFromJava:false",
@@ -373,14 +380,15 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 					//"minecraftRedirectConfinedSnakes:true",
 					//"minecraftStopConfinedSnakes:true",
 					"minecraftXRange:3", "minecraftYRange:3", "minecraftZRange:5",
-					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator",
+					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGenerator",
 					//"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.SnakeGenerator",
 					"task:edu.southwestern.tasks.evocraft.MinecraftShapeTask", "allowMultipleFunctions:true",
 					"ftype:0", "watch:false", "netChangeActivationRate:0.0", "cleanFrequency:-1",
 					"recurrency:false", "saveAllChampions:true", "cleanOldNetworks:false",
 					"includeFullSigmoidFunction:true", "includeFullGaussFunction:true", "includeCosineFunction:true", 
 					"includeGaussFunction:false", "includeIdFunction:true", "includeTriangleWaveFunction:false", 
-					"includeSquareWaveFunction:false", "includeFullSawtoothFunction:false", "includeSigmoidFunction:false", 
+					"includeSquareWaveFunction:false", "includeFullSawtoothFunction:false", "includeSigmoidFunction:false",
+					//"extraSpaceBetweenMinecraftShapes:0",
 					"includeAbsValFunction:false", "includeSawtoothFunction:false"}); 
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
