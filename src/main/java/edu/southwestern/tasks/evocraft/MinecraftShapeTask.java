@@ -326,7 +326,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			for(int i = 0; i < size; i++) {
 				MinecraftCoordinates corner = new MinecraftCoordinates(startingX - count*(ranges.x() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")),startingY+count*(ranges.y() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")), startingZ - count*(ranges.z() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")));
 				corner = corner.add(new MinecraftCoordinates(count*-extraSpace,0,count*-extraSpace));
-				System.out.println(corner);
+				//System.out.println(corner);
 				corners.add(corner);
 				count++;
 			}

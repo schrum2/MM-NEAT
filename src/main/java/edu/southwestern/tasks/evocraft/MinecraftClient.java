@@ -673,17 +673,17 @@ public class MinecraftClient extends Comm {
 		MinecraftCoordinates end = new MinecraftCoordinates(start.x() + numShapes*(ranges.x() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")) + buffer, start.y() + ranges.y() + buffer, start.z() + (int)(ranges.z()*Math.sqrt(numShapes)) + buffer);
 		//System.out.println("ENDS:"+end);
 		
-		// Clears out large block sections one at a time to ensure the server isn't overloaded
-		for(int x=0;x<=end.x();x+=100) {
-			for(int z=0;z<=end.z();z+=100) {
-				for(int y=GROUND_LEVEL;y<=end.y();y+=100) {
-					// CLears 1,000,000 blocks at a time
-					fillCube(x,y,z,x+100,y+100,z+100, BlockType.AIR);
+		// If cleared space isn't very large, just clear that space
+		if( (end.x()-groundStart.x())*(end.y()-groundStart.y())*(end.z()-groundStart.z())<1000000) {
+			fillCube(groundStart, end, BlockType.AIR); // Calls clear cube, which checks coordinates
+		}else {
+			// Otherwise, clears out large block sections one at a time to ensure the server isn't overloaded
+			for(int x=0;x<=end.x();x+=100) {
+				for(int z=0;z<=end.z();z+=100) {
+						fillCube(x,GROUND_LEVEL,z,x+100,end.y(),z+100, BlockType.AIR);
 				}
-			}
+			}	
 		}
-		
-		//fillCube(groundStart, end, BlockType.AIR); // Calls clear cube, which checks coordinates
 	}
 	
 	/**
