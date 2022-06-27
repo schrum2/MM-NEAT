@@ -73,10 +73,8 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		synchronized(PREVIOUSLY_COMPUTED_RESULTS) {
 			PREVIOUSLY_COMPUTED_RESULTS.put(corner, centerOfMassBeforeAndAfter);
 		}
-		double changeInPosition = centerOfMassBeforeAndAfter.t2.distance(centerOfMassBeforeAndAfter.t1);
-		assert !Double.isNaN(changeInPosition); // : "Before: " + MinecraftUtilClass.filterOutBlock(blocks,BlockType.AIR);
-		if(Parameters.parameters.booleanParameter("minecraftAccumulateChangeInCenterOfMass")) return centerOfMassBeforeAndAfter.t3;
-		else return changeInPosition;
+		
+		return centerOfMassBeforeAndAfter.t3;
 	}
 
 	/**
@@ -169,6 +167,14 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		}
 
 		Triple<Vertex,Vertex,Double> centerOfMassBeforeAndAfter = new Triple<>(initialCenterOfMass, lastCenterOfMass, totalChangeDistance);
+
+		double changeInPosition = centerOfMassBeforeAndAfter.t2.distance(centerOfMassBeforeAndAfter.t1);
+		assert !Double.isNaN(changeInPosition) : "Before: " + MinecraftUtilClass.filterOutBlock(blocks,BlockType.AIR);
+
+		if(!Parameters.parameters.booleanParameter("minecraftAccumulateChangeInCenterOfMass")) {
+			centerOfMassBeforeAndAfter.t3 = changeInPosition;		
+		}
+
 		return centerOfMassBeforeAndAfter;
 	}
 
