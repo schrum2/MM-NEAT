@@ -102,7 +102,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 			//System.out.println("Short wait time Update list: " + shortWaitTimeUpdate);
 			if(shortWaitTimeUpdate.isEmpty() || shortWaitTimeUpdate.size() <= Parameters.parameters.integerParameter("leftoverMinecraftBlocksAllowed") || previousCheck.size() > Parameters.parameters.integerParameter("leftoverMinecraftBlocksAllowed")) {
 				// Ship flew so far away that we award max fitness
-				System.out.println("Where fitness");
+				//System.out.println("Where fitness");
 				return maxFitness();
 			}
 			Vertex nextCenterOfMass = getCenterOfMass(shortWaitTimeUpdate);
