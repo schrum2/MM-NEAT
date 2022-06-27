@@ -680,7 +680,10 @@ public class MinecraftClient extends Comm {
 			// Otherwise, clears out large block sections one at a time to ensure the server isn't overloaded
 			for(int x=0;x<=end.x();x+=100) {
 				for(int z=0;z<=end.z();z+=100) {
-						fillCube(x,GROUND_LEVEL,z,x+100,end.y(),z+100, BlockType.AIR);
+					for(int y=GROUND_LEVEL;y<=end.y();y+=100) {
+						// CLears 1,000,000 blocks at a time
+						fillCube(x,y,z,x+100,y+100,z+100, BlockType.AIR);
+					}
 				}
 			}	
 		}
