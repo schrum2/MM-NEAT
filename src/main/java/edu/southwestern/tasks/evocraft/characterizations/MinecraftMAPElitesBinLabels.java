@@ -11,6 +11,12 @@ import edu.southwestern.tasks.evocraft.MinecraftClient;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.fitness.MinecraftFitnessFunction;
 
+/**
+ * For Minecraft, all binning schemes make use of a collection of Minecraft fitness function scores
+ * 
+ * @author schrum2
+ *
+ */
 public abstract class MinecraftMAPElitesBinLabels extends BaseBinLabels implements Iterable<int[]> {
 
 	public MinecraftMAPElitesBinLabels() {

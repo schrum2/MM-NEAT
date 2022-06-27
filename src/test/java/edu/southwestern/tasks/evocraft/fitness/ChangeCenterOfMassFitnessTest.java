@@ -16,6 +16,7 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
 import edu.southwestern.tasks.evocraft.MinecraftServer;
+import edu.southwestern.util.datastructures.Triple;
 import edu.southwestern.util.datastructures.Vertex;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 
@@ -66,6 +67,8 @@ public class ChangeCenterOfMassFitnessTest {
 		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet1);
 	
 		assertEquals(0.0, ff.fitnessScore(cornerBS1),0.0);
+		Triple<Vertex, Vertex, Double> beforeAndAfter = ChangeCenterOfMassFitness.getPreviouslyComputedResult(cornerBS1); // Prevent lock
+		assertEquals(0.0, beforeAndAfter.t3, 0.0);
 		
 		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS1, ranges, 1, 100); // Larger buffer is important
 		
@@ -104,6 +107,9 @@ public class ChangeCenterOfMassFitnessTest {
 		// is 6.0 or more
 		//System.out.println("Fitness for the blockSet 2: "+ ff.fitnessScore(cornerBS2));
 		assertEquals(ff.maxFitness(), ff.fitnessScore(cornerBS2),0.0);
+		Triple<Vertex, Vertex, Double> beforeAndAfter = ChangeCenterOfMassFitness.getPreviouslyComputedResult(cornerBS2); // Prevent lock
+		assertEquals(ff.maxFitness(), beforeAndAfter.t3, 0.0);
+		
 		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 100);
 	}
 	
@@ -132,7 +138,9 @@ public class ChangeCenterOfMassFitnessTest {
 
 		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet2);
 		//System.out.println("Second flying machine fitness: " + ff.fitnessScore(cornerBS2));
-		assertTrue(ff.maxFitness() <= ff.fitnessScore(cornerBS2));
+		assertEquals(ff.maxFitness(), ff.fitnessScore(cornerBS2), 0.0);
+		Triple<Vertex, Vertex, Double> beforeAndAfter = ChangeCenterOfMassFitness.getPreviouslyComputedResult(cornerBS2); // Prevent lock
+		assertEquals(ff.maxFitness(), beforeAndAfter.t3, 0.0);
 		
 		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 100);
 	}
@@ -155,6 +163,9 @@ public class ChangeCenterOfMassFitnessTest {
 		// When the time is small (50L) then the score becomes large
 		MinecraftClient.getMinecraftClient().spawnBlocks(oscillatingMachine);
 		double amount = ff.fitnessScore(cornerBS2);
+		Triple<Vertex, Vertex, Double> beforeAndAfter = ChangeCenterOfMassFitness.getPreviouslyComputedResult(cornerBS2); // Prevent lock
+		assertTrue(47 <= beforeAndAfter.t3);
+		
 		System.out.println("movement fitness when oscillating: "+ amount);
 		assertTrue(47 <= amount);
 		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 100);
