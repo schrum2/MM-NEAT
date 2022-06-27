@@ -8,10 +8,16 @@ import java.util.List;
 import edu.southwestern.evolution.mapelites.BaseBinLabels;
 import edu.southwestern.tasks.mario.level.LevelParser;
 
+/**
+ * General binning scheme that does not require level to consist of segments.
+ * 
+ * @author Jacob Schrum
+ *
+ */
 public class MarioMAPElitesPercentDecorNSAndLeniencyBinLabels extends BaseBinLabels {
 
 	List<String> labels = null;
-	private int binsPerDimension = 50; // Will this change later or be final?
+	private int binsPerDimension = 10; // Will this change later or be final?
 	
 	@Override
 	public List<String> binLabels() {
@@ -40,16 +46,25 @@ public class MarioMAPElitesPercentDecorNSAndLeniencyBinLabels extends BaseBinLab
 	public int[] multiDimensionalIndices(HashMap<String, Object> keys) {
 		
 		double[] stats = (double[]) keys.get("Complete Stats");
+		
+		//System.out.println(Arrays.toString(stats));
+		
 		double decorationPercent = stats[LevelParser.LEVEL_STATS_DECORATION_INDEX];
 		double leniencyPercent = stats[LevelParser.LEVEL_STATS_LENIENCY_INDEX];
 		double spaceCoveredPercent = stats[LevelParser.LEVEL_STATS_SPACE_COVERAGE_INDEX];
 
-		int decorationBinIndex = (int) (decorationPercent * binsPerDimension);
-		int spaceCoveredBinIndex = (int) (spaceCoveredPercent * binsPerDimension);
+		final double SCALE_FACTOR = 13;
+		int decorationBinIndex = (int) (SCALE_FACTOR * decorationPercent * binsPerDimension);
+		int spaceCoveredBinIndex = (int) (SCALE_FACTOR * spaceCoveredPercent * binsPerDimension);
 		// leniencyPercent is probably in the range -0.5 to 0.5, so shift to 0.0 to 1.0 first
 		int leniencyBinIndex = (int) ((leniencyPercent + 0.5) * binsPerDimension);
 		leniencyBinIndex = Math.min(leniencyBinIndex, binsPerDimension - 1);
 		leniencyBinIndex = Math.max(leniencyBinIndex, 0);
+		
+		assert decorationBinIndex < binsPerDimension : decorationBinIndex+" of "+binsPerDimension;
+		assert spaceCoveredBinIndex < binsPerDimension : spaceCoveredBinIndex+" of "+binsPerDimension;
+		assert leniencyBinIndex < binsPerDimension : leniencyBinIndex+" of "+binsPerDimension;
+		assert 0 <= leniencyBinIndex : leniencyBinIndex+" of "+binsPerDimension;
 		
 		return new int[] {decorationBinIndex, spaceCoveredBinIndex, leniencyBinIndex};
 	}
