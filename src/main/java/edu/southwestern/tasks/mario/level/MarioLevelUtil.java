@@ -33,7 +33,6 @@ import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.mario.MarioLevelTask;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.stats.StatisticsUtilities;
 
@@ -502,6 +501,7 @@ public class MarioLevelUtil {
 	public static void main(String[] args) throws FileNotFoundException, Exception {
 		removeMarioLevelBuffer = false;
 		String[] binningSchemes = new String[] {
+				"MarioMAPElitesPercentDecorNSAndLeniencyBinLabels", // New
 				"MarioMAPElitesDecorAndLeniencyBinLabels", // Never used in publication
 				"MarioMAPElitesDecorNSAndLeniencyBinLabels", // Original CPPN2GAN paper
 				"MarioMAPElitesDistinctChunksNSAndDecorationBinLabels", // CPPN2GAN ToG article
@@ -510,14 +510,14 @@ public class MarioLevelUtil {
 		};
 		// Load all levels
 		List<List<List<Integer>>> levelCollection = new ArrayList<>();
-		//String dir = "data/VGLC/SuperMarioBrosNewEncoding/overworld";
-		String dir = "data/VGLC/SuperMarioBros";
+		String dir = "data/VGLC/SuperMarioBrosNewEncoding/overworld";
+		//String dir = "data/VGLC/SuperMarioBros";
 		File dirFile = new File(dir);
 		for(File levelFile : dirFile.listFiles()) {
 			if(levelFile.getName().endsWith(".txt")) {
 				System.out.println(levelFile);
-				int[][] grid = OldLevelParser.readLevel(new Scanner(levelFile));
-				//int[][] grid = LevelParser.readLevel(new Scanner(levelFile));
+				//int[][] grid = OldLevelParser.readLevel(new Scanner(levelFile));
+				int[][] grid = LevelParser.readLevel(new Scanner(levelFile));
 				//System.out.println(Arrays.deepToString(grid));
 				List<List<Integer>> levelAsLists = new ArrayList<>();
 				for(int[] row: grid) {
@@ -550,13 +550,13 @@ public class MarioLevelUtil {
 					"marioGANLevelChunks:"+marioGANLevelChunks, "mu:0",
 					"io:true","netio:true","watch:false",
 					"marioSimpleAStarDistance:true",
-					"marioGANUsesOriginalEncoding:true",
+					"marioGANUsesOriginalEncoding:false",
 					"steadyStateIndividualsPerGeneration:1",
 					"marioProgressPlusJumpsFitness:false",
 					"marioProgressPlusTimeFitness:false",
 					"ea:edu.southwestern.evolution.mapelites.MAPElites", 
 					"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
-					"mapElitesBinLabels:edu.southwestern.tasks.mario."+binningSchemeClassName});
+					"mapElitesBinLabels:edu.southwestern.tasks.mario.binningschemes."+binningSchemeClassName});
 			MMNEAT.loadClasses();
 
 			MarioLevelTask<ArrayList<Double>> marioLevelTask = (MarioLevelTask<ArrayList<Double>>) MMNEAT.task;
