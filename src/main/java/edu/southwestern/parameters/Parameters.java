@@ -373,7 +373,12 @@ public class Parameters {
 		integerOptions.add("startY", 5, "The Y coordinate the shapes are generated on");
 		integerOptions.add("startZ", 0, "The Z coordinate the shapes are generated on");
 		integerOptions.add("minecraftNumberOfBinsForMovement", 3,"The amount of bins for each side of the flying machine movement");
-		
+		integerOptions.add("marioMinDecorationIndex", 0, "Lowest interval index for MAP Elites dimension associated with Mario level decoration");
+		integerOptions.add("marioMaxDecorationIndex", 10000, "Highest interval index for MAP Elites dimension associated with Mario level decoration");
+		integerOptions.add("marioMinLeniencyIndex", 0, "Lowest interval index for MAP Elites dimension associated with Mario level leniency");
+		integerOptions.add("marioMaxLeniencyIndex", 10000, "Highest interval index for MAP Elites dimension associated with Mario level leniency");
+		integerOptions.add("marioMinSpaceCoverageIndex", 0, "Lowest interval index for MAP Elites dimension associated with Mario level Space Coverage");
+		integerOptions.add("marioMaxSpaceCoverageIndex", 10000, "Highest interval index for MAP Elites dimension associated with Mario level Space Coverage");
 		
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
