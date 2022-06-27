@@ -2,6 +2,7 @@ package edu.southwestern.tasks.evocraft.fitness;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
@@ -11,7 +12,6 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
-import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
 import edu.southwestern.util.datastructures.Vertex;
 /**
@@ -25,6 +25,18 @@ import edu.southwestern.util.datastructures.Vertex;
  */
 public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 
+	private static final HashMap<MinecraftCoordinates, Triple<Vertex, Vertex, Double>> PREVIOUSLY_COMPUTED_RESULTS = new HashMap<>();
+	
+	/**
+	 * Retrieve and remove a previously computed result
+	 * @param corner Corner where the shape was evaluated
+	 * @return Results for shape that was spawned at that corner
+	 */
+	public static Triple<Vertex, Vertex, Double> getPreviouslyComputedResult(MinecraftCoordinates corner) {
+		synchronized(PREVIOUSLY_COMPUTED_RESULTS) {
+			return PREVIOUSLY_COMPUTED_RESULTS.remove(corner);
+		}
+	}
 
 	@Override
 	public double maxFitness() {
@@ -48,11 +60,21 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 	public double fitnessScore(MinecraftCoordinates corner) {
 
 		Triple<Vertex, Vertex, Double> centerOfMassBeforeAndAfter = getCenterOfMassBeforeAndAfter(corner);
+		// Do not erase previously computed result. Wait until other thread consumes it
+		while(PREVIOUSLY_COMPUTED_RESULTS.containsKey(corner)) {
+			try {
+				Thread.sleep(10); // Should this sleep longer?
+			} catch (InterruptedException e) {
+				System.out.println("Interrupted!");
+				e.printStackTrace();
+			}
+		}
+		// Save results computed at the given corner
+		synchronized(PREVIOUSLY_COMPUTED_RESULTS) {
+			PREVIOUSLY_COMPUTED_RESULTS.put(corner, centerOfMassBeforeAndAfter);
+		}
 		
-		double changeInPosition = centerOfMassBeforeAndAfter.t2.distance(centerOfMassBeforeAndAfter.t1);
-		assert !Double.isNaN(changeInPosition); // : "Before: " + MinecraftUtilClass.filterOutBlock(blocks,BlockType.AIR);
-		if(Parameters.parameters.booleanParameter("minecraftAccumulateChangeInCenterOfMass")) return centerOfMassBeforeAndAfter.t3;
-		else return changeInPosition;
+		return centerOfMassBeforeAndAfter.t3;
 	}
 
 	/**
@@ -85,7 +107,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		// List of blocks in the area based on the corner
 		List<Block> blocks = MinecraftClient.getMinecraftClient().readCube(corner,end);
 		blocks = MinecraftUtilClass.filterOutBlock(blocks, BlockType.AIR);
-		if(blocks.isEmpty()) return minFitness();
+		if(blocks.isEmpty()) return new Triple<>(new Vertex(0,0,0), new Vertex(0,0,0), minFitness());
 
 		//System.out.println("List of blocks before movement: "+ Arrays.toString(blocks.stream().filter(b -> b.type() != BlockType.AIR.ordinal()).toArray()));
 
@@ -121,7 +143,8 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 			if(shortWaitTimeUpdate.isEmpty() || shortWaitTimeUpdate.size() <= Parameters.parameters.integerParameter("leftoverMinecraftBlocksAllowed") || previousCheck.size() > Parameters.parameters.integerParameter("leftoverMinecraftBlocksAllowed")) {
 				// Ship flew so far away that we award max fitness
 				//System.out.println("Where fitness");
-				return maxFitness();
+				// Should this use lastCenterOfMass or should we infer a point that is at the extreme bounds of the eval space?
+				return new Triple<>(initialCenterOfMass, lastCenterOfMass, maxFitness());
 			}
 			Vertex nextCenterOfMass = getCenterOfMass(shortWaitTimeUpdate);
 			//System.out.println("Next COM: "+nextCenterOfMass);
@@ -144,6 +167,14 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		}
 
 		Triple<Vertex,Vertex,Double> centerOfMassBeforeAndAfter = new Triple<>(initialCenterOfMass, lastCenterOfMass, totalChangeDistance);
+
+		double changeInPosition = centerOfMassBeforeAndAfter.t2.distance(centerOfMassBeforeAndAfter.t1);
+		assert !Double.isNaN(changeInPosition) : "Before: " + MinecraftUtilClass.filterOutBlock(blocks,BlockType.AIR);
+
+		if(!Parameters.parameters.booleanParameter("minecraftAccumulateChangeInCenterOfMass")) {
+			centerOfMassBeforeAndAfter.t3 = changeInPosition;		
+		}
+
 		return centerOfMassBeforeAndAfter;
 	}
 

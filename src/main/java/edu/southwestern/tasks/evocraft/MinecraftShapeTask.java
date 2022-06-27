@@ -36,6 +36,8 @@ import edu.southwestern.tasks.evocraft.shapegeneration.ShapeGenerator;
 import edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.datastructures.Triple;
+import edu.southwestern.util.datastructures.Vertex;
 
 
 public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTask, BoundedTask {
@@ -219,6 +221,8 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		//System.out.println(genome.getId() + ":" + blocks);
 		MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
 		double[] fitnessScores = calculateFitnessScores(corner,fitnessFunctions);
+		// It is possible this is not even being used (null result), but the call is needed to prevent deadlock otherwise
+		Triple<Vertex, Vertex, Double> centerOfMassBeforeAndAfter = ChangeCenterOfMassFitness.getPreviouslyComputedResult(corner);
 		Score<T> score = new Score<T>(genome, fitnessScores);
 		if(MMNEAT.usingDiversityBinningScheme) {
 			//System.out.println("evaluate "+genome.getId() + " at " + corner + ": scores = "+ Arrays.toString(fitnessScores));
@@ -229,6 +233,13 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			double[] propertyScores = calculateFitnessScores(corner,minecraftBinLabels.properties(),blocks);
 			// Map contains all required properties now
 			HashMap<String,Object> behaviorMap = minecraftBinLabels.behaviorMapFromScores(propertyScores);
+			
+			// For the directional binning scheme
+			if(centerOfMassBeforeAndAfter != null) {
+				behaviorMap.put("x-movement", centerOfMassBeforeAndAfter.t2.x - centerOfMassBeforeAndAfter.t1.x);
+				behaviorMap.put("y-movement", centerOfMassBeforeAndAfter.t2.y - centerOfMassBeforeAndAfter.t1.y);
+				behaviorMap.put("z-movement", centerOfMassBeforeAndAfter.t2.z - centerOfMassBeforeAndAfter.t1.z);
+			}
 			
 			double binScore = qualityScore(fitnessScores); 
 			behaviorMap.put("binScore", binScore); // Quality Score!				
