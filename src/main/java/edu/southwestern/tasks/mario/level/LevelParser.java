@@ -15,6 +15,7 @@ import com.google.gson.GsonBuilder;
 import ch.idsia.mario.engine.level.Level;
 import ch.idsia.mario.engine.level.SpriteTemplate;
 import ch.idsia.mario.engine.sprites.Enemy;
+import edu.southwestern.parameters.Parameters;
 
 /**
  * This is the upgraded version of LevelParser that allows for more expressivity
@@ -193,6 +194,7 @@ public class LevelParser {
 	 * @return array of decoration, leniency, and space coverage
 	 */
 	public static double[] getSegmentStats(List<List<Integer>> oneLevel, int segmentWidth, int segmentStart, int segmentEnd) {
+		assert !Parameters.parameters.booleanParameter("marioGANUsesOriginalEncoding");
 		assert segmentWidth == segmentEnd - segmentStart;
 		double[] vals = {0,0,0};
         int height = oneLevel.size();

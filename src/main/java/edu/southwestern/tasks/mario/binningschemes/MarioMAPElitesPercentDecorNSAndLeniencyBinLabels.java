@@ -6,11 +6,12 @@ import java.util.HashMap;
 import java.util.List;
 
 import edu.southwestern.evolution.mapelites.BaseBinLabels;
+import edu.southwestern.tasks.mario.level.LevelParser;
 
 public class MarioMAPElitesPercentDecorNSAndLeniencyBinLabels extends BaseBinLabels {
 
 	List<String> labels = null;
-	private int binsPerDimension = 10; // Will this change later or be final?
+	private int binsPerDimension = 50; // Will this change later or be final?
 	
 	@Override
 	public List<String> binLabels() {
@@ -37,8 +38,20 @@ public class MarioMAPElitesPercentDecorNSAndLeniencyBinLabels extends BaseBinLab
 
 	@Override
 	public int[] multiDimensionalIndices(HashMap<String, Object> keys) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		double[] stats = (double[]) keys.get("Complete Stats");
+		double decorationPercent = stats[LevelParser.LEVEL_STATS_DECORATION_INDEX];
+		double leniencyPercent = stats[LevelParser.LEVEL_STATS_LENIENCY_INDEX];
+		double spaceCoveredPercent = stats[LevelParser.LEVEL_STATS_SPACE_COVERAGE_INDEX];
+
+		int decorationBinIndex = (int) (decorationPercent * binsPerDimension);
+		int spaceCoveredBinIndex = (int) (spaceCoveredPercent * binsPerDimension);
+		// leniencyPercent is probably in the range -0.5 to 0.5, so shift to 0.0 to 1.0 first
+		int leniencyBinIndex = (int) ((leniencyPercent + 0.5) * binsPerDimension);
+		leniencyBinIndex = Math.min(leniencyBinIndex, binsPerDimension - 1);
+		leniencyBinIndex = Math.max(leniencyBinIndex, 0);
+		
+		return new int[] {decorationBinIndex, spaceCoveredBinIndex, leniencyBinIndex};
 	}
 
 	@Override
