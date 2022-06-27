@@ -545,10 +545,10 @@ public class MarioLevelUtil {
 			String binningSchemeName = binningSchemeClassName.substring(14, binningSchemeClassName.length() - 9);
 			int marioGANLevelChunks = 10; // This is what we used with MarioGAN
 			Parameters.initializeParameterCollections(new String[] {
-					
-//					"marioMinDecorationIndex:2", "marioMaxDecorationIndex:4",
-//					"marioMinLeniencyIndex:4", "marioMaxLeniencyIndex:7"
-					
+					// Experimenting with restricted ranges
+					//"marioMinDecorationIndex:2", "marioMaxDecorationIndex:4",
+					//"marioMinLeniencyIndex:4", "marioMaxLeniencyIndex:5",
+					//"marioMinSpaceCoverageIndex:3","marioMaxSpaceCoverageIndex:7",
 					"base:dagstuhlmario","log:DagstuhlMario-"+binningSchemeName,"saveTo:"+binningSchemeName,
 					"task:edu.southwestern.tasks.mario.FakeMarioLevelTask",
 					"marioGANLevelChunks:"+marioGANLevelChunks, "mu:0",
@@ -573,8 +573,8 @@ public class MarioLevelUtil {
 				marioLevelTask.evaluateOneLevel(levelAsLists, 0, MMNEAT.genotype, map);
 				Archive archive = MMNEAT.getArchive();
 				System.out.println(Arrays.toString(archive.getBinMapping().multiDimensionalIndices(map)));
-				System.out.println(map);
-				System.out.println(Arrays.toString( (((ArrayList<double[]>) map.get("Level Stats"))).get(0)));
+				//System.out.println(map);
+				//System.out.println(Arrays.toString( (((ArrayList<double[]>) map.get("Level Stats"))).get(0)));
 				// No genotype or scores
 				Score score = new Score(map,MMNEAT.genotype,new double[0]);
 				me.fileUpdates(archive.add(score));
