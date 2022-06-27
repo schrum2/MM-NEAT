@@ -19,9 +19,22 @@ import edu.southwestern.tasks.evocraft.fitness.MinecraftFitnessFunction;
  */
 public class MinecraftMAPElitesDirectionalMovementBinLabels extends MinecraftMAPElitesBinLabels {
 
+	private List<String> labels = null;
+	
 	@Override
 	public List<String> binLabels() {
-		// TODO Auto-generated method stub
+		if(labels == null) {
+			int xDim = Parameters.parameters.integerParameter("minecraftXRange");
+			int yDim = Parameters.parameters.integerParameter("minecraftYRange");
+			int zDim = Parameters.parameters.integerParameter("minecraftZRange");
+			
+			int size = xDim*yDim*zDim; // size is the total possible volume
+			
+			labels = new ArrayList<String>(size);
+			
+			// go through all possible bins+1 since both 0 and 1000 blocks are both possibilities (i < size would just give a range of 0-999)
+			for(int i = 1; i <= size; i++) labels.add(i + "Blocks");
+		}
 		return null;
 	}
 
@@ -35,39 +48,30 @@ public class MinecraftMAPElitesDirectionalMovementBinLabels extends MinecraftMAP
 		MinecraftCoordinates ranges = MinecraftUtilClass.getRanges();
 		
 		int xBinPlacement = binPlacement(ranges.x(), xMovement);
-		int yBinPlacement = binPlacement(ranges.y(), yMovement);;
-		int zBinPlacement = binPlacement(ranges.z(), zMovement);;
+		int yBinPlacement = binPlacement(ranges.y(), yMovement);
+		int zBinPlacement = binPlacement(ranges.z(), zMovement);
 		
-		return null;
+		return new int[] {xBinPlacement,yBinPlacement,zBinPlacement};
 	}
 
-	private int binPlacement(int coordinate, double movement) {
-		double halfRange = (coordinate + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")) /2.0;
-		double binOneDimension = halfRange/Parameters.parameters.integerParameter("minecraftNumberOfBinsForMovement");
+	private int binPlacement(int rangeCoordinate, double movement) {
+		double halfRange = (rangeCoordinate + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")) /2.0;
+		int totalNumberOfBins = 2*Parameters.parameters.integerParameter("minecraftNumberOfBinsForMovement");
 		
 		double distanceFromEdge = halfRange + movement;
+		double binsTotalDistance = ( distanceFromEdge / (2*halfRange) ) * totalNumberOfBins;
 		
 		int binNumber = 0;
 		
-		if(movement < 0) {
-			if(distanceFromEdge < 0) {
-				binNumber = 0;
-			} else if(distanceFromEdge > 0 && distanceFromEdge < halfRange) {
-				binNumber = (int) (distanceFromEdge/Parameters.parameters.integerParameter("minecraftNumberOfBinsForMovement"));
-			} else {
-				assert distanceFromEdge == 0;
-				binNumber = Parameters.parameters.integerParameter("minecraftNumberOfBinsForMovement");
-			}
+		if(movement == 0) {
+			binNumber = Parameters.parameters.integerParameter("minecraftNumberOfBinsForMovement");
+		} else if(binsTotalDistance < 0) {
+			binNumber = 0;
+		} else if(binsTotalDistance > totalNumberOfBins) {
+			binNumber = totalNumberOfBins;
 		} else {
-			assert movement >= 0;
-			if(distanceFromEdge > 2*Parameters.parameters.integerParameter("minecraftNumberOfBinsForMovement")) {
-				binNumber = 2*Parameters.parameters.integerParameter("minecraftNumberOfBinsForMovement");
-			} else if(distanceFromEdge > 0 && distanceFromEdge < 2*Parameters.parameters.integerParameter("minecraftNumberOfBinsForMovement")) {
-				binNumber = (int) (distanceFromEdge/Parameters.parameters.integerParameter("minecraftNumberOfBinsForMovement"));
-			} else {
-				assert distanceFromEdge == 0;
-				binNumber = Parameters.parameters.integerParameter("minecraftNumberOfBinsForMovement");
-			}
+			binNumber = (int) Math.floor(distanceFromEdge/(2*halfRange));
+			if(binNumber >= Parameters.parameters.integerParameter("minecraftNumberOfBinsForMovement")) binNumber++; 
 		}
 		return binNumber;
 	}
