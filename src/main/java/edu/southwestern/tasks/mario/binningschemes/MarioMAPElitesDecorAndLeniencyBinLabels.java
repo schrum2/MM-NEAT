@@ -1,4 +1,4 @@
-package edu.southwestern.tasks.mario;
+package edu.southwestern.tasks.mario.binningschemes;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -8,6 +8,7 @@ import java.util.List;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.mapelites.BaseBinLabels;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.mario.MarioLevelTask;
 
 public class MarioMAPElitesDecorAndLeniencyBinLabels extends BaseBinLabels {
 		

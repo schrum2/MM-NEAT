@@ -369,7 +369,10 @@ public class Parameters {
 		integerOptions.add("interactiveSleepTimer", 1000, "The ammount of time the interactive thread sleeps for");
 		integerOptions.add("extraSpaceBetweenMinecraftShapes", 50, "The extra space that will be in between the shapes being evaluated");
 		integerOptions.add("leftoverMinecraftBlocksAllowed", 0, "The amount of blocks that will be allowed to be left behind by the flying machine and still get max fitness for the change in center of mass fitness function");
-
+		integerOptions.add("startX", 0, "The X coordinate the shapes are generated on");
+		integerOptions.add("startY", 5, "The Y coordinate the shapes are generated on");
+		integerOptions.add("startZ", 0, "The Z coordinate the shapes are generated on");
+		
 		
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
@@ -824,6 +827,7 @@ public class Parameters {
 		booleanOptions.add("minecraftNorthSouthOnly", false, "Determines whether only the North and South orientations will be used.");
 		booleanOptions.add("displayDiagonally", true, "Displays the archive diagonally");
 		booleanOptions.add("bedrockTestChambers", false, "Places walls made of bedrock around the flying machines");
+		booleanOptions.add("minecraftUpDownOnly", false, "Determines whether only the Up and Down orientations will be used.");
 
 		
 		// Double parameters

@@ -1,4 +1,4 @@
-package edu.southwestern.tasks.mario;
+package edu.southwestern.tasks.mario.binningschemes;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,6 +7,7 @@ import java.util.List;
 import edu.southwestern.evolution.mapelites.BaseBinLabels;
 import edu.southwestern.evolution.mapelites.generalmappings.TileNoveltyBinLabels;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.mario.MarioLevelTask;
 
 /**
  * Binning scheme for Mario GAN using Level

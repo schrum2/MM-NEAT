@@ -125,6 +125,10 @@ public class MinecraftUtilClass {
 			orientations = new Orientation[2];
 			orientations[0] = Orientation.NORTH;
 			orientations[1] = Orientation.SOUTH;
+		} else if(Parameters.parameters.booleanParameter("minecraftUpDownOnly")) { // only use up and down orientations
+			orientations = new Orientation[2];
+			orientations[0] = Orientation.UP;
+			orientations[1] = Orientation.DOWN;
 		} else { // use normal orientation array
 			orientations = Orientation.values();
 		}
@@ -137,6 +141,8 @@ public class MinecraftUtilClass {
 	 * @return int Number of orientation directions (either restricted or not restricted)
 	 */
 	public static int getnumOrientationDirections() { 
-		return Parameters.parameters.booleanParameter("minecraftNorthSouthOnly") ? 2:6; 
+		int result = 6;
+		if(Parameters.parameters.booleanParameter("minecraftNorthSouthOnly") || Parameters.parameters.booleanParameter("minecraftUpDownOnly")) result = 2;
+		return result; 
 	}
 }

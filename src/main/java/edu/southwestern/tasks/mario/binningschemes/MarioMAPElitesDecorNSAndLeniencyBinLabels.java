@@ -1,4 +1,4 @@
-package edu.southwestern.tasks.mario;
+package edu.southwestern.tasks.mario.binningschemes;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -9,6 +9,7 @@ import java.util.Arrays;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.mapelites.BaseBinLabels;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.mario.MarioLevelTask;
 
 /**
  * Known as SUM DSL in ToG journal paper. Also used in original GECCO CPPN2GAN paper.
@@ -74,7 +75,7 @@ public class MarioMAPElitesDecorNSAndLeniencyBinLabels extends BaseBinLabels {
 		// Scale scores so that we are less likely to overstep the bounds of the bins
 		final int BINS_PER_DIMENSION = Parameters.parameters.integerParameter("marioGANLevelChunks");
 		
-		int leniencySumIndex = Math.min(Math.max((int)((leniencySum*(BINS_PER_DIMENSION/2)+0.5)*BINS_PER_DIMENSION),0), BINS_PER_DIMENSION-1); //LEANIENCY BIN INDEX
+		int leniencySumIndex = Math.min(Math.max((int)((leniencySum*(BINS_PER_DIMENSION/2)+0.5)*BINS_PER_DIMENSION),0), BINS_PER_DIMENSION-1); //LENIENCY BIN INDEX
 		int decorationBinIndex =  Math.min((int)(decorationSum*DECORATION_SCALE*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1); //decorationBinIndex
 		int negativeSpaceSumIndex = Math.min((int)(negativeSpaceSum*NEGATIVE_SPACE_SCALE*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1); //negative space index
 
