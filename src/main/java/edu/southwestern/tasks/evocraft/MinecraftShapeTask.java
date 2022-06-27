@@ -333,7 +333,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		// Otherwise, generate in line
 		}else {
 			for(int i = 0; i < size; i++) {
-				MinecraftCoordinates corner = new MinecraftCoordinates(startingX + count*(ranges.x() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")), MinecraftClient.GROUND_LEVEL+1, startingZ);
+				MinecraftCoordinates corner = new MinecraftCoordinates(startingX + count*(ranges.x() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")), startingY, startingZ);
 				corner = corner.add(new MinecraftCoordinates(count*extraSpace,0,count*extraSpace));
 				
 				corners.add(corner);
@@ -352,7 +352,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 					"io:true", "netio:true", 
 					//"io:false", "netio:false", 
 					"mating:true", "fs:false", 
-					"startX:-10", "startY:15", "startZ:10",
+					//"startX:-10", "startY:15", "startZ:10",
 					//"genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype",
 					"vectorPresenceThresholdForEachBlock:true",
 					"voxelExpressionThreshold:0.5",
@@ -380,7 +380,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 					"includeFullSigmoidFunction:true", "includeFullGaussFunction:true", "includeCosineFunction:true", 
 					"includeGaussFunction:false", "includeIdFunction:true", "includeTriangleWaveFunction:false", 
 					"includeSquareWaveFunction:false", "includeFullSawtoothFunction:false", "includeSigmoidFunction:false",
-					"extraSpaceBetweenMinecraftShapes:0",
+					//"extraSpaceBetweenMinecraftShapes:0",
 					"includeAbsValFunction:false", "includeSawtoothFunction:false"}); 
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
