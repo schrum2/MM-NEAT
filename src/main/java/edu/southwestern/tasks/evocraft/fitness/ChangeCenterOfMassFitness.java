@@ -11,8 +11,6 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
-import edu.southwestern.util.datastructures.Pair;
-import edu.southwestern.util.datastructures.Triple;
 import edu.southwestern.util.datastructures.Vertex;
 /**
  * Calculates the changes in the center of mass of
@@ -47,22 +45,6 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 	@Override
 	public double fitnessScore(MinecraftCoordinates corner) {
 
-		Triple<Vertex, Vertex, Double> centerOfMassBeforeAndAfter = getCenterOfMassBeforeAndAfter(corner);
-		
-		double changeInPosition = centerOfMassBeforeAndAfter.t2.distance(centerOfMassBeforeAndAfter.t1);
-		assert !Double.isNaN(changeInPosition); // : "Before: " + MinecraftUtilClass.filterOutBlock(blocks,BlockType.AIR);
-		if(Parameters.parameters.booleanParameter("minecraftAccumulateChangeInCenterOfMass")) return centerOfMassBeforeAndAfter.t3;
-		else return changeInPosition;
-	}
-
-	/**
-	 * Calculates the initial and final center of mass after
-	 * a certain amount of time has passed
-	 * @param corner Coordinate of the corner of the shape
-	 * @return A triple with the initial center of mass, final center of mass, and total
-	 * 			change in distance
-	 */
-	public Triple<Vertex, Vertex, Double> getCenterOfMassBeforeAndAfter(MinecraftCoordinates corner) {
 		// Ranges before the change of space in between
 		int xrange = Parameters.parameters.integerParameter("minecraftXRange");
 		//int yrange = Parameters.parameters.integerParameter("minecraftYRange");
@@ -143,8 +125,10 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 			}
 		}
 
-		Triple<Vertex,Vertex,Double> centerOfMassBeforeAndAfter = new Triple<>(initialCenterOfMass, lastCenterOfMass, totalChangeDistance);
-		return centerOfMassBeforeAndAfter;
+		double changeInPosition = lastCenterOfMass.distance(initialCenterOfMass);
+		assert !Double.isNaN(changeInPosition) : "Before: " + MinecraftUtilClass.filterOutBlock(blocks,BlockType.AIR);
+		if(Parameters.parameters.booleanParameter("minecraftAccumulateChangeInCenterOfMass")) return totalChangeDistance;
+		else return changeInPosition;
 	}
 
 	public static Vertex getCenterOfMass(List<Block> blocks) {
