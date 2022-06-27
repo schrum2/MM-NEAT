@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import edu.southwestern.evolution.mapelites.BaseBinLabels;
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.mario.level.LevelParser;
 
 /**
@@ -14,7 +15,7 @@ import edu.southwestern.tasks.mario.level.LevelParser;
  * @author Jacob Schrum
  *
  */
-public class MarioMAPElitesPercentDecorNSAndLeniencyBinLabels extends BaseBinLabels {
+public class MarioMAPElitesPercentDecorateCoverageAndLeniencyBinLabels extends BaseBinLabels {
 
 	List<String> labels = null;
 	private int binsPerDimension = 10; // Will this change later or be final?
@@ -27,7 +28,7 @@ public class MarioMAPElitesPercentDecorNSAndLeniencyBinLabels extends BaseBinLab
 			for(int i = 0; i < binsPerDimension; i++) { // Decoration
 				for(int j = 0; j < binsPerDimension; j++) { // Negative Space
 					for(int r = -(binsPerDimension/2); r < binsPerDimension/2; r++) { // Leniency allows negative range
-						labels.add("Decoration"+i+"0-"+(i+1)+"0NS"+j+"0-"+(j+1)+"0Leniency"+r+"0-"+(r+1)+"0");
+						labels.add("Decoration"+i+"0-"+(i+1)+"0Coverage"+j+"0-"+(j+1)+"0Leniency"+r+"0-"+(r+1)+"0");
 					}
 				}
 			}
@@ -56,8 +57,10 @@ public class MarioMAPElitesPercentDecorNSAndLeniencyBinLabels extends BaseBinLab
 		final double SCALE_FACTOR = 13;
 		int decorationBinIndex = (int) (SCALE_FACTOR * decorationPercent * binsPerDimension);
 		int spaceCoveredBinIndex = (int) (SCALE_FACTOR * spaceCoveredPercent * binsPerDimension);
-		// leniencyPercent is probably in the range -0.5 to 0.5, so shift to 0.0 to 1.0 first
-		int leniencyBinIndex = (int) ((leniencyPercent + 0.5) * binsPerDimension);
+
+		double scaledLeniency = SCALE_FACTOR * leniencyPercent * binsPerDimension;
+		int leniencyBinIndex = (int) Math.floor(scaledLeniency < 0 ? (binsPerDimension/2) - scaledLeniency : (binsPerDimension/2) + scaledLeniency);
+		System.out.println("Leniency: "+ leniencyPercent + " -> " + scaledLeniency + " -> " + leniencyBinIndex);
 		leniencyBinIndex = Math.min(leniencyBinIndex, binsPerDimension - 1);
 		leniencyBinIndex = Math.max(leniencyBinIndex, 0);
 		
@@ -71,7 +74,7 @@ public class MarioMAPElitesPercentDecorNSAndLeniencyBinLabels extends BaseBinLab
 
 	@Override
 	public String[] dimensions() {
-		return new String[] {"Decoration", "Negative Space", "Leniency"};
+		return new String[] {"Decoration", "Space Coverage", "Leniency"};
 	}
 
 	@Override
@@ -79,4 +82,15 @@ public class MarioMAPElitesPercentDecorNSAndLeniencyBinLabels extends BaseBinLab
 		return new int[] {binsPerDimension, binsPerDimension, binsPerDimension};
 	}
 
+	@Override
+	public boolean discard(HashMap<String, Object> behaviorMap) {
+		int[] multi = multiDimensionalIndices(behaviorMap);
+		// Allow for discarding of solutions outside of a restricted range set at the command line
+		return multi[LevelParser.LEVEL_STATS_DECORATION_INDEX] < Parameters.parameters.integerParameter("marioMinDecorationIndex") ||
+			   multi[LevelParser.LEVEL_STATS_DECORATION_INDEX] > Parameters.parameters.integerParameter("marioMaxDecorationIndex") ||
+			   multi[LevelParser.LEVEL_STATS_LENIENCY_INDEX] < Parameters.parameters.integerParameter("marioMinLeniencyIndex") ||
+			   multi[LevelParser.LEVEL_STATS_LENIENCY_INDEX] > Parameters.parameters.integerParameter("marioMaxLeniencyIndex") ||
+			   multi[LevelParser.LEVEL_STATS_SPACE_COVERAGE_INDEX] < Parameters.parameters.integerParameter("marioMinSpaceCoverageIndex") ||
+			   multi[LevelParser.LEVEL_STATS_SPACE_COVERAGE_INDEX] > Parameters.parameters.integerParameter("marioMaxSpaceCoverageIndex");
+	}
 }

@@ -501,11 +501,11 @@ public class MarioLevelUtil {
 	public static void main(String[] args) throws FileNotFoundException, Exception {
 		removeMarioLevelBuffer = false;
 		String[] binningSchemes = new String[] {
-				"MarioMAPElitesPercentDecorNSAndLeniencyBinLabels", // New
-				"MarioMAPElitesDecorAndLeniencyBinLabels", // Never used in publication
-				"MarioMAPElitesDecorNSAndLeniencyBinLabels", // Original CPPN2GAN paper
-				"MarioMAPElitesDistinctChunksNSAndDecorationBinLabels", // CPPN2GAN ToG article
-				"MarioMAPElitesDistinctChunksNSAndLeniencyBinLabels"//, // Never used in publication
+				"MarioMAPElitesPercentDecorateCoverageAndLeniencyBinLabels" // New
+//				"MarioMAPElitesDecorAndLeniencyBinLabels", // Never used in publication
+//				"MarioMAPElitesDecorNSAndLeniencyBinLabels", // Original CPPN2GAN paper
+//				"MarioMAPElitesDistinctChunksNSAndDecorationBinLabels", // CPPN2GAN ToG article
+//				"MarioMAPElitesDistinctChunksNSAndLeniencyBinLabels"//, // Never used in publication
 				//"MarioMAPElitesNoveltyDecorAndLeniencyBinLabels" // Never used in publication
 		};
 		// Load all levels
@@ -545,6 +545,10 @@ public class MarioLevelUtil {
 			String binningSchemeName = binningSchemeClassName.substring(14, binningSchemeClassName.length() - 9);
 			int marioGANLevelChunks = 10; // This is what we used with MarioGAN
 			Parameters.initializeParameterCollections(new String[] {
+					
+//					"marioMinDecorationIndex:2", "marioMaxDecorationIndex:4",
+//					"marioMinLeniencyIndex:4", "marioMaxLeniencyIndex:7"
+					
 					"base:dagstuhlmario","log:DagstuhlMario-"+binningSchemeName,"saveTo:"+binningSchemeName,
 					"task:edu.southwestern.tasks.mario.FakeMarioLevelTask",
 					"marioGANLevelChunks:"+marioGANLevelChunks, "mu:0",
