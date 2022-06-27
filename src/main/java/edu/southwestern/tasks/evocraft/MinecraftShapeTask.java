@@ -108,7 +108,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		}		
 		
 		startingX = Parameters.parameters.integerParameter("startX");
-		startingZ = Parameters.parameters.integerParameter("startX");;
+		startingZ = Parameters.parameters.integerParameter("startZ");
 	}
 	
 	public int getStartingX() { return startingX; }
