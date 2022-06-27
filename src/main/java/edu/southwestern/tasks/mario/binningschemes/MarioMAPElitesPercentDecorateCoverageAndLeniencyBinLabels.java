@@ -59,7 +59,7 @@ public class MarioMAPElitesPercentDecorateCoverageAndLeniencyBinLabels extends B
 		int spaceCoveredBinIndex = (int) (SCALE_FACTOR * spaceCoveredPercent * binsPerDimension);
 
 		double scaledLeniency = SCALE_FACTOR * leniencyPercent * binsPerDimension;
-		int leniencyBinIndex = (int) Math.floor(scaledLeniency < 0 ? (binsPerDimension/2) - scaledLeniency : (binsPerDimension/2) + scaledLeniency);
+		int leniencyBinIndex = (int) Math.floor((binsPerDimension/2) + scaledLeniency);
 		System.out.println("Leniency: "+ leniencyPercent + " -> " + scaledLeniency + " -> " + leniencyBinIndex);
 		leniencyBinIndex = Math.min(leniencyBinIndex, binsPerDimension - 1);
 		leniencyBinIndex = Math.max(leniencyBinIndex, 0);
