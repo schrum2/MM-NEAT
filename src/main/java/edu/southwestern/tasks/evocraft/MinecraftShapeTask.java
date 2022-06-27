@@ -108,10 +108,13 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		}		
 		
 		startingX = Parameters.parameters.integerParameter("startX");
+		startingY = Parameters.parameters.integerParameter("startY");
 		startingZ = Parameters.parameters.integerParameter("startZ");
 	}
 	
 	public int getStartingX() { return startingX; }
+	
+	public int getStartingY() { return startingY; }
 	
 	public int getStartingZ() { return startingZ; }
 		
@@ -175,7 +178,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		MinecraftClient client = MinecraftClient.getMinecraftClient();		
 		// Avoid recalculating the same corners every time
 		if(corners == null) {
-			corners = getShapeCorners(population.size(), startingX, startingZ, MinecraftUtilClass.getRanges());
+			corners = getShapeCorners(population.size(), startingX, startingY, startingZ, MinecraftUtilClass.getRanges());
 		}
 
 		// Must clear the space where shapes are placed
@@ -300,15 +303,16 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	}
 
 	/**
-	 * Generate a given number of spawn corners for shapes based on given starting x/z coordinates
-	 * (starting y is assumed to be relative to the ground), and x/y/z-ranges for shape generation.
+	 * Generate a given number of spawn corners for shapes based on given starting x/y/z coordinates
+	 * and x/y/z-ranges for shape generation.
 	 * 
 	 * @param size Size of population, and thus number of corners to create
 	 * @param startingX x-coordinate of corner for first shape
+	 * @param startingY y-coordinate of corner for first shape
 	 * @param startingZ z-coordinate of corner for first shape
 	 * @param ranges size of generated shapes in x/y/z dimensions
 	 */
-	public static ArrayList<MinecraftCoordinates> getShapeCorners(int size, int startingX, int startingZ, MinecraftCoordinates ranges) {
+	public static ArrayList<MinecraftCoordinates> getShapeCorners(int size, int startingX, int startingY, int startingZ, MinecraftCoordinates ranges) {
 		ArrayList<MinecraftCoordinates> corners = new ArrayList<>(size);
 		int count = 0;
 		int extraSpace = Parameters.parameters.integerParameter("extraSpaceBetweenMinecraftShapes");
@@ -316,7 +320,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		// If placing diagonally, decrease the z coordinate
 		if(Parameters.parameters.booleanParameter("displayDiagonally")) {
 			for(int i = 0; i < size; i++) {
-				MinecraftCoordinates corner = new MinecraftCoordinates(startingX - count*(ranges.x() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")), MinecraftClient.GROUND_LEVEL+1+count*(ranges.y() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")), startingZ - count*(ranges.z() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")));
+				MinecraftCoordinates corner = new MinecraftCoordinates(startingX - count*(ranges.x() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")),startingY+count*(ranges.y() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")), startingZ - count*(ranges.z() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")));
 				corner = corner.add(new MinecraftCoordinates(count*-extraSpace,0,count*-extraSpace));
 				System.out.println(corner);
 				corners.add(corner);
@@ -344,7 +348,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 					"io:true", "netio:true", 
 					//"io:false", "netio:false", 
 					"mating:true", "fs:false", 
-					"startX:-10", "startY:10", "startZ:10",
+					"startX:-10", "startY:15", "startZ:10",
 					//"genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype",
 					"vectorPresenceThresholdForEachBlock:true",
 					"voxelExpressionThreshold:0.5",
