@@ -1,4 +1,4 @@
-package edu.southwestern.tasks.mario;
+package edu.southwestern.tasks.mario.binningschemes;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -9,6 +9,7 @@ import java.util.Arrays;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.mapelites.BaseBinLabels;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.mario.MarioLevelTask;
 
 /**
  * Known as SUM DSL in ToG journal paper. Also used in original GECCO CPPN2GAN paper.
