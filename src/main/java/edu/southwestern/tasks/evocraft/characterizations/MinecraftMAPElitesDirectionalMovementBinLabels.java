@@ -24,6 +24,14 @@ public class MinecraftMAPElitesDirectionalMovementBinLabels extends MinecraftMAP
 
 	@Override
 	public int[] multiDimensionalIndices(HashMap<String, Object> keys) {
+		
+		double xMovement = ((Double) keys.get("x-movement")).doubleValue();
+		double yMovement = ((Double) keys.get("y-movement")).doubleValue();
+		double zMovement = ((Double) keys.get("z-movement")).doubleValue();
+		
+		
+		// More to do
+		
 		return null;
 	}
 
@@ -33,7 +41,9 @@ public class MinecraftMAPElitesDirectionalMovementBinLabels extends MinecraftMAP
 	}
 	
 	public HashMap<String,Object> behaviorMapFromScores(double[] fitnessScores) {
-		return null;
+		// Since this scheme is not based on fitness functions, an empty HashMap is returned.
+		// The needed scores are collected in special case particular to this binning scheme.
+		return new HashMap<>();
 	}
 	
 	@Override
