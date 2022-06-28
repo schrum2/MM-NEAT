@@ -74,12 +74,13 @@ public class MinecraftMAPElitesDirectionalMovementBinLabels extends MinecraftMAP
 	 * @param movement Displacement of shape along dimension
 	 * @return index along chosen dimension
 	 */
-	private int binPlacement(int rangeCoordinate, double movement) {
+	public int binPlacement(int rangeCoordinate, double movement) {
 		double halfRange = (rangeCoordinate + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")) /2.0;
 		int totalNumberOfBins = dimensionValue();
 		
 		double distanceFromEdge = halfRange + movement;
-		double binsTotalDistance = ( distanceFromEdge / (2*halfRange) ) * totalNumberOfBins;
+		double portionDistance = distanceFromEdge / (2*halfRange);
+		double binsTotalDistance = portionDistance * (totalNumberOfBins - 1); // -1 because 0 movement bin excluded
 		
 		int binNumber = 0;
 		
@@ -92,7 +93,7 @@ public class MinecraftMAPElitesDirectionalMovementBinLabels extends MinecraftMAP
 		} else {
 			binNumber = (int) Math.floor(binsTotalDistance);
 			if(binNumber >= Parameters.parameters.integerParameter("minecraftNumberOfBinsForMovement")) binNumber++; 
-			System.out.println(movement + " -> " + distanceFromEdge + " -> " + binNumber);
+			//System.out.println(halfRange + ":" + movement + " -> " + portionDistance + " -> " + distanceFromEdge + " -> " + binsTotalDistance + " -> " + binNumber);
 		}
 		return binNumber;
 	}
@@ -167,7 +168,7 @@ public class MinecraftMAPElitesDirectionalMovementBinLabels extends MinecraftMAP
 					"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
 					"steadyStateIndividualsPerGeneration:100", 
 					"spaceBetweenMinecraftShapes:8","parallelMAPElitesInitialize:true",
-					"minecraftXRange:5","minecraftYRange:5","minecraftZRange:5",
+					"minecraftXRange:2","minecraftYRange:2","minecraftZRange:2",
 					//"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGenerator",
 					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator",
 					"vectorPresenceThresholdForEachBlock:true",
