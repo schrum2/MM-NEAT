@@ -679,7 +679,7 @@ public class MinecraftClient extends Comm {
 		}else {
 			int counter=0;
 			// Otherwise, clears out large block sections one at a time to ensure the server isn't overloaded
-			int fillSize = Parameters.parameters.integerParameter("clearDimension");
+			int fillSize = Parameters.parameters.integerParameter("minecraftClearDimension");
 			//System.out.println(end.x()+" "+end.y()+" "+end.z());
 			for(int x=0;x<=end.x();x+=fillSize) {
 				for(int z=0;z<=end.z();z+=fillSize) {
