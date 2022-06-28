@@ -25,8 +25,8 @@ public class CPPNOrVectorToVolumeGenerator implements ShapeGenerator {
 	private ThreeDimensionalVolumeGenerator forCPPN;
 	
 	public CPPNOrVectorToVolumeGenerator() {
-		forVectors = new VectorToVolumeGenerator();
-		forCPPN = new ThreeDimensionalVolumeGenerator();
+		forVectors = new VectorToVolumeGenerator(); // instance of VectorToVolumeGenerator
+		forCPPN = new ThreeDimensionalVolumeGenerator(); // instance of ThreeDimensionalVolumeGenerator
 	}
 	
 	@SuppressWarnings({ "unchecked" })
