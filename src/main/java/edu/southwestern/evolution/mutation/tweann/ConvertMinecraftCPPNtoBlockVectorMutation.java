@@ -7,6 +7,8 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.util.graphics.ThreeDimensionalUtil;
 
 /**
+ * Convert CPPN to Block Vector in Minecraft.
+ * Cannot specific type of phenotype since it changes.
  * 
  * @author Alejandro Medina
  *
