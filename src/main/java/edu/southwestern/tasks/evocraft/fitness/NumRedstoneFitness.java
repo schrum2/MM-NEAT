@@ -14,14 +14,5 @@ public class NumRedstoneFitness extends TypeCountFitness{
 		TypeCountFitness piston = new TypeCountFitness(BlockType.REDSTONE_BLOCK.ordinal());
 		double total = piston.fitnessFromBlocks(corner,blocks);
 		return total;
-		
-//		int pistonCount = 0;
-//		// increases count only if redstone block
-//		for(Block b : blocks) {
-//			if(b.type() == BlockType.PISTON.ordinal()||b.type() == BlockType.STICKY_PISTON.ordinal()) {
-//				pistonCount++;
-//			}
-//		}
-//		return pistonCount;
 	}
 }
