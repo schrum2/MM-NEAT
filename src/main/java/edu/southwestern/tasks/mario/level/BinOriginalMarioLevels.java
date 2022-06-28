@@ -16,6 +16,13 @@ import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.mario.MarioLevelTask;
 import edu.southwestern.util.datastructures.ArrayUtil;
 
+/**
+ * An idea out of Dagstuhl. Take the original Mario levels and
+ * place them into MAP Elites archives to see where they land.
+ * 
+ * @author Jacob Schrum
+ *
+ */
 public class BinOriginalMarioLevels {
 	/**
 	 * Loop through the original Mario levels and put them in each possible
