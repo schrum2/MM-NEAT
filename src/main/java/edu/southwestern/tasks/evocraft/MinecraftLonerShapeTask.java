@@ -34,7 +34,6 @@ import edu.southwestern.tasks.evocraft.fitness.CheckBlocksInSpaceFitness;
 import edu.southwestern.tasks.evocraft.fitness.OccupiedCountFitness;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
-
 /**
  * MAPElites only works with LonerTasks because it is a steady-state algorithm.
  * MinecraftShapeTask is parallelized for evolving populations, but this
@@ -160,7 +159,57 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			interactionThread.start();
 		}
 	}
+	
+	private class ControlBlocks<T> {
+		
+		private MinecraftCoordinates diamondBlock;
+		private MinecraftCoordinates emeraldBlock;
+		private MinecraftCoordinates obsidianBlock;
+		private Integer coordinates;
+		
+		
+		private ControlBlocks(MinecraftCoordinates diamond,MinecraftCoordinates emerald,MinecraftCoordinates obsidian,Integer coords) {
+			diamondBlock=diamond;
+			emeraldBlock=emerald;
+			obsidianBlock=obsidian;
+			coordinates=coords;
+		}
+		
+		public MinecraftCoordinates getDiamond() {
+			return diamondBlock;
+		}
 
+		public MinecraftCoordinates getEmerald() {
+			return emeraldBlock;
+		}
+		
+		public MinecraftCoordinates getObsidian() {
+			return obsidianBlock;
+		}
+		
+		public Integer getCoords() {
+			return coordinates;
+		}
+		
+		public void setDiamond(MinecraftCoordinates diamond) {
+			diamondBlock=diamond;
+		}
+
+		public void setEmerald(MinecraftCoordinates emerald) {
+			emeraldBlock=emerald;
+		}
+		
+		public void setObsidian(MinecraftCoordinates obsidian) {
+			obsidianBlock=obsidian;
+		}
+		
+		public void setCoords(Integer coords) {
+			coordinates=coords;
+		}
+	}
+	
+	
+	
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num, HashMap<String, Object> behaviorCharacteristics) {
 		MinecraftCoordinates ranges = MinecraftUtilClass.getRanges();
 
@@ -312,8 +361,8 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					MinecraftCoordinates emeraldBlock = corners.t2.add(new MinecraftCoordinates(MinecraftUtilClass.getRanges().x(),-1,-1));
 					interactive.add(new Block(emeraldBlock,BlockType.EMERALD_BLOCK, Orientation.WEST));
 					// commented out until working on this task. focus on this later
-//					MinecraftCoordinates obsidianBlock = corners.t2.sub(new MinecraftCoordinates(1,1,-MinecraftUtilClass.getRanges().z()));
-//					interactive.add(new Block(obsidianBlock,BlockType.OBSIDIAN, Orientation.WEST));
+					MinecraftCoordinates obsidianBlock = corners.t2.sub(new MinecraftCoordinates(1,1,-MinecraftUtilClass.getRanges().z()));
+					interactive.add(new Block(obsidianBlock,BlockType.OBSIDIAN, Orientation.WEST));
 					blocksToMonitor.add(new Triple<>(diamondBlock,emeraldBlock,index1D));
 					MinecraftClient.getMinecraftClient().spawnBlocks(interactive);
 				}
