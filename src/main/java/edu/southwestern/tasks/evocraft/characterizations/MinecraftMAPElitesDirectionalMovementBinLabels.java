@@ -1,10 +1,12 @@
 package edu.southwestern.tasks.evocraft.characterizations;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
@@ -110,6 +112,55 @@ public class MinecraftMAPElitesDirectionalMovementBinLabels extends MinecraftMAP
 	public List<MinecraftFitnessFunction> properties() {
 		// Return an empty list since the properties for this approach are not derived from fitness functions
 		return new ArrayList<>(0);
+	}
+	
+	public static void main(String[] args) {
+		int seed = 1;
+		try {
+			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:100", "maxGens:100000",
+					"base:minecraft", "log:Minecraft-MAPElitesCountEmptyFlyingMachineVectorNS", "saveTo:MAPElitesCountEmptyFlyingMachineVectorNS",
+					"minecraftContainsWholeMAPElitesArchive:true","forceLinearArchiveLayoutInMinecraft:false",
+					"launchMinecraftServerFromJava:false",
+					"io:true", "netio:true",
+					"interactWithMapElitesInWorld:true",
+					//"io:false", "netio:false", 
+					"mating:true", "fs:false",
+					"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet",
+					//"minecraftTypeCountFitness:true",
+					//"minecraftDiversityBlockFitness:true",
+					"minecraftChangeCenterOfMassFitness:true",
+					//"minecraftTypeTargetFitness:true", 
+					//"minecraftDesiredBlockCount:40",
+					//"minecraftOccupiedCountFitness:true",
+					"minecraftEvolveOrientation:true",
+					"minecraftNorthSouthOnly:true",
+					//"minecraftRedirectConfinedSnakes:true",
+					//"minecraftStopConfinedSnakes:true", 
+					//"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesWidthHeightDepthBinLabels",
+					"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesDirectionalMovementBinLabels",
+					"ea:edu.southwestern.evolution.mapelites.MAPElites", 
+					"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
+					"steadyStateIndividualsPerGeneration:100", 
+					//FOR TESTING
+					"spaceBetweenMinecraftShapes:8","parallelMAPElitesInitialize:false",
+					"minecraftXRange:2","minecraftYRange:2","minecraftZRange:5",
+					//"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGenerator",
+					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator",
+					"vectorPresenceThresholdForEachBlock:true",
+					"voxelExpressionThreshold:0.5",
+					"genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype",
+					"netChangeActivationRate:0.0",
+					
+					"task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask", "allowMultipleFunctions:true",
+					"ftype:0", "watch:false", "cleanFrequency:-1",
+					"recurrency:false", "saveAllChampions:true", "cleanOldNetworks:false",
+					"includeFullSigmoidFunction:true", "includeFullGaussFunction:true", "includeCosineFunction:true", 
+					"includeGaussFunction:false", "includeIdFunction:true", "includeTriangleWaveFunction:false", 
+					"includeSquareWaveFunction:false", "includeFullSawtoothFunction:false", "includeSigmoidFunction:false", 
+					"includeAbsValFunction:false", "includeSawtoothFunction:false"}); 
+		} catch (FileNotFoundException | NoSuchMethodException e) {
+			e.printStackTrace();
+		}
 	}
 
 }
