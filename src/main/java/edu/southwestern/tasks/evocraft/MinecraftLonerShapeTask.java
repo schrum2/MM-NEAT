@@ -103,8 +103,10 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 						for(ControlBlocks cb : currentElements) {
 							// Initial check, reads in blocks once and comapres from there
 							ArrayList<Block> interactiveBlocks = MinecraftClient.getMinecraftClient().readCube(cb.getDiamond(),cb.getEmerald());
+							ArrayList<Block> obsidianBlock = MinecraftClient.getMinecraftClient().readCube(cb.getObsidian());
 							if(interactiveBlocks.get(0).type!=BlockType.DIAMOND_BLOCK || 
-							   interactiveBlocks.get(interactiveBlocks.size()-1).type!=BlockType.EMERALD_BLOCK) { // If either diamond or emerald is different
+							   interactiveBlocks.get(interactiveBlocks.size()-1).type!=BlockType.EMERALD_BLOCK||
+							   obsidianBlock.get(0).type!=BlockType.OBSIDIAN) { // If either diamond or emerald is different
 								synchronized(blocksToMonitor) {
 									// Verify that it is actually missing
 									if(interactiveBlocks.get(0).type!=BlockType.DIAMOND_BLOCK) {
@@ -142,6 +144,9 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 											championCoords.add(new Pair<>(goldBlock,index1D));
 											highestFitness = (double) champion.MAPElitesBehaviorMap().get("binScore");
 										}
+									}
+									if(obsidianBlock.get(0).type!=BlockType.OBSIDIAN) {
+										
 									}
 								}
 							}
