@@ -90,7 +90,7 @@ public class MinecraftMAPElitesDirectionalMovementBinLabels extends MinecraftMAP
 		} else if(binsTotalDistance > totalNumberOfBins) {
 			binNumber = totalNumberOfBins;
 		} else {
-			binNumber = (int) Math.floor(distanceFromEdge/(2*halfRange));
+			binNumber = (int) Math.floor(binsTotalDistance);
 			if(binNumber >= Parameters.parameters.integerParameter("minecraftNumberOfBinsForMovement")) binNumber++; 
 			System.out.println(movement + " -> " + distanceFromEdge + " -> " + binNumber);
 		}
