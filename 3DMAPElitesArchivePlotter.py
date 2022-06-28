@@ -95,8 +95,8 @@ cmap = "viridis" # Colormap to use
 
 columns = math.ceil(dimensions[0]/rows)
 
-fig, axs = plt.subplots(nrows=rows, ncols=columns, constrained_layout=True, figsize=(columns*4, rows*3)) # Make subplots
-
+fig, axs = plt.subplots(nrows=rows, ncols=columns, constrained_layout=False, figsize=(columns*4, rows*3)) # Make subplots
+fig.tight_layout()
 fig.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap), ax=axs[:, :], location='right', aspect=50) # Make colorbar
 
 end = rows*columns
