@@ -2,7 +2,6 @@ package edu.southwestern.tasks.evocraft.characterizations;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -23,6 +22,10 @@ public class MinecraftMAPElitesDirectionalMovementBinLabels extends MinecraftMAP
 
 	private List<String> labels = null;
 	
+	public MinecraftMAPElitesDirectionalMovementBinLabels() {
+		super();
+	}
+	
 	@Override
 	public List<String> binLabels() {
 		if(labels == null) {
@@ -33,9 +36,16 @@ public class MinecraftMAPElitesDirectionalMovementBinLabels extends MinecraftMAP
 			int size = xDim*yDim*zDim; // size is the total possible volume
 			
 			labels = new ArrayList<String>(size);
-			
-			// go through all possible bins+1 since both 0 and 1000 blocks are both possibilities (i < size would just give a range of 0-999)
-			for(int i = 1; i <= size; i++) labels.add(i + "DirectionalMovement");
+			int half = Parameters.parameters.integerParameter("minecraftNumberOfBinsForMovement");
+
+			for(int x = -half; x <= half; x++) {
+				for(int y = -half; y <= half; y++) {
+					for(int z = -half; z <= half; z++) {
+						labels.add("X"+x+"Y"+y+"Z"+z);
+					}				
+				}
+			}
+						
 		}
 		return labels;
 	}
@@ -56,6 +66,14 @@ public class MinecraftMAPElitesDirectionalMovementBinLabels extends MinecraftMAP
 		return new int[] {xBinPlacement,yBinPlacement,zBinPlacement};
 	}
 
+	/**
+	 * Given the range along a given dimension, and how much a shape actually moved along that dimension,
+	 * figure out the archive index along that dimension.
+	 * 
+	 * @param rangeCoordinate max size of shape along given dimension
+	 * @param movement Displacement of shape along dimension
+	 * @return index along chosen dimension
+	 */
 	private int binPlacement(int rangeCoordinate, double movement) {
 		double halfRange = (rangeCoordinate + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")) /2.0;
 		int totalNumberOfBins = dimensionValue();
@@ -74,10 +92,16 @@ public class MinecraftMAPElitesDirectionalMovementBinLabels extends MinecraftMAP
 		} else {
 			binNumber = (int) Math.floor(distanceFromEdge/(2*halfRange));
 			if(binNumber >= Parameters.parameters.integerParameter("minecraftNumberOfBinsForMovement")) binNumber++; 
+			System.out.println(movement + " -> " + distanceFromEdge + " -> " + binNumber);
 		}
 		return binNumber;
 	}
 	
+	/**
+	 * Number of intervals in each dimension. Shape can move minecraftNumberOfBinsForMovement
+	 * intervals in either direction, and there is one extra interval in the middle for 0 movement.
+	 * @return Number of intervals
+	 */
 	private int dimensionValue() {
 		return 2*Parameters.parameters.integerParameter("minecraftNumberOfBinsForMovement")+1;
 	}
@@ -103,9 +127,8 @@ public class MinecraftMAPElitesDirectionalMovementBinLabels extends MinecraftMAP
 
 	@Override
 	public int[] dimensionSizes() {
-		MinecraftCoordinates reservedSpace = MinecraftUtilClass.reservedSpace();
-		int numberOfBinIntervals = Parameters.parameters.integerParameter("minecraftNumberOfBinsForMovement");
-		return new int[] {(reservedSpace.x()/2)/numberOfBinIntervals,(reservedSpace.y()/2)/numberOfBinIntervals,(reservedSpace.z()/2)/numberOfBinIntervals};
+		int dim = dimensionValue();
+		return new int[] {dim, dim, dim};
 	}
 
 	@Override
@@ -118,7 +141,7 @@ public class MinecraftMAPElitesDirectionalMovementBinLabels extends MinecraftMAP
 		int seed = 1;
 		try {
 			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:100", "maxGens:100000",
-					"base:minecraft", "log:Minecraft-MAPElitesCountEmptyFlyingMachineVectorNS", "saveTo:MAPElitesCountEmptyFlyingMachineVectorNS",
+					"base:minecraft", "log:Minecraft-MAPElitesDirectionalTest", "saveTo:MAPElitesDirectionalTest",
 					"minecraftContainsWholeMAPElitesArchive:true","forceLinearArchiveLayoutInMinecraft:false",
 					"launchMinecraftServerFromJava:false",
 					"io:true", "netio:true",
@@ -138,12 +161,13 @@ public class MinecraftMAPElitesDirectionalMovementBinLabels extends MinecraftMAP
 					//"minecraftStopConfinedSnakes:true", 
 					//"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesWidthHeightDepthBinLabels",
 					"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesDirectionalMovementBinLabels",
+					"minecraftNumberOfBinsForMovement:3",
+					
 					"ea:edu.southwestern.evolution.mapelites.MAPElites", 
 					"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
 					"steadyStateIndividualsPerGeneration:100", 
-					//FOR TESTING
-					"spaceBetweenMinecraftShapes:8","parallelMAPElitesInitialize:false",
-					"minecraftXRange:2","minecraftYRange:2","minecraftZRange:5",
+					"spaceBetweenMinecraftShapes:8","parallelMAPElitesInitialize:true",
+					"minecraftXRange:5","minecraftYRange:5","minecraftZRange:5",
 					//"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGenerator",
 					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator",
 					"vectorPresenceThresholdForEachBlock:true",
