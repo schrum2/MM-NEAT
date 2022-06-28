@@ -111,9 +111,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 									// Verify that it is actually missing
 									if(interactiveBlocks.get(0).type!=BlockType.DIAMOND_BLOCK) {
 										// Gets score and uses it to place to clear and replace the shape
-										System.out.println(cb.getOneD());
 										Score<T> s = MMNEAT.getArchive().getElite(cb.getOneD());
-										System.out.println(s==null);
 										placeArchiveInWorld(s.individual, s.MAPElitesBehaviorMap(), MinecraftUtilClass.getRanges(),true);
 									}
 									
@@ -146,7 +144,9 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 										}
 									}
 									if(obsidianBlock.get(0).type!=BlockType.OBSIDIAN) {
-										
+//										Score<T> s = MMNEAT.getArchive().getElite(cb.getOneD());
+//										MAPElites mapElites = new MAPElites();
+//										mapElites.newIndividual(cb.getOneD());
 									}
 								}
 							}
@@ -567,7 +567,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					//"io:false", "netio:false", 
 					"mating:true", "fs:false",
 					//"startX:-10", "startY:5", "startZ:10",
-					"clearDimension:100",
+					"minecraftClearDimension:100",
 					"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet",
 					//"minecraftTypeCountFitness:true",
 					"minecraftDiversityBlockFitness:true",
