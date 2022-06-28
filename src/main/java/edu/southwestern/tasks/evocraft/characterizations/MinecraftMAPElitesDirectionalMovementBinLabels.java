@@ -24,10 +24,9 @@ public class MinecraftMAPElitesDirectionalMovementBinLabels extends MinecraftMAP
 	@Override
 	public List<String> binLabels() {
 		if(labels == null) {
-			MinecraftCoordinates reservedSpace = MinecraftUtilClass.reservedSpace();
-			int xDim = reservedSpace.x();
-			int yDim = reservedSpace.y();
-			int zDim = reservedSpace.z();
+			int xDim = dimensionValue();
+			int yDim = dimensionValue();
+			int zDim = dimensionValue();
 			
 			int size = xDim*yDim*zDim; // size is the total possible volume
 			
@@ -57,7 +56,7 @@ public class MinecraftMAPElitesDirectionalMovementBinLabels extends MinecraftMAP
 
 	private int binPlacement(int rangeCoordinate, double movement) {
 		double halfRange = (rangeCoordinate + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")) /2.0;
-		int totalNumberOfBins = 2*Parameters.parameters.integerParameter("minecraftNumberOfBinsForMovement");
+		int totalNumberOfBins = dimensionValue();
 		
 		double distanceFromEdge = halfRange + movement;
 		double binsTotalDistance = ( distanceFromEdge / (2*halfRange) ) * totalNumberOfBins;
@@ -76,6 +75,10 @@ public class MinecraftMAPElitesDirectionalMovementBinLabels extends MinecraftMAP
 		}
 		return binNumber;
 	}
+	
+	private int dimensionValue() {
+		return 2*Parameters.parameters.integerParameter("minecraftNumberOfBinsForMovement")+1;
+	}
 
 	@Override
 	public String[] dimensions() {
@@ -90,8 +93,10 @@ public class MinecraftMAPElitesDirectionalMovementBinLabels extends MinecraftMAP
 	
 	@Override
 	public int oneDimensionalIndex(int[] multi) {
-		// TODO Auto-generated method stub
-		return 0;
+		int yDim = dimensionValue();
+		int zDim = dimensionValue();
+		int binIndex = multi[0]*yDim*zDim + multi[1]*zDim + multi[2];
+		return binIndex;
 	}
 
 	@Override
