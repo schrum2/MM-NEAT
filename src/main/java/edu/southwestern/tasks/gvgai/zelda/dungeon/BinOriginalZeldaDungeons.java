@@ -57,6 +57,10 @@ public class BinOriginalZeldaDungeons {
 					"task:edu.southwestern.tasks.zelda.FakeZeldaDungeonTask",
 					"mu:0","io:true","netio:true","watch:false",
 					"steadyStateIndividualsPerGeneration:1",
+					"zeldaDungeonBackTrackRoomFitness:true","zeldaDungeonDistinctRoomFitness:true",
+					"zeldaDungeonDistanceFitness:false","zeldaDungeonFewRoomFitness:false",
+					"zeldaDungeonTraversedRoomFitness:true","zeldaPercentDungeonTraversedRoomFitness:true",
+					"zeldaDungeonRandomFitness:false",
 					"ea:edu.southwestern.evolution.mapelites.MAPElites", 
 					"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
 					"mapElitesBinLabels:edu.southwestern.tasks.zelda."+binningSchemeClassName});
