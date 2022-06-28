@@ -56,14 +56,14 @@ public class ChangeCenterOfMassFitnessTest {
 	// Passes
 	@Test
 	public void testStagnantStructureQuickly() {
-		MinecraftCoordinates cornerBS1 = new MinecraftCoordinates(-6,7,-35);
+		MinecraftCoordinates cornerBS1 = new MinecraftCoordinates(-26,7,-35);
 		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS1, ranges, 1, 100); // Larger buffer is important
 
 		// Small list of blocks that don't move
 		// Should have a fitness of 0
 		blockSet1 = new ArrayList<>();
-		blockSet1.add(new Block(-5,7,-35,BlockType.REDSTONE_BLOCK, Orientation.WEST));
-		blockSet1.add(new Block(-4,7,-35,BlockType.PISTON, Orientation.EAST));
+		blockSet1.add(new Block(-25,7,-35,BlockType.REDSTONE_BLOCK, Orientation.WEST));
+		blockSet1.add(new Block(-24,7,-35,BlockType.PISTON, Orientation.EAST));
 		
 		
 		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet1);
