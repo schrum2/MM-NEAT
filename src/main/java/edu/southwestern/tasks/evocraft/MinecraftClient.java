@@ -678,11 +678,13 @@ public class MinecraftClient extends Comm {
 			fillCube(groundStart, end, BlockType.AIR); // Calls clear cube, which checks coordinates
 		}else {
 			// Otherwise, clears out large block sections one at a time to ensure the server isn't overloaded
-			for(int x=0;x<=end.x();x+=100) {
-				for(int z=0;z<=end.z();z+=100) {
-					for(int y=GROUND_LEVEL;y<=end.y();y+=100) {
+			int fillSize = Parameters.parameters.integerParameter("clearDimension");
+			for(int x=0;x<=end.x();x+=fillSize) {
+				for(int z=0;z<=end.z();z+=fillSize) {
+					for(int y=GROUND_LEVEL;y<=end.y();y+=fillSize) {
 						// CLears 1,000,000 blocks at a time, maybe optimize it?
-						fillCube(x,y,z,x+100,y+100,z+100, BlockType.AIR);
+						//System.out.println("clearing");
+						fillCube(x,y,z,x+fillSize,y+fillSize,z+fillSize, BlockType.AIR);
 					}
 				}
 			}	
