@@ -144,9 +144,10 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 										}
 									}
 									if(obsidianBlock.get(0).type!=BlockType.OBSIDIAN) {
-//										Score<T> s = MMNEAT.getArchive().getElite(cb.getOneD());
-//										MAPElites mapElites = new MAPElites();
-//										mapElites.newIndividual(cb.getOneD());
+										((MAPElites<T>) MMNEAT.ea).newIndividual(cb.getOneD());
+										Score<T> s = MMNEAT.getArchive().getElite(cb.getOneD());
+										placeArchiveInWorld(s.individual, s.MAPElitesBehaviorMap(), MinecraftUtilClass.getRanges(),true);
+										System.out.println("Spawned in individual: " + cb.getOneD());
 									}
 								}
 							}
