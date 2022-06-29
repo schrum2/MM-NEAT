@@ -158,6 +158,11 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 										// TODO: Spawn replacement obsidian block
 										
 										
+											List<Block> interactive = new ArrayList<>(); //Spawning blocks
+											interactive.add(new Block(cb.getObsidian(),BlockType.OBSIDIAN, Orientation.WEST));
+											MinecraftClient.getMinecraftClient().spawnBlocks(interactive);
+											
+										
 										// For troubleshooting, remove later
 										//Score<T> s = MMNEAT.getArchive().getElite(cb.getOneD());
 										//placeArchiveInWorld(s.individual, s.MAPElitesBehaviorMap(), MinecraftUtilClass.getRanges(),true);
