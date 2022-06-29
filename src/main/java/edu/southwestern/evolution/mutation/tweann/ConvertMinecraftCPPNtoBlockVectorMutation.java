@@ -1,10 +1,19 @@
 package edu.southwestern.evolution.mutation.tweann;
 
+import java.util.ArrayList;
+
+import edu.southwestern.evolution.genotypes.CPPNOrBlockVectorGenotype;
+import edu.southwestern.evolution.genotypes.EitherOrGenotype;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.genotypes.RealValuedGenotype;
+import edu.southwestern.evolution.mutation.Mutation;
 import edu.southwestern.networks.Network;
+import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.util.graphics.ThreeDimensionalUtil;
+import edu.southwestern.util.random.RandomNumbers;
 
 /**
  * Convert CPPN to Block Vector in Minecraft.
@@ -13,13 +22,18 @@ import edu.southwestern.util.graphics.ThreeDimensionalUtil;
  * @author Alejandro Medina
  *
  */
-public class ConvertMinecraftCPPNtoBlockVectorMutation extends ConvertCPPN2GANtoDirect2GANMutation {
+@SuppressWarnings("rawtypes")
+public class ConvertMinecraftCPPNtoBlockVectorMutation extends Mutation {
+
+	protected double rate;
 
 	public ConvertMinecraftCPPNtoBlockVectorMutation() {
 		super();
+		double rate = Parameters.parameters.doubleParameter("indirectToDirectTransitionRate");
+		assert 0 <= rate && rate <= 1 : "Mutation rate out of range: " + rate;
+		this.rate = rate;
 	}
 
-	@Override
 	protected double[] getLongVectorResultFromCPPN(Network cppn) {
 
 		// assert that there will only be one output label for the block type and block
@@ -73,6 +87,25 @@ public class ConvertMinecraftCPPNtoBlockVectorMutation extends ConvertCPPN2GANto
 			}
 		}
 		return results;
+	}
+
+	@Override
+	public boolean perform() {
+		return (RandomNumbers.randomGenerator.nextDouble() < rate);
+	}
+
+	@SuppressWarnings({ "unchecked" })
+	@Override
+	public void mutate(Genotype genotype) {
+		// Cannot do a transition mutation on a genotype that has already transitioned!
+		if(!((CPPNOrBlockVectorGenotype) genotype).getFirstForm()) return;
+		// Safe to assume phenotype is a network at this point
+		Network cppn = (Network) genotype.getPhenotype();
+		Genotype cppnOrBlockVectorGenotype = (CPPNOrBlockVectorGenotype) genotype;
+		double[] longResult = getLongVectorResultFromCPPN(cppn); //Helper method call
+
+		RealValuedGenotype k = new RealValuedGenotype(longResult);
+		((EitherOrGenotype<TWEANN, ArrayList<Double>>) cppnOrBlockVectorGenotype).switchForms(k);
 	}
 
 }
