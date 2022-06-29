@@ -684,17 +684,17 @@ public class MinecraftClient extends Comm {
 			int counter=0;
 			// Otherwise, clears out large block sections one at a time to ensure the server isn't overloaded
 			int fillSize = Parameters.parameters.integerParameter("minecraftClearDimension");
-			//System.out.println(end.x()+" "+end.y()+" "+end.z());
+			System.out.println("SIZE:  "+end.x()+" "+end.y()+" "+end.z());
 			for(int x=0;x<=end.x();x+=fillSize) {
 				for(int z=0;z<=end.z();z+=fillSize) {
 					for(int y=GROUND_LEVEL;y<=end.y();y+=fillSize) {
 						// CLears 1,000,000 blocks at a time, maybe optimize it?
-						//System.out.println("clearing "+counter);
+						System.out.println("clearing "+counter);
 						counter++;
 						fillCube(x,y,z,x+fillSize,y+fillSize,z+fillSize, BlockType.AIR);
-						//System.out.println(x+fillSize+" "+(y+fillSize)+" "+(z+fillSize));
+						System.out.println(x+fillSize+" "+(y+fillSize)+" "+(z+fillSize));
 						try {
-							Thread.sleep(200);
+							Thread.sleep(Parameters.parameters.integerParameter("minecraftClearSleepTimer"));
 						} catch (InterruptedException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
