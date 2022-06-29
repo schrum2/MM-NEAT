@@ -638,6 +638,11 @@ public class MinecraftClient extends Comm {
 			System.exit(1);
 		}
 		String response = commRecv();
+		if(response == null) {
+			System.out.println("Python process for interacting with the Minecraft server is not responding.");
+			System.out.println("This likely means the Minecraft server was overwhelmed. Try increasing the \"minecraftClearSleepTimer\"");
+			throw new NullPointerException("Response not received from readCube. Server is probably overwhelmed and crashed.");
+		}
 		String[] tokens = response.split(" ");
 		ArrayList<Block> result = new ArrayList<Block>(tokens.length / 4);
 		// Each Block is 4 numbers: x y z type
@@ -688,7 +693,6 @@ public class MinecraftClient extends Comm {
 			for(int x=0;x<=end.x();x+=fillSize) {
 				for(int z=0;z<=end.z();z+=fillSize) {
 					for(int y=GROUND_LEVEL;y<=end.y();y+=fillSize) {
-						// CLears 1,000,000 blocks at a time, maybe optimize it?
 						System.out.println("clearing "+counter);
 						counter++;
 						fillCube(x,y,z,x+fillSize,y+fillSize,z+fillSize, BlockType.AIR);
