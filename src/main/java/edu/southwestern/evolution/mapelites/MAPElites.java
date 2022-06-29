@@ -593,7 +593,6 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		// Evaluate and add child to archive
 		//System.out.println("====================================================");
 		Score<T> s1 = task.evaluate(child1);
-		System.out.println("s1");
 		// Indicate whether elite was added
 		boolean child1WasElite = archive.add(s1);
 		fileUpdates(child1WasElite); // Log for each individual produced
