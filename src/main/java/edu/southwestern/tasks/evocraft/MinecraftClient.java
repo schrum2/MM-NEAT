@@ -372,6 +372,10 @@ public class MinecraftClient extends Comm {
 			super(x, y, z);
 		}
 		
+		public MinecraftCoordinates(MinecraftCoordinates original) { // copy constructor
+			super(original.x(), original.y(), original.z());
+		}
+		
 		public int x() { return t1; }
 		public int y() { return t2; }
 		public int z() { return t3; }
