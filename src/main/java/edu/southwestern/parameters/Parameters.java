@@ -381,6 +381,12 @@ public class Parameters {
 		integerOptions.add("marioMaxLeniencyIndex", 10000, "Highest interval index for MAP Elites dimension associated with Mario level leniency");
 		integerOptions.add("marioMinSpaceCoverageIndex", 0, "Lowest interval index for MAP Elites dimension associated with Mario level Space Coverage");
 		integerOptions.add("marioMaxSpaceCoverageIndex", 10000, "Highest interval index for MAP Elites dimension associated with Mario level Space Coverage");
+		integerOptions.add("zeldaMinWallIndex", 0, "Lowest interval index for MAP Elites dimension associated with Zelda Dungeon Wall Tiles");
+		integerOptions.add("zeldaMaxWallIndex", 10000, "Highest interval index for MAP Elites dimension associated with Zelda Dungeon Wall Tiles");
+		integerOptions.add("zeldaMinWaterIndex", 0, "Lowest interval index for MAP Elites dimension associated with Zelda Dungeon Water Tiles");
+		integerOptions.add("zeldaMaxWaterIndex", 10000, "Highest interval index for MAP Elites dimension associated with Zelda Dungeon Water Tiles");
+		integerOptions.add("zeldaMinReachableRooms", 0, "Lowest interval index for MAP Elites dimension associated with Zelda Dungeon Reachable Rooms");
+		integerOptions.add("zeldaMaxReachableRooms", 1000000, "Highest interval index for MAP Elites dimension associated with Zelda Dungeon Reachable Rooms");
 		
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
