@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Vector;
@@ -552,6 +553,10 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	 * @param parentIndex
 	 */
 	public void newIndividual(int parentIndex) {
+		assert archive.getElite(parentIndex) != null : parentIndex + " in " + archive;
+		assert archive.getArchive().stream().filter(s -> s != null).count() == archive.getNumberOfOccupiedBins() : archive.getNumberOfOccupiedBins()+" supposedly occupied, but "+
+				"Archive "+ Arrays.toString(archive.getArchive().stream().map(s -> s == null ? "X" : ((Score) s).behaviorIndexScore() ).toArray());
+		
 		Genotype<T> parent1 = archive.getElite(parentIndex).individual;
 		long parentId1 = parent1.getId(); // Parent Id comes from original genome
 		long parentId2 = NUM_CODE_EMPTY;
@@ -586,6 +591,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			EvolutionaryHistory.logLineageData(parentId1,parentId2,child1);
 		}
 		// Evaluate and add child to archive
+		//System.out.println("====================================================");
 		Score<T> s1 = task.evaluate(child1);
 		// Indicate whether elite was added
 		boolean child1WasElite = archive.add(s1);
