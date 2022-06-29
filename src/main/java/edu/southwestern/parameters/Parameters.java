@@ -835,6 +835,7 @@ public class Parameters {
 		booleanOptions.add("displayDiagonally", true, "Displays the archive diagonally");
 		booleanOptions.add("bedrockTestChambers", false, "Places walls made of bedrock around the flying machines");
 		booleanOptions.add("minecraftUpDownOnly", false, "Determines whether only the Up and Down orientations will be used.");
+		booleanOptions.add("minecraftFakeTestFitness", false, "Not a real fitness function, used for testing forcing offspring");
 
 		
 		// Double parameters

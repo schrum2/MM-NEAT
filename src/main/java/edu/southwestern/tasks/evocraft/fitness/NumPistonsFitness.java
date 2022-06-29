@@ -17,14 +17,5 @@ public class NumPistonsFitness extends TypeCountFitness{
 		total += stickyPiston.fitnessFromBlocks(corner,blocks);
 		//System.out.println("Piston"+total);
 		return total;
-		
-//		int pistonCount = 0;
-//		// increases count only if redstone block
-//		for(Block b : blocks) {
-//			if(b.type() == BlockType.PISTON.ordinal()||b.type() == BlockType.STICKY_PISTON.ordinal()) {
-//				pistonCount++;
-//			}
-//		}
-//		return pistonCount;
 	}
 }
