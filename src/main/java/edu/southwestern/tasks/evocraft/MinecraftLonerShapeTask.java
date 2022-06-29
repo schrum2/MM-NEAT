@@ -201,7 +201,10 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			return diamondBlock;
 		}
 
-		
+		/**
+		 * Gets MinecraftCoordinate of the emerald block
+		 * @return the emerald block
+		 */
 		public MinecraftCoordinates getEmerald() {
 			return emeraldBlock;
 		}
