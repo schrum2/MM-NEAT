@@ -178,7 +178,6 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	
 	// Private class to keep track of interactive blocks
 	private static class ControlBlocks {
-		
 
 		private MinecraftCoordinates diamondBlock;
 		private MinecraftCoordinates emeraldBlock;
@@ -209,13 +208,22 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			return emeraldBlock;
 		}
 		
+		/**
+		 * Gets MinecraftCoordinate of the obsidian block
+		 * @return the obsidian block
+		 */
 		public MinecraftCoordinates getObsidian() {
 			return obsidianBlock;
 		}
 		
+		/**
+		 * Gets one dimensional index of the shape
+		 * return int of the 1D index
+		 */
 		public Integer getOneD() {
 			return oneDimIndex;
 		}
+		
 		@Override
 		public int hashCode() {
 			return Objects.hash(diamondBlock, emeraldBlock, obsidianBlock, oneDimIndex);
@@ -383,22 +391,20 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 
 			// Spawning shapes is disabled during initialization
 			if(spawnShapesInWorld) {
-				//System.out.println(blocks);
-				MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
+				MinecraftClient.getMinecraftClient().spawnBlocks(blocks); // Spawns shapes
 				if(Parameters.parameters.booleanParameter("interactWithMapElitesInWorld")) {
-					List<Block> interactive = new ArrayList<>(); //Spawning blocks
+					List<Block> interactive = new ArrayList<>(); //Spawning control blocks
 					MinecraftCoordinates diamondBlock = corners.t2.sub(new MinecraftCoordinates(1,1,1));
 					interactive.add(new Block(diamondBlock,BlockType.DIAMOND_BLOCK, Orientation.WEST));
 					MinecraftCoordinates emeraldBlock = corners.t2.add(new MinecraftCoordinates(MinecraftUtilClass.getRanges().x(),-1,-1));
 					interactive.add(new Block(emeraldBlock,BlockType.EMERALD_BLOCK, Orientation.WEST));
 					MinecraftCoordinates obsidianBlock = corners.t2.sub(new MinecraftCoordinates(1,1,-MinecraftUtilClass.getRanges().z()));
 					interactive.add(new Block(obsidianBlock,BlockType.OBSIDIAN, Orientation.WEST));
-					blocksToMonitor.add(new ControlBlocks(diamondBlock,emeraldBlock,obsidianBlock,index1D));
+					blocksToMonitor.add(new ControlBlocks(diamondBlock,emeraldBlock,obsidianBlock,index1D)); // Adds to the set that loops to check them
 					MinecraftClient.getMinecraftClient().spawnBlocks(interactive);
 				}
 
 				// Fences placed at initialization now
-
 				double testScore = 0;
 				MinecraftCoordinates testCorner = null;
 				assert !(((MinecraftLonerShapeTask<T>) MMNEAT.task).internalMinecraftShapeTask.fitnessFunctions.get(0) instanceof CheckBlocksInSpaceFitness && !(MMNEAT.blockSet instanceof MachineBlockSet)) || MinecraftShapeTask.qualityScore(new double[] {testScore = ((MinecraftLonerShapeTask<T>) MMNEAT.task).internalMinecraftShapeTask.fitnessFunctions.get(0).fitnessScore(testCorner = configureStartPosition(ranges, behaviorCharacteristics).t2)}) == ((Double) behaviorCharacteristics.get("binScore")).doubleValue() : 
