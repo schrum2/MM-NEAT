@@ -106,22 +106,21 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 							ArrayList<Block> obsidianBlock = MinecraftClient.getMinecraftClient().readCube(cb.getObsidian());
 							if(interactiveBlocks.get(0).type!=BlockType.DIAMOND_BLOCK || 
 							   interactiveBlocks.get(interactiveBlocks.size()-1).type!=BlockType.EMERALD_BLOCK||
-							   obsidianBlock.get(0).type!=BlockType.OBSIDIAN) { // If either diamond or emerald is different
+							   obsidianBlock.get(0).type!=BlockType.OBSIDIAN) { // If either diamond, emerald, or obsidian is different
 								synchronized(blocksToMonitor) {
 									
 									// Recheck and verify interactiveBlocks and obsidianBlock
-									
 									interactiveBlocks = MinecraftClient.getMinecraftClient().readCube(cb.getDiamond(),cb.getEmerald());
 									obsidianBlock = MinecraftClient.getMinecraftClient().readCube(cb.getObsidian());
 									
 									// Verify that it is actually missing
 									if(interactiveBlocks.get(0).type!=BlockType.DIAMOND_BLOCK) {
-										System.out.println("Regenerate the elite by diamond block "+cb.getDiamond());
+										//System.out.println("Regenerate the elite by diamond block "+cb.getDiamond());
 										// Gets score and uses it to place to clear and replace the shape
 										Score<T> s = MMNEAT.getArchive().getElite(cb.getOneD());
 										placeArchiveInWorld(s.individual, s.MAPElitesBehaviorMap(), MinecraftUtilClass.getRanges(),true);
 									} else if(interactiveBlocks.get(interactiveBlocks.size()-1).type!=BlockType.EMERALD_BLOCK) {
-										System.out.println("Discard the elite by emerald block "+cb.getEmerald());
+										//System.out.println("Discard the elite by emerald block "+cb.getEmerald());
 										// Uses score to clear the correct area
 										Score<T> s = MMNEAT.getArchive().getElite(cb.getOneD());
 										Pair<MinecraftCoordinates,MinecraftCoordinates> corners = configureStartPosition(MinecraftUtilClass.getRanges(), s.MAPElitesBehaviorMap());
@@ -149,28 +148,19 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 											highestFitness = (double) champion.MAPElitesBehaviorMap().get("binScore");
 										}
 									} else if(obsidianBlock.get(0).type!=BlockType.OBSIDIAN) {
-										System.out.println("Spawn offspring from the elite by obsidian block "+cb.getObsidian());
+										//System.out.println("Spawn offspring from the elite by obsidian block "+cb.getObsidian());
+										//System.out.println("1d:"+cb.getOneD()+"    Archive "+ Arrays.toString(MMNEAT.getArchive().getArchive().stream().map(s -> s == null ? "X" : ((Score) s).behaviorIndexScore() ).toArray()));
 										
-										System.out.println("1d:"+cb.getOneD()+"    Archive "+ Arrays.toString(MMNEAT.getArchive().getArchive().stream().map(s -> s == null ? "X" : ((Score) s).behaviorIndexScore() ).toArray()));
-										
-										((MAPElites<T>) MMNEAT.ea).newIndividual(cb.getOneD());
-										
-										// TODO: Spawn replacement obsidian block
-										
-										
-											List<Block> interactive = new ArrayList<>(); //Spawning blocks
-											interactive.add(new Block(cb.getObsidian(),BlockType.OBSIDIAN, Orientation.WEST));
-											MinecraftClient.getMinecraftClient().spawnBlocks(interactive);
-											
-										
-										// For troubleshooting, remove later
-										//Score<T> s = MMNEAT.getArchive().getElite(cb.getOneD());
-										//placeArchiveInWorld(s.individual, s.MAPElitesBehaviorMap(), MinecraftUtilClass.getRanges(),true);
-										System.out.println("================================Spawned in individual: " + cb.getOneD());
+										((MAPElites<T>) MMNEAT.ea).newIndividual(cb.getOneD()); // Spawns new individual
+
+										List<Block> interactive = new ArrayList<>(); //Spawning obsidian again
+										interactive.add(new Block(cb.getObsidian(),BlockType.OBSIDIAN, Orientation.WEST));
+										MinecraftClient.getMinecraftClient().spawnBlocks(interactive); 
 									}
 								}
 							}
-						}		
+						}	
+						// Sleep timer to not hog resources
 						try {
 							Thread.sleep(Parameters.parameters.integerParameter("interactiveSleepTimer"));
 						} catch (InterruptedException e) {
@@ -186,8 +176,43 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		}
 	}
 	
+	// Private class to keep track of interactive blocks
 	private static class ControlBlocks {
 		
+
+		private MinecraftCoordinates diamondBlock;
+		private MinecraftCoordinates emeraldBlock;
+		private MinecraftCoordinates obsidianBlock;
+		private int oneDimIndex;
+		
+		
+		private ControlBlocks(MinecraftCoordinates diamond,MinecraftCoordinates emerald,MinecraftCoordinates obsidian,int oneD) {
+			diamondBlock  = new MinecraftCoordinates(diamond);
+			emeraldBlock  = new MinecraftCoordinates(emerald);
+			obsidianBlock = new MinecraftCoordinates(obsidian);
+			oneDimIndex   = oneD;
+		}
+		
+		/**
+		 * Gets MinecraftCoordinate of the diamond block
+		 * @return the diamond block
+		 */
+		public MinecraftCoordinates getDiamond() {
+			return diamondBlock;
+		}
+
+		
+		public MinecraftCoordinates getEmerald() {
+			return emeraldBlock;
+		}
+		
+		public MinecraftCoordinates getObsidian() {
+			return obsidianBlock;
+		}
+		
+		public Integer getOneD() {
+			return oneDimIndex;
+		}
 		@Override
 		public int hashCode() {
 			return Objects.hash(diamondBlock, emeraldBlock, obsidianBlock, oneDimIndex);
@@ -205,42 +230,13 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			return Objects.equals(diamondBlock, other.diamondBlock) && Objects.equals(emeraldBlock, other.emeraldBlock)
 					&& Objects.equals(obsidianBlock, other.obsidianBlock) && oneDimIndex == other.oneDimIndex;
 		}
-
-		private MinecraftCoordinates diamondBlock;
-		private MinecraftCoordinates emeraldBlock;
-		private MinecraftCoordinates obsidianBlock;
-		private int oneDimIndex;
-		
-		
-		private ControlBlocks(MinecraftCoordinates diamond,MinecraftCoordinates emerald,MinecraftCoordinates obsidian,int oneD) {
-			diamondBlock  = new MinecraftCoordinates(diamond);
-			emeraldBlock  = new MinecraftCoordinates(emerald);
-			obsidianBlock = new MinecraftCoordinates(obsidian);
-			oneDimIndex   = oneD;
-		}
-		
-		public MinecraftCoordinates getDiamond() {
-			return diamondBlock;
-		}
-
-		public MinecraftCoordinates getEmerald() {
-			return emeraldBlock;
-		}
-		
-		public MinecraftCoordinates getObsidian() {
-			return obsidianBlock;
-		}
-		
-		public Integer getOneD() {
-			return oneDimIndex;
-		}
 		
 	}
 	
 	
 	
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num, HashMap<String, Object> behaviorCharacteristics) {
-		System.out.println("    Archive "+ Arrays.toString(MMNEAT.getArchive().getArchive().stream().map(s -> s == null ? "X" : ((Score) s).behaviorIndexScore() ).toArray()));
+		//System.out.println("    Archive "+ Arrays.toString(MMNEAT.getArchive().getArchive().stream().map(s -> s == null ? "X" : ((Score) s).behaviorIndexScore() ).toArray()));
 		
 		MinecraftCoordinates ranges = MinecraftUtilClass.getRanges();
 
@@ -349,7 +345,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 						champions.add(new Block(goldBlock,BlockType.GOLD_BLOCK, Orientation.WEST)); // Adds new gold block
 					}
 					MinecraftClient.getMinecraftClient().spawnBlocks(champions); // Spawns shapes in
-					System.out.println("Current:"+scoreOfCurrentElite+"  Highest:"+highestFitness); // For debugging
+					//System.out.println("Current:"+scoreOfCurrentElite+"  Highest:"+highestFitness); // For debugging
 					if(spawnShapesInWorld) highestFitness = scoreOfCurrentElite; // increases the best fitness if needed
 				}
 			}
