@@ -1,7 +1,9 @@
 package edu.southwestern.evolution.mutation.tweann;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
+import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.CPPNOrBlockVectorGenotype;
 import edu.southwestern.evolution.genotypes.EitherOrGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
@@ -53,7 +55,7 @@ public class ConvertMinecraftCPPNtoBlockVectorMutation extends Mutation {
 		int counter = 0;
 
 		double[] results = new double[numBlocks];
-
+		System.out.println("number of blocks " + numBlocks);
 		boolean distanceInEachPlane = Parameters.parameters.booleanParameter("objectBreederDistanceInEachPlane");
 
 		for (int xi = 0; xi < ranges.x(); xi++) {
@@ -62,30 +64,39 @@ public class ConvertMinecraftCPPNtoBlockVectorMutation extends Mutation {
 					double[] inputs = ThreeDimensionalUtil.get3DObjectCPPNInputs(xi, yi, zi, ranges.x(), ranges.y(), ranges.z(), -1, distanceInEachPlane);
 					cppn.flush(); // There should not be any left over recurrent activation, but clear each time just in case
 					double[] outputs = cppn.process(inputs);
-					
+					System.out.println("length of outputs " + outputs.length);
 					// two or three values per block
 					if (Parameters.parameters.booleanParameter("vectorPresenceThresholdForEachBlock")) {
-						final int PRESENCE_INDEX = 0;
-						final int TYPE_INDEX = 1;
+						final int PRESENCE_INDEX = counter;
+						final int TYPE_INDEX = counter + 1;
 						results[counter++] = outputs[PRESENCE_INDEX];
+						System.out.println("new val in results "+results[counter] + " and counter value: " + counter);
+						
 						results[counter++] = outputs[TYPE_INDEX];
-
+						System.out.println("new val in results "+results[counter] + " and counter value: " + counter);
+						
 						if (Parameters.parameters.booleanParameter("minecraftEvolveOrientation")) { // three values per block
-							final int ORIENTATION_INDEX = 2;
+							final int ORIENTATION_INDEX = counter + 2;
 							results[counter++] = outputs[ORIENTATION_INDEX];
+							System.out.println("new val in results "+results[counter] + " and counter value: " + counter);
+							
 						}
 					} else { // one or two values per block
-						final int TYPE_INDEX = 0;
+						final int TYPE_INDEX = counter;
 						results[counter++] = outputs[TYPE_INDEX];
+						System.out.println("new val in results "+results[counter] + " and counter value: " + counter);
 						
 						if (Parameters.parameters.booleanParameter("minecraftEvolveOrientation")) { // two values per block
-							final int ORIENTATION_INDEX = 1;
+							final int ORIENTATION_INDEX = counter + 1;
 							results[counter++] = outputs[ORIENTATION_INDEX];
+							System.out.println("new val in results "+results[counter] + " and counter value: " + counter);
+							
 						}
 					}
 				}
 			}
 		}
+		System.out.println("COUNTER: "+ counter);
 		return results;
 	}
 
@@ -107,5 +118,5 @@ public class ConvertMinecraftCPPNtoBlockVectorMutation extends Mutation {
 		RealValuedGenotype k = new RealValuedGenotype(longResult);
 		((EitherOrGenotype<TWEANN, ArrayList<Double>>) cppnOrBlockVectorGenotype).switchForms(k);
 	}
-
+	
 }

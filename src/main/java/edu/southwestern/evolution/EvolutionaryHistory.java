@@ -8,6 +8,7 @@ import java.util.Iterator;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.crossover.network.CombiningTWEANNCrossover;
+import edu.southwestern.evolution.genotypes.CPPNOrBlockVectorGenotype;
 import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.CombinedGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
@@ -195,14 +196,16 @@ public class EvolutionaryHistory {
 		TWEANNGenotype tg = (TWEANNGenotype) (MMNEAT.genotypeExamples == null ? 
 				MMNEAT.genotype instanceof TWEANNPlusParametersGenotype ?
 						((TWEANNPlusParametersGenotype) MMNEAT.genotype).getTWEANNGenotype() :
-							(MMNEAT.genotype instanceof CPPNOrDirectToGANGenotype) ?
+							MMNEAT.genotype instanceof CPPNOrDirectToGANGenotype ?
 									((TWEANNGenotype) ((CPPNOrDirectToGANGenotype) MMNEAT.genotype).getCurrentGenotype()) :
-										(MMNEAT.genotype instanceof CombinedGenotype ? 
-												((CombinedGenotype) MMNEAT.genotype).t1 : // Assume firsts of pair is TWEANNGenotype 
-													MMNEAT.genotype instanceof HyperNEATCPPNforDL4JGenotype ?
-															((HyperNEATCPPNforDL4JGenotype) MMNEAT.genotype).getCPPN() :
-																MMNEAT.genotype.copy()) : // Assume it is a TWEANNGenotype 
-																	MMNEAT.genotypeExamples.get(populationIndex).copy()); // First population from coevolution
+										MMNEAT.genotype instanceof CPPNOrBlockVectorGenotype ? 
+												((TWEANNGenotype) ((CPPNOrBlockVectorGenotype) MMNEAT.genotype).getCurrentGenotype()) :
+													MMNEAT.genotype instanceof CombinedGenotype ? 
+															((CombinedGenotype) MMNEAT.genotype).t1 : // Assume firsts of pair is TWEANNGenotype 
+																MMNEAT.genotype instanceof HyperNEATCPPNforDL4JGenotype ?
+																		((HyperNEATCPPNforDL4JGenotype) MMNEAT.genotype).getCPPN() :
+																			MMNEAT.genotype.copy() : // Assume it is a TWEANNGenotype 
+																				MMNEAT.genotypeExamples.get(populationIndex).copy()); // First population from coevolution
 		initArchetype(populationIndex, loadedArchetype, tg);
 	}
 
