@@ -989,6 +989,21 @@ public class ArrayUtil {
 		}
 		return null;
 	}
+	
+	/**
+	 * True if the item is contained in the array
+	 * 
+	 * @param <T> type of item
+	 * @param array Array to search
+	 * @param item item to look for
+	 * @return true if present, false otherwise
+	 */
+	public static <T> boolean contains(T[] array, T item) {
+		for(T x : array) {
+			if(x.equals(item)) return true;
+		}
+		return false;
+	}
 
 	/**
 	 * Return number of unique elements in an array

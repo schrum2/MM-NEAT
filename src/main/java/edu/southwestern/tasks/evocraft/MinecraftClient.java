@@ -578,11 +578,6 @@ public class MinecraftClient extends Comm {
 		checkBlockBounds(xmin, ymin, zmin, xmax, ymax, zmax);
 		String message = "fillCube "+xmin+" "+ymin+" "+zmin+" "+xmax+" "+ymax+" "+zmax+" "+type.ordinal()+" ";
 		
-		// For testing in #788
-//		System.out.println("------------------------------------------------");
-//		System.out.println(message);
-//		int v = MinecraftUtilClass.volume(xmin, ymin, zmin, xmax, ymax, zmax);
-//		System.out.println(MinecraftUtilClass.volume(xmin, ymin, zmin, xmax, ymax, zmax));
 		try {
 			commSend(message);
 		} catch (IOException e) {
@@ -638,6 +633,11 @@ public class MinecraftClient extends Comm {
 			System.exit(1);
 		}
 		String response = commRecv();
+		if(response == null) {
+			System.out.println("Python process for interacting with the Minecraft server is not responding.");
+			System.out.println("This likely means the Minecraft server was overwhelmed. Try increasing the \"minecraftClearSleepTimer\"");
+			throw new NullPointerException("Response not received from readCube. Server is probably overwhelmed and crashed.");
+		}
 		String[] tokens = response.split(" ");
 		ArrayList<Block> result = new ArrayList<Block>(tokens.length / 4);
 		// Each Block is 4 numbers: x y z type
@@ -684,15 +684,14 @@ public class MinecraftClient extends Comm {
 			int counter=0;
 			// Otherwise, clears out large block sections one at a time to ensure the server isn't overloaded
 			int fillSize = Parameters.parameters.integerParameter("minecraftClearDimension");
-			System.out.println("SIZE:  "+end.x()+" "+end.y()+" "+end.z());
+			//System.out.println("SIZE:  "+end.x()+" "+end.y()+" "+end.z());
 			for(int x=0;x<=end.x();x+=fillSize) {
 				for(int z=0;z<=end.z();z+=fillSize) {
 					for(int y=GROUND_LEVEL;y<=end.y();y+=fillSize) {
-						// CLears 1,000,000 blocks at a time, maybe optimize it?
-						System.out.println("clearing "+counter);
+						//System.out.println("clearing "+counter);
 						counter++;
 						fillCube(x,y,z,x+fillSize,y+fillSize,z+fillSize, BlockType.AIR);
-						System.out.println(x+fillSize+" "+(y+fillSize)+" "+(z+fillSize));
+						//System.out.println(x+fillSize+" "+(y+fillSize)+" "+(z+fillSize));
 						try {
 							Thread.sleep(Parameters.parameters.integerParameter("minecraftClearSleepTimer"));
 						} catch (InterruptedException e) {
@@ -767,51 +766,4 @@ public class MinecraftClient extends Comm {
 			throw new IllegalArgumentException("This version of Minecraft only allows blocks to be generated with y-coordinates between 0 and 255 inclusive.\nTherefore, cannot generate in this range: "+xmin+", "+ymin+", "+zmin+", "+xmax+", "+ymax+", "+zmax);
 		}
 	}
-
-	// All for testing how much the server can handle for fillCube, readCube and spawn blocks
-	// Tied with issue #788, keeping here for now just incase we need it but it can be deleted 
-	
-//	public static void main(String[] args) {
-//		MinecraftServer.launchServer();
-//		MinecraftClient.getMinecraftClient();
-//		ArrayList<Block> blockSet1 = new ArrayList<>();
-//		
-//		
-//		for(int x=0;x<1500;x++) {
-//			getMinecraftClient().fillCube(0, 5, 0, 0+x, 250, 0+x,BlockType.AIR);
-////			blockSet1.addAll(getMinecraftClient().fillCube(0, 5, 0, 0+x, 5, 0+x));
-//			int printX = x*x*250;
-//			System.out.println("Iteration:"+x+" Blocks placed="+printX);
-//		}
-//		System.out.println(blockSet1);
-//		
-//		
-//		
-////		ArrayList<Block> blockSet2 = new ArrayList<>();
-////		ArrayList<Block> blockSet3 = new ArrayList<>();
-////		for(int x=0;x<10000;x++) {
-////			int random_int1 = (int)Math.floor(Math.random()*(3-1+1)+1);
-////			int random_int2 = (int)Math.floor(Math.random()*(3-1+1)+1);
-////			int random_int3 = (int)Math.floor(Math.random()*(3-1+1)+1);
-////			if(random_int1==1) blockSet1.add(new Block(0+x,5,10,BlockType.GOLD_BLOCK, Orientation.WEST));
-////			else blockSet1.add(new Block(0+x,5,10,BlockType.REDSTONE_BLOCK, Orientation.WEST));
-////			
-////			if(random_int2==1) blockSet2.add(new Block(0+x,5,10,BlockType.DIAMOND_BLOCK, Orientation.WEST));
-////			else blockSet2.add(new Block(0+x,5,10,BlockType.DIRT, Orientation.WEST));
-////			
-////			if(random_int3==1) blockSet3.add(new Block(0+x,5,10,BlockType.EMERALD_BLOCK, Orientation.WEST));
-//			else blockSet3.add(new Block(0+x,5,10,BlockType.LAPIS_BLOCK, Orientation.WEST));
-//
-////			for(int z=0;z<blockSet1.size();z++) {
-////				blockSet1.get(z).z()
-////			}
-//			if(x%2==0) MinecraftClient.getMinecraftClient().spawnBlocks(blockSet1);
-//			if(x%3==0) MinecraftClient.getMinecraftClient().spawnBlocks(blockSet2);
-//			else MinecraftClient.getMinecraftClient().spawnBlocks(blockSet3);
-//			System.out.println("Blocks Placed="+x);
-//		}
-////		blockSet1.add(new Block(0,5,0,BlockType.DIAMOND_BLOCK, Orientation.WEST));
-////		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet1);
-//		
-//	}
 }

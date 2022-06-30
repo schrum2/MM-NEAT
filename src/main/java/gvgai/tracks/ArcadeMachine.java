@@ -81,7 +81,8 @@ public class ArcadeMachine {
      * @param playerID
      *            ID of the human player
      */
-    public static double[] runOneGame(String game_file, String level_file, boolean visuals, String agentNames,
+    @SuppressWarnings("unused")
+	public static double[] runOneGame(String game_file, String level_file, boolean visuals, String agentNames,
 	    String actionFile, int randomSeed, int playerID) {
 		VGDLFactory.GetInstance().init(); // This always first thing to do.
 		VGDLRegistry.GetInstance().init();
@@ -195,7 +196,8 @@ public class ArcadeMachine {
      *            actions.
      *
      */
-    public static double[] replayGame(String game_file, String level_file, boolean visuals, String actionFile) {
+    @SuppressWarnings("resource")
+	public static double[] replayGame(String game_file, String level_file, boolean visuals, String actionFile) {
 		VGDLFactory.GetInstance().init(); // This always first thing to do.
 		VGDLRegistry.GetInstance().init();
 
@@ -612,7 +614,8 @@ public class ArcadeMachine {
      * @return the player if it could be created, null otherwise.
      */
 
-    protected static Player createController(String playerName, int playerID, StateObservation so)
+    @SuppressWarnings("rawtypes")
+	protected static Player createController(String playerName, int playerID, StateObservation so)
 	    throws RuntimeException {
         Player player = null;
         try {
@@ -706,7 +709,8 @@ public class ArcadeMachine {
      *            for how long the warming up process must last (in
      *            milliseconds).
      */
-    public static void warmUp(Game toPlay, long howLong) {
+    @SuppressWarnings("unchecked")
+	public static void warmUp(Game toPlay, long howLong) {
         ElapsedCpuTimer ect = new ElapsedCpuTimer();
         ect.setMaxTimeMillis(howLong);
         int playoutLength = 10;
