@@ -26,15 +26,12 @@ import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBlock
 import edu.southwestern.tasks.evocraft.fitness.ChangeCenterOfMassFitness;
 import edu.southwestern.tasks.evocraft.fitness.CheckBlocksInSpaceFitness;
 import edu.southwestern.tasks.evocraft.fitness.DiversityBlockFitness;
-import edu.southwestern.tasks.evocraft.fitness.EastWestPistonCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.FakeTestFitness;
 import edu.southwestern.tasks.evocraft.fitness.MinecraftFitnessFunction;
 import edu.southwestern.tasks.evocraft.fitness.NegativeSpaceCountFitness;
-import edu.southwestern.tasks.evocraft.fitness.NorthSouthPistonCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.OccupiedCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.TypeCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.TypeTargetFitness;
-import edu.southwestern.tasks.evocraft.fitness.UpDownPistonCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.WidthFitness;
 import edu.southwestern.tasks.evocraft.shapegeneration.ShapeGenerator;
 import edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator;
@@ -93,20 +90,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		if(Parameters.parameters.booleanParameter("minecraftFakeTestFitness")) {
 			fitnessFunctions.add(new FakeTestFitness());
 		}
-		
-		if(Parameters.parameters.booleanParameter("minecraftNorthSouthPistonCountFitness")) {
-			fitnessFunctions.add(new NorthSouthPistonCountFitness());
-		}
-		
-		if(Parameters.parameters.booleanParameter("minecraftEastWestPistonCountFitness")) {
-			fitnessFunctions.add(new EastWestPistonCountFitness());
-		}
-		
-		if(Parameters.parameters.booleanParameter("minecraftUpDownPistonCountFitness")) {
-			fitnessFunctions.add(new UpDownPistonCountFitness());
-		}
-		
-		
+				
 		try {
 			MMNEAT.blockSet = (BlockSet) ClassCreation.createObject("minecraftBlockSet");
 		} catch (NoSuchMethodException e1) {
