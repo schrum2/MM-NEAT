@@ -700,7 +700,6 @@ public class MinecraftClient extends Comm {
 						try {
 							Thread.sleep(Parameters.parameters.integerParameter("minecraftClearSleepTimer"));
 						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}

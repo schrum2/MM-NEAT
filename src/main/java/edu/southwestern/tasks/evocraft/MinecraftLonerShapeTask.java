@@ -403,7 +403,6 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					blocksToMonitor.add(new ControlBlocks(diamondBlock,emeraldBlock,obsidianBlock,index1D)); // Adds to the set that loops to check them
 					MinecraftClient.getMinecraftClient().spawnBlocks(interactive);
 				}
-
 				// Fences placed at initialization now
 				double testScore = 0;
 				MinecraftCoordinates testCorner = null;
@@ -611,7 +610,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
 					"steadyStateIndividualsPerGeneration:100", 
 					//"extraSpaceBetweenMinecraftShapes:0",
-					"minecraftSkipInitialClear:true",
+					"minecraftSkipInitialClear:false",
 					"spaceBetweenMinecraftShapes:5","parallelMAPElitesInitialize:false",
 					"minecraftXRange:4","minecraftYRange:4","minecraftZRange:4",
 					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGenerator",

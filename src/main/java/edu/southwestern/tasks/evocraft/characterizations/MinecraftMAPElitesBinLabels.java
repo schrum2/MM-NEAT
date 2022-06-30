@@ -29,8 +29,9 @@ public abstract class MinecraftMAPElitesBinLabels extends BaseBinLabels implemen
 		MinecraftCoordinates ranges = new MinecraftCoordinates(Parameters.parameters.integerParameter("minecraftXRange"),Parameters.parameters.integerParameter("minecraftYRange"),Parameters.parameters.integerParameter("minecraftZRange"));
 		// Clears the area
 		if(!Parameters.parameters.booleanParameter("minecraftSkipInitialClear")) {
-			MinecraftClient.getMinecraftClient().clearSpaceForShapes(new MinecraftCoordinates(0,MinecraftClient.GROUND_LEVEL+1,0), ranges, binSize.size(), Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER));
-
+			MinecraftClient.getMinecraftClient().clearSpaceForShapes(new MinecraftCoordinates(0,MinecraftClient.GROUND_LEVEL+1,0), ranges, binSize.size(), Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER));	
+		}else {
+			System.out.println("Initial clear skipped, clearing smaller area for shapes that were generated, then placing fences");
 		}
 	}
 	

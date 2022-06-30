@@ -387,6 +387,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 					MinecraftClient.getMinecraftClient().clearSpaceForShapes(new MinecraftCoordinates(0,MinecraftClient.GROUND_LEVEL+1,0), ranges, pop_size, Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER));
 				
 					// Place fences around all areas where a shape from the archive could be placed
+					System.out.println("Area cleared, placing fences...");
 					MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
 					int dim1D = 0;
 					for(int[] multiIndices : minecraftBinLabels) {
@@ -399,7 +400,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 						}
 					}
 				}
-					
+				System.out.println("Fences placed, starting evolution");	
 				MinecraftLonerShapeTask.spawnShapesInWorldTrue();
 				// Add initial population to archive, if add is true
 				evaluatedPopulation.parallelStream().forEach( (s) -> {
