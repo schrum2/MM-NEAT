@@ -374,7 +374,6 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					blocksToMonitor.add(new ControlBlocks(diamondBlock,emeraldBlock,obsidianBlock,index1D));
 					MinecraftClient.getMinecraftClient().spawnBlocks(interactive);
 				}
-
 				// Fences placed at initialization now
 
 				double testScore = 0;
@@ -567,8 +566,8 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					//"io:false", "netio:false", 
 					"mating:true", "fs:false",
 					//"startX:-10", "startY:5", "startZ:10",
-					"minecraftClearDimension:100",
 					"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet",
+					"minecraftClearDimension:130", "minecraftClearSleepTimer:200",
 					//"minecraftTypeCountFitness:true",
 					"minecraftDiversityBlockFitness:true",
 					//"minecraftTypeTargetFitness:true", 
@@ -582,8 +581,9 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
 					"steadyStateIndividualsPerGeneration:100", 
 					//"extraSpaceBetweenMinecraftShapes:0",
+					"minecraftSkipInitialClear:false",
 					"spaceBetweenMinecraftShapes:5","parallelMAPElitesInitialize:false",
-					"minecraftXRange:2","minecraftYRange:2","minecraftZRange:2",
+					"minecraftXRange:4","minecraftYRange:4","minecraftZRange:4",
 					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGenerator",
 					"task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask", "allowMultipleFunctions:true",
 					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",
