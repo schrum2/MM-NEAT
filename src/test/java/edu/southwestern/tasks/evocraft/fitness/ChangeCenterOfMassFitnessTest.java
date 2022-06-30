@@ -22,9 +22,7 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 
 public class ChangeCenterOfMassFitnessTest {
 	
-	MinecraftCoordinates ranges = new MinecraftCoordinates(Parameters.parameters.integerParameter("minecraftXRange"), 
-															Parameters.parameters.integerParameter("minecraftYRange"),
-															Parameters.parameters.integerParameter("minecraftZRange"));
+	MinecraftCoordinates ranges = new MinecraftCoordinates(10, 10, 10);
 	
 	List<Block> blockSet1;
 	List<Block> blockSet2;
@@ -56,6 +54,7 @@ public class ChangeCenterOfMassFitnessTest {
 	// Passes
 	@Test
 	public void testStagnantStructureQuickly() {
+		ChangeCenterOfMassFitness.resetPreviousResults();
 		MinecraftCoordinates cornerBS1 = new MinecraftCoordinates(-26,7,-35);
 		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS1, ranges, 1, 100); // Larger buffer is important
 
@@ -72,14 +71,15 @@ public class ChangeCenterOfMassFitnessTest {
 		Triple<Vertex, Vertex, Double> beforeAndAfter = ChangeCenterOfMassFitness.getPreviouslyComputedResult(cornerBS1); // Prevent lock
 		assertEquals(0.0, beforeAndAfter.t3, 0.0);
 		
-		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS1, ranges, 1, 100); // Larger buffer is important
+		//MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS1, ranges, 1, 100); // Larger buffer is important
 		
 	}
 	
 	// Passes
 	@Test
-	public void testChangeInTotalDistance() {
-	
+	public void testChangeInTotalDistance() throws InterruptedException {
+		ChangeCenterOfMassFitness.resetPreviousResults();
+
 		Parameters.initializeParameterCollections(new String[] {"minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L, "minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet","minecraftFewerBlocksBeforeConsideredFlying:3"});
 		MinecraftCoordinates cornerBS2 = new MinecraftCoordinates(0,11,-5);
 		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 100);
@@ -98,8 +98,8 @@ public class ChangeCenterOfMassFitnessTest {
 		blockSet2.add(new Block(1,12,-4,BlockType.REDSTONE_BLOCK,Orientation.NORTH));
 		// Activate
 		blockSet2.add(new Block(1,12,-1,BlockType.QUARTZ_BLOCK,Orientation.NORTH));
-
-
+		
+		System.out.println("shortTimeBetweenMinecraftReads = " + Parameters.parameters.longParameter("shortTimeBetweenMinecraftReads"));
 		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet2);
 
 		// Since it is moving out completely, and all the ranges are the same value (10)
@@ -109,20 +109,62 @@ public class ChangeCenterOfMassFitnessTest {
 		// flies for a bit, but the exact amount is hard to pin down. Thus, we only assert that the amount
 		// is 6.0 or more
 		//System.out.println("Fitness for the blockSet 2: "+ ff.fitnessScore(cornerBS2));
-		assertEquals(ff.maxFitness()-0.3, ff.fitnessScore(cornerBS2),0.0);
+		assertEquals(ff.maxFitness(), ff.fitnessScore(cornerBS2),0.0);
+		Triple<Vertex, Vertex, Double> beforeAndAfter = ChangeCenterOfMassFitness.getPreviouslyComputedResult(cornerBS2); // Prevent lock
+		assertEquals(ff.maxFitness(), beforeAndAfter.t3, 0.0);
+		
+		//MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 100);
+	}
+
+		
+	// Passes
+	@Test
+	public void testChangeInPositionWithRemainingBlocks() {
+		ChangeCenterOfMassFitness.resetPreviousResults();
+
+		Parameters.initializeParameterCollections(new String[] {"minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:false","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet","minecraftFewerBlocksBeforeConsideredFlying:3"});
+		MinecraftCoordinates cornerBS2 = new MinecraftCoordinates(0,11,-5);
+		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 100);
+		
+		// List of flying machine blocks that should move
+		// Not really sure what the fitness would be after 10 seconds
+		blockSet2 = new ArrayList<>();
+		// Bottom layer
+		blockSet2.add(new Block(1,11,1,BlockType.PISTON,Orientation.NORTH));
+		blockSet2.add(new Block(1,11,0,BlockType.SLIME,Orientation.NORTH));
+		blockSet2.add(new Block(1,11,-1,BlockType.STICKY_PISTON,Orientation.SOUTH));
+		blockSet2.add(new Block(1,11,-2,BlockType.PISTON,Orientation.NORTH));
+		blockSet2.add(new Block(1,11,-4,BlockType.SLIME,Orientation.NORTH));
+		// Top layer
+		blockSet2.add(new Block(1,12,0,BlockType.REDSTONE_BLOCK,Orientation.NORTH));
+		blockSet2.add(new Block(1,12,-4,BlockType.REDSTONE_BLOCK,Orientation.NORTH));
+		// Activate
+		blockSet2.add(new Block(1,12,-1,BlockType.QUARTZ_BLOCK,Orientation.NORTH));
+
+		// Left-over garbage: 3 blocks
+		blockSet2.add(new Block(2,10,-1,BlockType.QUARTZ_BLOCK,Orientation.NORTH));
+		blockSet2.add(new Block(2,10,0,BlockType.QUARTZ_BLOCK,Orientation.NORTH));
+		blockSet2.add(new Block(2,10,1,BlockType.QUARTZ_BLOCK,Orientation.NORTH));
+
+		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet2);
+
+		// Three blocks remaining, so -0.3
+		assertEquals(ff.maxFitness()-0.3, ff.fitnessScore(cornerBS2), 0.0);
 		Triple<Vertex, Vertex, Double> beforeAndAfter = ChangeCenterOfMassFitness.getPreviouslyComputedResult(cornerBS2); // Prevent lock
 		assertEquals(ff.maxFitness()-0.3, beforeAndAfter.t3, 0.0);
 		
-		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 100);
+		//MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 100);
 	}
+	
 	
 	// Passes
 	@Test
 	public void testChangeInPosition() {
-		
+		ChangeCenterOfMassFitness.resetPreviousResults();
+
 		Parameters.initializeParameterCollections(new String[] {"minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:false","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet","minecraftFewerBlocksBeforeConsideredFlying:3"});
 		MinecraftCoordinates cornerBS2 = new MinecraftCoordinates(0,11,-5);
-		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 70);
+		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 100);
 		
 		// List of flying machine blocks that should move
 		// Not really sure what the fitness would be after 10 seconds
@@ -141,19 +183,21 @@ public class ChangeCenterOfMassFitnessTest {
 
 
 		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet2);
+		// Machine flies away completely
 		//System.out.println("Second flying machine fitness: " + ff.fitnessScore(cornerBS2));
-		assertEquals(ff.maxFitness()-0.3, ff.fitnessScore(cornerBS2), 0.0);
+		assertEquals(ff.maxFitness(), ff.fitnessScore(cornerBS2), 0.0);
 		Triple<Vertex, Vertex, Double> beforeAndAfter = ChangeCenterOfMassFitness.getPreviouslyComputedResult(cornerBS2); // Prevent lock
-		assertEquals(ff.maxFitness()-0.3, beforeAndAfter.t3, 0.0);
+		assertEquals(ff.maxFitness(), beforeAndAfter.t3, 0.0);
 		
-		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 70);
+		//MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 100);
 	}
 	
 	// Passes
 	// This test seems to pass reliably in isolation, but not always when run as part of the test suite, so it is disabled.
 	@Test
 	public void testOscillatingMachine() {
-		
+		ChangeCenterOfMassFitness.resetPreviousResults();
+
 		Parameters.initializeParameterCollections(new String[] {"minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:false","shortTimeBetweenMinecraftReads:" + 100L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet","minecraftFewerBlocksBeforeConsideredFlying:3"});
 		
 		MinecraftCoordinates cornerBS2 = new MinecraftCoordinates(0,11,-5);
@@ -175,12 +219,14 @@ public class ChangeCenterOfMassFitnessTest {
 		
 		System.out.println("movement fitness when oscillating: "+ amount);
 		assertTrue(43 <= amount);
-		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 100);
+		//MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 100);
 	}
 
 	// Passes
 	@Test
 	public void testGetCenterOfMass() {
+		ChangeCenterOfMassFitness.resetPreviousResults();
+
 		// Small list of blocks
 		blockSet1 = new ArrayList<>();
 		blockSet1.add(new Block(-5,7,-35,BlockType.REDSTONE_BLOCK, Orientation.WEST));
