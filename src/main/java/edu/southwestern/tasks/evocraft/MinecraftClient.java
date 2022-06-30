@@ -684,7 +684,7 @@ public class MinecraftClient extends Comm {
 			int counter=50000000; // Don't need gradual clear messages for small clear sizes
 			// Otherwise, clears out large block sections one at a time to ensure the server isn't overloaded
 			int fillSize = Parameters.parameters.integerParameter("minecraftClearDimension");
-			System.out.println("*WARNING* The size that needs to be clearedout is over 1,000,000 blocks, this may take a while to clear");
+			System.out.println("*WARNING* The size that needs to be cleared out is over 1,000,000 blocks, this may take a while to clear");
 			System.out.println("Size neededing to be cleared: "+(end.x()*end.y()*end.z())+" blocks"); // Prints to warn user
 			for(int x=0;x<=end.x();x+=fillSize) {
 				for(int z=0;z<=end.z();z+=fillSize) {

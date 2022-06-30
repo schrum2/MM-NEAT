@@ -400,7 +400,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 						}
 					}
 				}
-				System.out.println("Fences placed, starting evolution");	
+				System.out.println("Fences placed");	
 				MinecraftLonerShapeTask.spawnShapesInWorldTrue();
 				// Add initial population to archive, if add is true
 				evaluatedPopulation.parallelStream().forEach( (s) -> {
