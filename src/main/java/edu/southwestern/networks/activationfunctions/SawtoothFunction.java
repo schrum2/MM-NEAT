@@ -2,6 +2,8 @@ package edu.southwestern.networks.activationfunctions;
 
 import org.nd4j.linalg.activations.Activation;
 
+import edu.southwestern.networks.ActivationFunctions;
+
 public class SawtoothFunction implements ActivationFunction {
 
 	/**
@@ -13,7 +15,7 @@ public class SawtoothFunction implements ActivationFunction {
 	 */
 	@Override
 	public double f(double x) {
-		return x - Math.floor(x);
+		return ActivationFunctions.halfSawtooth(x);
 	}
 
 	@Override

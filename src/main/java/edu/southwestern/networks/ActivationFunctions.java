@@ -282,6 +282,17 @@ public class ActivationFunctions {
 	public static double fullSawtooth(double x, double a) {
 		return 2 * ((x/a) - Math.floor(1/2 + x/a));
 	}
+	
+	/**
+	 * Sawtooth function for x. mimics sine but in piecewise way. Uses
+	 * Math.floor().
+	 *
+	 * @param x Function parameter
+	 * @return value of sawtooth(x)
+	 */
+	public static double halfSawtooth(double x) {
+		return x - Math.floor(x);
+	}
 
 	/**
 	 * Square wave is a sinusoidal periodic waveform. Alternating between 

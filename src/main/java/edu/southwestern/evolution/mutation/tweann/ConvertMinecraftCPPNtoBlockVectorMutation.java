@@ -1,20 +1,18 @@
 package edu.southwestern.evolution.mutation.tweann;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
-import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.CPPNOrBlockVectorGenotype;
 import edu.southwestern.evolution.genotypes.EitherOrGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.RealValuedGenotype;
 import edu.southwestern.evolution.mutation.Mutation;
+import edu.southwestern.networks.ActivationFunctions;
 import edu.southwestern.networks.Network;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
+import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 import edu.southwestern.util.graphics.ThreeDimensionalUtil;
 import edu.southwestern.util.random.RandomNumbers;
 
@@ -72,8 +70,13 @@ public class ConvertMinecraftCPPNtoBlockVectorMutation extends Mutation {
 					cppn.flush(); // There should not be any left over recurrent activation, but clear each time just in case
 					double[] outputs = cppn.process(inputs);
 					// System.out.println(Arrays.toString(outputs));			
-				
-					for(int i = 0; i < outputs.length; i++) results[counter++] = outputs[i];
+					
+					// The CPPN can create negative or other out of bounds values. Need to bound to
+					// appropriate ranges.
+					for(int i = 0; i < outputs.length; i++) {
+						// halfSawtooth: binds to range [0,1) in a cyclic fashion
+						results[counter++] = ActivationFunctions.halfSawtooth(outputs[i]);
+					}
 					
 					
 				}
