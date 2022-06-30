@@ -73,6 +73,7 @@ public class RuleGenMachine
 	 * @param playerID
 	 *            ID of the human player
 	 */
+	@SuppressWarnings("unused")
 	public static double[] runOneGame(String original_game, String generated_game, String level_file, boolean visuals, String agentNames,
 									  String actionFile, int randomSeed, int playerID) {
 		VGDLFactory.GetInstance().init(); // This always first thing to do.
@@ -236,6 +237,7 @@ public class RuleGenMachine
 	 * @return The rule generator created
 	 * @throws RuntimeException
 	 */
+	@SuppressWarnings("rawtypes")
 	protected static AbstractRuleGenerator createRuleGenerator(String ruleGenerator, SLDescription sl)
 			throws RuntimeException {
 		AbstractRuleGenerator generator = null;

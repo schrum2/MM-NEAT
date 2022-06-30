@@ -73,10 +73,13 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		synchronized(PREVIOUSLY_COMPUTED_RESULTS) {
 			PREVIOUSLY_COMPUTED_RESULTS.put(corner, centerOfMassBeforeAndAfter);
 		}
-		double changeInPosition = centerOfMassBeforeAndAfter.t2.distance(centerOfMassBeforeAndAfter.t1);
-		assert !Double.isNaN(changeInPosition); // : "Before: " + MinecraftUtilClass.filterOutBlock(blocks,BlockType.AIR);
-		if(Parameters.parameters.booleanParameter("minecraftAccumulateChangeInCenterOfMass")) return centerOfMassBeforeAndAfter.t3;
-		else return changeInPosition;
+		
+//		if(centerOfMassBeforeAndAfter.t3 == 454.5) {
+//			System.out.println(centerOfMassBeforeAndAfter);
+//			System.out.println("corner: " + corner);
+//			throw new IllegalArgumentException();
+//		}
+		return centerOfMassBeforeAndAfter.t3;
 	}
 
 	/**
@@ -124,11 +127,11 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		
 		List<Block> shortWaitTimeUpdate = new ArrayList<>();
 		
+		long shortWaitTime = Parameters.parameters.longParameter("shortTimeBetweenMinecraftReads");
 		long startTime = System.currentTimeMillis();
 		// Wait for the machine to move some (if at all)
 		while(!stop) {
 
-			long shortWaitTime = Parameters.parameters.longParameter("shortTimeBetweenMinecraftReads");
 			try {
 				Thread.sleep(shortWaitTime);
 			} catch (InterruptedException e) {
@@ -139,10 +142,9 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 			// Should we check the actual time? Or is this fine?
 //			timeElapsed += shortWaitTime;
 
-			List<Block> previousCheck = shortWaitTimeUpdate;
 			shortWaitTimeUpdate = MinecraftUtilClass.filterOutBlock(MinecraftClient.getMinecraftClient().readCube(corner,end),BlockType.AIR);
 			//System.out.println("Short wait time Update list: " + shortWaitTimeUpdate);
-			if(shortWaitTimeUpdate.isEmpty() || shortWaitTimeUpdate.size() <= Parameters.parameters.integerParameter("leftoverMinecraftBlocksAllowed") || previousCheck.size() > Parameters.parameters.integerParameter("leftoverMinecraftBlocksAllowed")) {
+			if(shortWaitTimeUpdate.isEmpty() || (shortWaitTimeUpdate.size() <= Parameters.parameters.integerParameter("leftoverMinecraftBlocksAllowed") && shortWaitTimeUpdate.size() < blocks.size())) {
 				// Ship flew so far away that we award max fitness
 				//System.out.println("Where fitness");
 				// Should this use lastCenterOfMass or should we infer a point that is at the extreme bounds of the eval space?
@@ -169,6 +171,14 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		}
 
 		Triple<Vertex,Vertex,Double> centerOfMassBeforeAndAfter = new Triple<>(initialCenterOfMass, lastCenterOfMass, totalChangeDistance);
+
+		double changeInPosition = centerOfMassBeforeAndAfter.t2.distance(centerOfMassBeforeAndAfter.t1);
+		assert !Double.isNaN(changeInPosition) : "Before: " + MinecraftUtilClass.filterOutBlock(blocks,BlockType.AIR);
+
+		if(!Parameters.parameters.booleanParameter("minecraftAccumulateChangeInCenterOfMass")) {
+			centerOfMassBeforeAndAfter.t3 = changeInPosition;		
+		}
+
 		return centerOfMassBeforeAndAfter;
 	}
 
@@ -200,46 +210,29 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 	}
 
 	public static void main(String[] args) {
-		int seed = 1;
 		try {
-			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:100", "maxGens:100000",
-					"base:minecraft", "log:Minecraft-MAPElitesCountNegativeAccumulateChange", "saveTo:MAPElitesCountNegativeAccumulateChange",
-					"minecraftContainsWholeMAPElitesArchive:true","forceLinearArchiveLayoutInMinecraft:false",
-					"launchMinecraftServerFromJava:false",
-					"io:true", "netio:true",
-					//"io:false", "netio:false", 
-					"mating:true", "fs:false",
-					//"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.SimpleSolidBlockSet",
-					"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet",
-					//"minecraftTypeCountFitness:true",
+			MMNEAT.main(new String[] { "runNumber:1","randomSeed:1",
+					"base:minecraftaccumulate","log:MinecraftAccumulate-VectorCountNegativeUpDown","saveTo:VectorCountNegativeUpDown",
+					"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBlockCountEmptyCountBinLabels",
+					"minecraftXRange:2","minecraftYRange:4","minecraftZRange:3",
+					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator",
 					"minecraftChangeCenterOfMassFitness:true",
-					"minecraftAccumulateChangeInCenterOfMass:false",
-					"shortTimeBetweenMinecraftReads:500",
-					"minecraftMandatoryWaitTime:1000",
-					//"minecraftDiversityBlockFitness:true",
-					//"minecraftTypeTargetFitness:true", 
-					//"minecraftDesiredBlockCount:40",
-					//"minecraftOccupiedCountFitness:true",
-					//"minecraftEvolveOrientation:true",
-					//"minecraftRedirectConfinedSnakes:true",
-					//"minecraftStopConfinedSnakes:true", 
-					"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesWidthHeightDepthBinLabels",
-					//"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBlockCountEmptyCountBinLabels",
-					"ea:edu.southwestern.evolution.mapelites.MAPElites", 
+					"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet",
+					"trials:1","mu:100","maxGens:100000",
+					"minecraftContainsWholeMAPElitesArchive:true","forceLinearArchiveLayoutInMinecraft:false",
+					"launchMinecraftServerFromJava:false","io:true","netio:true",
+					"interactWithMapElitesInWorld:true","mating:true","fs:false",
+					"ea:edu.southwestern.evolution.mapelites.MAPElites",
 					"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
-					"steadyStateIndividualsPerGeneration:100", 
-					//FOR TESTING
-					"spaceBetweenMinecraftShapes:10","parallelMAPElitesInitialize:true",
-					//"minecraftXRange:9","minecraftYRange:9","minecraftZRange:9",
-					"minecraftXRange:3","minecraftYRange:3","minecraftZRange:5",
-					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGenerator",
-					"task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask", "allowMultipleFunctions:true",
-					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",
-					"recurrency:false", "saveAllChampions:true", "cleanOldNetworks:false",
-					"includeFullSigmoidFunction:true", "includeFullGaussFunction:true", "includeCosineFunction:true", 
-					"includeGaussFunction:false", "includeIdFunction:true", "includeTriangleWaveFunction:false", 
-					"includeSquareWaveFunction:false", "includeFullSawtoothFunction:false", "includeSigmoidFunction:false", 
-					"includeAbsValFunction:false", "includeSawtoothFunction:false"}); 
+					"steadyStateIndividualsPerGeneration:100",
+					"spaceBetweenMinecraftShapes:5",
+					"task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask",
+					"watch:false","saveAllChampions:true",
+					"genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype",
+					"vectorPresenceThresholdForEachBlock:true",
+					"voxelExpressionThreshold:0.5",
+					"minecraftAccumulateChangeInCenterOfMass:true","minecraftUpDownOnly:true",
+					"parallelEvaluations:true","threads:10","parallelMAPElitesInitialize:true"}); 
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}

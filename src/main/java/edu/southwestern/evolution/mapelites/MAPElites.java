@@ -20,6 +20,7 @@ import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.SteadyStateEA;
 import edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype;
+import edu.southwestern.evolution.genotypes.CPPNOrBlockVectorGenotype;
 import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.RealValuedGenotype;
@@ -100,7 +101,8 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			archiveLog = new MMNEATLog(infix, false, false, false, true); 
 			fillLog = new MMNEATLog("Fill", false, false, false, true);
 			// Can't check MMNEAT.genotype since MMNEAT.ea is initialized before MMNEAT.genotype
-			boolean cppnDirLogging = Parameters.parameters.classParameter("genotype").equals(CPPNOrDirectToGANGenotype.class);
+			boolean cppnDirLogging = Parameters.parameters.classParameter("genotype").equals(CPPNOrDirectToGANGenotype.class) ||
+									 Parameters.parameters.classParameter("genotype").equals(CPPNOrBlockVectorGenotype.class);
 			if(cppnDirLogging) {
 				cppnThenDirectLog = new MMNEATLog("cppnToDirect", false, false, false, true);
 				cppnVsDirectFitnessLog = new MMNEATLog("cppnVsDirectFitness", false, false, false, true);
@@ -461,11 +463,11 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				Vector<Score<T>> population = archive.archive;
 				for(Score<T> p : population) {
 					if(p == null || p.individual == null) eliteProper[i] = NUM_CODE_EMPTY; //if bin is empty
-					else if(((CPPNOrDirectToGANGenotype) p.individual).getFirstForm()) {
+					else if( (p.individual instanceof CPPNOrDirectToGANGenotype && ((CPPNOrDirectToGANGenotype) p.individual).getFirstForm()) || 
+							 (p.individual instanceof CPPNOrBlockVectorGenotype && ((CPPNOrBlockVectorGenotype) p.individual).getFirstForm()) ) {
 						numCPPN++;
 						eliteProper[i] = NUM_CODE_CPPN; //number for CPPN
 					} else { // Assume first form is false
-						assert !((CPPNOrDirectToGANGenotype) p.individual).getFirstForm();
 						numDirect++;
 						eliteProper[i] = NUM_CODE_DIRECT; //number for Direct
 					}
