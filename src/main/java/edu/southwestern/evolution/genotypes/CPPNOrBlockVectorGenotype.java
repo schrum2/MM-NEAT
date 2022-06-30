@@ -2,7 +2,6 @@ package edu.southwestern.evolution.genotypes;
 
 import java.util.ArrayList;
 
-import edu.southwestern.evolution.mutation.tweann.ConvertMinecraftCPPNtoBlockVectorMutation;
 import edu.southwestern.networks.TWEANN;
 
 /**
@@ -35,7 +34,6 @@ public class CPPNOrBlockVectorGenotype extends EitherOrGenotype<TWEANN,ArrayList
 	/**
 	 * Has a chance of mutating to change to CPPN
 	 */
-	@SuppressWarnings("unchecked")
 	//@SuppressWarnings("unchecked")
 	@Override
 	public void mutate() {
@@ -43,7 +41,7 @@ public class CPPNOrBlockVectorGenotype extends EitherOrGenotype<TWEANN,ArrayList
 		sb.append(this.getId());
 		sb.append(" ");
 		
-		new ConvertMinecraftCPPNtoBlockVectorMutation().go(this,sb);
+		// TODO: create new mutate type ConvertMinecraftCPPNtoBlockVectorMutation
 		
 		super.mutate();
 	}

@@ -57,7 +57,6 @@ public class Chromosome implements Comparable<Chromosome>{
 	 * @param width
 	 * @param height
 	 */
-	@SuppressWarnings("unchecked")
 	public Chromosome(int width, int height){
 		this.level = new ArrayList[height][width];
 		for(int y = 0; y < height; y++){
@@ -91,7 +90,6 @@ public class Chromosome implements Comparable<Chromosome>{
 	/**
 	 * initialize the agents used during evaluating the chromosome
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void constructAgent(){
 		try{
 			Class agentClass = Class.forName(SharedData.AGENT_NAME);
@@ -474,7 +472,6 @@ public class Chromosome implements Comparable<Chromosome>{
 	 * player ID used is 0, default for single player games.
 	 * @return	true if the player death terminates the game and false otherwise
 	 */
-	@SuppressWarnings("unlikely-arg-type")
 	private boolean isPlayerCauseDeath(){
 
 		for(TerminationData t:SharedData.gameDescription.getTerminationConditions()){

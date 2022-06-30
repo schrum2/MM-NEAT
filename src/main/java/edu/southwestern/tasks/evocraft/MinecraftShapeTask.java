@@ -26,7 +26,6 @@ import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBlock
 import edu.southwestern.tasks.evocraft.fitness.ChangeCenterOfMassFitness;
 import edu.southwestern.tasks.evocraft.fitness.CheckBlocksInSpaceFitness;
 import edu.southwestern.tasks.evocraft.fitness.DiversityBlockFitness;
-import edu.southwestern.tasks.evocraft.fitness.FakeTestFitness;
 import edu.southwestern.tasks.evocraft.fitness.MinecraftFitnessFunction;
 import edu.southwestern.tasks.evocraft.fitness.NegativeSpaceCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.OccupiedCountFitness;
@@ -85,10 +84,6 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		
 		if(Parameters.parameters.booleanParameter("NegativeSpaceCountFitness")) {
 			fitnessFunctions.add(new NegativeSpaceCountFitness());
-		}
-		
-		if(Parameters.parameters.booleanParameter("minecraftFakeTestFitness")) {
-			fitnessFunctions.add(new FakeTestFitness());
 		}
 		
 		

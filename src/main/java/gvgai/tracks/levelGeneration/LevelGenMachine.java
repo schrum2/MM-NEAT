@@ -168,8 +168,7 @@ public class LevelGenMachine
      * @param isHuman indicates if the game is played by a human or a bot
      * @return score of the game plaayed
      */
-    @SuppressWarnings("unused")
-	public static double runOneGeneratedLevel(String gameFile, boolean visuals, String agentName, String actionFile,
+    public static double runOneGeneratedLevel(String gameFile, boolean visuals, String agentName, String actionFile,
                                               String levelFile, int randomSeed, boolean isHuman) {
         VGDLFactory.GetInstance().init(); // This always first thing to do.
         VGDLRegistry.GetInstance().init();
@@ -332,8 +331,7 @@ public class LevelGenMachine
      * @param gd abstract object describes the game
      * @return AbstractLevelGenerator object.
      */
-    @SuppressWarnings("rawtypes")
-	protected static AbstractLevelGenerator createLevelGenerator(String levelGenerator, GameDescription gd)
+    protected static AbstractLevelGenerator createLevelGenerator(String levelGenerator, GameDescription gd)
             throws RuntimeException {
         AbstractLevelGenerator generator = null;
         try {

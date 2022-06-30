@@ -18,22 +18,6 @@ import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
  */
 public class ZeldaMAPElitesWallWaterRoomsBinLabels extends BaseBinLabels {
 
-	@Override
-	public boolean discard(HashMap<String, Object> behaviorMap) {
-		int[] multi = multiDimensionalIndices(behaviorMap);
-		
-		int wallTileIndex = multi[0];
-		int waterTileIndex = multi[1];
-		int numRoomsReachable = multi[2];
-		
-		return wallTileIndex  < Parameters.parameters.integerParameter("zeldaMinWallIndex")  ||
-			   wallTileIndex  > Parameters.parameters.integerParameter("zeldaMaxWallIndex")  ||
-			   waterTileIndex < Parameters.parameters.integerParameter("zeldaMinWaterIndex") ||
-			   waterTileIndex > Parameters.parameters.integerParameter("zeldaMaxWaterIndex") ||
-			   numRoomsReachable < Parameters.parameters.integerParameter("zeldaMinReachableRooms") ||
-			   numRoomsReachable > Parameters.parameters.integerParameter("zeldaMaxReachableRooms");
-	}
-	
 	public static final int TILE_GROUPS = 10;
 	
 	List<String> labels = null;

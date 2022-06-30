@@ -20,7 +20,6 @@ import edu.southwestern.data.SaveThread;
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.GenerationalEA;
 import edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype;
-import edu.southwestern.evolution.genotypes.CPPNOrBlockVectorGenotype;
 import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.CombinedGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
@@ -268,11 +267,6 @@ public class PopulationUtil {
 					// TWEANNGenotype is the first form of this genotype
 					for (int i = 0; i < size; i++) {
 						afrr.mutate((Genotype<TWEANN>) ((CPPNOrDirectToGANGenotype) parents.get(i)).getCurrentGenotype());
-					}	
-				} else if(parents.get(0) instanceof CPPNOrBlockVectorGenotype) {
-					// TWEANNGenotype is the first form of this genotype
-					for (int i = 0; i < size; i++) {
-						afrr.mutate((Genotype<TWEANN>) ((CPPNOrBlockVectorGenotype) parents.get(i)).getCurrentGenotype());
 					}	
 				} else if(parents.get(0) instanceof HyperNEATCPPNforDL4JGenotype) {
 					// Mutate the CPPN within the HyperNEATCPPNforDL4JGenotype

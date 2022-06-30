@@ -232,7 +232,6 @@ public abstract class Game {
 	 * Flag that can only be set to true externally. If true, the agent is
 	 * disqualified.
 	 */
-	@SuppressWarnings("unused")
 	private boolean disqualified;
 
 	/**
@@ -342,7 +341,6 @@ public abstract class Game {
 	 * @param constructors
 	 *            map of sprite constructor's information.
 	 */
-	@SuppressWarnings("unchecked")
 	public void initSprites(ArrayList<Integer> spOrder, ArrayList<Integer> sings,
 							HashMap<Integer, SpriteContent> constructors) {
 		ArrayList<Resource> resources = new ArrayList<Resource>();
@@ -773,7 +771,6 @@ public abstract class Game {
 	 * @param content
 	 *            list of parameter-value pairs.
 	 */
-	@SuppressWarnings("rawtypes")
 	protected void parseParameters(GameContent content) {
 		VGDLFactory factory = VGDLFactory.GetInstance();
 		Class refClass = VGDLFactory.registeredGames.get(content.referenceClass);
@@ -1312,7 +1309,6 @@ public abstract class Game {
 	/**
 	 * Handles collisions and triggers events.
 	 */
-	@SuppressWarnings({ "unused", "unchecked", "rawtypes" })
 	protected void eventHandling() {
 		// Array to indicate that the sprite type has no representative in
 		// collisions.
@@ -1627,7 +1623,6 @@ public abstract class Game {
 	 * @param functHash
 	 *            Hash of the effect name to shield.
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void addShield(int type1, int type2, long functHash) {
 		Pair newShield = new Pair(type2, functHash);
 		shieldedEffects[type1].add(newShield);
@@ -1673,7 +1668,6 @@ public abstract class Game {
 	 * @param force
 	 *            If true, forces the creation ignoring singleton restrictions
 	 */
-	@SuppressWarnings("unchecked")
 	public VGDLSprite addSprite(SpriteContent content, Vector2d position, int itype, boolean force) {
 		if (num_sprites > MAX_SPRITES) {
 			Logger.getInstance().addMessage(new Message(Message.WARNING, "Sprite limit reached."));

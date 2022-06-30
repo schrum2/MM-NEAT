@@ -202,7 +202,6 @@ public class BasicGame extends Game {
 	 * @param content
 	 *            list of parameter-value pairs.
 	 */
-	@SuppressWarnings("rawtypes")
 	protected void parseParameters(GameContent content) {
 		super.parseParameters(content);
 

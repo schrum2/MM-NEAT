@@ -1,16 +1,13 @@
 package edu.southwestern.tasks.evocraft;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
 
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
-import edu.southwestern.util.datastructures.ArrayUtil;
 
 /**
  * Some commonly used methods for dealing with the Minecraft world
@@ -115,19 +112,6 @@ public class MinecraftUtilClass {
 	public static List<Block> filterOutBlock(List<Block> blocks, BlockType type) {
 		return blocks.stream().filter(b -> b.type() != type.ordinal()).collect(Collectors.toList());
 	}
-	
-	
-	/**
-	 * 
-	 * @param blocks
-	 * @param type
-	 * @return
-	 */
-	public static List<Block> getDesiredBlocks(List<Block> blocks, BlockType[] typesToKeep) {
-		return blocks.stream().filter(b -> ArrayUtil.contains(typesToKeep, BlockType.values()[b.type()])  ).collect(Collectors.toList());
-	}
-	
-	
 
 	/** 
 	 * This static method will either return a restricted array of orientations, or
