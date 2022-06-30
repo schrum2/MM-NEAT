@@ -611,6 +611,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
 					"steadyStateIndividualsPerGeneration:100", 
 					//"extraSpaceBetweenMinecraftShapes:0",
+					"minecraftSkipInitialClear:true",
 					"spaceBetweenMinecraftShapes:5","parallelMAPElitesInitialize:false",
 					"minecraftXRange:4","minecraftYRange:4","minecraftZRange:4",
 					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGenerator",
