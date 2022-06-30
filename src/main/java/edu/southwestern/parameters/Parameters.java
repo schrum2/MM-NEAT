@@ -381,6 +381,7 @@ public class Parameters {
 		integerOptions.add("marioMinSpaceCoverageIndex", 0, "Lowest interval index for MAP Elites dimension associated with Mario level Space Coverage");
 		integerOptions.add("marioMaxSpaceCoverageIndex", 10000, "Highest interval index for MAP Elites dimension associated with Mario level Space Coverage");
 		integerOptions.add("minecraftFewerBlocksBeforeConsideredFlying", 3,"The amount of blocks that need to disappear before considering a machine as flying");
+		integerOptions.add("zeldaMinWallIndex", 0, "Lowest interval index for MAP Elites dimension associated with Zelda Dungeon Wall Tiles");
 		integerOptions.add("zeldaMaxWallIndex", 10000, "Highest interval index for MAP Elites dimension associated with Zelda Dungeon Wall Tiles");
 		integerOptions.add("zeldaMinWaterIndex", 0, "Lowest interval index for MAP Elites dimension associated with Zelda Dungeon Water Tiles");
 		integerOptions.add("zeldaMaxWaterIndex", 10000, "Highest interval index for MAP Elites dimension associated with Zelda Dungeon Water Tiles");
