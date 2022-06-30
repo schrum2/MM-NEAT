@@ -76,15 +76,15 @@ public interface ShapeGenerator<T> {
 		//if(SnakeGenerator.debug) System.out.println("("+xi+","+yi+","+zi+"):" + Arrays.toString(inputs) + " -> " + Arrays.toString(outputs));
 		int numBlockTypes = blockSet.size();
 		if(outputs[OUTPUT_INDEX_PRESENCE] > Parameters.parameters.doubleParameter("voxelExpressionThreshold")) {
-			ArrayList<Double> blockPreferences = new ArrayList<Double>(numBlockTypes);
-			for(int i = 1; i <= numBlockTypes; i++) {
-				blockPreferences.add(outputs[i]);
-			}
-			
+
 			int typeIndex;
 			if(Parameters.parameters.booleanParameter("oneOutputLabelForBlockTypeCPPN")) { // only one output will be used for the blocks
 				typeIndex = (int) HalfLinearPiecewiseFunction.halfLinear(outputs[OUTPUT_INDEX_PRESENCE+1]) * numBlockTypes; 
 			} else {
+				ArrayList<Double> blockPreferences = new ArrayList<Double>(numBlockTypes);
+				for(int i = 1; i <= numBlockTypes; i++) {
+					blockPreferences.add(outputs[i]);
+				}
 				typeIndex = StatisticsUtilities.argmax(blockPreferences); // different outputs for each block type will be used
 			}
 	

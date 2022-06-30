@@ -37,11 +37,13 @@ public class CPPNOrVectorToVolumeGenerator implements ShapeGenerator {
 		
 		List<Block> blocks;
 		CPPNOrBlockVectorGenotype either = (CPPNOrBlockVectorGenotype) genome;
-		
+		//System.out.println(either.getFirstForm());
 		if(either.getFirstForm()) { // first form is CPPN, use ThreeDimensionalVolumeGenerator
+			assert either.getFirstForm();
 			Genotype<TWEANN> first =  either.getCurrentGenotype();
 			blocks = forCPPN.generateShape((Genotype) first, corner, blockSet);
 		} else { // second form is Vector, use VectorToVolumeGenerator
+			assert !either.getFirstForm();
 			Genotype<ArrayList<Double>> second = either.getCurrentGenotype();
 			blocks = forVectors.generateShape(second, corner, blockSet);
 		}
@@ -65,8 +67,16 @@ public class CPPNOrVectorToVolumeGenerator implements ShapeGenerator {
 					//"displayDiagonally:false",
 					
 					"genotype:edu.southwestern.evolution.genotypes.CPPNOrBlockVectorGenotype",
+					//"genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype",
+					
+					
+					"oneOutputLabelForBlockTypeCPPN:true",
+					
+					"oneOutputLabelForBlockOrientationCPPN:true",
 					
 					"vectorPresenceThresholdForEachBlock:true",
+					//"vectorPresenceThresholdForEachBlock:false",
+					
 					"voxelExpressionThreshold:0.5",
 					"launchMinecraftServerFromJava:false",
 					//"minecraftTypeCountFitness:true",
@@ -84,8 +94,9 @@ public class CPPNOrVectorToVolumeGenerator implements ShapeGenerator {
 					//"minecraftRedirectConfinedSnakes:true",
 					//"minecraftStopConfinedSnakes:true",
 					"minecraftXRange:2", "minecraftYRange:2", "minecraftZRange:4",
-					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.CPPNOrVectorToVolumeGenerator",
+					//"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator",
 					
+					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.CPPNOrVectorToVolumeGenerator",
 					
 					
 					//"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.SnakeGenerator",
