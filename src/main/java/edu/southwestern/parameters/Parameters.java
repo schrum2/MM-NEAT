@@ -368,7 +368,6 @@ public class Parameters {
 		integerOptions.add("minecraftAmountOfBlocksToEvolve", 5, "The ammount of possible blocks that can be evolved by CPPN");
 		integerOptions.add("interactiveSleepTimer", 1000, "The ammount of time the interactive thread sleeps for");
 		integerOptions.add("extraSpaceBetweenMinecraftShapes", 50, "The extra space that will be in between the shapes being evaluated");
-		integerOptions.add("leftoverMinecraftBlocksAllowed", 2, "The amount of blocks that will be allowed to be left behind by the flying machine and still get max fitness for the change in center of mass fitness function");
 		integerOptions.add("startX", 0, "The X coordinate the shapes are generated on");
 		integerOptions.add("startY", 5, "The Y coordinate the shapes are generated on");
 		integerOptions.add("startZ", 0, "The Z coordinate the shapes are generated on");
@@ -381,7 +380,7 @@ public class Parameters {
 		integerOptions.add("marioMaxLeniencyIndex", 10000, "Highest interval index for MAP Elites dimension associated with Mario level leniency");
 		integerOptions.add("marioMinSpaceCoverageIndex", 0, "Lowest interval index for MAP Elites dimension associated with Mario level Space Coverage");
 		integerOptions.add("marioMaxSpaceCoverageIndex", 10000, "Highest interval index for MAP Elites dimension associated with Mario level Space Coverage");
-		integerOptions.add("zeldaMinWallIndex", 0, "Lowest interval index for MAP Elites dimension associated with Zelda Dungeon Wall Tiles");
+		integerOptions.add("minecraftFewerBlocksBeforeConsideredFlying", 3,"The amount of blocks that need to disappear before considering a machine as flying");
 		integerOptions.add("zeldaMaxWallIndex", 10000, "Highest interval index for MAP Elites dimension associated with Zelda Dungeon Wall Tiles");
 		integerOptions.add("zeldaMinWaterIndex", 0, "Lowest interval index for MAP Elites dimension associated with Zelda Dungeon Water Tiles");
 		integerOptions.add("zeldaMaxWaterIndex", 10000, "Highest interval index for MAP Elites dimension associated with Zelda Dungeon Water Tiles");
