@@ -843,6 +843,9 @@ public class Parameters {
 		booleanOptions.add("minecraftUpDownOnly", false, "Determines whether only the Up and Down orientations will be used.");
 		booleanOptions.add("minecraftFakeTestFitness", false, "Not a real fitness function, used for testing forcing offspring");
 		booleanOptions.add("minecraftSkipInitialClear", false, "Option to skip the initial clear of the world and immediatly start spawning shapes");
+		booleanOptions.add("minecraftNorthSouthPistonCountFitness", false, "Fitness function that counts the number of sticky or regular pistons that are oriented either North or South");
+		booleanOptions.add("minecraftEastWestPistonCountFitness", false, "Fitness function that counts the number of sticky or regular pistons that are oriented either East or West");
+		booleanOptions.add("minecraftUpDownPistonCountFitness", false, "Fitness function that counts the number of sticky or regular pistons that are oriented either Up or Down");
 
 		
 		// Double parameters
