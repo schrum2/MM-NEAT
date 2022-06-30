@@ -69,6 +69,9 @@ public class CPPNOrVectorToVolumeGenerator implements ShapeGenerator {
 					//"genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype",
 					
 					
+					//"indirectToDirectTransitionRate:0.0", // Testing with No conversion, but comment this out later
+					
+					
 					"oneOutputLabelForBlockTypeCPPN:true",
 					
 					"oneOutputLabelForBlockOrientationCPPN:true",
