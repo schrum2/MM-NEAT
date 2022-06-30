@@ -24,7 +24,9 @@ import edu.southwestern.util.datastructures.Vertex;
  *
  */
 public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
-
+	// Flying machines that leave blocks behind get a small fitness penalty proportional to the number of remaining blocks,
+	// but scaled down to 10% of that.
+	private static final double REMAINING_BLOCK_PUNISHMENT_SCALE = 0.1;
 	private static final HashMap<MinecraftCoordinates, Triple<Vertex, Vertex, Double>> PREVIOUSLY_COMPUTED_RESULTS = new HashMap<>();
 	
 	/**
@@ -112,6 +114,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		// List of blocks in the area based on the corner
 		List<Block> blocks = MinecraftClient.getMinecraftClient().readCube(corner,end);
 		blocks = MinecraftUtilClass.filterOutBlock(blocks, BlockType.AIR);
+		int blockListSize = blocks.size();
 		if(blocks.isEmpty()) return new Triple<>(new Vertex(0,0,0), new Vertex(0,0,0), minFitness());
 
 		//System.out.println("List of blocks before movement: "+ Arrays.toString(blocks.stream().filter(b -> b.type() != BlockType.AIR.ordinal()).toArray()));
@@ -143,12 +146,14 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 //			timeElapsed += shortWaitTime;
 
 			shortWaitTimeUpdate = MinecraftUtilClass.filterOutBlock(MinecraftClient.getMinecraftClient().readCube(corner,end),BlockType.AIR);
+			int shortWaitListSize = shortWaitTimeUpdate.size();
+			int remainingBlocks = blockListSize - shortWaitListSize;
 			//System.out.println("Short wait time Update list: " + shortWaitTimeUpdate);
-			if(shortWaitTimeUpdate.isEmpty() || (shortWaitTimeUpdate.size() <= Parameters.parameters.integerParameter("leftoverMinecraftBlocksAllowed") && shortWaitTimeUpdate.size() < blocks.size())) {
+			if(remainingBlocks >= Parameters.parameters.integerParameter("minecraftFewerBlocksBeforeConsideredFlying")) {
 				// Ship flew so far away that we award max fitness
 				//System.out.println("Where fitness");
 				// Should this use lastCenterOfMass or should we infer a point that is at the extreme bounds of the eval space?
-				return new Triple<>(initialCenterOfMass, lastCenterOfMass, maxFitness());
+				return new Triple<>(initialCenterOfMass, lastCenterOfMass, maxFitness() - remainingBlocks*REMAINING_BLOCK_PUNISHMENT_SCALE);
 			}
 			Vertex nextCenterOfMass = getCenterOfMass(shortWaitTimeUpdate);
 			//System.out.println("Next COM: "+nextCenterOfMass);
