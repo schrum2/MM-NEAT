@@ -372,8 +372,8 @@ public class Parameters {
 		integerOptions.add("startX", 0, "The X coordinate the shapes are generated on");
 		integerOptions.add("startY", 5, "The Y coordinate the shapes are generated on");
 		integerOptions.add("startZ", 0, "The Z coordinate the shapes are generated on");
-		integerOptions.add("minecraftClearDimension", 100, "The coordinates to clear the space for the archive");
-		integerOptions.add("minecraftClearSleepTimer", 100, "How long the thread should sleep between sending a clear command to python");
+		integerOptions.add("minecraftClearDimension", 120, "The coordinates to clear the space for the archive");
+		integerOptions.add("minecraftClearSleepTimer", 200, "How long the thread should sleep between sending a clear command to python");
 		integerOptions.add("minecraftNumberOfBinsForMovement", 3,"The amount of bins for each side of the flying machine movement");
 		integerOptions.add("marioMinDecorationIndex", 0, "Lowest interval index for MAP Elites dimension associated with Mario level decoration");
 		integerOptions.add("marioMaxDecorationIndex", 10000, "Highest interval index for MAP Elites dimension associated with Mario level decoration");
