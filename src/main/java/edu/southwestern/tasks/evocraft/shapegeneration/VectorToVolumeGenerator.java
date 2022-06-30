@@ -65,7 +65,7 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 						
 						if(phenotype.get(PRESENCE_INDEX) >= Parameters.parameters.doubleParameter("voxelExpressionThreshold")) {
 							int blockTypeIndex = (int)(phenotype.get(TYPE_INDEX)*numBlockTypes); // length because there are no AIR blocks in list for this case (presence takes care of this)		
-							System.out.println("Block type index: " + blockTypeIndex);
+							// System.out.println("Block type index: " + blockTypeIndex);
 							assert blockTypeIndex >= 0 : "Index "+TYPE_INDEX+ " of " + phenotype + " multiplied by " + numBlockTypes;
 
 							if(blockTypeIndex == numBlockTypes) blockTypeIndex--; // Rare case
@@ -113,8 +113,8 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 	public static void main(String[] args) {
 		int seed = 0;
 		try {
-			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:100", "maxGens:100000",
-					"base:minecraft", "log:Minecraft-VectorToVolumeUpDown", "saveTo:VectorToVolumeUpDown",
+			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:10", "maxGens:100000",
+					"base:minecraft", "log:Minecraft-NorthSouthPistonCount", "saveTo:NorthSouthPistonCount",
 					"io:true", "netio:true", 
 					"launchMinecraftServerFromJava:false",
 					//"io:false", "netio:false", 
@@ -124,6 +124,8 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 					//"minecraftTypeCountFitness:true",
 					//"minecraftDiversityBlockFitness:true",
 					"minecraftChangeCenterOfMassFitness:true",
+					
+					
 					//"minecraftTypeTargetFitness:true", 
 					//"minecraftDesiredBlockCount:40",
 					"minecraftContainsWholeMAPElitesArchive:true",
@@ -135,24 +137,27 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 					
 					
 					
-					"oneOutputLabelForBlockTypeCPPN:true",
-					"oneOutputLabelForBlockOrientationCPPN:true",
+					//"oneOutputLabelForBlockTypeCPPN:true",
+					//"oneOutputLabelForBlockOrientationCPPN:true",
 					
 					
 					//"minecraftNorthSouthOnly:true",
 					
-					"minecraftUpDownOnly:true",
+					//"minecraftUpDownOnly:true",
 					
 					
 					//"minecraftOccupiedCountFitness:true",
 					//"minecraftEvolveOrientation:true",
 					//"minecraftRedirectConfinedSnakes:true",
 					//"minecraftStopConfinedSnakes:true",
-					"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBlockCountBinLabels",
+					//"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBlockCountBinLabels",
+					
+					"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesNorthSouthPistonCountBinLabels",
+					
 					"ea:edu.southwestern.evolution.mapelites.MAPElites", 
 					"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
 					"steadyStateIndividualsPerGeneration:100",
-					"minecraftXRange:2","minecraftYRange:2","minecraftZRange:4",
+					"minecraftXRange:2","minecraftYRange:2","minecraftZRange:2",
 					"minecraftStopConfinedSnakes:true",
 					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator",
 					"task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask", 
