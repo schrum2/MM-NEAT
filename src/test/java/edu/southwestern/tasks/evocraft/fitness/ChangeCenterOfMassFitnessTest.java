@@ -122,7 +122,7 @@ public class ChangeCenterOfMassFitnessTest {
 		
 		Parameters.initializeParameterCollections(new String[] {"minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:false","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet","minecraftFewerBlocksBeforeConsideredFlying:3"});
 		MinecraftCoordinates cornerBS2 = new MinecraftCoordinates(0,11,-5);
-		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 100);
+		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 70);
 		
 		// List of flying machine blocks that should move
 		// Not really sure what the fitness would be after 10 seconds
@@ -146,7 +146,7 @@ public class ChangeCenterOfMassFitnessTest {
 		Triple<Vertex, Vertex, Double> beforeAndAfter = ChangeCenterOfMassFitness.getPreviouslyComputedResult(cornerBS2); // Prevent lock
 		assertEquals(ff.maxFitness()-0.3, beforeAndAfter.t3, 0.0);
 		
-		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 100);
+		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 70);
 	}
 	
 	// Passes
