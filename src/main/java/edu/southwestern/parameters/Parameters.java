@@ -843,6 +843,7 @@ public class Parameters {
 		booleanOptions.add("bedrockTestChambers", false, "Places walls made of bedrock around the flying machines");
 		booleanOptions.add("minecraftUpDownOnly", false, "Determines whether only the Up and Down orientations will be used.");
 		booleanOptions.add("minecraftFakeTestFitness", false, "Not a real fitness function, used for testing forcing offspring");
+		booleanOptions.add("minecraftSkipInitialClear", false, "Option to skip the initial clear of the world and immediatly start spawning shapes");
 
 		
 		// Double parameters
