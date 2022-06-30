@@ -1,38 +1,59 @@
 package edu.southwestern.evolution.mutation.tweann;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.genotypes.CPPNOrBlockVectorGenotype;
+import edu.southwestern.evolution.genotypes.EitherOrGenotype;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.genotypes.RealValuedGenotype;
+import edu.southwestern.evolution.mutation.Mutation;
 import edu.southwestern.networks.Network;
+import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
-import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.graphics.ThreeDimensionalUtil;
+import edu.southwestern.util.random.RandomNumbers;
 
 /**
+ * Convert CPPN to Block Vector in Minecraft.
+ * Cannot specific type of phenotype since it changes.
  * 
  * @author Alejandro Medina
  *
  */
-public class ConvertMinecraftCPPNtoBlockVectorMutation extends ConvertCPPN2GANtoDirect2GANMutation {
+@SuppressWarnings("rawtypes")
+public class ConvertMinecraftCPPNtoBlockVectorMutation extends Mutation {
 
-	@Override
+	protected double rate;
+
+	public ConvertMinecraftCPPNtoBlockVectorMutation() {
+		super();
+		double rate = Parameters.parameters.doubleParameter("indirectToDirectTransitionRate");
+		assert 0 <= rate && rate <= 1 : "Mutation rate out of range: " + rate;
+		this.rate = rate;
+	}
+
 	protected double[] getLongVectorResultFromCPPN(Network cppn) {
-		
-		// assert that there will only be one output label for the block type and block orientation
+
+		// assert that there will only be one output label for the block type and block
+		// orientation
 		assert Parameters.parameters.booleanParameter("oneOutputLabelForBlockTypeCPPN");
 		assert Parameters.parameters.booleanParameter("oneOutputLabelForBlockOrientationCPPN");
-		
+
 		MinecraftCoordinates ranges = MinecraftUtilClass.getRanges();
 		int numbersPerBlock = 1; // 1 is the lowest number of numbers corresponding to a block
-		if(Parameters.parameters.booleanParameter("minecraftEvolveOrientation")) numbersPerBlock++; // evolve orientation is true, number of corresponding numbers per block should be increased by 1
-		if(Parameters.parameters.booleanParameter("vectorPresenceThresholdForEachBlock")) numbersPerBlock++; // presence is true, number of corresponding numbers per block should be increased by 1 
-		
-		int numBlocks = numbersPerBlock * (ranges.x() * ranges.y() * ranges.z()); // one or more numbers per block depending on command line parameters
-		int numOrientations = MinecraftUtilClass.getnumOrientationDirections();
-		
-		double[] upper = ArrayUtil.doubleSpecified(numBlocks, 1.0); // upper bounds
-		double[] lower = ArrayUtil.doubleSpecified(numBlocks, 0.0); // lower bounds
-	
+		if (Parameters.parameters.booleanParameter("minecraftEvolveOrientation"))
+			numbersPerBlock++; // evolve orientation is true, number of corresponding numbers per block should
+								// be increased by 1
+		if (Parameters.parameters.booleanParameter("vectorPresenceThresholdForEachBlock"))
+			numbersPerBlock++; // presence is true, number of corresponding numbers per block should be
+								// increased by 1
+		int numBlocks = numbersPerBlock * (ranges.x() * ranges.y() * ranges.z());
+		int counter = 0;
+
 		double[] results = new double[numBlocks];
 		//System.out.println("number of blocks " + numBlocks);
 		boolean distanceInEachPlane = Parameters.parameters.booleanParameter("objectBreederDistanceInEachPlane");
@@ -72,14 +93,30 @@ public class ConvertMinecraftCPPNtoBlockVectorMutation extends ConvertCPPN2GANto
 							
 						}
 					}
-
 				}
 			}
-		}	
-		
-		
-		// TODO Auto-generated method stub
+		}
+		System.out.println("COUNTER: "+ counter);
 		return results;
 	}
 
+	@Override
+	public boolean perform() {
+		return (RandomNumbers.randomGenerator.nextDouble() < rate);
+	}
+
+	@SuppressWarnings({ "unchecked" })
+	@Override
+	public void mutate(Genotype genotype) {
+		// Cannot do a transition mutation on a genotype that has already transitioned!
+		if(!((CPPNOrBlockVectorGenotype) genotype).getFirstForm()) return;
+		// Safe to assume phenotype is a network at this point
+		Network cppn = (Network) genotype.getPhenotype();
+		Genotype cppnOrBlockVectorGenotype = (CPPNOrBlockVectorGenotype) genotype;
+		double[] longResult = getLongVectorResultFromCPPN(cppn); //Helper method call
+
+		RealValuedGenotype k = new RealValuedGenotype(longResult);
+		((EitherOrGenotype<TWEANN, ArrayList<Double>>) cppnOrBlockVectorGenotype).switchForms(k);
+	}
+	
 }

@@ -13,6 +13,7 @@ import edu.southwestern.evolution.EA;
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.ScoreHistory;
 import edu.southwestern.evolution.crossover.Crossover;
+import edu.southwestern.evolution.genotypes.CPPNOrBlockVectorGenotype;
 import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.CombinedGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
@@ -207,6 +208,7 @@ public class MMNEAT {
 				genotype instanceof TWEANNPlusParametersGenotype ||
 				genotype instanceof CombinedGenotype || // Assume first member of pair is TWEANNGenotype
 				genotype instanceof CPPNOrDirectToGANGenotype || // Assume first form is TWEANNGenotype
+				genotype instanceof CPPNOrBlockVectorGenotype || // Assume first form is TWEANNGenotype
 				genotype instanceof HyperNEATCPPNforDL4JGenotype) { // Contains CPPN that is TWEANNGenotype
 			if (Parameters.parameters.booleanParameter("io")
 					&& Parameters.parameters.booleanParameter("logTWEANNData")) {
@@ -222,11 +224,13 @@ public class MMNEAT {
 					((TWEANNPlusParametersGenotype) genotype).getTWEANNGenotype().biggestInnovation() :
 						genotype instanceof CPPNOrDirectToGANGenotype ?
 								((TWEANNGenotype) ((CPPNOrDirectToGANGenotype) genotype).getCurrentGenotype()).biggestInnovation():
-									(genotype instanceof CombinedGenotype ? 
-											((TWEANNGenotype) ((CombinedGenotype) genotype).t1).biggestInnovation() :
-												(genotype instanceof HyperNEATCPPNforDL4JGenotype ?
-														((HyperNEATCPPNforDL4JGenotype) genotype).getCPPN().biggestInnovation()	:
-															((TWEANNGenotype) genotype).biggestInnovation()));
+									(genotype instanceof CPPNOrBlockVectorGenotype ? 
+											((TWEANNGenotype) ((CPPNOrBlockVectorGenotype) genotype).getCurrentGenotype()).biggestInnovation():
+												(genotype instanceof CombinedGenotype ? 
+														((TWEANNGenotype) ((CombinedGenotype) genotype).t1).biggestInnovation() :
+															(genotype instanceof HyperNEATCPPNforDL4JGenotype ?
+																	((HyperNEATCPPNforDL4JGenotype) genotype).getCPPN().biggestInnovation()	:
+																		((TWEANNGenotype) genotype).biggestInnovation())));
 					
 			if (biggestInnovation > EvolutionaryHistory.largestUnusedInnovationNumber) {
 					EvolutionaryHistory.setInnovation(biggestInnovation + 1);

@@ -67,6 +67,11 @@ public abstract class EitherOrGenotype<X,Y> implements Genotype {
 	    firstForm = false;
 	}
 	
+	/**
+	 * Whether genome is in its first form or not.
+	 * False value means it is in its second form.
+	 * @return boolean indicating if in first form
+	 */
 	public boolean getFirstForm() {
 		return firstForm;
 	}

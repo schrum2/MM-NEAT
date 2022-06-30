@@ -69,10 +69,15 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 							
 							if(Parameters.parameters.booleanParameter("minecraftEvolveOrientation")) {
 								final int ORIENTATION_INDEX = counter+2;
+								//System.out.println("orientaton index " + ORIENTATION_INDEX);
 								blockOrientation = MinecraftUtilClass.getOrientations()[(int) (phenotype.get(ORIENTATION_INDEX) * numOrientations)];
+		
 								counter++; // increase counter because there are three numbers per block in this case
 							}
 								
+							//System.out.println("blockTypeIndex " + blockTypeIndex);
+							//System.out.println("blockType " + blockSet.getPossibleBlocks()[blockTypeIndex]);
+							
 							b = new Block(corner.add(new MinecraftCoordinates(xi,yi,zi)), blockSet.getPossibleBlocks()[blockTypeIndex], blockOrientation);
 						} // else do not place any block
 						counter+=2; // two numbers per block (unless evolve orientation is true)
