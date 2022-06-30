@@ -386,6 +386,7 @@ public class Parameters {
 		integerOptions.add("zeldaMaxWaterIndex", 10000, "Highest interval index for MAP Elites dimension associated with Zelda Dungeon Water Tiles");
 		integerOptions.add("zeldaMinReachableRooms", 0, "Lowest interval index for MAP Elites dimension associated with Zelda Dungeon Reachable Rooms");
 		integerOptions.add("zeldaMaxReachableRooms", 1000000, "Highest interval index for MAP Elites dimension associated with Zelda Dungeon Reachable Rooms");
+		integerOptions.add("minecraftPistonLabelSize", 6, "Dictates amount of bin labels made for MinecraftMAPElitesNorthSouthPistonCountBinLabels");
 		
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
@@ -843,10 +844,6 @@ public class Parameters {
 		booleanOptions.add("minecraftUpDownOnly", false, "Determines whether only the Up and Down orientations will be used.");
 		booleanOptions.add("minecraftFakeTestFitness", false, "Not a real fitness function, used for testing forcing offspring");
 		booleanOptions.add("minecraftSkipInitialClear", false, "Option to skip the initial clear of the world and immediatly start spawning shapes");
-		booleanOptions.add("minecraftNorthSouthPistonCountFitness", false, "Fitness function that counts the number of sticky or regular pistons that are oriented either North or South");
-		booleanOptions.add("minecraftEastWestPistonCountFitness", false, "Fitness function that counts the number of sticky or regular pistons that are oriented either East or West");
-		booleanOptions.add("minecraftUpDownPistonCountFitness", false, "Fitness function that counts the number of sticky or regular pistons that are oriented either Up or Down");
-
 		
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
