@@ -594,7 +594,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					//"io:false", "netio:false", 
 					"mating:true", "fs:false",
 					//"startX:-10", "startY:5", "startZ:10",
-					"minecraftClearDimension:130", "minecraftClearSleepTimer:50",
+					"minecraftClearDimension:130", "minecraftClearSleepTimer:200",
 					"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.SimpleSolidBlockSet",
 					//"minecraftTypeCountFitness:true",
 					//"minecraftFakeTestFitness:true",
