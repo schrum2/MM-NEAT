@@ -28,3 +28,5 @@ With each shape, three blocks are also generated:
 * Also, a gold block is displayed on any individual(s) which have the highest fitness (denoted as champions). This is just a flag to showcase where the "best" individuals are, and breaking it does not have any effect
 
 From here, all of the batch files can be run, which all have different focuses on outcomes. Happy generating!
+
+For more help/ information on EvoCraft, visit the [**Evocraft-py repository**](https://github.com/real-itu/Evocraft-py)
