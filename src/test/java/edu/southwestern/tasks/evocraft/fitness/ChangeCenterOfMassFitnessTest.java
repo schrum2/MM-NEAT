@@ -75,6 +75,57 @@ public class ChangeCenterOfMassFitnessTest {
 		
 	}
 	
+	
+	@Test
+	public void testBigSmallMove() {
+		ChangeCenterOfMassFitness.resetPreviousResults();
+		Parameters.initializeParameterCollections("minecraftXRange:4 minecraftYRange:4 minecraftZRange:4 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftChangeCenterOfMassFitness:true minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet trials:1 mu:100 maxGens:100000 minecraftContainsWholeMAPElitesArchive:true forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:false netio:false interactWithMapElitesInWorld:true mating:true fs:false ea:edu.southwestern.evolution.mapelites.MAPElites experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 spaceBetweenMinecraftShapes:5 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesWidthHeightDepthBinLabels".split(" "));
+		
+
+		
+		MinecraftCoordinates cornerBS1 = new MinecraftCoordinates(28,33,28);
+		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS1, ranges, 1, 100); // Larger buffer is important
+
+		blockSet1 = new ArrayList<>();
+		
+		blockSet1.add(new Block(29,35,29,BlockType.REDSTONE_BLOCK,Orientation.SOUTH)); 
+		blockSet1.add(new Block(29,35,31,BlockType.PISTON,Orientation.DOWN)); 
+		blockSet1.add(new Block(29,36,30,BlockType.STICKY_PISTON,Orientation.EAST)); 
+		blockSet1.add(new Block(29,36,32,BlockType.OBSERVER,Orientation.UP)); 
+		blockSet1.add(new Block(29,37,32,BlockType.OBSERVER,Orientation.WEST)); 
+		blockSet1.add(new Block(30,34,32,BlockType.PISTON,Orientation.SOUTH)); 
+		blockSet1.add(new Block(30,35,31,BlockType.SLIME,Orientation.EAST)); 
+		blockSet1.add(new Block(30,36,30,BlockType.QUARTZ_BLOCK,Orientation.NORTH)); 
+		blockSet1.add(new Block(30,37,29,BlockType.STICKY_PISTON,Orientation.UP)); 
+		blockSet1.add(new Block(30,37,30,BlockType.OBSERVER,Orientation.SOUTH)); 
+		blockSet1.add(new Block(30,37,32,BlockType.PISTON,Orientation.DOWN)); 
+		blockSet1.add(new Block(31,34,30,BlockType.OBSERVER,Orientation.EAST)); 
+		blockSet1.add(new Block(31,34,31,BlockType.STICKY_PISTON,Orientation.UP)); 
+		blockSet1.add(new Block(31,34,32,BlockType.SLIME,Orientation.NORTH)); 
+		blockSet1.add(new Block(31,35,29,BlockType.QUARTZ_BLOCK,Orientation.DOWN)); 
+		blockSet1.add(new Block(31,35,30,BlockType.QUARTZ_BLOCK,Orientation.WEST)); 
+		blockSet1.add(new Block(31,35,31,BlockType.SLIME,Orientation.NORTH)); 
+		blockSet1.add(new Block(31,36,31,BlockType.STICKY_PISTON,Orientation.DOWN)); 
+		blockSet1.add(new Block(31,37,32,BlockType.SLIME,Orientation.WEST)); 
+		blockSet1.add(new Block(32,35,29,BlockType.PISTON,Orientation.EAST)); 
+		blockSet1.add(new Block(32,35,30,BlockType.QUARTZ_BLOCK,Orientation.WEST)); 
+		blockSet1.add(new Block(32,35,31,BlockType.REDSTONE_BLOCK,Orientation.WEST)); 
+		blockSet1.add(new Block(32,35,32,BlockType.QUARTZ_BLOCK,Orientation.NORTH)); 
+		blockSet1.add(new Block(32,36,32,BlockType.REDSTONE_BLOCK,Orientation.DOWN)); 
+		blockSet1.add(new Block(32,37,29,BlockType.PISTON,Orientation.WEST)); 
+		blockSet1.add(new Block(32,37,30,BlockType.STICKY_PISTON,Orientation.NORTH)); 
+		blockSet1.add(new Block(32,37,32,BlockType.REDSTONE_BLOCK,Orientation.DOWN));		
+		
+		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet1);
+		double fitness = ff.fitnessScore(cornerBS1);
+		
+		assertTrue(fitness < 0.3);
+		Triple<Vertex, Vertex, Double> beforeAndAfter = ChangeCenterOfMassFitness.getPreviouslyComputedResult(cornerBS1); // Prevent lock
+		assertTrue(beforeAndAfter.t3 < 0.3);
+		
+		
+	}
+	
 	// Passes
 	@Test
 	public void testChangeInTotalDistance() throws InterruptedException {
