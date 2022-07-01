@@ -1,9 +1,7 @@
 package edu.southwestern.tasks.evocraft;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
 
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;

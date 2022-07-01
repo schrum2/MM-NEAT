@@ -118,7 +118,9 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		// List of blocks in the area based on the corner
 		List<Block> blocks = MinecraftClient.getMinecraftClient().readCube(corner,end);
 		blocks = MinecraftUtilClass.filterOutBlock(blocks, BlockType.AIR);
-		int initialBlockCount = blocks.size();
+		// Initial count cannot include extended pistons since that means the count might decrease even though shape has not flown away.
+		List<Block> originalBlocks = MinecraftUtilClass.filterOutBlock(MinecraftUtilClass.filterOutBlock(blocks, BlockType.PISTON_HEAD),BlockType.PISTON_EXTENSION);
+		int initialBlockCount = originalBlocks.size();
 		if(blocks.isEmpty()) return new Triple<>(new Vertex(0,0,0), new Vertex(0,0,0), minFitness());
 
 		//System.out.println("List of blocks before movement: "+ Arrays.toString(blocks.stream().filter(b -> b.type() != BlockType.AIR.ordinal()).toArray()));
@@ -157,9 +159,21 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 				// BUT What if it moves back and forth and returned to its original position?
 
 				// It is possible the shape flew away leaving some stationary parts
-				int remainingBlockCount = shortWaitTimeUpdate.size();
+				List<Block> updatedBlocksWithoutExtendedPistons = MinecraftUtilClass.filterOutBlock(MinecraftUtilClass.filterOutBlock(shortWaitTimeUpdate, BlockType.PISTON_HEAD),BlockType.PISTON_EXTENSION);
+				int remainingBlockCount = updatedBlocksWithoutExtendedPistons.size();
 				int departedBlockCount = initialBlockCount - remainingBlockCount;
-				if(departedBlockCount >= Parameters.parameters.integerParameter("minecraftFewerBlocksBeforeConsideredFlying")) {
+				// At least half of the blocks need to leave before we consider the shape to be flying
+				if(departedBlockCount >= initialBlockCount/2) {
+					
+//					assert false : "remainingBlockCount = "+remainingBlockCount+"\ninitialBlockCount = "+initialBlockCount+"\ndepartedBlockCount = "+departedBlockCount+
+//						"\nshortWaitTimeUpdate                = "+shortWaitTimeUpdate+
+//						"\nblocks                             = "+blocks+
+//						"\noriginalBlocks                     = "+originalBlocks+
+//						"\nupdatedBlocksWithoutExtendedPistons= "+updatedBlocksWithoutExtendedPistons+
+//						"\ninitialCenterOfMass = "+initialCenterOfMass+"\nnextCenterOfMass = "+nextCenterOfMass+
+//						"\ncorner = "+corner;
+					
+					
 					// Ship flew so far away that we award max fitness, but penalize remaining blocks
 					System.out.println(remainingBlockCount +" remaining blocks: max = " + maxFitness());
 					return new Triple<>(initialCenterOfMass, lastCenterOfMass, maxFitness() - remainingBlockCount*REMAINING_BLOCK_PUNISHMENT_SCALE);

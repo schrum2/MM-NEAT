@@ -124,7 +124,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 										// Uses score to clear the correct area
 										Score<T> s = MMNEAT.getArchive().getElite(cb.getOneD());
 										Pair<MinecraftCoordinates,MinecraftCoordinates> corners = configureStartPosition(MinecraftUtilClass.getRanges(), s.MAPElitesBehaviorMap());
-										clearBlocksInArchive(MinecraftUtilClass.getRanges(),corners.t1);
+										clearBlocksForShape(MinecraftUtilClass.getRanges(),corners.t1);
 										
 										//Removes from the archive, and then the set
 										((MAPElites<T>) MMNEAT.ea).getArchive().removeElite(cb.getOneD());
@@ -261,7 +261,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			System.exit(1);
 		}
 		// Clears specified space for new shape
-		clearBlocksInArchive(ranges, corner);
+		clearBlocksForShape(ranges, corner);
 		MinecraftCoordinates middle = corner.add(MinecraftUtilClass.emptySpaceOffsets());
 		// Evaluates the shape at the middle of the space defined by the corner, and then adds the corner back to the queue
 		Score<T> score = internalMinecraftShapeTask.evaluateOneShape(individual, middle);
@@ -382,7 +382,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		synchronized(blocksToMonitor) {
 
 			// Clears old shape if there was one
-			Pair<MinecraftCoordinates,MinecraftCoordinates> cleared = clearBlocksInArchive(ranges, corners.t1);
+			Pair<MinecraftCoordinates,MinecraftCoordinates> cleared = clearBlocksForShape(ranges, corners.t1);
 			assert cleared.t1.equals(corners.t1) : "Cleared space does not start at right location: "+cleared.t1+" vs "+corners.t1;
 			// Could do more checking here
 
@@ -497,7 +497,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	 * @param startPosition Starting indices of a specific shape
 	 * @return start and end coordinates of area that was cleared
 	 */
-	public static Pair<MinecraftCoordinates,MinecraftCoordinates> clearBlocksInArchive(MinecraftCoordinates ranges, MinecraftCoordinates startPosition) {
+	public static Pair<MinecraftCoordinates,MinecraftCoordinates> clearBlocksForShape(MinecraftCoordinates ranges, MinecraftCoordinates startPosition) {
 		MinecraftCoordinates clearEnd = startPosition.add(MinecraftUtilClass.reservedSpace());
 		// Sub 1 to not delete interactive blocks
 		clearEnd = clearEnd.sub(new MinecraftCoordinates(1));
@@ -595,7 +595,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					"mating:true", "fs:false",
 					//"startX:-10", "startY:5", "startZ:10",
 					"minecraftClearDimension:130", "minecraftClearSleepTimer:200",
-					"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.SimpleSolidBlockSet",
+					"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet",
 					//"minecraftTypeCountFitness:true",
 					//"minecraftFakeTestFitness:true",
 					//"minecraftDiversityBlockFitness:true",
@@ -605,14 +605,14 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					//"minecraftEvolveOrientation:true",
 					//"minecraftRedirectConfinedSnakes:true",
 					//"minecraftStopConfinedSnakes:true", 
-					"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesRedstoneVSPistonBinLabels",
+					"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBlockCountEmptyCountBinLabels",
 					"ea:edu.southwestern.evolution.mapelites.MAPElites", 
 					"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
 					"steadyStateIndividualsPerGeneration:100", 
 					//"extraSpaceBetweenMinecraftShapes:0",
 					"minecraftSkipInitialClear:false",
 					"spaceBetweenMinecraftShapes:5","parallelMAPElitesInitialize:false",
-					"minecraftXRange:4","minecraftYRange:4","minecraftZRange:4",
+					"minecraftXRange:2","minecraftYRange:2","minecraftZRange:2",
 					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGenerator",
 					"task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask", "allowMultipleFunctions:true",
 					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",
