@@ -33,8 +33,8 @@ import edu.southwestern.tasks.evocraft.fitness.OccupiedCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.TypeCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.TypeTargetFitness;
 import edu.southwestern.tasks.evocraft.fitness.WidthFitness;
+import edu.southwestern.tasks.evocraft.shapegeneration.BoundedVectorGenerator;
 import edu.southwestern.tasks.evocraft.shapegeneration.ShapeGenerator;
-import edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Triple;
@@ -400,12 +400,12 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 
 	@Override
 	public double[] getUpperBounds() {
-		return ((VectorToVolumeGenerator) MMNEAT.shapeGenerator).getUpperBounds(); // calling getUpperBounds from VectorToVolumeGenerator class
+		return ((BoundedVectorGenerator) MMNEAT.shapeGenerator).getUpperBounds(); // calling getUpperBounds from VectorToVolumeGenerator class
 	
 	}
 
 	@Override
 	public double[] getLowerBounds() {
-		return ((VectorToVolumeGenerator) MMNEAT.shapeGenerator).getLowerBounds(); // calling getlowerBounds from VectorToVolumeGenerator class
+		return ((BoundedVectorGenerator) MMNEAT.shapeGenerator).getLowerBounds(); // calling getlowerBounds from VectorToVolumeGenerator class
 	}
 }

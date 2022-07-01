@@ -22,7 +22,7 @@ import edu.southwestern.util.datastructures.ArrayUtil;
  * @author Alejandro Medina
  *
  */
-public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>> {
+public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>>, BoundedVectorGenerator {
 	
 	private static double[] upper = null;
 	private static double[] lower = null;
@@ -66,8 +66,7 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 						if(phenotype.get(PRESENCE_INDEX) >= Parameters.parameters.doubleParameter("voxelExpressionThreshold")) {
 							assert phenotype.get(TYPE_INDEX) >= 0 : "index:"+TYPE_INDEX+":"+phenotype;
 							int blockTypeIndex = (int)(phenotype.get(TYPE_INDEX)*numBlockTypes); // length because there are no AIR blocks in list for this case (presence takes care of this)		
-							// System.out.println("Block type index: " + blockTypeIndex);
-							assert blockTypeIndex >= 0 : "Index "+TYPE_INDEX+ " of " + phenotype + " multiplied by " + numBlockTypes;
+							assert blockTypeIndex >= 0.0 : "Index "+TYPE_INDEX+ " of " + phenotype + " multiplied by " + numBlockTypes;
 
 							if(blockTypeIndex == numBlockTypes) blockTypeIndex--; // Rare case
 							

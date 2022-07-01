@@ -20,7 +20,7 @@ import edu.southwestern.tasks.evocraft.blocks.BlockSet;
  *
  */
 @SuppressWarnings("rawtypes")
-public class CPPNOrVectorToVolumeGenerator implements ShapeGenerator {
+public class CPPNOrVectorToVolumeGenerator implements ShapeGenerator, BoundedVectorGenerator {
 
 	private VectorToVolumeGenerator forVectors;
 	private ThreeDimensionalVolumeGenerator forCPPN;
@@ -36,7 +36,6 @@ public class CPPNOrVectorToVolumeGenerator implements ShapeGenerator {
 		
 		List<Block> blocks;
 		CPPNOrBlockVectorGenotype either = (CPPNOrBlockVectorGenotype) genome;
-		//System.out.println(either.getFirstForm());
 		if(either.getFirstForm()) { // first form is CPPN, use ThreeDimensionalVolumeGenerator
 			assert either.getFirstForm();
 			Genotype<TWEANN> first =  either.getCurrentGenotype();
@@ -55,7 +54,7 @@ public class CPPNOrVectorToVolumeGenerator implements ShapeGenerator {
 	}
 
 	public static void main(String[] args) {
-		int seed = 0;
+		int seed = 33;
 		try {
 			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:20", "maxGens:150",
 					"base:minecraft", "log:Minecraft-TestingCPPNtoVector", "saveTo:TestingCPPNtoVector",
@@ -89,7 +88,7 @@ public class CPPNOrVectorToVolumeGenerator implements ShapeGenerator {
 					//"NegativeSpaceCountFitness:true",
 					"minecraftChangeCenterOfMassFitness:true",
 					"minecraftEndEvalNoMovement:true",
-					//"shortTimeBetweenMinecraftReads:" + 50000L,
+					"shortTimeBetweenMinecraftReads:" + 500L,
 					"minecraftAccumulateChangeInCenterOfMass:true",
 					//"minecraftDiversityBlockFitness:true",
 					//"minecraftEvolveOrientation:true",
@@ -102,7 +101,10 @@ public class CPPNOrVectorToVolumeGenerator implements ShapeGenerator {
 					
 					
 					//"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.SnakeGenerator",
-					"task:edu.southwestern.tasks.evocraft.MinecraftShapeTask", "allowMultipleFunctions:true",
+				
+					"task:edu.southwestern.tasks.evocraft.MinecraftShapeTask", 
+					
+					"allowMultipleFunctions:true",
 					"ftype:0", "watch:false", "netChangeActivationRate:0.0", "cleanFrequency:-1",
 					"recurrency:false", "saveAllChampions:true", "cleanOldNetworks:false",
 					"includeFullSigmoidFunction:true", "includeFullGaussFunction:true", "includeCosineFunction:true", 
@@ -113,5 +115,15 @@ public class CPPNOrVectorToVolumeGenerator implements ShapeGenerator {
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public double[] getLowerBounds() {
+		return forVectors.getLowerBounds();
+	}
+
+	@Override
+	public double[] getUpperBounds() {
+		return forVectors.getUpperBounds();
 	}
 }
