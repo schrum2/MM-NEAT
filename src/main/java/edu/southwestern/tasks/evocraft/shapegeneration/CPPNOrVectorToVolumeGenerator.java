@@ -54,7 +54,7 @@ public class CPPNOrVectorToVolumeGenerator implements ShapeGenerator, BoundedVec
 	}
 
 	public static void main(String[] args) {
-		int seed = 33;
+		int seed = 67;
 		try {
 			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:20", "maxGens:150",
 					"base:minecraft", "log:Minecraft-TestingCPPNtoVector", "saveTo:TestingCPPNtoVector",
@@ -98,6 +98,11 @@ public class CPPNOrVectorToVolumeGenerator implements ShapeGenerator, BoundedVec
 					//"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator",
 					
 					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.CPPNOrVectorToVolumeGenerator",
+					
+					
+					"minecraftContainsWholeMAPElitesArchive:true",
+					"ea:edu.southwestern.evolution.mapelites.MAPElites", 
+					"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesNorthSouthPistonCountBinLabels",
 					
 					
 					//"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.SnakeGenerator",
