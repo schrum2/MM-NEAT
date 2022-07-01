@@ -66,7 +66,7 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 						if(phenotype.get(PRESENCE_INDEX) >= Parameters.parameters.doubleParameter("voxelExpressionThreshold")) {
 							assert phenotype.get(TYPE_INDEX) >= 0 : "index:"+TYPE_INDEX+":"+phenotype;
 							int blockTypeIndex = (int)(phenotype.get(TYPE_INDEX)*numBlockTypes); // length because there are no AIR blocks in list for this case (presence takes care of this)		
-							System.out.println("Block type index: " + blockTypeIndex);
+							//System.out.println("Block type index: " + blockTypeIndex);
 							assert blockTypeIndex >= 0 : "Index "+TYPE_INDEX+ " of " + phenotype + " multiplied by " + numBlockTypes;
 
 							if(blockTypeIndex == numBlockTypes) blockTypeIndex--; // Rare case
