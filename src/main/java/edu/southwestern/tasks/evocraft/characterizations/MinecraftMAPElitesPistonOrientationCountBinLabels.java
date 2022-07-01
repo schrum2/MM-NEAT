@@ -13,7 +13,7 @@ import edu.southwestern.tasks.evocraft.fitness.MinecraftFitnessFunction;
 import edu.southwestern.tasks.evocraft.fitness.NorthSouthPistonCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.UpDownPistonCountFitness;
 
-public class MinecraftMAPElitesNorthSouthPistonCountBinLabels extends MinecraftMAPElitesBinLabels {
+public class MinecraftMAPElitesPistonOrientationCountBinLabels extends MinecraftMAPElitesBinLabels {
 
 	private List<String> labels = null;
 	private List<MinecraftFitnessFunction> properties = Arrays.asList(new NorthSouthPistonCountFitness(), new UpDownPistonCountFitness(), new EastWestPistonCountFitness());
