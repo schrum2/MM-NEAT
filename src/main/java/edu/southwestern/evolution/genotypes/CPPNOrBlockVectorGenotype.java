@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import edu.southwestern.evolution.mutation.tweann.ConvertMinecraftCPPNtoBlockVectorMutation;
 import edu.southwestern.networks.TWEANN;
+import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.stats.StatisticsUtilities;
 
 /**
  * Allows to switch back and forth between a CPPN or Block Vector genotype.
@@ -42,10 +44,16 @@ public class CPPNOrBlockVectorGenotype extends EitherOrGenotype<TWEANN,ArrayList
 		StringBuilder sb = new StringBuilder();
 		sb.append(this.getId());
 		sb.append(" ");
+
+		assert firstForm || StatisticsUtilities.minimum(ArrayUtil.doubleArrayFromList((ArrayList<Double>) this.getCurrentGenotype().getPhenotype())) >= 0 : "1."+this.getCurrentGenotype().getPhenotype();
 		
 		new ConvertMinecraftCPPNtoBlockVectorMutation().go(this,sb);
+
+		assert firstForm || StatisticsUtilities.minimum(ArrayUtil.doubleArrayFromList((ArrayList<Double>) this.getCurrentGenotype().getPhenotype())) >= 0 : "2."+this.getCurrentGenotype().getPhenotype();
 		
 		super.mutate();
+		
+		assert firstForm || StatisticsUtilities.minimum(ArrayUtil.doubleArrayFromList((ArrayList<Double>) this.getCurrentGenotype().getPhenotype())) >= 0 : "3."+this.getCurrentGenotype().getPhenotype();
 	}
 	
 	@SuppressWarnings("rawtypes")
