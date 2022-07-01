@@ -368,11 +368,10 @@ public class Parameters {
 		integerOptions.add("minecraftAmountOfBlocksToEvolve", 5, "The ammount of possible blocks that can be evolved by CPPN");
 		integerOptions.add("interactiveSleepTimer", 1000, "The ammount of time the interactive thread sleeps for");
 		integerOptions.add("extraSpaceBetweenMinecraftShapes", 50, "The extra space that will be in between the shapes being evaluated");
-		integerOptions.add("leftoverMinecraftBlocksAllowed", 2, "The amount of blocks that will be allowed to be left behind by the flying machine and still get max fitness for the change in center of mass fitness function");
 		integerOptions.add("startX", 0, "The X coordinate the shapes are generated on");
 		integerOptions.add("startY", 5, "The Y coordinate the shapes are generated on");
 		integerOptions.add("startZ", 0, "The Z coordinate the shapes are generated on");
-		integerOptions.add("minecraftClearDimension", 120, "The coordinates to clear the space for the archive");
+		integerOptions.add("minecraftClearDimension", 200, "The coordinates to clear the space for the archive");
 		integerOptions.add("minecraftClearSleepTimer", 200, "How long the thread should sleep between sending a clear command to python");
 		integerOptions.add("minecraftNumberOfBinsForMovement", 3,"The amount of bins for each side of the flying machine movement");
 		integerOptions.add("marioMinDecorationIndex", 0, "Lowest interval index for MAP Elites dimension associated with Mario level decoration");
@@ -387,6 +386,7 @@ public class Parameters {
 		integerOptions.add("zeldaMaxWaterIndex", 10000, "Highest interval index for MAP Elites dimension associated with Zelda Dungeon Water Tiles");
 		integerOptions.add("zeldaMinReachableRooms", 0, "Lowest interval index for MAP Elites dimension associated with Zelda Dungeon Reachable Rooms");
 		integerOptions.add("zeldaMaxReachableRooms", 1000000, "Highest interval index for MAP Elites dimension associated with Zelda Dungeon Reachable Rooms");
+		integerOptions.add("minecraftPistonLabelSize", 6, "Dictates amount of bin labels made for MinecraftMAPElitesNorthSouthPistonCountBinLabels");
 		
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
@@ -844,7 +844,6 @@ public class Parameters {
 		booleanOptions.add("minecraftUpDownOnly", false, "Determines whether only the Up and Down orientations will be used.");
 		booleanOptions.add("minecraftFakeTestFitness", false, "Not a real fitness function, used for testing forcing offspring");
 		booleanOptions.add("minecraftSkipInitialClear", false, "Option to skip the initial clear of the world and immediatly start spawning shapes");
-
 		
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");

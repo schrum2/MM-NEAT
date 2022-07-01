@@ -1,5 +1,6 @@
 package edu.southwestern.tasks.evocraft.fitness;
 
+import java.util.Arrays;
 import java.util.List;
 
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;

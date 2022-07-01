@@ -64,20 +64,19 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 						final int TYPE_INDEX = counter+1;
 						
 						if(phenotype.get(PRESENCE_INDEX) >= Parameters.parameters.doubleParameter("voxelExpressionThreshold")) {
+							assert phenotype.get(TYPE_INDEX) >= 0 : "index:"+TYPE_INDEX+":"+phenotype;
 							int blockTypeIndex = (int)(phenotype.get(TYPE_INDEX)*numBlockTypes); // length because there are no AIR blocks in list for this case (presence takes care of this)		
+							//System.out.println("Block type index: " + blockTypeIndex);
+							assert blockTypeIndex >= 0 : "Index "+TYPE_INDEX+ " of " + phenotype + " multiplied by " + numBlockTypes;
+
 							if(blockTypeIndex == numBlockTypes) blockTypeIndex--; // Rare case
 							
 							if(Parameters.parameters.booleanParameter("minecraftEvolveOrientation")) {
 								final int ORIENTATION_INDEX = counter+2;
-								System.out.println("orientaton index " + ORIENTATION_INDEX);
 								blockOrientation = MinecraftUtilClass.getOrientations()[(int) (phenotype.get(ORIENTATION_INDEX) * numOrientations)];
-		
 								counter++; // increase counter because there are three numbers per block in this case
 							}
 								
-							System.out.println("blockTypeIndex " + blockTypeIndex);
-							System.out.println("blockType " + blockSet.getPossibleBlocks()[blockTypeIndex]);
-							
 							b = new Block(corner.add(new MinecraftCoordinates(xi,yi,zi)), blockSet.getPossibleBlocks()[blockTypeIndex], blockOrientation);
 						} // else do not place any block
 						counter+=2; // two numbers per block (unless evolve orientation is true)

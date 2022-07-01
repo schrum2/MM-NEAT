@@ -90,9 +90,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		if(Parameters.parameters.booleanParameter("minecraftFakeTestFitness")) {
 			fitnessFunctions.add(new FakeTestFitness());
 		}
-		
-		
-		
+				
 		try {
 			MMNEAT.blockSet = (BlockSet) ClassCreation.createObject("minecraftBlockSet");
 		} catch (NoSuchMethodException e1) {

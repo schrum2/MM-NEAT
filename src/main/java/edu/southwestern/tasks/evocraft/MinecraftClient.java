@@ -16,6 +16,8 @@ import edu.southwestern.util.datastructures.Triple;
 
 public class MinecraftClient extends Comm {
 
+	private static final int MAX_CLEAR_WITHOUT_LOOP = 1500000;
+
 	public static final int GROUND_LEVEL = 4;
 
 	public static final int BUFFER = 10;
@@ -678,16 +680,18 @@ public class MinecraftClient extends Comm {
 		//System.out.println("ENDS:"+end);
 		
 		// If cleared space isn't very large, just clear that space
-		if( (end.x()-groundStart.x())*(end.y()-groundStart.y())*(end.z()-groundStart.z())<1000000) {
+		int clearSize = (end.x()-groundStart.x())*(end.y()-groundStart.y())*(end.z()-groundStart.z());
+		if( clearSize<=MAX_CLEAR_WITHOUT_LOOP) {
 			fillCube(groundStart, end, BlockType.AIR); // Calls clear cube, which checks coordinates
 		}else {
 			int counter=50000000; // Don't need gradual clear messages for small clear sizes
 			// Otherwise, clears out large block sections one at a time to ensure the server isn't overloaded
 			int fillSize = Parameters.parameters.integerParameter("minecraftClearDimension");
-			System.out.println("*WARNING* The size that needs to be cleared out is over 1,000,000 blocks, this may take a while to clear");
-			System.out.println("Size neededing to be cleared: "+(end.x()*end.y()*end.z())+" blocks"); // Prints to warn user
-			for(int x=0;x<=end.x();x+=fillSize) {
-				for(int z=0;z<=end.z();z+=fillSize) {
+			System.out.println("*WARNING* The size that needs to be cleared out is over "+MAX_CLEAR_WITHOUT_LOOP+" blocks, this may take a while to clear");
+			System.out.println("Size neededing to be cleared: "+clearSize+" blocks"); // Prints to warn user
+			System.out.println("From "+groundStart+" to "+end);
+			for(int x=groundStart.x();x<=end.x();x+=fillSize) {
+				for(int z=groundStart.z();z<=end.z();z+=fillSize) {
 					for(int y=GROUND_LEVEL;y<=end.y();y+=fillSize) {
 						//System.out.println("clearing "+counter);
 						counter++;
@@ -705,6 +709,7 @@ public class MinecraftClient extends Comm {
 					}
 				}
 			}	
+			System.out.println("Clearing done");
 		}
 	}
 	
