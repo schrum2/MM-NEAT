@@ -118,6 +118,8 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		// List of blocks in the area based on the corner
 		List<Block> blocks = MinecraftClient.getMinecraftClient().readCube(corner,end);
 		blocks = MinecraftUtilClass.filterOutBlock(blocks, BlockType.AIR);
+		// Piston extensions artificially increase the block count in a way that can cause calculation problems
+		blocks = MinecraftUtilClass.filterOutBlock(blocks, BlockType.PISTON_EXTENSION);
 		int initialBlockCount = blocks.size();
 		if(blocks.isEmpty()) return new Triple<>(new Vertex(0,0,0), new Vertex(0,0,0), minFitness());
 
@@ -146,6 +148,8 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 				System.exit(1);
 			}
 			shortWaitTimeUpdate = MinecraftUtilClass.filterOutBlock(MinecraftClient.getMinecraftClient().readCube(corner,end),BlockType.AIR);
+			// Need to filter out piston extensions here too for the same reason as above
+			shortWaitTimeUpdate = MinecraftUtilClass.filterOutBlock(shortWaitTimeUpdate,BlockType.PISTON_EXTENSION);
 			if(shortWaitTimeUpdate.isEmpty()) { // If list is empty now (but was not before) then shape has flown completely away
 				return new Triple<>(initialCenterOfMass, lastCenterOfMass, maxFitness());
 			}
@@ -160,6 +164,13 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 				int remainingBlockCount = shortWaitTimeUpdate.size();
 				int departedBlockCount = initialBlockCount - remainingBlockCount;
 				if(departedBlockCount >= Parameters.parameters.integerParameter("minecraftFewerBlocksBeforeConsideredFlying")) {
+					
+					assert false : "remainingBlockCount = "+remainingBlockCount+"\ninitialBlockCount = "+initialBlockCount+"\ndepartedBlockCount = "+departedBlockCount+"\nminecraftFewerBlocksBeforeConsideredFlying = "+Parameters.parameters.integerParameter("minecraftFewerBlocksBeforeConsideredFlying")+
+						"\nshortWaitTimeUpdate = "+shortWaitTimeUpdate+
+						"\nblocks              = "+blocks+
+						"\ninitialCenterOfMass = "+initialCenterOfMass+"\nnextCenterOfMass = "+nextCenterOfMass;
+					
+					
 					// Ship flew so far away that we award max fitness, but penalize remaining blocks
 					System.out.println(remainingBlockCount +" remaining blocks: max = " + maxFitness());
 					return new Triple<>(initialCenterOfMass, lastCenterOfMass, maxFitness() - remainingBlockCount*REMAINING_BLOCK_PUNISHMENT_SCALE);
