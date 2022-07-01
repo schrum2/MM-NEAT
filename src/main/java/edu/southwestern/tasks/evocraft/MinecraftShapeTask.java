@@ -180,14 +180,15 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 
 	@Override
 	public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {
-		MinecraftClient client = MinecraftClient.getMinecraftClient();		
+		//MinecraftClient client = MinecraftClient.getMinecraftClient();		
 		// Avoid recalculating the same corners every time
 		if(corners == null) {
 			corners = getShapeCorners(population.size(), startingX, startingY, startingZ, MinecraftUtilClass.getRanges());
 		}
 
 		// Must clear the space where shapes are placed
-		client.clearSpaceForShapes(new MinecraftCoordinates(startingX,MinecraftClient.GROUND_LEVEL+1,startingZ), MinecraftUtilClass.getRanges(), population.size(), Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER));
+		// Clear the individually instead.
+		//client.clearSpaceForShapes(new MinecraftCoordinates(startingX,MinecraftClient.GROUND_LEVEL+1,startingZ), MinecraftUtilClass.getRanges(), population.size(), Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER));
 		
 		// Generate and evaluate shapes in parallel
 		IntStream stream = IntStream.range(0, corners.size());
@@ -226,6 +227,10 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		@SuppressWarnings("unchecked")
 		List<Block> blocks = MMNEAT.shapeGenerator.generateShape(genome, corner, MMNEAT.blockSet);
 		//System.out.println(genome.getId() + ":" + blocks);
+
+		// Clear space around this one shape
+		MinecraftLonerShapeTask.clearBlocksForShape(MinecraftUtilClass.getRanges(), corner.sub(MinecraftUtilClass.emptySpaceOffsets()));
+		
 		MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
 		double[] fitnessScores = calculateFitnessScores(corner,fitnessFunctions);
 		// It is possible this is not even being used (null result), but the call is needed to prevent deadlock otherwise
