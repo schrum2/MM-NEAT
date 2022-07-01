@@ -266,10 +266,10 @@ public class ChangeCenterOfMassFitnessTest {
 		double amount = ff.fitnessScore(cornerBS2);
 		Triple<Vertex, Vertex, Double> beforeAndAfter = ChangeCenterOfMassFitness.getPreviouslyComputedResult(cornerBS2); // Prevent lock
 		System.out.println("beforeAndAfter.t3 = " + beforeAndAfter.t3);
-		assertTrue(43 <= beforeAndAfter.t3);
+		assertTrue(40 <= beforeAndAfter.t3);
 		
 		System.out.println("movement fitness when oscillating: "+ amount);
-		assertTrue(43 <= amount);
+		assertTrue(40 <= amount);
 		//MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 100);
 	}
 
