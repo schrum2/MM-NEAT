@@ -58,6 +58,18 @@ public class MinecraftMAPElitesPistonOrientationCountBinLabels extends Minecraft
 	}
 
 	@Override
+	public int[] multiDimensionalIndices(HashMap<String, Object> keys) {
+		int[] multi = super.multiDimensionalIndices(keys);
+		// If the number of pistons with a given orientation exceeds the dim, then simply reduce it to the max interval
+		multi[0] = Math.min(multi[0], dim-1);
+		multi[1] = Math.min(multi[1], dim-1);
+		multi[2] = Math.min(multi[2], dim-1);
+
+		return multi;
+	}
+	
+	
+	@Override
 	public List<MinecraftFitnessFunction> properties() { return properties; }
 
 }
