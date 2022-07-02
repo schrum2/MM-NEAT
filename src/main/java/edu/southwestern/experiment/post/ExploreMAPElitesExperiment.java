@@ -1,5 +1,6 @@
 package edu.southwestern.experiment.post;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import edu.southwestern.MMNEAT.MMNEAT;
@@ -23,12 +24,13 @@ import edu.southwestern.util.file.Serialization;
 public class ExploreMAPElitesExperiment<T> implements Experiment {
 	
 	private Genotype<T> genotype;
-	private ArrayList<Genotype<T>> genotypes;
+	private ArrayList<Genotype<T>> genotypes = new ArrayList<>();
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void init() {
 		String dir = FileUtilities.getSaveDirectory() + "/archive/" + Parameters.parameters.stringParameter("mapElitesArchiveFile");
+		System.out.println("Load: "+dir);
 		genotype = (Genotype<T>) Serialization.load(dir);
 		genotypes.add(genotype);
 		
@@ -49,4 +51,7 @@ public class ExploreMAPElitesExperiment<T> implements Experiment {
 		return true;
 	}
 
+	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
+		MMNEAT.main("runNumber:0 parallelEvaluations:false base:minecraftaccumulate log:MinecraftAccumulate-VectorCount saveTo:VectorCount trials:1 mapElitesArchiveFile:18Blocks-elite.xml io:false netio:false onlyWatchPareto:true printFitness:true animateNetwork:false monitorInputs:true experiment:edu.southwestern.experiment.post.ExploreMAPElitesExperiment logLock:true watchLastBest:false monitorSubstrates:true showCPPN:true substrateGridSize:10 showWeights:true watch:true showNetworks:true inheritFitness:false marioLevelAgent:ch.idsia.ai.agents.human.HumanKeyboardAgent marioStuckTimeout:99999 smartLodeRunnerEnemies:false".split(" "));
+	}
 }
