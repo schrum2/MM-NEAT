@@ -121,6 +121,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		blocks = MinecraftUtilClass.filterOutBlock(blocks, BlockType.AIR);
 		// Initial count cannot include extended pistons since that means the count might decrease even though shape has not flown away.
 		List<Block> originalBlocks = MinecraftUtilClass.filterOutBlock(MinecraftUtilClass.filterOutBlock(blocks, BlockType.PISTON_HEAD),BlockType.PISTON_EXTENSION);
+		List<Block> previousBlocks = originalBlocks;
 		int initialBlockCount = originalBlocks.size();
 		if(blocks.isEmpty()) {
 			if(CommonConstants.watch) System.out.println("Empty shape: Immediate failure");
@@ -132,7 +133,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		// Initial center of mass is where it starts
 		Vertex initialCenterOfMass = getCenterOfMass(blocks);
 		Vertex lastCenterOfMass = new Vertex(initialCenterOfMass); // Copy constructor (not a copy of reference)
-		if(CommonConstants.watch) System.out.println("Initial center of mass: " + initialCenterOfMass);
+		if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": Initial center of mass: " + initialCenterOfMass);
 		//System.out.println("total change vertex: " + totalChangeVertex);
 		//System.out.println(initialCenterOfMass);
 
@@ -153,16 +154,18 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 			}
 			shortWaitTimeUpdate = MinecraftUtilClass.filterOutBlock(MinecraftClient.getMinecraftClient().readCube(corner,end),BlockType.AIR);
 			if(shortWaitTimeUpdate.isEmpty()) { // If list is empty now (but was not before) then shape has flown completely away
-				if(CommonConstants.watch) System.out.println("Shape empty now: max fitness! Last center of mass = "+lastCenterOfMass);
+				if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": Shape empty now: max fitness! Last center of mass = "+lastCenterOfMass);
 				return new Triple<>(initialCenterOfMass, lastCenterOfMass, maxFitness());
 			}
 			Vertex nextCenterOfMass = getCenterOfMass(shortWaitTimeUpdate);
-			if(CommonConstants.watch) System.out.println("Next COM: "+nextCenterOfMass);
+			if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": Next COM: "+nextCenterOfMass);
 			//System.out.println("Does last equals next? " + lastCenterOfMass + " and " + nextCenterOfMass);
-			if(Parameters.parameters.booleanParameter("minecraftEndEvalNoMovement") && lastCenterOfMass.equals(nextCenterOfMass)) {
+			
+			// Only consider the shape to not be moving if the center of mass is the same AND the entire block list is the same
+			if(Parameters.parameters.booleanParameter("minecraftEndEvalNoMovement") && lastCenterOfMass.equals(nextCenterOfMass) && previousBlocks.equals(shortWaitTimeUpdate)) {
 				// This means that it hasn't moved, so move on to the next.
 				// BUT What if it moves back and forth and returned to its original position?
-				if(CommonConstants.watch) System.out.println("No movement.");
+				if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": No movement.");
 				// It is possible the shape flew away leaving some stationary parts
 				List<Block> updatedBlocksWithoutExtendedPistons = MinecraftUtilClass.filterOutBlock(MinecraftUtilClass.filterOutBlock(shortWaitTimeUpdate, BlockType.PISTON_HEAD),BlockType.PISTON_EXTENSION);
 				int remainingBlockCount = updatedBlocksWithoutExtendedPistons.size();
@@ -189,6 +192,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 				totalChangeDistance += lastCenterOfMass.distance(nextCenterOfMass);
 				if(CommonConstants.watch) System.out.println("Total is now: "+totalChangeDistance);
 				lastCenterOfMass = nextCenterOfMass;
+				previousBlocks = shortWaitTimeUpdate; // Remember the previous block list
 				if(System.currentTimeMillis() - startTime > Parameters.parameters.longParameter("minecraftMandatoryWaitTime")) {
 					System.out.println("Time elapsed: minecraftMandatoryWaitTime = "+ Parameters.parameters.longParameter("minecraftMandatoryWaitTime"));
 					stop = true;

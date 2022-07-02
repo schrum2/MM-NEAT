@@ -273,9 +273,17 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			System.exit(1);
 		}
 
-		// Copy over one HashMap to another (is there an easier way?)
+		// Average over HashMap values
 		for(HashMap.Entry<String,Object> entry : score.MAPElitesBehaviorMap().entrySet()) {
-			behaviorCharacteristics.put(entry.getKey(), entry.getValue());
+			if(behaviorCharacteristics.containsKey(entry.getKey()) && entry.getValue() instanceof Double) {
+				double previous = ((Double) behaviorCharacteristics.get(entry.getKey())).doubleValue();
+				double current = ((Double) entry.getValue()).doubleValue();
+				double avg = previous + (current - previous) / (num + 1); // Incremental average calculation 
+				behaviorCharacteristics.put(entry.getKey(), avg);
+			} else { // Overwrite, fresh start
+				assert num == 0 || !(entry.getValue() instanceof Double) : ""+behaviorCharacteristics;
+				behaviorCharacteristics.put(entry.getKey(), entry.getValue());
+			}
 		}
 		// Checks command line param on whether or not to generate shapes in archive
 		if(Parameters.parameters.booleanParameter("minecraftContainsWholeMAPElitesArchive")) {

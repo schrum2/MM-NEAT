@@ -52,6 +52,6 @@ public class ExploreMAPElitesExperiment<T> implements Experiment {
 	}
 
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
-		MMNEAT.main("runNumber:0 parallelEvaluations:false base:minecraftaccumulate log:MinecraftAccumulate-VectorCount saveTo:VectorCount trials:1 mapElitesArchiveFile:18Blocks-elite.xml io:false netio:false onlyWatchPareto:true printFitness:true animateNetwork:false monitorInputs:true experiment:edu.southwestern.experiment.post.ExploreMAPElitesExperiment logLock:true watchLastBest:false monitorSubstrates:true showCPPN:true substrateGridSize:10 showWeights:true watch:true showNetworks:true inheritFitness:false marioLevelAgent:ch.idsia.ai.agents.human.HumanKeyboardAgent marioStuckTimeout:99999 smartLodeRunnerEnemies:false".split(" "));
+		MMNEAT.main("runNumber:0 parallelEvaluations:false base:minecraftaccumulate log:MinecraftAccumulate-VectorCount saveTo:VectorCount shortTimeBetweenMinecraftReads:1000 trials:2 mapElitesArchiveFile:18Blocks-elite.xml io:false netio:false onlyWatchPareto:true printFitness:true animateNetwork:false monitorInputs:true experiment:edu.southwestern.experiment.post.ExploreMAPElitesExperiment logLock:true watchLastBest:false monitorSubstrates:true showCPPN:true substrateGridSize:10 showWeights:true watch:true showNetworks:true inheritFitness:false marioLevelAgent:ch.idsia.ai.agents.human.HumanKeyboardAgent marioStuckTimeout:99999 smartLodeRunnerEnemies:false".split(" "));
 	}
 }
