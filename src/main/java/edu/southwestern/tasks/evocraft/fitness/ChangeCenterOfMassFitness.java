@@ -177,7 +177,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 				// During simulation, it seems that many blocks could potentially be turned temporarily into PISTON_EXTENSIONS.
 				// It should be hard to archive credit for flying, so make sure that the number of departed blocks is sufficiently high
 				// according to multiple methods of checking the world contents.
-				if(departedBlockCount >= initialBlockCount/2 && departedCountIncludingPistons >= initialCountWithExtensions/2) {
+				if(departedBlockCount > Math.ceil(initialBlockCount/2.0) && departedCountIncludingPistons > Math.ceil(initialCountWithExtensions/2.0)) {
 					if(CommonConstants.watch) System.out.println("Enough have departed. departedBlockCount is "+departedBlockCount+ " from initialBlockCount of "+initialBlockCount);					
 //					System.out.println( "remainingBlockCount = "+remainingBlockCount+"\ninitialBlockCount = "+initialBlockCount+"\ndepartedBlockCount = "+departedBlockCount+
 //						"\nshortWaitTimeUpdate                = "+shortWaitTimeUpdate+
