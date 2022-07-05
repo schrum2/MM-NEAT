@@ -119,6 +119,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		// List of blocks in the area based on the corner
 		List<Block> blocks = MinecraftClient.getMinecraftClient().readCube(corner,end);
 		blocks = MinecraftUtilClass.filterOutBlock(blocks, BlockType.AIR);
+		int initialCountWithExtensions = blocks.size();
 		// Initial count cannot include extended pistons since that means the count might decrease even though shape has not flown away.
 		List<Block> originalBlocks = MinecraftUtilClass.filterOutBlock(MinecraftUtilClass.filterOutBlock(blocks, BlockType.PISTON_HEAD),BlockType.PISTON_EXTENSION);
 		List<Block> previousBlocks = originalBlocks;
@@ -166,21 +167,27 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 				// This means that it hasn't moved, so move on to the next.
 				// BUT What if it moves back and forth and returned to its original position?
 				if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": No movement.");
+				int remainingBlockCountWithPistons = shortWaitTimeUpdate.size();
+				int departedCountIncludingPistons = initialCountWithExtensions - remainingBlockCountWithPistons;
 				// It is possible the shape flew away leaving some stationary parts
 				List<Block> updatedBlocksWithoutExtendedPistons = MinecraftUtilClass.filterOutBlock(MinecraftUtilClass.filterOutBlock(shortWaitTimeUpdate, BlockType.PISTON_HEAD),BlockType.PISTON_EXTENSION);
 				int remainingBlockCount = updatedBlocksWithoutExtendedPistons.size();
 				int departedBlockCount = initialBlockCount - remainingBlockCount;
-				// At least half of the blocks need to leave before we consider the shape to be flying
-				if(departedBlockCount >= initialBlockCount/2) {
+				// At least half of the blocks need to leave before we consider the shape to be flying.
+				// During simulation, it seems that many blocks could potentially be turned temporarily into PISTON_EXTENSIONS.
+				// It should be hard to archive credit for flying, so make sure that the number of departed blocks is sufficiently high
+				// according to multiple methods of checking the world contents.
+				if(departedBlockCount > Math.ceil(initialBlockCount/2.0) && departedCountIncludingPistons > Math.ceil(initialCountWithExtensions/2.0)) {
 					if(CommonConstants.watch) System.out.println("Enough have departed. departedBlockCount is "+departedBlockCount+ " from initialBlockCount of "+initialBlockCount);					
-//					assert false : "remainingBlockCount = "+remainingBlockCount+"\ninitialBlockCount = "+initialBlockCount+"\ndepartedBlockCount = "+departedBlockCount+
+//					System.out.println( "remainingBlockCount = "+remainingBlockCount+"\ninitialBlockCount = "+initialBlockCount+"\ndepartedBlockCount = "+departedBlockCount+
 //						"\nshortWaitTimeUpdate                = "+shortWaitTimeUpdate+
 //						"\nblocks                             = "+blocks+
 //						"\noriginalBlocks                     = "+originalBlocks+
 //						"\nupdatedBlocksWithoutExtendedPistons= "+updatedBlocksWithoutExtendedPistons+
 //						"\ninitialCenterOfMass = "+initialCenterOfMass+"\nnextCenterOfMass = "+nextCenterOfMass+
-//						"\ncorner = "+corner;
-					
+//						"\ncorner = "+corner+
+//						"\nbig area around is "+MinecraftUtilClass.filterOutBlock(MinecraftClient.getMinecraftClient().readCube(corner.sub(new MinecraftCoordinates(5,5,5)),end.add(new MinecraftCoordinates(5,5,5))),BlockType.AIR) );
+//					System.exit(1);
 					
 					// Ship flew so far away that we award max fitness, but penalize remaining blocks
 					System.out.println(remainingBlockCount +" remaining blocks: max = " + maxFitness());
