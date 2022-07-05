@@ -340,7 +340,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		if(Parameters.parameters.booleanParameter("displayDiagonally")) {
 			for(int i = 0; i < size; i++) {
 				int yCoordinate = startingY+i*totalSpaceBetweenShapes;
-				if(yCoordinate >= MinecraftClient.MAX_Y_COORDINATE) {
+				if(yCoordinate + ranges.y() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes") >= MinecraftClient.MAX_Y_COORDINATE) {
 					// Y values will spike up but reset when out of range (like sawtooth function)
 					yCoordinate = startingY;
 				}
