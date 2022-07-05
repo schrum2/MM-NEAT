@@ -1,5 +1,6 @@
 package edu.southwestern.tasks.evocraft.shapegeneration;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,6 +81,7 @@ public interface ShapeGenerator<T> {
 			int typeIndex;
 			if(Parameters.parameters.booleanParameter("oneOutputLabelForBlockTypeCPPN")) { // only one output will be used for the blocks
 				typeIndex = (int) HalfLinearPiecewiseFunction.halfLinear(outputs[OUTPUT_INDEX_PRESENCE+1]) * numBlockTypes; 
+				typeIndex = Math.min(typeIndex, numBlockTypes - 1);
 			} else {
 				ArrayList<Double> blockPreferences = new ArrayList<Double>(numBlockTypes);
 				for(int i = 1; i <= numBlockTypes; i++) {
@@ -94,6 +96,7 @@ public interface ShapeGenerator<T> {
 				int orientationPreferenceIndex;
 				if(Parameters.parameters.booleanParameter("oneOutputLabelForBlockOrientationCPPN")) { // only one output will be used for the orientation
 					orientationPreferenceIndex = (int) HalfLinearPiecewiseFunction.halfLinear(outputs[OUTPUT_INDEX_PRESENCE+2]) * numOrientations;
+					orientationPreferenceIndex = Math.min(orientationPreferenceIndex, numOrientations - 1);
 				} else { // different outputs for each orientation direction will be used
 					double[] orientationPreferences = ArrayUtil.portion(outputs,numBlockTypes + 1, numBlockTypes + numOrientations);
 					assert orientationPreferences.length == numOrientations;
@@ -212,5 +215,9 @@ public interface ShapeGenerator<T> {
 			labels = ArrayUtil.combineArrays(labels,orientationLabels);
 		}
 		return labels;
+	}
+	
+	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
+		MMNEAT.main("runNumber:3 randomSeed:3 base:minecraftaccumulate log:MinecraftAccumulate-CPPNToVectorCountNegative saveTo:CPPNToVectorCountNegative mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBlockCountEmptyCountBinLabels minecraftXRange:4 minecraftYRange:4 minecraftZRange:4 oneOutputLabelForBlockTypeCPPN:true oneOutputLabelForBlockOrientationCPPN:true vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.CPPNOrVectorToVolumeGenerator minecraftChangeCenterOfMassFitness:true minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet trials:1 mu:100 maxGens:100000 minecraftContainsWholeMAPElitesArchive:true forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:true mating:true fs:false ea:edu.southwestern.evolution.mapelites.MAPElites experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 spaceBetweenMinecraftShapes:5 parallelMAPElitesInitialize:false task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask minecraftSkipInitialClear:true watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.CPPNOrBlockVectorGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 allowMultipleFunctions:true ftype:0 watch:false netChangeActivationRate:0.3 cleanFrequency:-1 recurrency:false saveAllChampions:true cleanOldNetworks:false includeFullSigmoidFunction:true includeFullGaussFunction:true includeCosineFunction:true includeGaussFunction:false includeIdFunction:true includeTriangleWaveFunction:false includeSquareWaveFunction:false includeFullSawtoothFunction:false includeSigmoidFunction:false includeAbsValFunction:false includeSawtoothFunction:false minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true".split(" "));
 	}
 }

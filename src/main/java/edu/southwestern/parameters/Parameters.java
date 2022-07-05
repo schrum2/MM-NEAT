@@ -839,7 +839,7 @@ public class Parameters {
 		booleanOptions.add("oneOutputLabelForBlockTypeCPPN", false, "Determines whether CPPN will use only one output for determining the block type.");
 		booleanOptions.add("oneOutputLabelForBlockOrientationCPPN", false, "Determines whether CPPN will use only one output for determining the block orientation.");
 		booleanOptions.add("minecraftNorthSouthOnly", false, "Determines whether only the North and South orientations will be used.");
-		booleanOptions.add("displayDiagonally", true, "Displays the archive diagonally");
+		booleanOptions.add("displayDiagonally", true, "Displays the Minecraft shapes diagonally in the world");
 		booleanOptions.add("bedrockTestChambers", false, "Places walls made of bedrock around the flying machines");
 		booleanOptions.add("minecraftUpDownOnly", false, "Determines whether only the Up and Down orientations will be used.");
 		booleanOptions.add("minecraftFakeTestFitness", false, "Not a real fitness function, used for testing forcing offspring");
