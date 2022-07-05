@@ -254,6 +254,8 @@ then you might be able to simply put ``python`` into this text file. However, a 
 
 Some code also makes use of PyTorch 1.0.
 
+### Minecraft
+
 The Minecraft domain focuses on having A.I generate flying machines with the Multi-Dimensional Archive of Phenotypic Elites (MAP-Elites).
 There are several batch files that can be run with this to generate a myriad of different shapes, however, doing this requires
 additional set up. You'll need a copy of Minecraft java edition on your machine, and you'll need to get a server running.
