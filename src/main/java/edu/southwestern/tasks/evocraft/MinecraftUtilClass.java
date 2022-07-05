@@ -1,8 +1,13 @@
 package edu.southwestern.tasks.evocraft;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 
+import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
@@ -158,5 +163,65 @@ public class MinecraftUtilClass {
 		int result = 6;
 		if(Parameters.parameters.booleanParameter("minecraftNorthSouthOnly") || Parameters.parameters.booleanParameter("minecraftUpDownOnly")) result = 2;
 		return result; 
+	}
+	
+	/**
+	 * Returns list of blocks from a previously loaded
+	 * MAP-Elites output text file.
+	 * 
+	 * @param f file to be read in
+	 * @return List of blocks to be spawned in the world.
+	 * @throws FileNotFoundException
+	 */
+	public static List<Block> loadMAPElitesOutputFile(File f) throws FileNotFoundException {
+		List<Block> blocks = new ArrayList<Block>();
+		Scanner s = new Scanner(f);
+		boolean start = true; // used because fencepost problem when parsing (starting "[" and ending "]" cause issues since this extra output is only at the beginning and end)
+		while(s.hasNext()) {
+			String line = ""; // empty string to begin with, will have 5 tokens per block (based on file output)
+			
+			for(int i = 0; i < 5; i++) {
+				if(i % 2 == 0) line += s.next() + " "; // even index of i is useful information
+				else s.next(); // odd index of i is useless information
+			}
+			
+			// first token is [BLOCKTYPE
+			// second token is (x,y,z)
+			// third token is ORIENTATION,
+			
+			String[] blockVals = line.split(" "); // blockVals now has blockType, Coordinates, and orientation
+			
+			String bType;
+			if(start) {
+				bType = blockVals[0].substring(1); // gets rid of the '[' from the block type token
+				start = false;
+			}
+			else {
+				bType = blockVals[0]; // middle of list, no starting "["
+			}
+			
+			String[] coordinates = blockVals[1].split(","); // splits coordinates token into the three coordinates x/y/z 
+			int x = Integer.parseInt(coordinates[0].substring(1)); // gets rid of '(' from x coordinate sub-token
+			int y = Integer.parseInt(coordinates[1]); // y coordinate
+			int z = Integer.parseInt(coordinates[2].substring(0, coordinates[2].length()-1)); // gets rid of ')' from z coordinate
+			
+			String orientation = blockVals[2].substring(0, blockVals[2].length()-1); // gets rid of "]" from orientation token
+			
+			// b is the new block to add to blocks
+			Block b = new Block(new MinecraftCoordinates(x,y,z), BlockType.valueOf(bType), Orientation.valueOf(orientation));
+			blocks.add(b);		
+		}
+		s.close(); // close the scanner
+		// System.out.println(blocks);
+		return blocks;
+	}
+	
+	
+	public static void main(String[] args) {
+		try {
+			loadMAPElitesOutputFile(new File("C:\\Scope2022/MM-NEAT/BlockCount9NegativeSpace3_22.08636_85986.txt"));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 }
