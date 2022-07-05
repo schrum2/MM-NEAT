@@ -50,7 +50,8 @@ public class MinecraftMAPElitesPistonOrientationCountBinLabels extends Minecraft
 		
 		
 		int binIndex = multi[0]*yDim*zDim + multi[1]*zDim + multi[2];
-		System.out.println(binIndex);
+
+		assert binIndex < binLabels().size() : "Out of Bounds: " +Arrays.toString(multi) + " mapped to " + binIndex + " for dim = "+dim;
 		
 		return binIndex;
 	}
@@ -69,6 +70,8 @@ public class MinecraftMAPElitesPistonOrientationCountBinLabels extends Minecraft
 		multi[1] = Math.min(multi[1], dim-1);
 		multi[2] = Math.min(multi[2], dim-1);
 
+		assert multi[0]*dim*dim + multi[1]*dim + multi[2] < binLabels().size() : "Out of Bounds: " +Arrays.toString(multi) + " mapped to " + (multi[0]*dim*dim + multi[1]*dim + multi[2]) + " for dim = "+dim;
+		
 		return multi;
 	}
 	

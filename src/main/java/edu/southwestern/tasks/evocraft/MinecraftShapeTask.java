@@ -333,26 +333,26 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	 */
 	public static ArrayList<MinecraftCoordinates> getShapeCorners(int size, int startingX, int startingY, int startingZ, MinecraftCoordinates ranges) {
 		ArrayList<MinecraftCoordinates> corners = new ArrayList<>(size);
-		int count = 0;
 		int extraSpace = Parameters.parameters.integerParameter("extraSpaceBetweenMinecraftShapes");
-
+		int totalSpaceBetweenShapes = Math.max(Math.max(ranges.x(), ranges.y()), ranges.z()) + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes") + extraSpace;
+		
 		// If placing diagonally, decrease the x and z coordinates. Increase the Y
 		if(Parameters.parameters.booleanParameter("displayDiagonally")) {
 			for(int i = 0; i < size; i++) {
-				MinecraftCoordinates corner = new MinecraftCoordinates(startingX - count*(ranges.x() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")),startingY+count*(ranges.y() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")), startingZ - count*(ranges.z() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")));
-				corner = corner.add(new MinecraftCoordinates(count*-extraSpace,0,count*-extraSpace));
+				int yCoordinate = startingY+i*totalSpaceBetweenShapes;
+				if(yCoordinate + ranges.y() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes") >= MinecraftClient.MAX_Y_COORDINATE) {
+					// Y values will spike up but reset when out of range (like sawtooth function)
+					yCoordinate = startingY;
+				}
+				MinecraftCoordinates corner = new MinecraftCoordinates(startingX - i*totalSpaceBetweenShapes,yCoordinate, startingZ - i*totalSpaceBetweenShapes);
 				//System.out.println(corner);
 				corners.add(corner);
-				count++;
 			}
 		// Otherwise, generate in line
 		}else {
 			for(int i = 0; i < size; i++) {
-				MinecraftCoordinates corner = new MinecraftCoordinates(startingX + count*(ranges.x() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")), startingY, startingZ);
-				corner = corner.add(new MinecraftCoordinates(count*extraSpace,0,count*extraSpace));
-				
+				MinecraftCoordinates corner = new MinecraftCoordinates(startingX + i*totalSpaceBetweenShapes, startingY, startingZ);				
 				corners.add(corner);
-				count++;
 			}
 		}
 		
