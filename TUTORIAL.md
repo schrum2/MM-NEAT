@@ -254,6 +254,19 @@ then you might be able to simply put ``python`` into this text file. However, a 
 
 Some code also makes use of PyTorch 1.0.
 
+The Minecraft domain focuses on having A.I generate flying machines with the Multi-Dimensional Archive of Phenotypic Elites (MAP-Elites).
+There are several batch files that can be run with this to generate a myriad of different shapes, however, doing this requires
+additional set up. You'll need a copy of Minecraft java edition on your machine, and you'll need to get a server running.
+The instructions for this can be found here:
+
+https://github.com/schrum2/MM-NEAT/blob/devMueller/Minecraft.md
+
+All of the shapes are generated in the world, starting at coordinates 0,5,0. Instructions on teleporting there, as well as other specifics are
+also in the linked file, but it's important to note that teleporting yourself below the y coordinate of 5 can cause issues, sometimes
+even teleporting you under the world. Another thing to keep in mind is that some of the batch files may take a few minutes to initialize
+before anything is placed in the world, as they need to clear out the space in the world before placing the shapes. Also, some batch files
+are still being worked on, so there may be a few issues with them. Instructions on running the batch files are also in the file linked above.
+
 ## MAKING YOUR OWN DOMAINS
 
 All of the pre-existing domains should provide useful examples of how to integrate a new
