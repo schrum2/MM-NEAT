@@ -10,6 +10,7 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
+import edu.southwestern.tasks.BoundedTask;
 import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 import edu.southwestern.tasks.evocraft.blocks.BlockSet;
 import edu.southwestern.util.datastructures.ArrayUtil;
@@ -60,6 +61,14 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 					
 					// there will either be two or three numbers corresponding to 1 block depending on if orientation is being evolved
 					if(Parameters.parameters.booleanParameter("vectorPresenceThresholdForEachBlock")) {
+						
+						assert phenotype.get(counter) >= ((BoundedTask) MMNEAT.task).getLowerBounds()[counter] : counter+":bounds="+((BoundedTask) MMNEAT.task).getLowerBounds()+":phenotype="+phenotype;
+						assert phenotype.get(counter) <= ((BoundedTask) MMNEAT.task).getUpperBounds()[counter] : counter+":bounds="+((BoundedTask) MMNEAT.task).getUpperBounds()+":phenotype="+phenotype;
+						assert phenotype.get(counter+1) >= ((BoundedTask) MMNEAT.task).getLowerBounds()[counter+1] : (counter+1)+":bounds="+((BoundedTask) MMNEAT.task).getLowerBounds()+":phenotype="+phenotype;
+						assert phenotype.get(counter+1) <= ((BoundedTask) MMNEAT.task).getUpperBounds()[counter+1] : (counter+1)+":bounds="+((BoundedTask) MMNEAT.task).getUpperBounds()+":phenotype="+phenotype;
+						assert phenotype.get(counter+2) >= ((BoundedTask) MMNEAT.task).getLowerBounds()[counter+2] : (counter+2)+":bounds="+((BoundedTask) MMNEAT.task).getLowerBounds()+":phenotype="+phenotype;
+						assert phenotype.get(counter+2) <= ((BoundedTask) MMNEAT.task).getUpperBounds()[counter+2] : (counter+2)+":bounds="+((BoundedTask) MMNEAT.task).getUpperBounds()+":phenotype="+phenotype;
+						
 						final int PRESENCE_INDEX = counter;
 						final int TYPE_INDEX = counter+1;
 						
@@ -72,7 +81,9 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 							
 							if(Parameters.parameters.booleanParameter("minecraftEvolveOrientation")) {
 								final int ORIENTATION_INDEX = counter+2;
-								blockOrientation = MinecraftUtilClass.getOrientations()[(int) (phenotype.get(ORIENTATION_INDEX) * numOrientations)];
+								int orientationTypeIndex = (int) (phenotype.get(ORIENTATION_INDEX) * numOrientations);
+								if(orientationTypeIndex == numOrientations) orientationTypeIndex--; // Boundary case
+								blockOrientation = MinecraftUtilClass.getOrientations()[orientationTypeIndex];
 								counter++; // increase counter because there are three numbers per block in this case
 							}
 								
