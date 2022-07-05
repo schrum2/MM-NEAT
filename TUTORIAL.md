@@ -240,7 +240,7 @@ me at schrum2@southwestern.edu
 ### More Domains
 
 Other pre-existing domains include a toroidal Predator/Prey grid world (see [PUBLICATIONS.md](PUBLICATIONS.md)), 
-several board games, Super Mario, and VizDoom. Several ways of interactively creating interesting 
+several board games, Super Mario, and more. Several ways of interactively creating interesting 
 art and sounds are also available (see [INTERACTIVE_EVOLUTION.md](INTERACTIVE_EVOLUTION.md)). 
 Please explore!
 
