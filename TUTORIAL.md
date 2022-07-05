@@ -46,7 +46,7 @@ project can also be built with Maven directly in Eclipse. Many other IDEs also h
 ## RUNNING
 
 The main class of the project is 
-[edu.southwestern.mmneat.MMNEAT.java](https://github.com/schrum2/MM-NEAT/blob/master/src/main/java/edu/southwestern/MMNEAT/MMNEAT.java),
+[edu.southwestern.mmneat.MMNEAT.java](src/main/java/edu/southwestern/MMNEAT/MMNEAT.java),
 but this class requires many command line parameters to function correctly.
 When you execute "mvn -U install" an executable uber jar file will be created in
 the "target" sub-directory: MM-NEAT-0.0.1-SNAPSHOT.jar
@@ -72,7 +72,7 @@ Here is a brief description of each of these key parameters.
 Other parameters may need to be set as well, depending on the 
 type of the experiment, and whether you are ok with the default
 values. All default values are listed in
-[edu.southwestern.parameters.Parameters.java](https://github.com/schrum2/MM-NEAT/blob/master/src/main/java/edu/southwestern/parameters/Parameters.java).
+[edu.southwestern.parameters.Parameters.java](src/main/java/edu/southwestern/parameters/Parameters.java).
 
 Examples of appropriate parameters to launch experiments with
 are in the many Experiment files described next.
@@ -93,7 +93,7 @@ part these experiments were run on a condor cluster, so distributing all
 execution would be best.
 
 For more details on research conducted with MM-NEAT, see the associated list of
-[publications](https://github.com/schrum2/MM-NEAT/blob/master/PUBLICATIONS.md).
+[publications](PUBLICATIONS.md).
 
 After running any of these experiments, you will likely want to look at the 
 results. Each experiment outputs several files with the suffix "plot" that
@@ -137,7 +137,7 @@ Watching, evaluating, or recording champion performance with original settings
 means that the setting will be the same as in the original experiment that created
 the champion. FourMaze and MPMvsG rules are specific rule sets that have been used
 in the literature before. These rule sets are explained in both the dissertation
-and GECCO 2014 paper referenced in [PUBLICATIONS.md](https://github.com/schrum2/MM-NEAT/blob/master/PUBLICATIONS.md).
+and GECCO 2014 paper referenced in [PUBLICATIONS.md](PUBLICATIONS.md).
 
 As you watch a network's behavior, you will also see several other windows. One 
 contains the evolved neural network used by the agent. Four narrow windows contain 
@@ -150,9 +150,9 @@ will leave trails of a difference color for each module she uses.
 
 ## TRAINING GENERATIVE ADVERSARIAL NETWORKS
 
-Python code associated with training GANs is in a special [GAN](https://github.com/schrum2/MM-NEAT/tree/master/src/main/python/GAN)
-subdirectory. Within this directory, the file [main.py](https://github.com/schrum2/MM-NEAT/blob/master/src/main/python/GAN/main.py)
-is used to train GANs and the file [generator_ws.py](https://github.com/schrum2/MM-NEAT/blob/master/src/main/python/GAN/generator_ws.py)
+Python code associated with training GANs is in a special [GAN](src/main/python/GAN)
+subdirectory. Within this directory, the file [main.py](src/main/python/GAN/main.py)
+is used to train GANs and the file [generator_ws.py](src/main/python/GAN/generator_ws.py)
 can be used to send latent vectors to a pretrained GAN and retrieve the resulting
 output. Here is an example command for training a GAN using data from the game Lode Runner:
 
@@ -163,7 +163,7 @@ python main.py --niter 5000 --nz 10 --json LodeRunnerAllTilesLevel1to10.json --e
 The meaning of the command line parameters is explained within main.py. However, the thing that is needed most
 is a json file containing training samples representing 2D game levels. The existing json training sets can be
 viewed to understand the format of the data. There are several evolution tasks defined using Java code that
-send latent vectors to generator_ws.py and take the output to produce game levels. One example is [MarioGANLevelTask](https://github.com/schrum2/MM-NEAT/blob/master/src/main/java/edu/southwestern/tasks/mario/MarioGANLevelTask.java).
+send latent vectors to generator_ws.py and take the output to produce game levels. One example is [MarioGANLevelTask](src/main/java/edu/southwestern/tasks/mario/MarioGANLevelTask.java).
 
 ## OTHER DOMAINS
 
@@ -185,7 +185,7 @@ PuddleWorld, CartPole, MountainCar, and Tetris. Visualization can be viewed if "
 is included in the command line. Post visualizations with some of the batch files above
 also work (postParetoFrontWatch.bat and postBestObjective*). Most of these domains
 have not received much attention, but Tetris is an exception 
-(see [PUBLICATIONS.md](https://github.com/schrum2/MM-NEAT/blob/master/PUBLICATIONS.md)). 
+(see [PUBLICATIONS.md](PUBLICATIONS.md)). 
 
 Here is a quick test of MM-NEAT using a simple RL Glue domain: the cartpole domain,
 also known as pole balancing or the inverted pendulum problem. First, navigate to the "batch\RLGlue-Other"
@@ -239,14 +239,14 @@ me at schrum2@southwestern.edu
 
 ### More Domains
 
-Other pre-existing domains include a toroidal Predator/Prey grid world (see [PUBLICATIONS.md](https://github.com/schrum2/MM-NEAT/blob/master/PUBLICATIONS.md)), 
-several board games, Super Mario, and VizDoom. Several ways of interactively creating interesting 
-art and sounds are also available (see [INTERACTIVE_EVOLUTION.md](https://github.com/schrum2/MM-NEAT/blob/master/INTERACTIVE_EVOLUTION.md)). 
+Other pre-existing domains include a toroidal Predator/Prey grid world (see [PUBLICATIONS.md](PUBLICATIONS.md)), 
+several board games, Super Mario, and more. Several ways of interactively creating interesting 
+art and sounds are also available (see [INTERACTIVE_EVOLUTION.md](INTERACTIVE_EVOLUTION.md)). 
 Please explore!
 
 ### Python
 
-Although most code is in Java, some domains make limited use of Python scripts. Specifically, Python 3.6. 
+Although most code is in Java, some domains make limited use of Python scripts. Specifically, Python 3.7. 
 In order to make use of these domains, 
 you must create a text file called ``my_python_path.txt`` in the root MM-NEAT directory that contains the path to your
 python executable. If you only have one version of Python on your machine, and it is part of your PATH environment variable,
@@ -256,18 +256,18 @@ Some code also makes use of PyTorch 1.0.
 
 ### Minecraft
 
-The Minecraft domain focuses on having A.I generate flying machines with the Multi-Dimensional Archive of Phenotypic Elites (MAP-Elites).
-There are several batch files that can be run with this to generate a myriad of different shapes, however, doing this requires
-additional set up. You'll need a copy of Minecraft java edition on your machine, and you'll need to get a server running.
+The Minecraft domain focuses on evolving shapes using the [EvoCraft API](https://github.com/real-itu/Evocraft-py) which also requires
+Python as described above. There are several batch files that can be run to generate a myriad of different shapes, however, doing this requires
+additional set up. You'll need a copy of Minecraft Java edition on your machine, and you'll need to get a modded EvoCraft server running.
 The instructions for this can be found here:
 
-https://github.com/schrum2/MM-NEAT/blob/devMueller/Minecraft.md
+[Minecraft Instructions](Minecraft.md)
 
-All of the shapes are generated in the world, starting at coordinates 0,5,0. Instructions on teleporting there, as well as other specifics are
+All of the shapes are generated in the world, around coordinates 0,5,0. Instructions on teleporting there, as well as other specifics are
 also in the linked file, but it's important to note that teleporting yourself below the y coordinate of 5 can cause issues, sometimes
 even teleporting you under the world. Another thing to keep in mind is that some of the batch files may take a few minutes to initialize
-before anything is placed in the world, as they need to clear out the space in the world before placing the shapes. Also, some batch files
-are still being worked on, so there may be a few issues with them. Instructions on running the batch files are also in the file linked above.
+before anything is placed in the world, as they need to clear out the space in the world before placing the shapes. 
+Instructions on running the batch files are also in the file linked above.
 
 ## MAKING YOUR OWN DOMAINS
 
@@ -276,18 +276,18 @@ domain either of your own design, or made by someone else. Here are some general
 on how to do this.
 
 1. Make your domain implement the Task interface. Specifically, you may want to extend one
-   of the classes in the [edu.southwestern.tasks](https://github.com/schrum2/MM-NEAT/tree/master/src/main/java/edu/southwestern/tasks) 
+   of the classes in the [edu.southwestern.tasks](src/main/java/edu/southwestern/tasks) 
    package that already implements the 
-   [Task interface](https://github.com/schrum2/MM-NEAT/blob/master/src/main/java/edu/southwestern/tasks/Task.java). 
-   [LonerTask](https://github.com/schrum2/MM-NEAT/blob/master/src/main/java/edu/southwestern/tasks/LonerTask.java) 
+   [Task interface](src/main/java/edu/southwestern/tasks/Task.java). 
+   [LonerTask](src/main/java/edu/southwestern/tasks/LonerTask.java) 
    is appropriate for any task where only a single genotype is evaluated
    at a time. However, if the domain has noisy evaluations, then 
-   [NoisyLonerTask](https://github.com/schrum2/MM-NEAT/blob/master/src/main/java/edu/southwestern/tasks/NoisyLonerTask.java) 
+   [NoisyLonerTask](src/main/java/edu/southwestern/tasks/NoisyLonerTask.java) 
    is more appropriate.
 2. You may need to set up additional parameters related to your domain in
-   [edu.southwestern.parameters.Parameters.java](https://github.com/schrum2/MM-NEAT/blob/master/src/main/java/edu/southwestern/parameters/Parameters.java)
-3. You will need to edit 
-   [edu.southwestern.mmneat.MMNEAT.java](https://github.com/schrum2/MM-NEAT/blob/master/src/main/java/edu/southwestern/MMNEAT/MMNEAT.java)
+   [edu.southwestern.parameters.Parameters.java](src/main/java/edu/southwestern/parameters/Parameters.java)
+3. You may need to edit 
+   [edu.southwestern.mmneat.MMNEAT.java](src/main/java/edu/southwestern/MMNEAT/MMNEAT.java)
    so that when the game task
    matches your new task, it prepares evolution to run your domain (for example, by 
    instantiating classes or setting up parameters unique to your domain).
@@ -295,5 +295,3 @@ on how to do this.
 If you integrate any interesting domains into MM-NEAT, I would love to hear about it
 by email at schrum2@southwestern.edu. You can also create an Issue or pull request directly in GitHub.
 Feel free to contact me for help with integrating your domains as well. 
-
-
