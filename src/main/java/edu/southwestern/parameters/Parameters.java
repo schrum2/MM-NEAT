@@ -994,6 +994,7 @@ public class Parameters {
 		stringOptions.add("archiveSubDirectoryName", "archive", "Directory name to store archive files in a MAP Elites run");
 		stringOptions.add("latestIterationSaved", "iterationX", "The last iteration of PictureTargetTask to be saved.");
 		
+		stringOptions.add("minecraftBlockListTextFile", "", "The file name of a MAPElite shape from that archive that is going to be spawned.");
 		
 		// Class options
 		classOptions.add("zeldaGrammarRules", ZeldaHumanSubjectStudy2019GraphGrammar.class, "Determines what ruleset we're using");
