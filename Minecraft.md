@@ -27,7 +27,7 @@ With each shape, three blocks are also generated:
 * The obsidian block, which when broken, forces new individuals to be produced based on the current shape's makeup. This is useful for when you want more shapes that are similar to an already generated shape.
 * Also, a gold block is displayed on any individual(s) which have the highest fitness (denoted as champions). This is just a flag to showcase where the "best" individuals are, and breaking it does not have any effect
 
-If anything happens to the server, or your world, and it needs to be reset, run the batch file `ResetServerWorld.bat` and then select all (by typing "a" into the command window that appears). This will give you a fresh world, but keep all of your settings and inventory. Make sure the server is not running when it is run, otherwise it will not reset.
+If anything happens to the server, or your world, and it needs to be reset, run the batch file `ResetServerWorld.bat` and then select all (by typing "a" into the command window that appears). This will give you a fresh world by copying in the files from the backup directory, however, all of your settings and inventory items will be saved. Make sure the server is not running when it is run, otherwise it will not reset.
 
 From here, all of the other batch files can also be run, which all have different focuses on outcomes. Happy generating!
 
