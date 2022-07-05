@@ -79,6 +79,34 @@ public class ChangeCenterOfMassFitnessTest {
 		
 	}
 	
+	@Test
+	public void testSimpleCases() {
+		ChangeCenterOfMassFitness.resetPreviousResults();
+		Parameters.initializeParameterCollections("minecraftXRange:4 minecraftYRange:4 minecraftZRange:4 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftChangeCenterOfMassFitness:true minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet trials:1 mu:100 maxGens:100000 minecraftContainsWholeMAPElitesArchive:true forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:false netio:false interactWithMapElitesInWorld:true mating:true fs:false ea:edu.southwestern.evolution.mapelites.MAPElites experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 spaceBetweenMinecraftShapes:5 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesWidthHeightDepthBinLabels".split(" "));
+		
+
+		
+		MinecraftCoordinates cornerBS1 = new MinecraftCoordinates(0,5,0);
+		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS1, ranges, 1, 100); // Larger buffer is important
+		
+		blockSet1 = new ArrayList<>();
+		blockSet1.add(new Block(0,5,0,BlockType.REDSTONE_BLOCK,Orientation.SOUTH));
+		
+		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet1);
+		double fitness = ff.fitnessScore(cornerBS1);
+		System.out.println("fitness = "+fitness);
+		assertTrue(fitness == 0.0);
+		Triple<Vertex, Vertex, Double> beforeAndAfter = ChangeCenterOfMassFitness.getPreviouslyComputedResult(cornerBS1); // Prevent lock
+		assertTrue(beforeAndAfter.t3 == 0.0);
+		
+		blockSet1.add(new Block(1,5,0,BlockType.PISTON,Orientation.SOUTH));
+		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet1);
+		double fitness2 = ff.fitnessScore(cornerBS1);
+		System.out.println("fitness = "+fitness2);
+		assertTrue(fitness < 0.1);
+		Triple<Vertex, Vertex, Double> beforeAndAfter2 = ChangeCenterOfMassFitness.getPreviouslyComputedResult(cornerBS1); // Prevent lock
+		assertTrue(beforeAndAfter2.t3 < 0.1);
+	}
 	
 	@Test
 	public void testBigSmallMove() {
