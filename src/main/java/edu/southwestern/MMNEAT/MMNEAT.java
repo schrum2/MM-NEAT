@@ -34,6 +34,7 @@ import edu.southwestern.evolution.metaheuristics.Metaheuristic;
 import edu.southwestern.evolution.metaheuristics.SubstrateLinkPenalty;
 import edu.southwestern.evolution.mulambda.MuLambda;
 import edu.southwestern.experiment.Experiment;
+import edu.southwestern.experiment.post.MinecraftBlockRenderExperiment;
 import edu.southwestern.log.EvalLog;
 import edu.southwestern.log.MMNEATLog;
 import edu.southwestern.log.PerformanceLog;
@@ -726,6 +727,13 @@ public class MMNEAT {
 				throw new IllegalArgumentException("zeldaType : " + type + " unrecognized. (original, generated, tutorial)");
 			}
 			HumanSubjectStudy2019Zelda.runTrial(t);
+		} else if(args[0].equals("minecraftBlocks")){
+			String[] reducedArgs = new String[args.length - 1];
+			System.arraycopy(args, 1, reducedArgs, 0, reducedArgs.length);
+			Parameters.initializeParameterCollections(reducedArgs);
+			MinecraftBlockRenderExperiment experiment = new MinecraftBlockRenderExperiment();
+			experiment.init();
+			experiment.run();
 		} else {
 			evolutionaryRun(args);
 		}

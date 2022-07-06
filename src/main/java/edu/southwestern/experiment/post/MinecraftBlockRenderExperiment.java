@@ -25,7 +25,7 @@ public class MinecraftBlockRenderExperiment implements Experiment {
 	
 	@Override
 	public void init() {
-		dir = FileUtilities.getSaveDirectory() + "/archive/" + Parameters.parameters.stringParameter("minecraftBlockListTextFile");
+		dir = Parameters.parameters.stringParameter("minecraftBlockListTextFile");
 		System.out.println("Load: "+ dir);
 	}
 
@@ -49,18 +49,4 @@ public class MinecraftBlockRenderExperiment implements Experiment {
 	public boolean shouldStop() {
 		return false;
 	}
-
-	
-	public static void main(String[] args) {
-		try {
-			MMNEAT.main(new String[] { "io:false", "netio:false", "launchMinecraftServerFromJava:false", "base:minecraftaccumulate", "saveTo:CPPNToVectorCountNegative", "runNumber:99",
-					"log:Minecraft-CPPNToVectorCountNegative",
-					"minecraftBlockListTextFile:BlockCount62NegativeSpace2_0.45374_17351.txt", "experiment:edu.southwestern.experiment.post.MinecraftBlockRenderExperiment"});
-					 
-		} catch (FileNotFoundException | NoSuchMethodException e) {
-			e.printStackTrace();
-		}
-	}
-
-	
 }
