@@ -42,7 +42,7 @@ public class MinecraftMAPElitesPistonOrientationCountBinLabels extends Minecraft
 	public int oneDimensionalIndex(int[] multi) { 
 		int yDim = dim;
 		int zDim = dim;
-		System.out.println(Arrays.toString(multi));
+		//System.out.println(Arrays.toString(multi));
 
 		multi[0] = Math.min(multi[0], dim-1);
 		multi[1] = Math.min(multi[1], dim-1);
