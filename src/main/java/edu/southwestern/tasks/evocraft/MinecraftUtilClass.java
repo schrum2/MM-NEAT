@@ -215,13 +215,4 @@ public class MinecraftUtilClass {
 		// System.out.println(blocks);
 		return blocks;
 	}
-	
-	
-	public static void main(String[] args) {
-		try {
-			loadMAPElitesOutputFile(new File("C:\\Scope2022/MM-NEAT/BlockCount9NegativeSpace3_22.08636_85986.txt"));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-	}
 }
