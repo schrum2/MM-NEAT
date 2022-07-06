@@ -555,6 +555,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	 * 
 	 * @param parentIndex
 	 */
+	@SuppressWarnings("rawtypes")
 	public void newIndividual(int parentIndex) {
 		assert archive.getElite(parentIndex) != null : parentIndex + " in " + archive;
 		assert archive.getArchive().stream().filter(s -> s != null).count() == archive.getNumberOfOccupiedBins() : archive.getNumberOfOccupiedBins()+" supposedly occupied, but "+
