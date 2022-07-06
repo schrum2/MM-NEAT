@@ -1,6 +1,7 @@
 package edu.southwestern.evolution.mapelites.emitters;
 
 import java.util.ArrayList;
+import java.util.concurrent.Semaphore;
 
 import cern.colt.Arrays;
 import edu.southwestern.MMNEAT.MMNEAT;
@@ -28,7 +29,8 @@ public abstract class Emitter implements Comparable<Emitter> {
 	
 	public int solutionCount = 0; // amount of solutions found by this emitter
 	int populationCounter; // counter for getting the next solution from the population
-	public int additionCounter; // amount of parents currently stored, to be used in distribution update
+	private int additionCounter = 0; // amount of parents currently stored, to be used in distribution update
+	private Semaphore claims;
 	int validParents = 0; // amount of non-failure valued parents, for calculating new mu and weights
 	double[][] parentPopulation = null; // stored parents
 	double[][] sampledPopulation = null; // current population to pull individuals from
@@ -65,7 +67,8 @@ public abstract class Emitter implements Comparable<Emitter> {
 		parentPopulation = new double[populationSize][CMAESInstance.getDimension()];
 		deltaIFitnesses = new double[populationSize];
 		fitnessTypePairs = new ArrayList<Pair<Double,SOLUTION_TYPE>>(populationSize);
-		
+		// reserve right to generate each new population member
+		claims = new Semaphore(populationSize);
 	}
 
 	
@@ -127,6 +130,17 @@ public abstract class Emitter implements Comparable<Emitter> {
 		CMAESInstance.updateDistribution(parentPopulation2, deltaI);	
 	}
 
+	/**
+	 * Reserve the right to produce a new population member for this emitter in the near future
+	 */
+	public void claimEmitter() {
+		try {
+			claims.acquire();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+	}
 	
 	/**
 	 * Add a parent and corresponding fitness to the current set
@@ -174,6 +188,8 @@ public abstract class Emitter implements Comparable<Emitter> {
 				updateDistribution(parentPopulation, deltaIFitnesses); // logging happens inside this function
 			}
 			additionCounter = 0;
+			// release all emitter claims
+			claims.release(populationSize);
 		}
 	}
 	
@@ -243,5 +259,9 @@ public abstract class Emitter implements Comparable<Emitter> {
 	
 	public double[] getMean() {
 		return CMAESInstance.getMeanX();
+	}
+
+	public int getAdditionCounter() {
+		return additionCounter;
 	}
 }
