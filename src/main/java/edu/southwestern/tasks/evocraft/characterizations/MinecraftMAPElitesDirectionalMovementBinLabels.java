@@ -15,6 +15,8 @@ import edu.southwestern.tasks.evocraft.fitness.MinecraftFitnessFunction;
  * Although this extends the MinecraftMAPElitesBinLabels, it does not follow the normal
  * pattern of simply aggregating several fitness functions.
  * 
+ * NOTE: This binning scheme does not seem to work correctly.
+ * 
  * @author schrum2
  *
  */

@@ -79,6 +79,49 @@ public class ChangeCenterOfMassFitnessTest {
 		
 	}
 	
+	@Test
+	public void testSimpleCases() {
+		ChangeCenterOfMassFitness.resetPreviousResults();
+		Parameters.initializeParameterCollections("minecraftXRange:4 minecraftYRange:4 minecraftZRange:4 minecraftChangeCenterOfMassFitness:true launchMinecraftServerFromJava:false io:false netio:false spaceBetweenMinecraftShapes:5 voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true minecraftClearSleepTimer:400".split(" "));
+		
+
+		
+		MinecraftCoordinates cornerBS1 = new MinecraftCoordinates(0,5,0);
+		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS1, ranges, 1, 100); // Larger buffer is important
+		
+		blockSet1 = new ArrayList<>();
+		blockSet1.add(new Block(0,5,0,BlockType.REDSTONE_BLOCK,Orientation.SOUTH));
+		
+		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet1);
+		double fitness = ff.fitnessScore(cornerBS1);
+		System.out.println("fitness = "+fitness);
+		assertEquals(0.0, fitness, 0.0);
+		Triple<Vertex, Vertex, Double> beforeAndAfter = ChangeCenterOfMassFitness.getPreviouslyComputedResult(cornerBS1); // Prevent lock
+		assertEquals(0.0, beforeAndAfter.t3, 0.0);
+		
+		// When the piston is extended without the block, it still reads as having a 0 for the fitness score because the
+		// first read happens after the piston is pushed out. This is weird behavior, but expected for the time being as
+		// we are still achieving oscillation. Marking here just in case the calculation changes in the future
+		ChangeCenterOfMassFitness.resetPreviousResults();
+		blockSet1.add(new Block(1,5,0,BlockType.PISTON,Orientation.NORTH));
+		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet1);
+		double fitness2 = ff.fitnessScore(cornerBS1);
+		System.out.println("fitness = "+fitness2);
+		assertEquals(0.0, fitness2, 0.0);
+		Triple<Vertex, Vertex, Double> beforeAndAfter2 = ChangeCenterOfMassFitness.getPreviouslyComputedResult(cornerBS1); // Prevent lock
+		assertEquals(0.0, beforeAndAfter2.t3, 0.0);
+		
+		ChangeCenterOfMassFitness.resetPreviousResults();
+		blockSet1.add(new Block(1,5,-1,BlockType.SLIME,Orientation.NORTH));
+		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet1);
+		double fitness3 = ff.fitnessScore(cornerBS1);
+		System.out.println("fitness = "+fitness3);
+		assertTrue(fitness3 < 0.1);
+		//assertTrue(0.0 < fitness3); // Might also be 0!?
+		Triple<Vertex, Vertex, Double> beforeAndAfter3 = ChangeCenterOfMassFitness.getPreviouslyComputedResult(cornerBS1); // Prevent lock
+		assertTrue(beforeAndAfter3.t3 < 0.1);
+		//assertTrue(0.0 < beforeAndAfter3.t3);
+	}
 	
 	@Test
 	public void testBigSmallMove() {
