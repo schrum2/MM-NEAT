@@ -1,7 +1,9 @@
 package edu.southwestern.evolution.mapelites.emitters;
 
 import java.util.ArrayList;
+import java.util.concurrent.Semaphore;
 
+import cern.colt.Arrays;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
@@ -27,7 +29,8 @@ public abstract class Emitter implements Comparable<Emitter> {
 	
 	public int solutionCount = 0; // amount of solutions found by this emitter
 	int populationCounter; // counter for getting the next solution from the population
-	public int additionCounter; // amount of parents currently stored, to be used in distribution update
+	private int additionCounter = 0; // amount of parents currently stored, to be used in distribution update
+	private Semaphore claims;
 	int validParents = 0; // amount of non-failure valued parents, for calculating new mu and weights
 	double[][] parentPopulation = null; // stored parents
 	double[][] sampledPopulation = null; // current population to pull individuals from
@@ -64,7 +67,8 @@ public abstract class Emitter implements Comparable<Emitter> {
 		parentPopulation = new double[populationSize][CMAESInstance.getDimension()];
 		deltaIFitnesses = new double[populationSize];
 		fitnessTypePairs = new ArrayList<Pair<Double,SOLUTION_TYPE>>(populationSize);
-		
+		// reserve right to generate each new population member
+		claims = new Semaphore(populationSize);
 	}
 
 	
@@ -126,6 +130,17 @@ public abstract class Emitter implements Comparable<Emitter> {
 		CMAESInstance.updateDistribution(parentPopulation2, deltaI);	
 	}
 
+	/**
+	 * Reserve the right to produce a new population member for this emitter in the near future
+	 */
+	public void claimEmitter() {
+		try {
+			claims.acquire();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+	}
 	
 	/**
 	 * Add a parent and corresponding fitness to the current set
@@ -137,7 +152,7 @@ public abstract class Emitter implements Comparable<Emitter> {
 	 * @param currentScore The fitness of current bin occupant (higher is better)
 	 * @param archive The current archive
 	 */
-	public void addFitness(double[] parent, double newScore, double currentScore, Archive<ArrayList<Double>> archive) {
+	public synchronized void addFitness(double[] parent, double newScore, double currentScore, Archive<ArrayList<Double>> archive) {
 		fitnessTypePairs.add(calculateFitness(newScore, currentScore));
 		//deltaIFitnesses[additionCounter] = calculateFitness(newScore, currentScore);
 		parentPopulation[additionCounter] = parent;
@@ -173,6 +188,8 @@ public abstract class Emitter implements Comparable<Emitter> {
 				updateDistribution(parentPopulation, deltaIFitnesses); // logging happens inside this function
 			}
 			additionCounter = 0;
+			// release all emitter claims
+			claims.release(populationSize);
 		}
 	}
 	
@@ -220,15 +237,20 @@ public abstract class Emitter implements Comparable<Emitter> {
 	 * 
 	 * @return The next sampled individual
 	 */
-	public double[] sampleSingle() {
+	public synchronized double[] sampleSingle() {
 		if (sampledPopulation == null || (sampledPopulation.length-1) < populationCounter) { // at start or when counter is above
 			resetSample();
 		}
 		double[] newIndividual = sampledPopulation[populationCounter];
 		// Infeasible solutions are not evaluated, and can thus be replaced without counting toward evaluation cost
 		if(Parameters.parameters.booleanParameter("resampleBadCMAMEGenomes")) {
+			int count = 0;
 			while(!BoundedRealValuedGenotype.isBounded(newIndividual)) { // Try to replace as long as outside bounds
 				newIndividual = CMAESInstance.resampleSingle(populationCounter);
+				count++;
+				if(count > 100) {
+					System.out.println("Having troule re-sampling. Attempt: "+count + ": "+Arrays.toString(newIndividual));
+				}
 			}
 		}
 		populationCounter++;
@@ -237,5 +259,9 @@ public abstract class Emitter implements Comparable<Emitter> {
 	
 	public double[] getMean() {
 		return CMAESInstance.getMeanX();
+	}
+
+	public int getAdditionCounter() {
+		return additionCounter;
 	}
 }
