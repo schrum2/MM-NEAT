@@ -116,17 +116,16 @@ public class MinecraftUtilClass {
 	
 	
 	/**
+	 * Filter the blocks to only instances of block types in the typesToKeep
 	 * 
-	 * @param blocks
-	 * @param type
-	 * @return
+	 * @param blocks List of various blocks
+	 * @param type Array of block types to keep
+	 * @return Filtered list with only blocks from the desired array of types
 	 */
 	public static List<Block> getDesiredBlocks(List<Block> blocks, BlockType[] typesToKeep) {
 		return blocks.stream().filter(b -> ArrayUtil.contains(typesToKeep, BlockType.values()[b.type()])  ).collect(Collectors.toList());
 	}
 	
-	
-
 	/** 
 	 * This static method will either return a restricted array of orientations, or
 	 * it will return an array of orientations with all 6 orientations.

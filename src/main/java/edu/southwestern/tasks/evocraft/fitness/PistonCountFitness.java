@@ -1,6 +1,5 @@
 package edu.southwestern.tasks.evocraft.fitness;
 
-import java.util.Arrays;
 import java.util.List;
 
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
@@ -24,8 +23,8 @@ public abstract class PistonCountFitness extends CheckBlocksInSpaceFitness {
 
 	@Override
 	public double maxFitness() {
-		// TODO Auto-generated method stub
-		return 0;
+		MinecraftCoordinates range = MinecraftUtilClass.getRanges();
+		return range.x() * range.y() * range.z();
 	}
 	
 	public static double pistonCount(List<Block> blocks, Orientation[] allowedOrientations) {
