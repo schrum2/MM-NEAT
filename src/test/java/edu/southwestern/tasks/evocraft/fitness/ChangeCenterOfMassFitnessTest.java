@@ -82,7 +82,7 @@ public class ChangeCenterOfMassFitnessTest {
 	@Test
 	public void testSimpleCases() {
 		ChangeCenterOfMassFitness.resetPreviousResults();
-		Parameters.initializeParameterCollections("minecraftXRange:4 minecraftYRange:4 minecraftZRange:4 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftChangeCenterOfMassFitness:true minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet trials:1 mu:100 maxGens:100000 minecraftContainsWholeMAPElitesArchive:true forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:false netio:false interactWithMapElitesInWorld:true mating:true fs:false ea:edu.southwestern.evolution.mapelites.MAPElites experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 spaceBetweenMinecraftShapes:5 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesWidthHeightDepthBinLabels".split(" "));
+		Parameters.initializeParameterCollections("minecraftXRange:4 minecraftYRange:4 minecraftZRange:4 minecraftChangeCenterOfMassFitness:true launchMinecraftServerFromJava:false io:false netio:false spaceBetweenMinecraftShapes:5 voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true minecraftClearSleepTimer:400".split(" "));
 		
 
 		
@@ -95,9 +95,9 @@ public class ChangeCenterOfMassFitnessTest {
 		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet1);
 		double fitness = ff.fitnessScore(cornerBS1);
 		System.out.println("fitness = "+fitness);
-		assertTrue(fitness == 0.0);
+		assertEquals(0.0, fitness, 0.0);
 		Triple<Vertex, Vertex, Double> beforeAndAfter = ChangeCenterOfMassFitness.getPreviouslyComputedResult(cornerBS1); // Prevent lock
-		assertTrue(beforeAndAfter.t3 == 0.0);
+		assertEquals(0.0, beforeAndAfter.t3, 0.0);
 		
 		// When the piston is extended without the block, it still reads as having a 0 for the fitness score because the
 		// first read happens after the piston is pushed out. This is weird behavior, but expected for the time being as
@@ -107,9 +107,9 @@ public class ChangeCenterOfMassFitnessTest {
 		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet1);
 		double fitness2 = ff.fitnessScore(cornerBS1);
 		System.out.println("fitness = "+fitness2);
-		assertTrue(fitness2 == 0.0);
+		assertEquals(0.0, fitness2, 0.0);
 		Triple<Vertex, Vertex, Double> beforeAndAfter2 = ChangeCenterOfMassFitness.getPreviouslyComputedResult(cornerBS1); // Prevent lock
-		assertTrue(beforeAndAfter2.t3 == 0.0);
+		assertEquals(0.0, beforeAndAfter2.t3, 0.0);
 		
 		ChangeCenterOfMassFitness.resetPreviousResults();
 		blockSet1.add(new Block(1,5,-1,BlockType.SLIME,Orientation.NORTH));
@@ -117,8 +117,10 @@ public class ChangeCenterOfMassFitnessTest {
 		double fitness3 = ff.fitnessScore(cornerBS1);
 		System.out.println("fitness = "+fitness3);
 		assertTrue(fitness3 < 0.1);
+		//assertTrue(0.0 < fitness3); // Might also be 0!?
 		Triple<Vertex, Vertex, Double> beforeAndAfter3 = ChangeCenterOfMassFitness.getPreviouslyComputedResult(cornerBS1); // Prevent lock
 		assertTrue(beforeAndAfter3.t3 < 0.1);
+		//assertTrue(0.0 < beforeAndAfter3.t3);
 	}
 	
 	@Test
