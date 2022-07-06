@@ -152,7 +152,7 @@ public abstract class Emitter implements Comparable<Emitter> {
 	 * @param currentScore The fitness of current bin occupant (higher is better)
 	 * @param archive The current archive
 	 */
-	public void addFitness(double[] parent, double newScore, double currentScore, Archive<ArrayList<Double>> archive) {
+	public synchronized void addFitness(double[] parent, double newScore, double currentScore, Archive<ArrayList<Double>> archive) {
 		fitnessTypePairs.add(calculateFitness(newScore, currentScore));
 		//deltaIFitnesses[additionCounter] = calculateFitness(newScore, currentScore);
 		parentPopulation[additionCounter] = parent;
@@ -237,7 +237,7 @@ public abstract class Emitter implements Comparable<Emitter> {
 	 * 
 	 * @return The next sampled individual
 	 */
-	public double[] sampleSingle() {
+	public synchronized double[] sampleSingle() {
 		if (sampledPopulation == null || (sampledPopulation.length-1) < populationCounter) { // at start or when counter is above
 			resetSample();
 		}
