@@ -1,7 +1,6 @@
 package edu.southwestern.tasks.evocraft.fitness;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -64,9 +63,9 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 	}
 
 	@Override
-	public double fitnessScore(MinecraftCoordinates corner) {
+	public double fitnessScore(MinecraftCoordinates corner, List<Block> originalBlocks) {
 
-		Triple<Vertex, Vertex, Double> centerOfMassBeforeAndAfter = getCenterOfMassBeforeAndAfter(corner);
+		Triple<Vertex, Vertex, Double> centerOfMassBeforeAndAfter = getCenterOfMassBeforeAndAfter(corner, originalBlocks);
 		// Do not erase previously computed result. Wait until other thread consumes it
 		while(PREVIOUSLY_COMPUTED_RESULTS.containsKey(corner)) {
 			try {
@@ -96,7 +95,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 	 * @return A triple with the initial center of mass, final center of mass, and total
 	 * 			change in distance
 	 */
-	public Triple<Vertex, Vertex, Double> getCenterOfMassBeforeAndAfter(MinecraftCoordinates corner) {
+	public Triple<Vertex, Vertex, Double> getCenterOfMassBeforeAndAfter(MinecraftCoordinates corner, List<Block> originalBlocks) {
 		// Ranges before the change of space in between
 		int xrange = Parameters.parameters.integerParameter("minecraftXRange");
 		//int yrange = Parameters.parameters.integerParameter("minecraftYRange");
@@ -117,14 +116,11 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		double totalChangeDistance = 0.0;
 
 		// List of blocks in the area based on the corner
-		List<Block> blocks = MinecraftClient.getMinecraftClient().readCube(corner,end);
-		blocks = MinecraftUtilClass.filterOutBlock(blocks, BlockType.AIR);
-		int initialCountWithExtensions = blocks.size();
-		// Initial count cannot include extended pistons since that means the count might decrease even though shape has not flown away.
-		List<Block> originalBlocks = MinecraftUtilClass.filterOutBlock(MinecraftUtilClass.filterOutBlock(blocks, BlockType.PISTON_HEAD),BlockType.PISTON_EXTENSION);
+		//List<Block> blocks = MinecraftClient.getMinecraftClient().readCube(corner,end);
+		//blocks = MinecraftUtilClass.filterOutBlock(blocks, BlockType.AIR);
 		List<Block> previousBlocks = originalBlocks;
 		int initialBlockCount = originalBlocks.size();
-		if(blocks.isEmpty()) {
+		if(originalBlocks.isEmpty()) {
 			if(CommonConstants.watch) System.out.println("Empty shape: Immediate failure");
 			return new Triple<>(new Vertex(0,0,0), new Vertex(0,0,0), minFitness());
 		}
@@ -132,7 +128,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		//System.out.println("List of blocks before movement: "+ Arrays.toString(blocks.stream().filter(b -> b.type() != BlockType.AIR.ordinal()).toArray()));
 
 		// Initial center of mass is where it starts
-		Vertex initialCenterOfMass = getCenterOfMass(blocks);
+		Vertex initialCenterOfMass = getCenterOfMass(originalBlocks);
 		Vertex lastCenterOfMass = new Vertex(initialCenterOfMass); // Copy constructor (not a copy of reference)
 		if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": Initial center of mass: " + initialCenterOfMass);
 		//System.out.println("total change vertex: " + totalChangeVertex);
@@ -140,7 +136,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 
 		boolean stop = false;
 		
-		List<Block> shortWaitTimeUpdate = new ArrayList<>();
+		List<Block> shortWaitTimeUpdate = null;
 		
 		long shortWaitTime = Parameters.parameters.longParameter("shortTimeBetweenMinecraftReads");
 		long startTime = System.currentTimeMillis();
@@ -167,17 +163,11 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 				// This means that it hasn't moved, so move on to the next.
 				// BUT What if it moves back and forth and returned to its original position?
 				if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": No movement.");
-				int remainingBlockCountWithPistons = shortWaitTimeUpdate.size();
-				int departedCountIncludingPistons = initialCountWithExtensions - remainingBlockCountWithPistons;
-				// It is possible the shape flew away leaving some stationary parts
-				List<Block> updatedBlocksWithoutExtendedPistons = MinecraftUtilClass.filterOutBlock(MinecraftUtilClass.filterOutBlock(shortWaitTimeUpdate, BlockType.PISTON_HEAD),BlockType.PISTON_EXTENSION);
-				int remainingBlockCount = updatedBlocksWithoutExtendedPistons.size();
-				int departedBlockCount = initialBlockCount - remainingBlockCount;
+				int remainingBlockCount = shortWaitTimeUpdate.size(); // Could be larger than initial due to extensions
+				int departedBlockCount = initialBlockCount - remainingBlockCount; // Could be negative due to extensions
 				// At least half of the blocks need to leave before we consider the shape to be flying.
-				// During simulation, it seems that many blocks could potentially be turned temporarily into PISTON_EXTENSIONS.
 				// It should be hard to archive credit for flying, so make sure that the number of departed blocks is sufficiently high
-				// according to multiple methods of checking the world contents.
-				if(departedBlockCount > Math.ceil(initialBlockCount/2.0) && departedCountIncludingPistons > Math.ceil(initialCountWithExtensions/2.0)) {
+				if(departedBlockCount > Math.ceil(initialBlockCount/2.0)) {
 					if(CommonConstants.watch) System.out.println("Enough have departed. departedBlockCount is "+departedBlockCount+ " from initialBlockCount of "+initialBlockCount);					
 //					System.out.println( "remainingBlockCount = "+remainingBlockCount+"\ninitialBlockCount = "+initialBlockCount+"\ndepartedBlockCount = "+departedBlockCount+
 //						"\nshortWaitTimeUpdate                = "+shortWaitTimeUpdate+
@@ -210,7 +200,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		Triple<Vertex,Vertex,Double> centerOfMassBeforeAndAfter = new Triple<>(initialCenterOfMass, lastCenterOfMass, totalChangeDistance);
 		
 		double changeInPosition = centerOfMassBeforeAndAfter.t2.distance(centerOfMassBeforeAndAfter.t1);
-		assert !Double.isNaN(changeInPosition) : "Before: " + MinecraftUtilClass.filterOutBlock(blocks,BlockType.AIR);
+		assert !Double.isNaN(changeInPosition) : "Before: " + originalBlocks;
 
 		if(!Parameters.parameters.booleanParameter("minecraftAccumulateChangeInCenterOfMass")) {
 			centerOfMassBeforeAndAfter.t3 = changeInPosition;		

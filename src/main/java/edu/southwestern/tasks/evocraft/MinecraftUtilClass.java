@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
-import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
@@ -162,6 +161,27 @@ public class MinecraftUtilClass {
 		int result = 6;
 		if(Parameters.parameters.booleanParameter("minecraftNorthSouthOnly") || Parameters.parameters.booleanParameter("minecraftUpDownOnly")) result = 2;
 		return result; 
+	}
+	
+	/**
+	 * Use EvoCraft client code to call readCube and determine blocks that are
+	 * present in the world.
+	 * 
+	 * @param corner minimal coordinate of shape being checked
+	 * @return List of blocks occupying the space for the given shape
+	 */
+	public static List<Block> readBlocksFromClient(MinecraftCoordinates corner) {
+		MinecraftCoordinates ranges = new MinecraftCoordinates(
+				Parameters.parameters.integerParameter("minecraftXRange") - 1,
+				Parameters.parameters.integerParameter("minecraftYRange") - 1,
+				Parameters.parameters.integerParameter("minecraftZRange") - 1);
+		return readBlocksFromClient(corner, ranges);
+	}
+	
+	public static List<Block> readBlocksFromClient(MinecraftCoordinates corner, MinecraftCoordinates ranges) {
+		MinecraftClient client = MinecraftClient.getMinecraftClient();
+		List<Block> blocks = client.readCube(corner, corner.add(ranges));
+		return blocks;
 	}
 	
 	/**

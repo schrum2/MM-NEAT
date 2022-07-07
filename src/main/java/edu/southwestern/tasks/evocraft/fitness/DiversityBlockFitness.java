@@ -9,10 +9,10 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.shapegeneration.ShapeGenerator;
 
-public class DiversityBlockFitness extends CheckBlocksInSpaceFitness{
+public class DiversityBlockFitness extends MinecraftFitnessFunction{
 
 	@Override
-	public double fitnessFromBlocks(MinecraftCoordinates corner, List<Block> blocks) {
+	public double fitnessScore(MinecraftCoordinates corner, List<Block> blocks) {
 		
 		int[][][] shape = MinecraftClient.blockListTo3DArray(corner, blocks, 1);
 		

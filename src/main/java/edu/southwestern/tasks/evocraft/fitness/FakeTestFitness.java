@@ -2,15 +2,20 @@ package edu.southwestern.tasks.evocraft.fitness;
 
 import java.util.List;
 
-import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 
-public class FakeTestFitness extends CheckBlocksInSpaceFitness {
+/** 
+ * Only used for testing. Keeps returning a fitness that is one higher than the previous.
+ * 
+ * @author Jacob Schrum
+ *
+ */
+public class FakeTestFitness extends MinecraftFitnessFunction {
 	public static double score=0;
 
 	@Override
-	public double fitnessFromBlocks(MinecraftCoordinates corner, List<Block> blocks) {
+	public double fitnessScore(MinecraftCoordinates corner, List<Block> blocks) {
 		
 		try {
 			Thread.sleep(500);
@@ -26,8 +31,7 @@ public class FakeTestFitness extends CheckBlocksInSpaceFitness {
 
 	@Override
 	public double maxFitness() {
-		// TODO Auto-generated method stub
-		return 0;
+		return 0; // Incorrect, but not relevant
 	}
 	
 

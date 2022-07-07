@@ -15,10 +15,10 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
  * @author schrum2
  *
  */
-public abstract class RangeFitness extends CheckBlocksInSpaceFitness {
+public abstract class RangeFitness extends MinecraftFitnessFunction {
 
 	@Override
-	public double fitnessFromBlocks(MinecraftCoordinates corner, List<Block> blocks) {
+	public double fitnessScore(MinecraftCoordinates corner, List<Block> blocks) {
 		return coordinateRange(blocks, dimension());
 	}
 

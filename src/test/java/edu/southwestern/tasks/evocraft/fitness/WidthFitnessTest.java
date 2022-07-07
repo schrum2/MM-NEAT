@@ -29,21 +29,21 @@ public class WidthFitnessTest {
 	}
 
 	@Test
-	public void testFitnessFromBlocks() {
+	public void testfitnessScore() {
 		// Should not matter
 		MinecraftCoordinates loc = new MinecraftCoordinates(11102,5,-32434);
 		List<Block> blocks = new ArrayList<>();
-		assertEquals(0, ff.fitnessFromBlocks(loc, blocks), 0);
+		assertEquals(0, ff.fitnessScore(loc, blocks), 0);
 		blocks.add(new Block(11102,5,-32434,BlockType.REDSTONE_BLOCK,null));
-		assertEquals(1, ff.fitnessFromBlocks(loc, blocks), 0);
+		assertEquals(1, ff.fitnessScore(loc, blocks), 0);
 		blocks.add(new Block(11102,6,-32434,BlockType.REDSTONE_BLOCK,null));
-		assertEquals(1, ff.fitnessFromBlocks(loc, blocks), 0);
+		assertEquals(1, ff.fitnessScore(loc, blocks), 0);
 		blocks.add(new Block(11102,6,-32433,BlockType.REDSTONE_BLOCK,null));
-		assertEquals(1, ff.fitnessFromBlocks(loc, blocks), 0);
+		assertEquals(1, ff.fitnessScore(loc, blocks), 0);
 		blocks.add(new Block(11103,6,-32433,BlockType.REDSTONE_BLOCK,null));
-		assertEquals(2, ff.fitnessFromBlocks(loc, blocks), 0);
+		assertEquals(2, ff.fitnessScore(loc, blocks), 0);
 		blocks.add(new Block(11105,6,-32433,BlockType.REDSTONE_BLOCK,null));
-		assertEquals(4, ff.fitnessFromBlocks(loc, blocks), 0);		
+		assertEquals(4, ff.fitnessScore(loc, blocks), 0);		
 	}
 
 	@Test

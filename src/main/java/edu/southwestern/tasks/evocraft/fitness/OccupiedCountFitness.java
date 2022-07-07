@@ -15,10 +15,10 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
  * @author schrum2
  *
  */
-public class OccupiedCountFitness extends CheckBlocksInSpaceFitness {
+public class OccupiedCountFitness extends MinecraftFitnessFunction {
 
 	@Override
-	public double fitnessFromBlocks(MinecraftCoordinates corner, List<Block> blocks) {
+	public double fitnessScore(MinecraftCoordinates corner, List<Block> blocks) {
 		int total = 0;
 		for(Block b : blocks) {
 			if(b.type() != BlockType.AIR.ordinal()) {

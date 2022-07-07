@@ -2,7 +2,6 @@ package edu.southwestern.tasks.evocraft;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,14 +16,11 @@ import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.BoundedTask;
 import edu.southwestern.tasks.SinglePopulationTask;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
-import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.blocks.BlockSet;
-import edu.southwestern.tasks.evocraft.blocks.SimpleSolidBlockSet;
 import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBinLabels;
 import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBlockCountBinLabels;
 import edu.southwestern.tasks.evocraft.fitness.ChangeCenterOfMassFitness;
-import edu.southwestern.tasks.evocraft.fitness.CheckBlocksInSpaceFitness;
 import edu.southwestern.tasks.evocraft.fitness.DiversityBlockFitness;
 import edu.southwestern.tasks.evocraft.fitness.FakeTestFitness;
 import edu.southwestern.tasks.evocraft.fitness.MinecraftFitnessFunction;
@@ -32,7 +28,6 @@ import edu.southwestern.tasks.evocraft.fitness.NegativeSpaceCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.OccupiedCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.TypeCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.TypeTargetFitness;
-import edu.southwestern.tasks.evocraft.fitness.WidthFitness;
 import edu.southwestern.tasks.evocraft.shapegeneration.BoundedVectorGenerator;
 import edu.southwestern.tasks.evocraft.shapegeneration.ShapeGenerator;
 import edu.southwestern.util.ClassCreation;
@@ -232,7 +227,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		MinecraftLonerShapeTask.clearBlocksForShape(MinecraftUtilClass.getRanges(), corner.sub(MinecraftUtilClass.emptySpaceOffsets()));
 		
 		MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
-		double[] fitnessScores = calculateFitnessScores(corner,fitnessFunctions);
+		double[] fitnessScores = calculateFitnessScores(corner,fitnessFunctions,blocks);
 		// It is possible this is not even being used (null result), but the call is needed to prevent deadlock otherwise
 		Triple<Vertex, Vertex, Double> centerOfMassBeforeAndAfter = ChangeCenterOfMassFitness.getPreviouslyComputedResult(corner);
 		Score<T> score = new Score<T>(genome, fitnessScores);
@@ -282,43 +277,15 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	}
 
 	/**
-	 * Calculate all fitness scores for a shape at a given corner.
-	 * This makes sure that the blocks actually come from the Minecraft world.
-	 * 
-	 * @param corner Minimal corner from which shape is generated
-	 * @param fitnessFunctions the shape properties to calculate
-	 * @return double array of all fitness values in order
-	 */
-	public static double[] calculateFitnessScores(MinecraftCoordinates corner, List<MinecraftFitnessFunction> fitnessFunctions) {
-		List<Block> readBlocks = CheckBlocksInSpaceFitness.readBlocksFromClient(corner); // Read these just once
-		return calculateFitnessScores(corner, fitnessFunctions, readBlocks);
-	}
-
-	/**
 	 * Calculate all fitness scores for a shape at a given corner
 	 * 
 	 * @param corner Minimal corner from which shape is generated
+	 * @param originalBlocks blocks from generator, before rendering
 	 * @return double array of all fitness values in order
 	 */
-	public static double[] calculateFitnessScores(MinecraftCoordinates corner, List<MinecraftFitnessFunction> fitnessFunctions, List<Block> readBlocks) {
+	public static double[] calculateFitnessScores(MinecraftCoordinates corner, List<MinecraftFitnessFunction> fitnessFunctions, List<Block> originalBlocks) {
 		// Parallelize fitness calculation
-		double[] fitnessScores = fitnessFunctions.parallelStream().mapToDouble(ff -> {
-			double score;
-			assert !(ff instanceof OccupiedCountFitness && MMNEAT.blockSet instanceof SimpleSolidBlockSet) || (score = ff.fitnessScore(corner)) == ((CheckBlocksInSpaceFitness) ff).fitnessFromBlocks(corner,readBlocks) : 
-				"OccupiedCountFitness:corner:"+corner+",readBlocks:"+readBlocks+",world score = "+score;
-			assert !(ff instanceof WidthFitness && MMNEAT.blockSet instanceof SimpleSolidBlockSet) || (score = ff.fitnessScore(corner)) == ((CheckBlocksInSpaceFitness) ff).fitnessFromBlocks(corner,readBlocks) : 
-				"WidthFitness:corner:"+corner+",readBlocks:"+readBlocks+",world score = "+score+": "+Arrays.toString(CheckBlocksInSpaceFitness.readBlocksFromClient(corner).stream().filter(b -> b.type() != BlockType.AIR.ordinal()).toArray());
-			
-			if(ff instanceof CheckBlocksInSpaceFitness) {
-				// All fitness functions of this type can just use the previously computed readBlocks list
-				score = ((CheckBlocksInSpaceFitness) ff).fitnessFromBlocks(corner,readBlocks);
-			} else {
-				score = ff.fitnessScore(corner);
-			}			
-			return score;
-		}).toArray();
-		
-		return fitnessScores;
+		return fitnessFunctions.parallelStream().mapToDouble(ff -> ff.fitnessScore(corner,originalBlocks)).toArray();
 	}
 
 	/**

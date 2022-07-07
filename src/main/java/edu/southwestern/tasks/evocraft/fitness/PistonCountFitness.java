@@ -8,7 +8,7 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
 import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 
-public abstract class PistonCountFitness extends CheckBlocksInSpaceFitness {
+public abstract class PistonCountFitness extends MinecraftFitnessFunction {
 
 	protected Orientation[] allowedOrientations;
 	
@@ -17,7 +17,7 @@ public abstract class PistonCountFitness extends CheckBlocksInSpaceFitness {
 	}
 	
 	@Override
-	public double fitnessFromBlocks(MinecraftCoordinates corner, List<Block> blocks) {
+	public double fitnessScore(MinecraftCoordinates corner, List<Block> blocks) {
 		return pistonCount(blocks, allowedOrientations);
 	}
 

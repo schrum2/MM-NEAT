@@ -11,24 +11,24 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
  * @author schrum2
  *
  */
-public class TypeCountFitness extends CheckBlocksInSpaceFitness {
+public class TypeCountFitness extends MinecraftFitnessFunction {
 	
-	static int desiredType;
+	private int desiredType;
 	
 	public TypeCountFitness(int type) {
 		desiredType = type;
 	}
 	
 	public TypeCountFitness() {
-		desiredType = Parameters.parameters.integerParameter("minecraftDesiredBlockType");;
+		desiredType = Parameters.parameters.integerParameter("minecraftDesiredBlockType");
 	}
 	
 	@Override
-	public double fitnessFromBlocks(MinecraftCoordinates corner, List<Block> blocks) {
-		return typeCount(blocks);
+	public double fitnessScore(MinecraftCoordinates corner, List<Block> blocks) {
+		return typeCount(blocks,desiredType);
 	}
 
-	public static double typeCount(List<Block> blocks) {
+	public static double typeCount(List<Block> blocks, int desiredType) {
 		int total = 0;
 		for(Block b : blocks) {
 			if(b.type() == desiredType) {
@@ -43,5 +43,4 @@ public class TypeCountFitness extends CheckBlocksInSpaceFitness {
 	public double maxFitness() {
 		return Parameters.parameters.integerParameter("minecraftXRange") * Parameters.parameters.integerParameter("minecraftYRange") * Parameters.parameters.integerParameter("minecraftZRange");
 	}
-
 }

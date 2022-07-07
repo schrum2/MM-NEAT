@@ -9,10 +9,10 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.util.stats.StatisticsUtilities;
 
-public class NegativeSpaceCountFitness extends CheckBlocksInSpaceFitness {
+public class NegativeSpaceCountFitness extends MinecraftFitnessFunction {
 
 	@Override
-	public double fitnessFromBlocks(MinecraftCoordinates corner, List<Block> blocks) {
+	public double fitnessScore(MinecraftCoordinates corner, List<Block> blocks) {
 		// Makes arrays from the coordinates of the streams
 		Stream<Block> blocklessX = blocks.parallelStream().filter(b -> b.type() != BlockType.AIR.ordinal());
 		double[] blockArrX = blocklessX.mapToDouble(b -> b.x()).toArray();

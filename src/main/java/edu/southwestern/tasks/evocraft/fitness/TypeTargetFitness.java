@@ -5,14 +5,14 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 
-public class TypeTargetFitness extends CheckBlocksInSpaceFitness {
+public class TypeTargetFitness extends MinecraftFitnessFunction {
 
 	@Override
-	public double fitnessFromBlocks(MinecraftCoordinates corner, List<Block> blocks) {
+	public double fitnessScore(MinecraftCoordinates corner, List<Block> blocks) {
 		// total that is being evolved to match
 		int desiredTotal = Parameters.parameters.integerParameter("minecraftDesiredBlockCount");
 		// count of current total number of desired blocks
-		double blockCount = TypeCountFitness.typeCount(blocks);
+		double blockCount = TypeCountFitness.typeCount(blocks,Parameters.parameters.integerParameter("minecraftDesiredBlockType"));
 		
 		return desiredTotal - Math.abs(desiredTotal - blockCount);
 	}

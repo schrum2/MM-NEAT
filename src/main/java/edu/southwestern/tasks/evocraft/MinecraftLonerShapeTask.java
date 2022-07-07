@@ -28,11 +28,7 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
-import edu.southwestern.tasks.evocraft.blocks.MachineBlockSet;
 import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBinLabels;
-import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBlockCountBinLabels;
-import edu.southwestern.tasks.evocraft.fitness.CheckBlocksInSpaceFitness;
-import edu.southwestern.tasks.evocraft.fitness.OccupiedCountFitness;
 import edu.southwestern.util.datastructures.Pair;
 /**
  * MAPElites only works with LonerTasks because it is a steady-state algorithm.
@@ -411,13 +407,6 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					blocksToMonitor.add(new ControlBlocks(diamondBlock,emeraldBlock,obsidianBlock,index1D)); // Adds to the set that loops to check them
 					MinecraftClient.getMinecraftClient().spawnBlocks(interactive);
 				}
-				// Fences placed at initialization now
-				double testScore = 0;
-				MinecraftCoordinates testCorner = null;
-				assert !(((MinecraftLonerShapeTask<T>) MMNEAT.task).internalMinecraftShapeTask.fitnessFunctions.get(0) instanceof CheckBlocksInSpaceFitness && !(MMNEAT.blockSet instanceof MachineBlockSet)) || MinecraftShapeTask.qualityScore(new double[] {testScore = ((MinecraftLonerShapeTask<T>) MMNEAT.task).internalMinecraftShapeTask.fitnessFunctions.get(0).fitnessScore(testCorner = configureStartPosition(ranges, behaviorCharacteristics).t2)}) == ((Double) behaviorCharacteristics.get("binScore")).doubleValue() : 
-					individual.getId() + ":" + testCorner + ":" + behaviorCharacteristics + ":testScore="+testScore+":\n" + ((MinecraftLonerShapeTask<T>) MMNEAT.task).internalMinecraftShapeTask.fitnessFunctions.get(0).getClass().getSimpleName() + ":\n" + blocks;
-				assert !(MMNEAT.getArchiveBinLabelsClass() instanceof MinecraftMAPElitesBlockCountBinLabels && !(MMNEAT.blockSet instanceof MachineBlockSet)) || new OccupiedCountFitness().fitnessScore(testCorner = configureStartPosition(ranges, behaviorCharacteristics).t2) == (testScore = ((Double) behaviorCharacteristics.get("OccupiedCountFitness")).doubleValue()) : 
-					individual.getId() + ":" + testCorner+":occupied count="+testScore+":"+ blocks + ":" + CheckBlocksInSpaceFitness.readBlocksFromClient(testCorner);
 			}
 		}
 

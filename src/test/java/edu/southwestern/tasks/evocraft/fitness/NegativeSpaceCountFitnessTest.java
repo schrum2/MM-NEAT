@@ -3,7 +3,6 @@ package edu.southwestern.tasks.evocraft.fitness;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -11,7 +10,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.tasks.evocraft.MinecraftClient;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
@@ -19,10 +17,6 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
 import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 
 public class NegativeSpaceCountFitnessTest {
-	
-	List<Block> blockSet1;
-	List<Block> blockSet2;
-	List<Block> blockSet3;
 	
 	NegativeSpaceCountFitness ff;
 	
@@ -55,30 +49,30 @@ public class NegativeSpaceCountFitnessTest {
 		MinecraftCoordinates corner = new MinecraftCoordinates(0,5,0); //Initializes corner for testing
 		//MinecraftClient.getMinecraftClient().clearSpaceForShapes(corner, MinecraftUtilClass.getRanges(), 2, 100);
 		
-		blockSet1 = new ArrayList<>();
-		blockSet2 = new ArrayList<>();
-		blockSet3 = new ArrayList<>();
+		ArrayList<Block> blockSet1 = new ArrayList<>();
+		ArrayList<Block> blockSet2 = new ArrayList<>();
+		ArrayList<Block> blockSet3 = new ArrayList<>();
 		blockSet1.add(new Block(10,15,10,BlockType.AIR, Orientation.WEST));
-		assertEquals(-1,ff.fitnessFromBlocks(corner,blockSet1),0); // Test when nothing
+		assertEquals(-1,ff.fitnessScore(corner,blockSet1),0); // Test when nothing
 		
 		blockSet1.add(new Block(0,5,0,BlockType.GLOWSTONE, Orientation.WEST));
-		assertEquals(0,ff.fitnessFromBlocks(corner,blockSet1),0);
+		assertEquals(0,ff.fitnessScore(corner,blockSet1),0);
 		blockSet1.add(new Block(1,5,0,BlockType.GLOWSTONE, Orientation.WEST));
-		assertEquals(0,ff.fitnessFromBlocks(corner,blockSet1),0);
+		assertEquals(0,ff.fitnessScore(corner,blockSet1),0);
 		blockSet1.add(new Block(1,5,1,BlockType.GLOWSTONE, Orientation.WEST));
 		blockSet1.add(new Block(0,5,1,BlockType.AIR, Orientation.WEST));
-		assertEquals(1,ff.fitnessFromBlocks(corner,blockSet1),0);
+		assertEquals(1,ff.fitnessScore(corner,blockSet1),0);
 		blockSet1.add(new Block(0,6,1,BlockType.AIR, Orientation.WEST));
 		blockSet1.add(new Block(0,6,0,BlockType.AIR, Orientation.WEST));
 		blockSet1.add(new Block(1,6,0,BlockType.AIR, Orientation.WEST));
-		assertEquals(1,ff.fitnessFromBlocks(corner,blockSet1),0); // Air above blocks does not effect the negative space
+		assertEquals(1,ff.fitnessScore(corner,blockSet1),0); // Air above blocks does not effect the negative space
 		blockSet1.add(new Block(1,6,1,BlockType.CRAFTING_TABLE, Orientation.WEST));
-		assertEquals(4,ff.fitnessFromBlocks(corner,blockSet1),0);
+		assertEquals(4,ff.fitnessScore(corner,blockSet1),0);
 		blockSet1.add(new Block(1,7,1,BlockType.CRAFTING_TABLE, Orientation.WEST));
 		blockSet1.add(new Block(0,7,0,BlockType.AIR, Orientation.WEST));
 		blockSet1.add(new Block(1,7,0,BlockType.AIR, Orientation.WEST));
 		blockSet1.add(new Block(0,7,1,BlockType.AIR, Orientation.WEST));
-		assertEquals(7,ff.fitnessFromBlocks(corner,blockSet1),0);
+		assertEquals(7,ff.fitnessScore(corner,blockSet1),0);
 		blockSet1.add(new Block(3,7,2,BlockType.WOOL, Orientation.WEST)); // Adding in air blocks
 		blockSet1.add(new Block(3,7,1,BlockType.AIR, Orientation.WEST));
 		blockSet1.add(new Block(3,7,0,BlockType.AIR, Orientation.WEST));
@@ -104,7 +98,7 @@ public class NegativeSpaceCountFitnessTest {
 		blockSet1.add(new Block(0,6,2,BlockType.AIR, Orientation.WEST));
 		blockSet1.add(new Block(0,5,2,BlockType.AIR, Orientation.WEST));
 
-		assertEquals(30,ff.fitnessFromBlocks(corner,blockSet1),0);
+		assertEquals(30,ff.fitnessScore(corner,blockSet1),0);
 		
 		//MinecraftClient.getMinecraftClient().spawnBlocks(blockSet1); // Spawns in just for verification
 		
@@ -119,7 +113,7 @@ public class NegativeSpaceCountFitnessTest {
 				}
 			}
 		}
-		assertEquals(500,ff.fitnessFromBlocks(corner2,blockSet2),0);
+		assertEquals(500,ff.fitnessScore(corner2,blockSet2),0);
 		//MinecraftClient.getMinecraftClient().spawnBlocks(blockSet2); // Spawns in just for verification
 		
 		MinecraftCoordinates corner3 = new MinecraftCoordinates(26,5,0); //Initializes another corner for testing
@@ -141,10 +135,10 @@ public class NegativeSpaceCountFitnessTest {
 				}
 			}
 		}
-		assertEquals(0,ff.fitnessFromBlocks(corner3,blockSet3),0);
+		assertEquals(0,ff.fitnessScore(corner3,blockSet3),0);
 		
 		blockSet3.add(new Block(32,5,0,BlockType.DIAMOND_ORE, Orientation.WEST));// Add one extra block to double check
-		assertEquals(17,ff.fitnessFromBlocks(corner3,blockSet3),0); 
+		assertEquals(17,ff.fitnessScore(corner3,blockSet3),0); 
 		//MinecraftClient.getMinecraftClient().spawnBlocks(blockSet3); // Spawns in just for verification
 		
 		

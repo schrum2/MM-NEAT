@@ -6,16 +6,29 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 
-public class NumPistonsFitness extends TypeCountFitness{
+/**
+ * Counts number of pistons of either type (regular or sticky).
+ * Extending TypeCountFitness only makes calculation of maxFitness easier.
+ * Two internal instances of TypeCountFitness, one for each type.
+ * 
+ * @author Jacob Schrum
+ *
+ */
+public class NumPistonsFitness extends TypeCountFitness {
 
+	private TypeCountFitness piston;
+	private TypeCountFitness stickyPiston;
+
+	public NumPistonsFitness() {
+		piston = new TypeCountFitness(BlockType.PISTON.ordinal());
+		stickyPiston = new TypeCountFitness(BlockType.STICKY_PISTON.ordinal());
+	}
+	
 	@Override
-	public double fitnessFromBlocks(MinecraftCoordinates corner, List<Block> blocks) {
-		
-		TypeCountFitness piston = new TypeCountFitness(BlockType.PISTON.ordinal());
-		double total = piston.fitnessFromBlocks(corner,blocks);
-		TypeCountFitness stickyPiston = new TypeCountFitness(BlockType.STICKY_PISTON.ordinal());
-		total += stickyPiston.fitnessFromBlocks(corner,blocks);
-		//System.out.println("Piston"+total);
+	public double fitnessScore(MinecraftCoordinates corner, List<Block> blocks) {
+		//System.out.println(blocks);
+		double total = piston.fitnessScore(corner,blocks);
+		total += stickyPiston.fitnessScore(corner,blocks);
 		return total;
 	}
 }

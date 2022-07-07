@@ -1,9 +1,9 @@
 package edu.southwestern.tasks.evocraft.fitness;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import edu.southwestern.tasks.evocraft.MinecraftClient;
+import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
+import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 
 /**
  * Abstract class for extending specific Minecraft fitness functions
@@ -11,35 +11,22 @@ import edu.southwestern.tasks.evocraft.MinecraftClient;
  * @author schrum2
  */
 public abstract class MinecraftFitnessFunction {
-	/**
-	 * Each shape is generated with respect to a particular location that defines the
-	 * minimal corner coordinates of the generated shape. Method uses these corner
-	 * coordinates to find each shape and evaluate them, assigning fitness scores
-	 * that are returned in a list.
-	 * 
-	 * @param corners List of corner locations
-	 * @return List of corresponding fitness values
-	 */
-	public List<Double> fitnessScores(List<MinecraftClient.MinecraftCoordinates> corners){
-		ArrayList<Double> fitnessScores = new ArrayList<>(corners.size());
-		for(MinecraftClient.MinecraftCoordinates c : corners) {
-			fitnessScores.add(fitnessScore(c));
-		}
-		return fitnessScores;
-	}
-	
+
 	/**
 	 * Calculate fitness of one shape in the world based on its minimal corner coordinates.
 	 * @param corner Minimal coordinates of shape
+	 * @param originalBlocks Blocks from the generator, before being spawned (and potentially changing)
 	 * @return Fitness score for shape
 	 */
-	public abstract double fitnessScore(MinecraftClient.MinecraftCoordinates corner);
+	public abstract double fitnessScore(MinecraftCoordinates corner, List<Block> originalBlocks);
 	
 	/**
 	 * Minimum possible fitness
 	 * @return Minimum possible fitness
 	 */
-	public abstract double minFitness();
+	public double minFitness() {
+		return 0; // Can be overridden
+	}
 	
 	/**
 	 * Maximum possible fitness
