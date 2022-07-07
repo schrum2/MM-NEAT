@@ -158,9 +158,9 @@ public class ChangeCenterOfMassFitnessTest {
 		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet1);
 		double fitness = ff.fitnessScore(cornerBS1,blockSet1);
 		System.out.println("fitness = "+fitness);
-		assertTrue(fitness < 0.4);
+		assertEquals(0.42170668924365207, fitness, 0.000000000001);
 		Triple<Vertex, Vertex, Double> beforeAndAfter = ChangeCenterOfMassFitness.getPreviouslyComputedResult(cornerBS1); // Prevent lock
-		assertTrue(beforeAndAfter.t3 < 0.4);
+		assertEquals(0.42170668924365207, beforeAndAfter.t3, 0.000000000001);
 		
 		
 	}
