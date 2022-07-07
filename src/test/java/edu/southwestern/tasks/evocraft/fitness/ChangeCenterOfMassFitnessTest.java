@@ -355,4 +355,11 @@ public class ChangeCenterOfMassFitnessTest {
 		assertEquals(new Vertex(1.0,5.375,-1.375), ChangeCenterOfMassFitness.getCenterOfMass(blockSet2));
 	}
 
+	@Test
+	public void testMaxFitness() {
+		Parameters.initializeParameterCollections(new String[] {"minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L, "minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+		 double maxFitness = (10 + 1) * ((6 + 10) / 2.0);
+		 assertEquals(maxFitness, ff.maxFitness(), 0.0);
+		 
+	}
 }
