@@ -363,5 +363,44 @@ public class ChangeCenterOfMassFitnessTest {
 		 double maxFitness = (10 + 1) * ((6 + 10) / 2.0);
 		 assertEquals(maxFitness, ff.maxFitness(), 0.0);
 		 
+		// changes space between shapes 
+		Parameters.initializeParameterCollections(new String[] {"minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:2","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L, "minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+		 maxFitness = (10 + 1) * ((2 + 10) / 2.0);
+		 assertEquals(maxFitness, ff.maxFitness(), 0.0);
+		
+		// changes x/y/z ranges 
+		Parameters.initializeParameterCollections(new String[] {"minecraftXRange:5","minecraftYRange:5","minecraftZRange:5","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L, "minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+		 maxFitness = (10 + 1) * ((6 + 5) / 2.0);
+		 assertEquals(maxFitness, ff.maxFitness(), 0.0);
+		
+	    Parameters.initializeParameterCollections(new String[] {"minecraftXRange:5","minecraftYRange:15","minecraftZRange:2","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L, "minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+		 maxFitness = (10 + 1) * ((6 + 15) / 2.0);
+		 assertEquals(maxFitness, ff.maxFitness(), 0.0);
+		
+		// change x/y/z ranges and space between shape 
+		Parameters.initializeParameterCollections(new String[] {"minecraftXRange:17","minecraftYRange:14","minecraftZRange:15","spaceBetweenMinecraftShapes:16","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L, "minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+		 maxFitness = (10 + 1) * ((16 + 17) / 2.0);
+		 assertEquals(maxFitness, ff.maxFitness(), 0.0);
+		
+		// change time params 
+		Parameters.initializeParameterCollections(new String[] {"minecraftXRange:17","minecraftYRange:14","minecraftZRange:15","spaceBetweenMinecraftShapes:5","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 500L, "minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+		 maxFitness = (20 + 1) * ((5 + 17) / 2.0);
+		 assertEquals(maxFitness, ff.maxFitness(), 0.0);
+		 
+		 
+		// change x/y/z ranges and space between shape 
+		Parameters.initializeParameterCollections(new String[] {"minecraftXRange:17","minecraftYRange:14","minecraftZRange:15","spaceBetweenMinecraftShapes:16","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L, "minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+		 maxFitness = (10 + 1) * ((16 + 17) / 2.0);
+		 assertEquals(maxFitness, ff.maxFitness(), 0.0);
+	
+		// minecraftAccumulateChangeInCenterOfMass = false   
+		Parameters.initializeParameterCollections(new String[] {"minecraftXRange:17","minecraftYRange:14","minecraftZRange:15","spaceBetweenMinecraftShapes:16","minecraftAccumulateChangeInCenterOfMass:false","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L, "minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+		 maxFitness = ((16 + 17) /2.0);
+		 assertEquals(maxFitness, ff.maxFitness(), 0.0);
+		
+		Parameters.initializeParameterCollections(new String[] {"minecraftXRange:567","minecraftYRange:567","minecraftZRange:568","spaceBetweenMinecraftShapes:2","minecraftAccumulateChangeInCenterOfMass:false","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L, "minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+		 maxFitness = ((2 + 568) /2.0);
+		 assertEquals(maxFitness, ff.maxFitness(), 0.0);
+		 
 	}
 }
