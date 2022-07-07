@@ -57,8 +57,6 @@ public class ChangeCenterOfMassFitnessTest {
 		MinecraftCoordinates cornerBS1 = new MinecraftCoordinates(-26,7,-35);
 		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS1, ranges, 1, 100); // Larger buffer is important
 
-		// Small list of blocks that don't move
-		// Should have a fitness of 0
 		ArrayList<Block> blockSet1 = new ArrayList<>();
 		blockSet1.add(new Block(-25,7,-35,BlockType.REDSTONE_BLOCK, Orientation.WEST));
 		blockSet1.add(new Block(-24,7,-35,BlockType.PISTON, Orientation.EAST));
@@ -66,9 +64,9 @@ public class ChangeCenterOfMassFitnessTest {
 		
 		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet1);
 	
-		assertEquals(0.0, ff.fitnessScore(cornerBS1,blockSet1),0.0);
+		assertEquals(0.5, ff.fitnessScore(cornerBS1,blockSet1),0.0);
 		Triple<Vertex, Vertex, Double> beforeAndAfter = ChangeCenterOfMassFitness.getPreviouslyComputedResult(cornerBS1); // Prevent lock
-		assertEquals(0.0, beforeAndAfter.t3, 0.0);
+		assertEquals(0.5, beforeAndAfter.t3, 0.0);
 		
 		//MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS1, ranges, 1, 100); // Larger buffer is important
 		
@@ -287,6 +285,7 @@ public class ChangeCenterOfMassFitnessTest {
 
 		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet2);
 		// Machine flies away completely
+		System.out.println("Flying away should earn "+ff.maxFitness());
 		//System.out.println("Second flying machine fitness: " + ff.fitnessScore(cornerBS2));
 		assertEquals(ff.maxFitness(), ff.fitnessScore(cornerBS2,blockSet2), 0.0);
 		Triple<Vertex, Vertex, Double> beforeAndAfter = ChangeCenterOfMassFitness.getPreviouslyComputedResult(cornerBS2); // Prevent lock
