@@ -94,20 +94,19 @@ public class ChangeCenterOfMassFitnessTest {
 		Triple<Vertex, Vertex, Double> beforeAndAfter = ChangeCenterOfMassFitness.getPreviouslyComputedResult(cornerBS1); // Prevent lock
 		assertEquals(0.0, beforeAndAfter.t3, 0.0);
 		
-		// When the piston is extended without the block, it still reads as having a 0 for the fitness score because the
-		// first read happens after the piston is pushed out. This is weird behavior, but expected for the time being as
-		// we are still achieving oscillation. Marking here just in case the calculation changes in the future
+		// Now that the fitness function has the original blocks from the generator, it can correctly
+		// award a non-zero fitness to a simple piston extension.
 		ChangeCenterOfMassFitness.resetPreviousResults();
-		blockSet1.add(new Block(1,5,0,BlockType.PISTON,Orientation.NORTH));
+		blockSet1.add(new Block(1,8,0,BlockType.PISTON,Orientation.NORTH));
 		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet1);
 		double fitness2 = ff.fitnessScore(cornerBS1,blockSet1);
 		System.out.println("fitness = "+fitness2);
-		assertEquals(0.0, fitness2, 0.0);
+		assertEquals(0.3726779962499649, fitness2, 0.0000000000001);
 		Triple<Vertex, Vertex, Double> beforeAndAfter2 = ChangeCenterOfMassFitness.getPreviouslyComputedResult(cornerBS1); // Prevent lock
-		assertEquals(0.0, beforeAndAfter2.t3, 0.0);
+		assertEquals(0.3726779962499649, beforeAndAfter2.t3, 0.0000000000001);
 		
 		ChangeCenterOfMassFitness.resetPreviousResults();
-		blockSet1.add(new Block(1,5,-1,BlockType.SLIME,Orientation.NORTH));
+		blockSet1.add(new Block(1,8,-1,BlockType.SLIME,Orientation.NORTH));
 		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet1);
 		double fitness3 = ff.fitnessScore(cornerBS1,blockSet1);
 		System.out.println("fitness = "+fitness3);
