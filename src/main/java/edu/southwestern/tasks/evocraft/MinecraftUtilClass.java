@@ -185,6 +185,23 @@ public class MinecraftUtilClass {
 	}
 	
 	/**
+	 * Block orientations cannot be read from the world, so they are always null when read. 
+	 * To compare against such lists, it might be necessary to take a list with non-null
+	 * block orientations and set them to null. This means there is no certainty as you
+	 * what the orientations are, but it gives some means of comparison.
+	 * 
+	 * @param originalBlocks Blocks from a generator, that still have orientations
+	 * @return block list with only null orientations, but otherwise the same
+	 */
+	public static List<Block> wipeOrientations(List<Block> originalBlocks) {
+		ArrayList<Block> result = new ArrayList<>(originalBlocks.size());
+		for(Block b : originalBlocks) {
+			result.add(new Block(b.x(), b.y(), b.z(),b.type()));
+		}
+		return result;
+	}
+	
+	/**
 	 * Returns list of blocks from a previously loaded
 	 * MAP-Elites output text file.
 	 * 

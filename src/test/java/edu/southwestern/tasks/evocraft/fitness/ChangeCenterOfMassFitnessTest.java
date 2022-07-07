@@ -77,15 +77,15 @@ public class ChangeCenterOfMassFitnessTest {
 	@Test
 	public void testSimpleCases() {
 		ChangeCenterOfMassFitness.resetPreviousResults();
-		Parameters.initializeParameterCollections("minecraftXRange:4 minecraftYRange:4 minecraftZRange:4 minecraftChangeCenterOfMassFitness:true launchMinecraftServerFromJava:false io:false netio:false spaceBetweenMinecraftShapes:5 voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true minecraftClearSleepTimer:400".split(" "));
-		
+		Parameters.initializeParameterCollections("watch:true minecraftXRange:4 minecraftYRange:4 minecraftZRange:4 minecraftChangeCenterOfMassFitness:true launchMinecraftServerFromJava:false io:false netio:false spaceBetweenMinecraftShapes:5 voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true minecraftClearSleepTimer:400".split(" "));
+		CommonConstants.watch = true; // For extra debug info
 
 		
-		MinecraftCoordinates cornerBS1 = new MinecraftCoordinates(0,5,0);
+		MinecraftCoordinates cornerBS1 = new MinecraftCoordinates(0,8,0);
 		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS1, ranges, 1, 100); // Larger buffer is important
 		
 		ArrayList<Block> blockSet1 = new ArrayList<>();
-		blockSet1.add(new Block(0,5,0,BlockType.REDSTONE_BLOCK,Orientation.SOUTH));
+		blockSet1.add(new Block(0,8,0,BlockType.REDSTONE_BLOCK,Orientation.SOUTH));
 		
 		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet1);
 		double fitness = ff.fitnessScore(cornerBS1,blockSet1);

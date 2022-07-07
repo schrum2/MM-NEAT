@@ -110,6 +110,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 
 		assert corner.x() <= end.x() && corner.y() <= end.y() && corner.z() <= end.z(): "corner should be less than end in each coordinate: corner = "+corner+ ", max = "+end; 
 
+		if(CommonConstants.watch) System.out.println("Original Blocks: "+originalBlocks);
 		if(CommonConstants.watch) System.out.println("Evaluate at corner: "+corner);
 		//		System.out.println("end:"+end);
 
@@ -118,7 +119,9 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		// List of blocks in the area based on the corner
 		//List<Block> blocks = MinecraftClient.getMinecraftClient().readCube(corner,end);
 		//blocks = MinecraftUtilClass.filterOutBlock(blocks, BlockType.AIR);
-		List<Block> previousBlocks = originalBlocks;
+		
+		// These blocks will be compared with blocks read from the world, which will have only null orientations
+		List<Block> previousBlocks = MinecraftUtilClass.wipeOrientations(originalBlocks);
 		int initialBlockCount = originalBlocks.size();
 		if(originalBlocks.isEmpty()) {
 			if(CommonConstants.watch) System.out.println("Empty shape: Immediate failure");
@@ -150,6 +153,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 				System.exit(1);
 			}
 			shortWaitTimeUpdate = MinecraftUtilClass.filterOutBlock(MinecraftClient.getMinecraftClient().readCube(corner,end),BlockType.AIR);
+			if(CommonConstants.watch) System.out.println("Block update: "+shortWaitTimeUpdate);
 			if(shortWaitTimeUpdate.isEmpty()) { // If list is empty now (but was not before) then shape has flown completely away
 				if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": Shape empty now: max fitness! Last center of mass = "+lastCenterOfMass);
 				return new Triple<>(initialCenterOfMass, lastCenterOfMass, maxFitness());
