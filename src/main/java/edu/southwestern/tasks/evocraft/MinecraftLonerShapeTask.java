@@ -169,6 +169,9 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 				}
 			};
 			interactionThread.start();
+		} else {
+			// Just say the thread is finished since it never starts in this case
+			interactiveLoopFinished = true;
 		}
 	}
 	

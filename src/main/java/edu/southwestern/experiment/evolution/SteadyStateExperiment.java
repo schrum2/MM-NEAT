@@ -81,12 +81,13 @@ public class SteadyStateExperiment<T> implements Experiment {
 			for(Thread t : threads) {
 				try {
 					t.join();
+					System.out.println("Thread "+t.getId()+" joined.");
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 			}
 		}
-		
+		System.out.println("Time for EA clean-up.");
 		ea.finalCleanup();
 	}
 
