@@ -285,7 +285,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			}
 		}
 		// Checks command line param on whether or not to generate shapes in archive
-		if(Parameters.parameters.booleanParameter("minecraftContainsWholeMAPElitesArchive")) {
+		if(Parameters.parameters.booleanParameter("minecraftContainsWholeMAPElitesArchive") || CommonConstants.netio) {
 			// Places the shapes in the world based on their position
 			placeArchiveInWorld(individual, behaviorCharacteristics, ranges);	
 		}
@@ -325,8 +325,8 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 				//System.out.println("Current:"+scoreOfCurrentElite+"  Highest:"+highestFitness);
 			}
 			
-			// If the shape has a fitness greater than or equal to the previous champion's
-			if(scoreOfCurrentElite>=highestFitness) {
+			// If the shape has a fitness greater than or equal to the previous champion's, then place a gold block near it
+			if(Parameters.parameters.booleanParameter("minecraftContainsWholeMAPElitesArchive") && scoreOfCurrentElite>=highestFitness) {
 				synchronized(championCoords) {
 					// Sets up coordinates for the new block, and the array list for spawning
 					Pair<MinecraftCoordinates,MinecraftCoordinates> corners = configureStartPosition(ranges, behaviorCharacteristics);

@@ -401,9 +401,11 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 							MinecraftLonerShapeTask.placeFencesAroundArchive(ranges,corners.t2);
 						}
 					}
+					
+					System.out.println("Fences placed");	
+					MinecraftLonerShapeTask.spawnShapesInWorldTrue();
 				}
-				System.out.println("Fences placed");	
-				MinecraftLonerShapeTask.spawnShapesInWorldTrue();
+				
 				// Add initial population to archive, if add is true
 				evaluatedPopulation.parallelStream().forEach( (s) -> {
 					boolean result = archive.add(s); // Fill the archive with random starting individuals, only when this flag is true
