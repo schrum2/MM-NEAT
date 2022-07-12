@@ -29,7 +29,6 @@ public class MinecraftMAPElitesPistonOrientationCountBinLabels extends Minecraft
 			for(int xi = 0; xi <dim; xi++) {
 				for(int yi = 0; yi < dim; yi++) {
 					for(int zi = 0; zi < dim; zi++) {
-						// TODO: change label once it works
 						labels.add("NS"+xi+"UD"+yi+"EW"+zi);
 					}
 				}

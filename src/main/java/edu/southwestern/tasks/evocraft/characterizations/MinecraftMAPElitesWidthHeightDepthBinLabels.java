@@ -80,9 +80,13 @@ public class MinecraftMAPElitesWidthHeightDepthBinLabels extends MinecraftMAPEli
 	@Override
 	public boolean discard(HashMap<String, Object> behaviorMap) {
 		// Checking one should be sufficient, but check all just in case
-		return ((Double) behaviorMap.get("WidthFitness")).doubleValue() == 0 ||
-			   ((Double) behaviorMap.get("HeightFitness")).doubleValue() == 0 ||
-			   ((Double) behaviorMap.get("DepthFitness")).doubleValue() == 0;
+		Double width = (Double) behaviorMap.get("WidthFitness");
+		Double height = (Double) behaviorMap.get("HeightFitness");
+		Double depth = (Double) behaviorMap.get("DepthFitness");
+		return width != null && height != null && depth != null &&
+			   (width.doubleValue() == 0 ||
+			   height.doubleValue() == 0 ||
+			   depth.doubleValue() == 0);
 	}
 	
 	

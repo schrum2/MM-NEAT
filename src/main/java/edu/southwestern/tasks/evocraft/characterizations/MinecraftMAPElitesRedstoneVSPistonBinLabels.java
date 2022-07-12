@@ -2,7 +2,6 @@ package edu.southwestern.tasks.evocraft.characterizations;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 import edu.southwestern.parameters.Parameters;
@@ -42,14 +41,6 @@ public class MinecraftMAPElitesRedstoneVSPistonBinLabels extends MinecraftMAPEli
 		//System.out.println("multi 0:"+multi[0]+"  dimSize:"+dimensionSizes()[1]+"  multi[1]:"+multi[1]+"  bin"+binIndex);
 		return binIndex;
 	}
-
-	@Override
-	public int[] multiDimensionalIndices(HashMap<String, Object> keys) {
-		int[] result = super.multiDimensionalIndices(keys);
-		// Actual block count could be 0, but such shapes are discarded, only for block Count
-		//result[0]--;
-		return result;
-	}
 	
 	@Override
 	public int[] dimensionSizes() {
@@ -61,9 +52,4 @@ public class MinecraftMAPElitesRedstoneVSPistonBinLabels extends MinecraftMAPEli
 	public List<MinecraftFitnessFunction> properties() {
 		return properties;
 	}
-
-//	@Override
-//	public boolean discard(HashMap<String, Object> behaviorMap) {
-//		return ((Double) behaviorMap.get("OccupiedCountFitness")).doubleValue() == 0; // IF empty, discards it (mostly first row of blockCount)
-//	}
 }
