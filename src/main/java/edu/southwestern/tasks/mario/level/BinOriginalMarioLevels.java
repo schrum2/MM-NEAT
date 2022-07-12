@@ -36,11 +36,11 @@ public class BinOriginalMarioLevels {
 	public static void main(String[] args) throws FileNotFoundException, Exception {
 		MarioLevelUtil.removeMarioLevelBuffer = false;
 		String[] binningSchemes = new String[] {
-				"MarioMAPElitesPercentDecorateCoverageAndLeniencyBinLabels", // New
-				"MarioMAPElitesDecorAndLeniencyBinLabels", // Never used in publication
-				"MarioMAPElitesDecorNSAndLeniencyBinLabels", // Original CPPN2GAN paper
-				"MarioMAPElitesDistinctChunksNSAndDecorationBinLabels", // CPPN2GAN ToG article
-				"MarioMAPElitesDistinctChunksNSAndLeniencyBinLabels" // Never used in publication
+				"MarioMAPElitesPercentDecorateCoverageAndLeniencyBinLabels" //, // New
+				//"MarioMAPElitesDecorAndLeniencyBinLabels", // Never used in publication
+				//"MarioMAPElitesDecorNSAndLeniencyBinLabels", // Original CPPN2GAN paper
+				//"MarioMAPElitesDistinctChunksNSAndDecorationBinLabels", // CPPN2GAN ToG article
+				//"MarioMAPElitesDistinctChunksNSAndLeniencyBinLabels" // Never used in publication
 		};
 		// Load all levels
 		List<List<List<Integer>>> levelCollection = new ArrayList<>();

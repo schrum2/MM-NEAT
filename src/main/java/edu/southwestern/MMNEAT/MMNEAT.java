@@ -53,8 +53,10 @@ import edu.southwestern.tasks.Task;
 import edu.southwestern.tasks.evocraft.blocks.BlockSet;
 import edu.southwestern.tasks.evocraft.shapegeneration.ShapeGenerator;
 import edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.BinOriginalZeldaDungeons;
 import edu.southwestern.tasks.gvgai.zelda.study.HumanSubjectStudy2019Zelda;
 import edu.southwestern.tasks.mario.gan.GANProcess;
+import edu.southwestern.tasks.mario.level.BinOriginalMarioLevels;
 import edu.southwestern.tasks.motests.MultipleFunctionOptimization;
 import edu.southwestern.tasks.mspacman.facades.ExecutorFacade;
 import edu.southwestern.tasks.rlglue.tetris.HyperNEATTetrisTask;
@@ -734,6 +736,22 @@ public class MMNEAT {
 			MinecraftBlockRenderExperiment experiment = new MinecraftBlockRenderExperiment();
 			experiment.init();
 			experiment.run();
+		} else if(args[0].equals("binMario")){
+			try {
+				BinOriginalMarioLevels.main(new String[0]);
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.out.println("Error while running BinOriginalMarioLevels");
+				System.exit(1);
+			}
+		} else if(args[0].equals("binZelda")){
+			try {
+				BinOriginalZeldaDungeons.main(new String[0]);
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.out.println("Error while running BinOriginalZeldaDungeons");
+				System.exit(1);
+			}
 		} else {
 			evolutionaryRun(args);
 		}

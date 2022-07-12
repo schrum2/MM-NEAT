@@ -29,7 +29,7 @@ public class BinOriginalZeldaDungeons {
 		
 		String[] binningSchemes = new String[] {
 				"ZeldaMAPElitesWallWaterRoomsBinLabels", // WWR in Journal paper, also in original CPPN2GAN paper
-				"ZeldaMAPElitesNoveltyAndBackTrackRoomBinLabels", // Never used in publication
+				//"ZeldaMAPElitesNoveltyAndBackTrackRoomBinLabels", // Never used in publication
 				"ZeldaMAPElitesDistinctAndBackTrackRoomsBinLabels" // Distinct BTR in ToG article
 		};
 		// Load all dungeons
