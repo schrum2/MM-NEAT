@@ -4,13 +4,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
 
-import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.experiment.Experiment;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
-import edu.southwestern.util.file.FileUtilities;
 
 /**
  * Load a single elite from MAP Elites output text file to spawn it

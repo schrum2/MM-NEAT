@@ -317,24 +317,26 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			List<String> binLabels = archive.getBinMapping().binLabels();
 			// Load each elite from xml file into archive
 			for(int i = 0; i < binLabels.size(); i++) {
-				String binDir = archiveDir + "/" + binLabels.get(i) + "/";
-				Genotype<T> elite = (Genotype<T>) Serialization.load(binDir + "elite"); // Load genotype
-				// Load behavior scores
-				ArrayList<Double> scores = new ArrayList<Double>(numLabels); 
-				try {
-					Scanner scoresFile = new Scanner(new File(binDir + "scores.txt"));
-					while(scoresFile.hasNextDouble()) {
-						scores.add(scoresFile.nextDouble());
+				String binPrefix = archiveDir + "/" + binLabels.get(i) + "-";
+				Genotype<T> elite = (Genotype<T>) Serialization.load(binPrefix + "elite"); // Load genotype
+				if(elite != null) { // File actually exists
+					// Load behavior scores
+					ArrayList<Double> scores = new ArrayList<Double>(numLabels); 
+					try {
+						Scanner scoresFile = new Scanner(new File(binPrefix + "scores.txt"));
+						while(scoresFile.hasNextDouble()) {
+							scores.add(scoresFile.nextDouble());
+						}
+						scoresFile.close();
+					} catch (FileNotFoundException e) {
+						System.out.println("Could not read " + binPrefix + "scores.txt");
+						e.printStackTrace();
+						System.exit(1);
 					}
-					scoresFile.close();
-				} catch (FileNotFoundException e) {
-					System.out.println("Could not read " + binDir + "scores.txt");
-					e.printStackTrace();
-					System.exit(1);
+					// Package in a score
+					Score<T> score = new Score<T>(elite, new double[0], scores);
+					archive.archive.set(i, score); // Directly set the bin contents
 				}
-				// Package in a score
-				Score<T> score = new Score<T>(elite, new double[0], scores);
-				archive.archive.set(i, score); // Directly set the bin contents
 			}
 		} else {
 			System.out.println("Fill up initial archive");
@@ -375,19 +377,12 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				trainImageAutoEncoderAndSetLossBounds(outputAutoEncoderFile, trainingDataDirectory, evaluatedPopulation);
 				System.out.println("Initial occupancy: "+ this.archive.getNumberOfOccupiedBins());
 			} else {
-				
-				//long startTime = System.currentTimeMillis();
-				
-				// Clears space for incoming archive
-				boolean minecraftInit = archive.getBinMapping() instanceof MinecraftMAPElitesBinLabels && Parameters.parameters.booleanParameter("minecraftContainsWholeMAPElitesArchive");
-				//final int xRange = Parameters.parameters.integerParameter("minecraftXRange");
 				MinecraftCoordinates ranges = new MinecraftCoordinates(Parameters.parameters.integerParameter("minecraftXRange"),Parameters.parameters.integerParameter("minecraftYRange"),Parameters.parameters.integerParameter("minecraftZRange"));
+				boolean minecraftInit = archive.getBinMapping() instanceof MinecraftMAPElitesBinLabels && Parameters.parameters.booleanParameter("minecraftContainsWholeMAPElitesArchive");
 				if(minecraftInit) { //then clear world
 					// Initializes the population size and ranges for clearing
 					int pop_size = Parameters.parameters.integerParameter("mu");
-					//MinecraftCoordinates ranges = new MinecraftCoordinates(Parameters.parameters.integerParameter("minecraftXRange"),Parameters.parameters.integerParameter("minecraftYRange"),Parameters.parameters.integerParameter("minecraftZRange"));
 					MinecraftClient.getMinecraftClient().clearSpaceForShapes(new MinecraftCoordinates(0,MinecraftClient.GROUND_LEVEL+1,0), ranges, pop_size, Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER));
-				
 					// Place fences around all areas where a shape from the archive could be placed
 					System.out.println("Area cleared, placing fences...");
 					MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
