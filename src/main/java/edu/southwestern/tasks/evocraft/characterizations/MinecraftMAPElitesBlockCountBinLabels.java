@@ -64,8 +64,7 @@ public class MinecraftMAPElitesBlockCountBinLabels extends MinecraftMAPElitesBin
 	@Override
 	public boolean discard(HashMap<String, Object> behaviorMap) {
 		Double count = (Double) behaviorMap.get("OccupiedCountFitness");
-		// Null allowance is for loading an evolved archive for post-evaluation
-		return count != null && count.doubleValue() == 0;
+		return count.doubleValue() == 0;
 	}
 	
 	public static void main(String[] args) {

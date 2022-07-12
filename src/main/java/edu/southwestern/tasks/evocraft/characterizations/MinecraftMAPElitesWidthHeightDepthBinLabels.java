@@ -83,10 +83,9 @@ public class MinecraftMAPElitesWidthHeightDepthBinLabels extends MinecraftMAPEli
 		Double width = (Double) behaviorMap.get("WidthFitness");
 		Double height = (Double) behaviorMap.get("HeightFitness");
 		Double depth = (Double) behaviorMap.get("DepthFitness");
-		return width != null && height != null && depth != null &&
-			   (width.doubleValue() == 0 ||
+		return width.doubleValue() == 0 ||
 			   height.doubleValue() == 0 ||
-			   depth.doubleValue() == 0);
+			   depth.doubleValue() == 0;
 	}
 	
 	

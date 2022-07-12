@@ -57,7 +57,6 @@ public class MinecraftMAPElitesPistonOrientationCountBinLabels extends Minecraft
 	
 	@Override
 	public int[] dimensionSizes() {
-		// CHANGE
 		return new int[] {dim,dim,dim};
 	}
 
