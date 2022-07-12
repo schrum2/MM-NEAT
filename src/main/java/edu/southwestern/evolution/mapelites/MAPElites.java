@@ -6,9 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Scanner;
 import java.util.Vector;
 import java.util.stream.Stream;
 
@@ -311,10 +309,10 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			emitterMeanLog = new MMNEATLog("EmitterMeans", false, false, false, true);
 		}
 		saveImageArchives = MMNEAT.task instanceof PictureTargetTask;
-		Vector<Score<T>> evaluatedPopulation;
+		ArrayList<Genotype<T>> startingPopulation; // Will be new or from saved archive
 		if(iterations > 0) {
-			evaluatedPopulation = new Vector<>();
-			int numLabels = archive.getBinMapping().binLabels().size();
+			startingPopulation = new ArrayList<>();
+			//int numLabels = archive.getBinMapping().binLabels().size();
 			// Loading from saved archive
 			String archiveDir = archive.getArchiveDirectory();
 			List<String> binLabels = archive.getBinMapping().binLabels();
@@ -322,59 +320,66 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			for(int i = 0; i < binLabels.size(); i++) {
 				String binPrefix = archiveDir + "/" + binLabels.get(i) + "-";
 				Genotype<T> elite = (Genotype<T>) Serialization.load(binPrefix + "elite"); // Load genotype
-				double binScore = Double.NEGATIVE_INFINITY; // The one bin score
+				//double binScore = Double.NEGATIVE_INFINITY; // The one bin score
 				if(elite != null) { // File actually exists
-					// Load behavior scores
-					ArrayList<Double> scores = new ArrayList<Double>(numLabels); 
-					try {
-						Scanner scoresFile = new Scanner(new File(binPrefix + "scores.txt"));
-						while(scoresFile.hasNextDouble()) {
-							double score = scoresFile.nextDouble();
-							if(Double.isFinite(score)) {
-								binScore = score; // This is an actual score
-							}
-							scores.add(score);
-						}
-						scoresFile.close();
-					} catch (FileNotFoundException e) {
-						System.out.println("Could not read " + binPrefix + "scores.txt");
-						e.printStackTrace();
-						System.exit(1);
-					}
-					// This does not provide a complete behavior map, but the score and 1-D index are known
-					HashMap<String,Object> map = new HashMap<>();
-					map.put("binScore", binScore);
-					map.put("dim1D", i);
+					startingPopulation.add(elite);
+
+// Although it would be nice to save on computation by loading saved behavior characteristic data,
+// it is not a reliable replacement for simply re-evaluating each elite.
 					
-					// Package in a score
-					Score<T> score = new Score<T>(map, elite, new double[0]);					
-					evaluatedPopulation.add(score);
+//					// Load behavior scores
+//					ArrayList<Double> scores = new ArrayList<Double>(numLabels); 
+//					try {
+//						Scanner scoresFile = new Scanner(new File(binPrefix + "scores.txt"));
+//						while(scoresFile.hasNextDouble()) {
+//							double score = scoresFile.nextDouble();
+//							if(Double.isFinite(score)) {
+//								binScore = score; // This is an actual score
+//							}
+//							scores.add(score);
+//						}
+//						scoresFile.close();
+//					} catch (FileNotFoundException e) {
+//						System.out.println("Could not read " + binPrefix + "scores.txt");
+//						e.printStackTrace();
+//						System.exit(1);
+//					}
+//					// This does not provide a complete behavior map, but the score and 1-D index are known
+//					HashMap<String,Object> map = new HashMap<>();
+//					map.put("binScore", binScore);
+//					map.put("dim1D", i);
+//					
+//					// Package in a score
+//					Score<T> score = new Score<T>(map, elite, new double[0]);					
+//					evaluatedPopulation.add(score);
 				}
 			}
 		} else {
 			System.out.println("Fill up initial archive");
 			// Start from scratch
 			int startSize = Parameters.parameters.integerParameter("mu");
-			ArrayList<Genotype<T>> startingPopulation = PopulationUtil.initialPopulation(example, startSize);			
+			startingPopulation = PopulationUtil.initialPopulation(example, startSize);			
 			assert startingPopulation.size() == 0 || !(startingPopulation.get(0) instanceof BoundedRealValuedGenotype) || ((BoundedRealValuedGenotype) startingPopulation.get(0)).isBounded() : "Initial individual not bounded: "+startingPopulation.get(0);
-			evaluatedPopulation = new Vector<>(startingPopulation.size());
-
-			boolean backupNetIO = CommonConstants.netio;
-			CommonConstants.netio = false; // Some tasks require archive comparison to do this, but it does not exist yet.
-			Stream<Genotype<T>> evaluateStream = Parameters.parameters.booleanParameter("parallelMAPElitesInitialize") ? 
-													startingPopulation.parallelStream() :
-													startingPopulation.stream();
-			if(Parameters.parameters.booleanParameter("parallelMAPElitesInitialize"))
-				System.out.println("Initialize archive in parallel");
-			// Evaluate initial population
-			evaluateStream.forEach( (g) -> {
-				Score<T> s = task.evaluate(g);
-				evaluatedPopulation.add(s);
-			});
-			CommonConstants.netio = backupNetIO;
 		}
 		
 		// Next code executes for fresh starts and resumes/loads
+		// Even for resume, re-evaluate the loaded genotypes
+		Vector<Score<T>> evaluatedPopulation = new Vector<>(startingPopulation.size());
+		
+		boolean backupNetIO = CommonConstants.netio;
+		CommonConstants.netio = false; // Some tasks require archive comparison to do this, but it does not exist yet.
+		Stream<Genotype<T>> evaluateStream = Parameters.parameters.booleanParameter("parallelMAPElitesInitialize") ? 
+												startingPopulation.parallelStream() :
+												startingPopulation.stream();
+		if(Parameters.parameters.booleanParameter("parallelMAPElitesInitialize"))
+			System.out.println("Evaluate archive in parallel");
+		// Evaluate initial population
+		evaluateStream.forEach( (g) -> {
+			Score<T> s = task.evaluate(g);
+			evaluatedPopulation.add(s);
+		});
+		CommonConstants.netio = backupNetIO;		
+		
 		if(Parameters.parameters.booleanParameter("dynamicAutoencoderIntervals")) {					
 			autoencoderLossRange = new MMNEATLog("autoencoderLossRange", false, false, false, true);
 		}
