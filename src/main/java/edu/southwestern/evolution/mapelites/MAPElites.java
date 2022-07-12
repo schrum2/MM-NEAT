@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Vector;
@@ -321,13 +322,18 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			for(int i = 0; i < binLabels.size(); i++) {
 				String binPrefix = archiveDir + "/" + binLabels.get(i) + "-";
 				Genotype<T> elite = (Genotype<T>) Serialization.load(binPrefix + "elite"); // Load genotype
+				double binScore = Double.NEGATIVE_INFINITY; // The one bin score
 				if(elite != null) { // File actually exists
 					// Load behavior scores
 					ArrayList<Double> scores = new ArrayList<Double>(numLabels); 
 					try {
 						Scanner scoresFile = new Scanner(new File(binPrefix + "scores.txt"));
 						while(scoresFile.hasNextDouble()) {
-							scores.add(scoresFile.nextDouble());
+							double score = scoresFile.nextDouble();
+							if(Double.isFinite(score)) {
+								binScore = score; // This is an actual score
+							}
+							scores.add(score);
 						}
 						scoresFile.close();
 					} catch (FileNotFoundException e) {
@@ -335,8 +341,13 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 						e.printStackTrace();
 						System.exit(1);
 					}
+					// This does not provide a complete behavior map, but the score and 1-D index are known
+					HashMap<String,Object> map = new HashMap<>();
+					map.put("binScore", binScore);
+					map.put("dim1D", i);
+					
 					// Package in a score
-					Score<T> score = new Score<T>(elite, new double[0], scores);
+					Score<T> score = new Score<T>(map, elite, new double[0]);					
 					evaluatedPopulation.add(score);
 				}
 			}
