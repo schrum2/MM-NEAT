@@ -310,7 +310,9 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			emitterMeanLog = new MMNEATLog("EmitterMeans", false, false, false, true);
 		}
 		saveImageArchives = MMNEAT.task instanceof PictureTargetTask;
+		Vector<Score<T>> evaluatedPopulation;
 		if(iterations > 0) {
+			evaluatedPopulation = new Vector<>();
 			int numLabels = archive.getBinMapping().binLabels().size();
 			// Loading from saved archive
 			String archiveDir = archive.getArchiveDirectory();
@@ -335,7 +337,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 					}
 					// Package in a score
 					Score<T> score = new Score<T>(elite, new double[0], scores);
-					archive.archive.set(i, score); // Directly set the bin contents
+					evaluatedPopulation.add(score);
 				}
 			}
 		} else {
@@ -344,7 +346,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			int startSize = Parameters.parameters.integerParameter("mu");
 			ArrayList<Genotype<T>> startingPopulation = PopulationUtil.initialPopulation(example, startSize);			
 			assert startingPopulation.size() == 0 || !(startingPopulation.get(0) instanceof BoundedRealValuedGenotype) || ((BoundedRealValuedGenotype) startingPopulation.get(0)).isBounded() : "Initial individual not bounded: "+startingPopulation.get(0);
-			Vector<Score<T>> evaluatedPopulation = new Vector<>(startingPopulation.size());
+			evaluatedPopulation = new Vector<>(startingPopulation.size());
 
 			boolean backupNetIO = CommonConstants.netio;
 			CommonConstants.netio = false; // Some tasks require archive comparison to do this, but it does not exist yet.
@@ -359,67 +361,66 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				evaluatedPopulation.add(s);
 			});
 			CommonConstants.netio = backupNetIO;
-			
-			if(Parameters.parameters.booleanParameter("dynamicAutoencoderIntervals")) {					
-				autoencoderLossRange = new MMNEATLog("autoencoderLossRange", false, false, false, true);
-			}
-			
-			// Special code if image auto-encoder is used
-			if(Parameters.parameters.booleanParameter("trainInitialAutoEncoder") && saveImageArchives && Parameters.parameters.booleanParameter("trainingAutoEncoder")) {
-				System.out.println("Train initial auto-encoder");
-				((PictureTargetTask) MMNEAT.task).saveAllArchiveImages("starting", AutoEncoderProcess.SIDE_LENGTH, AutoEncoderProcess.SIDE_LENGTH, evaluatedPopulation);
-				String experimentDir = FileUtilities.getSaveDirectory()+File.separator+"snapshots";
-				Parameters.parameters.setString("mostRecentAutoEncoder", experimentDir+File.separator+ "starting.pth");
-				String outputAutoEncoderFile = Parameters.parameters.stringParameter("mostRecentAutoEncoder");
-				String trainingDataDirectory = experimentDir+File.separator+"starting";
+		}
+		
+		// Next code executes for fresh starts and resumes/loads
+		if(Parameters.parameters.booleanParameter("dynamicAutoencoderIntervals")) {					
+			autoencoderLossRange = new MMNEATLog("autoencoderLossRange", false, false, false, true);
+		}
 
-				// This adds the population to the archive after training the auto-encoder
-				trainImageAutoEncoderAndSetLossBounds(outputAutoEncoderFile, trainingDataDirectory, evaluatedPopulation);
-				System.out.println("Initial occupancy: "+ this.archive.getNumberOfOccupiedBins());
-			} else {
-				MinecraftCoordinates ranges = new MinecraftCoordinates(Parameters.parameters.integerParameter("minecraftXRange"),Parameters.parameters.integerParameter("minecraftYRange"),Parameters.parameters.integerParameter("minecraftZRange"));
-				boolean minecraftInit = archive.getBinMapping() instanceof MinecraftMAPElitesBinLabels && Parameters.parameters.booleanParameter("minecraftContainsWholeMAPElitesArchive");
-				if(minecraftInit) { //then clear world
-					// Initializes the population size and ranges for clearing
-					int pop_size = Parameters.parameters.integerParameter("mu");
-					MinecraftClient.getMinecraftClient().clearSpaceForShapes(new MinecraftCoordinates(0,MinecraftClient.GROUND_LEVEL+1,0), ranges, pop_size, Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER));
-					// Place fences around all areas where a shape from the archive could be placed
-					System.out.println("Area cleared, placing fences...");
-					MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
-					int dim1D = 0;
-					for(int[] multiIndices : minecraftBinLabels) {
-						//System.out.println(Arrays.toString(multiIndices));
-						Pair<MinecraftCoordinates, MinecraftCoordinates> corners = MinecraftLonerShapeTask.configureStartPosition(ranges, multiIndices, dim1D++);
-						// Only place on ground
-						if(corners.t1.y() == MinecraftClient.GROUND_LEVEL+1) {
-							//System.out.println("YES GROUND");
-							MinecraftLonerShapeTask.placeFencesAroundArchive(ranges,corners.t2);
-						}
+		// Special code if image auto-encoder is used
+		if(Parameters.parameters.booleanParameter("trainInitialAutoEncoder") && saveImageArchives && Parameters.parameters.booleanParameter("trainingAutoEncoder")) {
+			System.out.println("Train initial auto-encoder");
+			((PictureTargetTask) MMNEAT.task).saveAllArchiveImages("starting", AutoEncoderProcess.SIDE_LENGTH, AutoEncoderProcess.SIDE_LENGTH, evaluatedPopulation);
+			String experimentDir = FileUtilities.getSaveDirectory()+File.separator+"snapshots";
+			Parameters.parameters.setString("mostRecentAutoEncoder", experimentDir+File.separator+ "starting.pth");
+			String outputAutoEncoderFile = Parameters.parameters.stringParameter("mostRecentAutoEncoder");
+			String trainingDataDirectory = experimentDir+File.separator+"starting";
+
+			// This adds the population to the archive after training the auto-encoder
+			trainImageAutoEncoderAndSetLossBounds(outputAutoEncoderFile, trainingDataDirectory, evaluatedPopulation);
+			System.out.println("Initial occupancy: "+ this.archive.getNumberOfOccupiedBins());
+		} else {
+			MinecraftCoordinates ranges = new MinecraftCoordinates(Parameters.parameters.integerParameter("minecraftXRange"),Parameters.parameters.integerParameter("minecraftYRange"),Parameters.parameters.integerParameter("minecraftZRange"));
+			boolean minecraftInit = archive.getBinMapping() instanceof MinecraftMAPElitesBinLabels && Parameters.parameters.booleanParameter("minecraftContainsWholeMAPElitesArchive");
+			if(minecraftInit) { //then clear world
+				// Initializes the population size and ranges for clearing
+				int pop_size = Parameters.parameters.integerParameter("mu");
+				MinecraftClient.getMinecraftClient().clearSpaceForShapes(new MinecraftCoordinates(0,MinecraftClient.GROUND_LEVEL+1,0), ranges, pop_size, Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER));
+				// Place fences around all areas where a shape from the archive could be placed
+				System.out.println("Area cleared, placing fences...");
+				MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
+				int dim1D = 0;
+				for(int[] multiIndices : minecraftBinLabels) {
+					//System.out.println(Arrays.toString(multiIndices));
+					Pair<MinecraftCoordinates, MinecraftCoordinates> corners = MinecraftLonerShapeTask.configureStartPosition(ranges, multiIndices, dim1D++);
+					// Only place on ground
+					if(corners.t1.y() == MinecraftClient.GROUND_LEVEL+1) {
+						//System.out.println("YES GROUND");
+						MinecraftLonerShapeTask.placeFencesAroundArchive(ranges,corners.t2);
 					}
-					
-					System.out.println("Fences placed");	
-					MinecraftLonerShapeTask.spawnShapesInWorldTrue();
 				}
-				
-				// Add initial population to archive, if add is true
-				evaluatedPopulation.parallelStream().forEach( (s) -> {
-					boolean result = archive.add(s); // Fill the archive with random starting individuals, only when this flag is true
-					
-					// Minecraft shapes have to be re-generated and added to the world
-					synchronized(archive) {
-						if(minecraftInit && result) {
-							//System.out.println("Put "+s.individual.getId()+":"+s.MAPElitesBehaviorMap());
-							int index1D = (int) s.MAPElitesBehaviorMap().get("dim1D");
-							double scoreOfCurrentElite = s.behaviorIndexScore();
-							MinecraftLonerShapeTask.clearAndSpawnShape(s.individual, s.MAPElitesBehaviorMap(), ranges, index1D, scoreOfCurrentElite);
-						}
-					}
-				});
-				//long endTime = System.currentTimeMillis();
-				//System.out.println("TIME TAKEN:" + (endTime - startTime));
-				
-				
+
+				System.out.println("Fences placed");	
+				MinecraftLonerShapeTask.spawnShapesInWorldTrue();
 			}
+
+			// Add initial population to archive, if add is true
+			evaluatedPopulation.parallelStream().forEach( (s) -> {
+				boolean result = archive.add(s); // Fill the archive with random starting individuals, only when this flag is true
+
+				// Minecraft shapes have to be re-generated and added to the world
+				synchronized(archive) {
+					if(minecraftInit && result) {
+						//System.out.println("Put "+s.individual.getId()+":"+s.MAPElitesBehaviorMap());
+						int index1D = (int) s.MAPElitesBehaviorMap().get("dim1D");
+						double scoreOfCurrentElite = s.behaviorIndexScore();
+						MinecraftLonerShapeTask.clearAndSpawnShape(s.individual, s.MAPElitesBehaviorMap(), ranges, index1D, scoreOfCurrentElite);
+					}
+				}
+			});
+			//long endTime = System.currentTimeMillis();
+			//System.out.println("TIME TAKEN:" + (endTime - startTime));
 		}
 	}
 
