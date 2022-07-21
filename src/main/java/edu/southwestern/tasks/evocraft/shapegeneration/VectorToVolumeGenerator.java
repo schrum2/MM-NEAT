@@ -48,7 +48,12 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 	public List<Block> generateShape(Genotype<ArrayList<Double>> genome, MinecraftCoordinates corner,
 			BlockSet blockSet) {
 		MinecraftCoordinates ranges = MinecraftUtilClass.getRanges();
-		
+		boolean evolveOrientation = Parameters.parameters.booleanParameter("minecraftEvolveOrientation");
+		boolean separatePresenceThreshold = Parameters.parameters.booleanParameter("vectorPresenceThresholdForEachBlock");
+		int numsPerBlock = 1;
+		if(separatePresenceThreshold) numsPerBlock++;
+		if(evolveOrientation) numsPerBlock++;
+
 		List<Block> blocks = new ArrayList<Block>();
 		ArrayList<Double> phenotype = genome.getPhenotype();	
 		Orientation blockOrientation = Orientation.NORTH; // all blocks will have orientation of north by default
@@ -60,7 +65,7 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 					Block b = null;
 					
 					// there will either be two or three numbers corresponding to 1 block depending on if orientation is being evolved
-					if(Parameters.parameters.booleanParameter("vectorPresenceThresholdForEachBlock")) {
+					if(separatePresenceThreshold) {
 						
 						assert phenotype.get(counter) >= ((BoundedTask) MMNEAT.task).getLowerBounds()[counter] : counter+":bounds="+((BoundedTask) MMNEAT.task).getLowerBounds()+":phenotype="+phenotype;
 						assert phenotype.get(counter) <= ((BoundedTask) MMNEAT.task).getUpperBounds()[counter] : counter+":bounds="+((BoundedTask) MMNEAT.task).getUpperBounds()+":phenotype="+phenotype;
@@ -79,37 +84,43 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 
 							if(blockTypeIndex == numBlockTypes) blockTypeIndex--; // Rare case
 							
-							if(Parameters.parameters.booleanParameter("minecraftEvolveOrientation")) {
+							if(evolveOrientation) {
 								final int ORIENTATION_INDEX = counter+2;
-								int orientationTypeIndex = (int) (phenotype.get(ORIENTATION_INDEX) * numOrientations);
-								if(orientationTypeIndex == numOrientations) orientationTypeIndex--; // Boundary case
-								blockOrientation = MinecraftUtilClass.getOrientations()[orientationTypeIndex];
-								counter++; // increase counter because there are three numbers per block in this case
+								blockOrientation = determineOrientation(phenotype, ORIENTATION_INDEX);
 							}
 								
 							b = new Block(corner.add(new MinecraftCoordinates(xi,yi,zi)), blockSet.getPossibleBlocks()[blockTypeIndex], blockOrientation);
 						} // else do not place any block
-						counter+=2; // two numbers per block (unless evolve orientation is true)
 					} else { // there will either be one or two numbers per block depending on if orientation is being evolved
 						int blockTypeIndex = (int)(phenotype.get(counter)*(numBlockTypes+1)); // length+1 because there could be airblocks
 						if(blockTypeIndex != numBlockTypes) { // Corresponds to empty/AIR block
 							
-							if(Parameters.parameters.booleanParameter("minecraftEvolveOrientation")) {
+							if(evolveOrientation) {
 								final int ORIENTATION_INDEX = counter+1;
-								blockOrientation = MinecraftUtilClass.getOrientations()[(int) (phenotype.get(ORIENTATION_INDEX) * numOrientations)];
-								counter++; // increase counter because there are two numbers per block in this case
+								blockOrientation = determineOrientation(phenotype, ORIENTATION_INDEX);
 							}
 							
 							b = new Block(corner.add(new MinecraftCoordinates(xi,yi,zi)), blockSet.getPossibleBlocks()[blockTypeIndex], blockOrientation);
 						}
-						counter++; // one number per block (unless evolve orientation is true)
 					}
 					// Will be null if empty/AIR
 					if(b!=null) blocks.add(b);
+					counter+=numsPerBlock;
 				}
 			}
 		}
+		
+		assert counter == phenotype.size() : "Counter "+counter+" did not reach end of list: "+phenotype.size();
+		
 		return blocks;	
+	}
+
+	private Orientation determineOrientation(ArrayList<Double> phenotype, final int ORIENTATION_INDEX) {
+		Orientation blockOrientation;
+		int orientationTypeIndex = (int) (phenotype.get(ORIENTATION_INDEX) * numOrientations);
+		if(orientationTypeIndex == numOrientations) orientationTypeIndex--; // Boundary case
+		blockOrientation = MinecraftUtilClass.getOrientations()[orientationTypeIndex];
+		return blockOrientation;
 	}
 
 	@Override
