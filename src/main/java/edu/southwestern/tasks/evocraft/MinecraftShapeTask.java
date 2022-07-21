@@ -1,5 +1,6 @@
 package edu.southwestern.tasks.evocraft;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,6 +9,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.GenerationalEA;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.NetworkGenotype;
 import edu.southwestern.networks.NetworkTask;
@@ -35,6 +37,7 @@ import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Triple;
 import edu.southwestern.util.datastructures.Vertex;
+import edu.southwestern.util.file.FileUtilities;
 
 
 public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTask, BoundedTask {
@@ -263,6 +266,15 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			//if(genome.getId()  == 91) System.out.println(genome.getId() + ":" + blocks + ":" + behaviorMap);
 			assert !(minecraftBinLabels instanceof MinecraftMAPElitesBlockCountBinLabels) || ((Integer) behaviorMap.get("dim1D")).intValue() == (int) ((Double) behaviorMap.get("OccupiedCountFitness")).doubleValue() - 1 : behaviorMap + ":" + blocks;
 			assert !(minecraftBinLabels instanceof MinecraftMAPElitesBlockCountBinLabels) || blocks.size() == (int) ((Double) behaviorMap.get("OccupiedCountFitness")).doubleValue() : behaviorMap + ":" + blocks;
+		} else if(Parameters.parameters.booleanParameter("minecraftChangeCenterOfMassFitness") && fitnessScores[0] > fitnessFunctions.get(0).maxFitness() - 5) {
+			// Assuming that change in center of mass is at index 0, and that 5 is a suitable threshold for penalties to the max fitness
+			String flyingDir = FileUtilities.getSaveDirectory() + "/flyingMachines";
+			File dir = new File(flyingDir);
+			// Create dir
+			if (!dir.exists()) {
+				dir.mkdir();
+			}
+			MinecraftLonerShapeTask.writeBlockListFile(blocks, flyingDir + File.separator + "GEN"+((GenerationalEA) MMNEAT.ea).currentGeneration(), "FITNESS"+fitnessScores[0]+".txt");
 		}
 		return score;
 	}

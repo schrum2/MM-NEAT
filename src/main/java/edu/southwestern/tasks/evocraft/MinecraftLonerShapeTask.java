@@ -432,17 +432,27 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			Archive<T> archive = MMNEAT.getArchive();
 			String fileName = String.format("%7.5f", scoreOfCurrentElite) + "_" + genomeId + ".txt";
 			String binPath = archive.getArchiveDirectory() + File.separator + minecraftBinLabels.binLabels().get(dim1D);
-			String fullName = binPath + "_" + fileName;
-			System.out.println(fullName);
-			try {
-				PrintStream outputFile = new PrintStream(new File(fullName));
-				outputFile.println(blocks);
-				outputFile.close();
-			} catch (FileNotFoundException e) {
-				System.out.println("Error writing file "+fullName);
-				e.printStackTrace();
-				System.exit(1);
-			}
+			writeBlockListFile(blocks, fileName, binPath);
+		}
+	}
+
+	/**
+	 * Write block list text file to specified location
+	 * @param blocks The blocks to write
+	 * @param pathAndPrefix Path plus first part of filename. Will be followed by _ before the fileSuffix
+	 * @param fileSuffix Last part of filename
+	 */
+	public static void writeBlockListFile(List<Block> blocks, String pathAndPrefix, String fileSuffix) {
+		String fullName = pathAndPrefix + "_" + fileSuffix;
+		System.out.println(fullName);
+		try {
+			PrintStream outputFile = new PrintStream(new File(fullName));
+			outputFile.println(blocks);
+			outputFile.close();
+		} catch (FileNotFoundException e) {
+			System.out.println("Error writing file "+fullName);
+			e.printStackTrace();
+			System.exit(1);
 		}
 	}
 
