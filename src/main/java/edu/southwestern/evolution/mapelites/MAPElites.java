@@ -316,6 +316,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			// Loading from saved archive
 			String archiveDir = archive.getArchiveDirectory();
 			List<String> binLabels = archive.getBinMapping().binLabels();
+			Serialization.debug = false; // Don't print stack trace for missing files
 			// Load each elite from xml file into archive
 			for(int i = 0; i < binLabels.size(); i++) {
 				String binPrefix = archiveDir + "/" + binLabels.get(i) + "-";
@@ -323,37 +324,9 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				//double binScore = Double.NEGATIVE_INFINITY; // The one bin score
 				if(elite != null) { // File actually exists
 					startingPopulation.add(elite);
-
-// Although it would be nice to save on computation by loading saved behavior characteristic data,
-// it is not a reliable replacement for simply re-evaluating each elite.
-					
-//					// Load behavior scores
-//					ArrayList<Double> scores = new ArrayList<Double>(numLabels); 
-//					try {
-//						Scanner scoresFile = new Scanner(new File(binPrefix + "scores.txt"));
-//						while(scoresFile.hasNextDouble()) {
-//							double score = scoresFile.nextDouble();
-//							if(Double.isFinite(score)) {
-//								binScore = score; // This is an actual score
-//							}
-//							scores.add(score);
-//						}
-//						scoresFile.close();
-//					} catch (FileNotFoundException e) {
-//						System.out.println("Could not read " + binPrefix + "scores.txt");
-//						e.printStackTrace();
-//						System.exit(1);
-//					}
-//					// This does not provide a complete behavior map, but the score and 1-D index are known
-//					HashMap<String,Object> map = new HashMap<>();
-//					map.put("binScore", binScore);
-//					map.put("dim1D", i);
-//					
-//					// Package in a score
-//					Score<T> score = new Score<T>(map, elite, new double[0]);					
-//					evaluatedPopulation.add(score);
 				}
 			}
+			Serialization.debug = true; // Restore stack traces
 		} else {
 			System.out.println("Fill up initial archive");
 			// Start from scratch
