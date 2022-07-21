@@ -24,6 +24,8 @@ import edu.southwestern.util.datastructures.Vertex;
  *
  */
 public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
+	// At least this many blocks must depart to count as flying
+	private static final int SUFFICIENT_DEPARTED_BLOCKS = 6;
 	// Flying machines that leave blocks behind get a small fitness penalty proportional to the number of remaining blocks,
 	// but scaled down to 10% of that.
 	private static final double REMAINING_BLOCK_PUNISHMENT_SCALE = 0.1;
@@ -167,26 +169,9 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 				// This means that it hasn't moved, so move on to the next.
 				// BUT What if it moves back and forth and returned to its original position?
 				if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": No movement.");
-				int remainingBlockCount = shortWaitTimeUpdate.size(); // Could be larger than initial due to extensions
-				int departedBlockCount = initialBlockCount - remainingBlockCount; // Could be negative due to extensions
-				// At least half of the blocks need to leave before we consider the shape to be flying.
-				// It should be hard to archive credit for flying, so make sure that the number of departed blocks is sufficiently high
-				if(departedBlockCount > Math.ceil(initialBlockCount/2.0)) {
-					if(CommonConstants.watch) System.out.println("Enough have departed. departedBlockCount is "+departedBlockCount+ " from initialBlockCount of "+initialBlockCount);					
-//					System.out.println( "remainingBlockCount = "+remainingBlockCount+"\ninitialBlockCount = "+initialBlockCount+"\ndepartedBlockCount = "+departedBlockCount+
-//						"\nshortWaitTimeUpdate                = "+shortWaitTimeUpdate+
-//						"\nblocks                             = "+blocks+
-//						"\noriginalBlocks                     = "+originalBlocks+
-//						"\nupdatedBlocksWithoutExtendedPistons= "+updatedBlocksWithoutExtendedPistons+
-//						"\ninitialCenterOfMass = "+initialCenterOfMass+"\nnextCenterOfMass = "+nextCenterOfMass+
-//						"\ncorner = "+corner+
-//						"\nbig area around is "+MinecraftUtilClass.filterOutBlock(MinecraftClient.getMinecraftClient().readCube(corner.sub(new MinecraftCoordinates(5,5,5)),end.add(new MinecraftCoordinates(5,5,5))),BlockType.AIR) );
-//					System.exit(1);
-					
-					// Ship flew so far away that we award max fitness, but penalize remaining blocks
-					System.out.println(remainingBlockCount +" remaining blocks: max = " + maxFitness());
-					return new Triple<>(initialCenterOfMass, lastCenterOfMass, maxFitness() - remainingBlockCount*REMAINING_BLOCK_PUNISHMENT_SCALE);
-				}
+				Triple<Vertex, Vertex, Double> result = checkCreditForDepartedBlocks(initialBlockCount,
+						initialCenterOfMass, lastCenterOfMass, shortWaitTimeUpdate);
+				if(result != null) return result;
 				
 				stop = true;
 			} else {
@@ -200,7 +185,12 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 				}
 			}
 		}
-
+		
+		// It is possible that blocks flew away, but some remaining component kept oscillating until the end. This is still a flying machine though.
+		Triple<Vertex, Vertex, Double> result = checkCreditForDepartedBlocks(initialBlockCount, initialCenterOfMass, lastCenterOfMass, shortWaitTimeUpdate);
+		if(result != null) return result;
+		
+		// Machine did not fly away
 		Triple<Vertex,Vertex,Double> centerOfMassBeforeAndAfter = new Triple<>(initialCenterOfMass, lastCenterOfMass, totalChangeDistance);
 		
 		double changeInPosition = centerOfMassBeforeAndAfter.t2.distance(centerOfMassBeforeAndAfter.t1);
@@ -211,6 +201,31 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		}
 		if(CommonConstants.watch) System.out.println("Final result "+centerOfMassBeforeAndAfter);
 		return centerOfMassBeforeAndAfter;
+	}
+
+	private Triple<Vertex, Vertex, Double> checkCreditForDepartedBlocks(int initialBlockCount,
+			Vertex initialCenterOfMass, Vertex lastCenterOfMass, List<Block> shortWaitTimeUpdate) {
+		int remainingBlockCount = shortWaitTimeUpdate.size(); // Could be larger than initial due to extensions
+		int departedBlockCount = initialBlockCount - remainingBlockCount; // Could be negative due to extensions
+		Triple<Vertex, Vertex, Double> result = null;
+		// It should be hard to archive credit for flying, so make sure that the number of departed blocks is sufficiently high
+		if(departedBlockCount > SUFFICIENT_DEPARTED_BLOCKS) {
+			if(CommonConstants.watch) System.out.println("Enough have departed. departedBlockCount is "+departedBlockCount+ " from initialBlockCount of "+initialBlockCount);					
+//					System.out.println( "remainingBlockCount = "+remainingBlockCount+"\ninitialBlockCount = "+initialBlockCount+"\ndepartedBlockCount = "+departedBlockCount+
+//						"\nshortWaitTimeUpdate                = "+shortWaitTimeUpdate+
+//						"\nblocks                             = "+blocks+
+//						"\noriginalBlocks                     = "+originalBlocks+
+//						"\nupdatedBlocksWithoutExtendedPistons= "+updatedBlocksWithoutExtendedPistons+
+//						"\ninitialCenterOfMass = "+initialCenterOfMass+"\nnextCenterOfMass = "+nextCenterOfMass+
+//						"\ncorner = "+corner+
+//						"\nbig area around is "+MinecraftUtilClass.filterOutBlock(MinecraftClient.getMinecraftClient().readCube(corner.sub(new MinecraftCoordinates(5,5,5)),end.add(new MinecraftCoordinates(5,5,5))),BlockType.AIR) );
+//					System.exit(1);
+			
+			// Ship flew so far away that we award max fitness, but penalize remaining blocks
+			System.out.println(remainingBlockCount +" remaining blocks: max = " + maxFitness());
+			result = new Triple<>(initialCenterOfMass, lastCenterOfMass, maxFitness() - remainingBlockCount*REMAINING_BLOCK_PUNISHMENT_SCALE);
+		}
+		return result;
 	}
 
 	public static Vertex getCenterOfMass(List<Block> blocks) {
