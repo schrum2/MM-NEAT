@@ -331,7 +331,7 @@ public class MMNEAT {
 			actualFitnessFunctions.set(pop, num);
 		}
 		// For coevolution.
-		// Create enough objective arrays to accomadate each population
+		// Create enough objective arrays to accommodate each population
 		while(fitnessFunctions.size() <= pop) {
 			fitnessFunctions.add(new ArrayList<String>());
 		}

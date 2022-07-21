@@ -118,7 +118,10 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 	private Orientation determineOrientation(ArrayList<Double> phenotype, final int ORIENTATION_INDEX) {
 		Orientation blockOrientation;
 		int orientationTypeIndex = (int) (phenotype.get(ORIENTATION_INDEX) * numOrientations);
-		if(orientationTypeIndex == numOrientations) orientationTypeIndex--; // Boundary case
+		if(orientationTypeIndex == numOrientations) {
+			assert phenotype.get(ORIENTATION_INDEX) == 1.0;
+			orientationTypeIndex--; // Boundary case
+		}
 		blockOrientation = MinecraftUtilClass.getOrientations()[orientationTypeIndex];
 		return blockOrientation;
 	}
