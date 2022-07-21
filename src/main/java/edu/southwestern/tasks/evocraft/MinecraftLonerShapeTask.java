@@ -435,7 +435,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			Archive<T> archive = MMNEAT.getArchive();
 			String fileName = String.format("%7.5f", scoreOfCurrentElite) + "_" + genomeId + ".txt";
 			String binPath = archive.getArchiveDirectory() + File.separator + minecraftBinLabels.binLabels().get(dim1D);
-			writeBlockListFile(blocks, fileName, binPath);
+			writeBlockListFile(blocks, binPath, fileName);
 		}
 	}
 
