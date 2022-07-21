@@ -125,7 +125,7 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 
 	@Override
 	public String[] getNetworkOutputLabels() {
-		return ShapeGenerator.defaultNetworkOutputLabels(MMNEAT.blockSet);
+		throw new UnsupportedOperationException("This should not be called for vector-based shape generation");
 	}
 	
 	public double[] getUpperBounds() { return upper; }
