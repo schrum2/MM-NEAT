@@ -9,6 +9,7 @@ import java.util.stream.IntStream;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.genotypes.NetworkGenotype;
 import edu.southwestern.networks.NetworkTask;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
@@ -170,7 +171,8 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 
 	@Override
 	public void postConstructionInitialization() {
-		MMNEAT.setNNInputParameters(sensorLabels().length, outputLabels().length);
+		if(MMNEAT.genotype instanceof NetworkGenotype)
+			MMNEAT.setNNInputParameters(sensorLabels().length, outputLabels().length);
 	}
 
 	@Override
