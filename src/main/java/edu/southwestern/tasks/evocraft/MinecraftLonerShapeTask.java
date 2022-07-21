@@ -165,7 +165,10 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 						}
 
 					}
-					interactiveLoopFinished = true;
+					// Might keep interactive loop active even after experiment completion so that blocks still work
+					if(!Parameters.parameters.booleanParameter("interactWithMinecraftForever")) {
+						interactiveLoopFinished = true;
+					}
 				}
 			};
 			interactionThread.start();

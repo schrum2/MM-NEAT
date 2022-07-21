@@ -340,48 +340,8 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		return corners;
 	}
 
-	public static void main(String[] args) {
-		int seed = 7;
-		try {
-			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:20", "maxGens:150",
-					"base:minecraft", "log:Minecraft-CenterOfMassVectors", "saveTo:CenterOfMassVectors",
-					"io:true", "netio:true", 
-					//"io:false", "netio:false", 
-					"mating:true", "fs:false", 
-					//"startX:-10", "startY:15", "startZ:10",
-					//"displayDiagonally:false",
-					//"genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype",
-					"vectorPresenceThresholdForEachBlock:true",
-					"voxelExpressionThreshold:0.5",
-					"launchMinecraftServerFromJava:false",
-					//"minecraftTypeCountFitness:true",
-					//"minecraftTypeTargetFitness:true", 
-					//"minecraftDesiredBlockCount:40",
-					//"minecraftOccupiedCountFitness:true",
-					//"minecraftChangeCenterOfMassFitness:true",
-					//"NegativeSpaceCountFitness:true",
-					"minecraftChangeCenterOfMassFitness:true",
-					"minecraftEndEvalNoMovement:true",
-					"shortTimeBetweenMinecraftReads:" + 50000L,
-					"minecraftAccumulateChangeInCenterOfMass:true",
-					//"minecraftDiversityBlockFitness:true",
-					//"minecraftEvolveOrientation:true",
-					//"minecraftRedirectConfinedSnakes:true",
-					//"minecraftStopConfinedSnakes:true",
-					"minecraftXRange:3", "minecraftYRange:3", "minecraftZRange:5",
-					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGenerator",
-					//"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.SnakeGenerator",
-					"task:edu.southwestern.tasks.evocraft.MinecraftShapeTask", "allowMultipleFunctions:true",
-					"ftype:0", "watch:false", "netChangeActivationRate:0.0", "cleanFrequency:-1",
-					"recurrency:false", "saveAllChampions:true", "cleanOldNetworks:false",
-					"includeFullSigmoidFunction:true", "includeFullGaussFunction:true", "includeCosineFunction:true", 
-					"includeGaussFunction:false", "includeIdFunction:true", "includeTriangleWaveFunction:false", 
-					"includeSquareWaveFunction:false", "includeFullSawtoothFunction:false", "includeSigmoidFunction:false",
-					//"extraSpaceBetweenMinecraftShapes:0",
-					"includeAbsValFunction:false", "includeSawtoothFunction:false"}); 
-		} catch (FileNotFoundException | NoSuchMethodException e) {
-			e.printStackTrace();
-		}
+	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
+		MMNEAT.main("runNumber:89 randomSeed:89 minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftDiversityBlockFitness:true minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.SimpleSolidBlockSet trials:1 mu:20 maxGens:3005 launchMinecraftServerFromJava:false io:true netio:true mating:true fs:false spaceBetweenMinecraftShapes:7 task:edu.southwestern.tasks.evocraft.MinecraftShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:minecraftaccumulate log:MinecraftAccumulate-ESVectorSimple saveTo:ESVectorSimple".split(" ")); 
 	}
 
 	@Override
