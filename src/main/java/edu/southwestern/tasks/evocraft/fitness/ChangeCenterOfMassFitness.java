@@ -35,7 +35,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 	private static final double REMAINING_BLOCK_PUNISHMENT_SCALE = 0.1;
 	private static final HashMap<MinecraftCoordinates, Triple<Vertex, Vertex, Double>> PREVIOUSLY_COMPUTED_RESULTS = new HashMap<>();
 	// Nowhere near where anything else is being evaluated
-	private static final MinecraftCoordinates SPECIAL_CORNER = new MinecraftCoordinates(-500, 300, 500);
+	private static final MinecraftCoordinates SPECIAL_CORNER = new MinecraftCoordinates(-500, 100, 500);
 	private static final int SPECIAL_CORNER_BUFFER = 20;
 	
 	/**
