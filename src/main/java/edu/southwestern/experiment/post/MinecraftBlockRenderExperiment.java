@@ -8,7 +8,10 @@ import edu.southwestern.experiment.Experiment;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
+import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
+import edu.southwestern.tasks.evocraft.fitness.ChangeCenterOfMassFitness;
+import edu.southwestern.util.MiscUtil;
 
 /**
  * Load a single elite from MAP Elites output text file to spawn it
@@ -29,18 +32,38 @@ public class MinecraftBlockRenderExperiment implements Experiment {
 
 	@Override
 	public void run() {
-		List<Block> blocks;
 		try {
-			blocks = MinecraftUtilClass.loadMAPElitesOutputFile(new File(dir)); // get block list from output file
-			System.out.println("Spawning " + blocks.size() + " blocks from " + dir);
-			for(Block b: blocks) {
-				System.out.println(b);
+			File file = new File(dir);
+			if(file.isDirectory()) {
+				for(String individual : file.list()) {
+					generateOneShapeFromFile(new File(dir + File.separator + individual));
+					MiscUtil.waitForReadStringAndEnterKeyPress("Press enter to continue");
+				}
+			} else {
+				// Is a single text file
+				generateOneShapeFromFile(file);
 			}
-				
-			MinecraftClient.getMinecraftClient().spawnBlocks(blocks); // spawn blocks in minecraft world
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * @param blockTextFile
+	 * @throws FileNotFoundException
+	 */
+	public void generateOneShapeFromFile(File blockTextFile) throws FileNotFoundException {
+		List<Block> blocks = MinecraftUtilClass.loadMAPElitesOutputFile(blockTextFile); // get block list from output file
+		MinecraftCoordinates corner = MinecraftUtilClass.minCoordinates(blocks); // Original corner (or close to it)
+		ChangeCenterOfMassFitness.clearAreaAroundSpecialCorner();
+		List<Block> shiftedBlocks = MinecraftUtilClass.shiftBlocksBetweenCorners(blocks, corner, ChangeCenterOfMassFitness.SPECIAL_CORNER);
+		
+		System.out.println("Spawning " + shiftedBlocks.size() + " blocks from " + dir);
+		for(Block b: shiftedBlocks) {
+			System.out.println(b);
+		}
+			
+		MinecraftClient.getMinecraftClient().spawnBlocks(shiftedBlocks); // spawn blocks in minecraft world
 	}
 
 	@Override

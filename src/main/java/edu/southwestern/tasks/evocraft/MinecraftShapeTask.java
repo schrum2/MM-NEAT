@@ -268,7 +268,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			assert !(minecraftBinLabels instanceof MinecraftMAPElitesBlockCountBinLabels) || blocks.size() == (int) ((Double) behaviorMap.get("OccupiedCountFitness")).doubleValue() : behaviorMap + ":" + blocks;
 		} 
 		
-		if(Parameters.parameters.booleanParameter("minecraftChangeCenterOfMassFitness") && fitnessScores[0] > fitnessFunctions.get(0).maxFitness() - 5) {
+		if(CommonConstants.netio && Parameters.parameters.booleanParameter("minecraftChangeCenterOfMassFitness") && fitnessScores[0] > fitnessFunctions.get(0).maxFitness() - 5) {
 			// Assuming that change in center of mass is at index 0, and that 5 is a suitable threshold for penalties to the max fitness
 			String flyingDir = FileUtilities.getSaveDirectory() + "/flyingMachines";
 			File dir = new File(flyingDir);

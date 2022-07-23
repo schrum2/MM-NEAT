@@ -38,13 +38,13 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 	private static final double REMAINING_BLOCK_PUNISHMENT_SCALE = 0.1;
 	private static final HashMap<MinecraftCoordinates, Triple<Vertex, Vertex, Double>> PREVIOUSLY_COMPUTED_RESULTS = new HashMap<>();
 	// Nowhere near where anything else is being evaluated
-	private static final MinecraftCoordinates SPECIAL_CORNER = new MinecraftCoordinates(-500, 100, 500);
+	public static final MinecraftCoordinates SPECIAL_CORNER = new MinecraftCoordinates(-500, 100, 500);
 	private static final int SPECIAL_CORNER_BUFFER = 20;
 	
 	/**
 	 * Make sure the special area for double-checking flying shapes is really clear
 	 */
-	private static void clearAreaAroundSpecialCorner() {
+	public static void clearAreaAroundSpecialCorner() {
 		MinecraftCoordinates lower = SPECIAL_CORNER.sub(SPECIAL_CORNER_BUFFER);
 		MinecraftCoordinates upper = SPECIAL_CORNER.add(MinecraftUtilClass.getRanges().add(SPECIAL_CORNER_BUFFER));
 		MinecraftClient.getMinecraftClient().fillCube(lower, upper, BlockType.AIR);
@@ -190,15 +190,15 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 				if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": No movement.");
 				Triple<Vertex, Vertex, Double> result = checkCreditForDepartedBlocks(initialBlockCount, initialCenterOfMass, lastCenterOfMass, shortWaitTimeUpdate);
 				if(result != null) {
-					
-					String flyingDir = FileUtilities.getSaveDirectory() + "/possibleFlyingMachines";
-					File dir = new File(flyingDir);
-					// Create dir
-					if (!dir.exists()) {
-						dir.mkdir();
+					if(CommonConstants.netio) {
+						String flyingDir = FileUtilities.getSaveDirectory() + "/possibleFlyingMachines";
+						File dir = new File(flyingDir);
+						// Create dir
+						if (!dir.exists()) {
+							dir.mkdir();
+						}
+						MinecraftLonerShapeTask.writeBlockListFile(originalBlocks, flyingDir + File.separator + "Attempt"+attempt, "FITNESS_"+result.t3+".txt");
 					}
-					MinecraftLonerShapeTask.writeBlockListFile(originalBlocks, flyingDir + File.separator + "Attempt"+attempt, "HASH"+originalBlocks.hashCode()+".txt");
-					
 					System.out.println("Flying machine from attempt "+attempt);
 					for(int i = 0; i < history.size(); i++) {
 						System.out.println(i + "." + history.get(i));

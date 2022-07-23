@@ -212,6 +212,8 @@ public class ChangeCenterOfMassFitnessTest {
 	// Passes
 	@Test
 	public void testChangeInPositionWithRemainingBlocks() {
+		Parameters.initializeParameterCollections(new String[] {"netio:false"});
+		CommonConstants.netio = false;
 		boolean result = flyingMachineWithRemainingBlocks();
 		if(!result) {
 			// Get a second chance
