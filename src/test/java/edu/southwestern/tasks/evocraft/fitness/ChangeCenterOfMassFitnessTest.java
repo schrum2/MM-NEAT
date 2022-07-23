@@ -160,10 +160,10 @@ public class ChangeCenterOfMassFitnessTest {
 		double fitness = ff.fitnessScore(cornerBS1,blockSet1);
 		System.out.println("fitness = "+fitness);
 		assertTrue(0.03 <= fitness);
-		assertTrue(0.05 >= fitness);
+		assertTrue(0.5825731613780569 >= fitness);
 		Triple<Vertex, Vertex, Double> beforeAndAfter = ChangeCenterOfMassFitness.getPreviouslyComputedResult(cornerBS1); // Prevent lock
 		assertTrue(0.03 <= beforeAndAfter.t3);
-		assertTrue(0.05 >= beforeAndAfter.t3);
+		assertTrue(0.5825731613780569 >= beforeAndAfter.t3);
 		
 		
 	}
