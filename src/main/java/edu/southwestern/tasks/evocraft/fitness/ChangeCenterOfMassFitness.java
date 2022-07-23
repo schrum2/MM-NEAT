@@ -7,14 +7,13 @@ import java.util.HashMap;
 import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
-import edu.southwestern.evolution.GenerationalEA;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient;
-import edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
+import edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask;
 import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 import edu.southwestern.util.datastructures.Triple;
 import edu.southwestern.util.datastructures.Vertex;
@@ -198,7 +197,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 					if (!dir.exists()) {
 						dir.mkdir();
 					}
-					MinecraftLonerShapeTask.writeBlockListFile(originalBlocks, flyingDir + File.separator + "GEN"+((GenerationalEA) MMNEAT.ea).currentGeneration()+"Attempt"+attempt, "HASH"+originalBlocks.hashCode()+".txt");
+					MinecraftLonerShapeTask.writeBlockListFile(originalBlocks, flyingDir + File.separator + "Attempt"+attempt, "HASH"+originalBlocks.hashCode()+".txt");
 					
 					System.out.println("Flying machine from attempt "+attempt);
 					for(int i = 0; i < history.size(); i++) {
