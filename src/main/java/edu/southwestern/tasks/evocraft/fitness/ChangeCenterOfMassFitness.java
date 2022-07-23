@@ -1,20 +1,24 @@
 package edu.southwestern.tasks.evocraft.fitness;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.GenerationalEA;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient;
+import edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 import edu.southwestern.util.datastructures.Triple;
 import edu.southwestern.util.datastructures.Vertex;
+import edu.southwestern.util.file.FileUtilities;
 /**
  * Calculates the changes in the center of mass of
  * a given structure. If the structure is a flying machine
@@ -137,12 +141,13 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		if(CommonConstants.watch) System.out.println("Original Blocks: "+originalBlocks);
 		if(CommonConstants.watch) System.out.println("Evaluate at corner: "+corner);
 		
-		//ArrayList<List<Block>> history = new ArrayList<>();
+		ArrayList<List<Block>> history = new ArrayList<>();
 		
 		double totalChangeDistance = 0.0;
 		// These blocks will be compared with blocks read from the world, which will have only null orientations
 		List<Block> previousBlocks = MinecraftUtilClass.wipeOrientations(originalBlocks);
-		//history.add(previousBlocks);
+		history.add(originalBlocks);
+		history.add(previousBlocks);
 		int initialBlockCount = originalBlocks.size();
 		if(originalBlocks.isEmpty()) {
 			if(CommonConstants.watch) System.out.println("Empty shape: Immediate failure");
@@ -169,7 +174,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 				System.exit(1);
 			}
 			shortWaitTimeUpdate = MinecraftUtilClass.filterOutBlock(MinecraftClient.getMinecraftClient().readCube(corner,end),BlockType.AIR);
-			//history.add(shortWaitTimeUpdate);
+			history.add(shortWaitTimeUpdate);
 			if(CommonConstants.watch) System.out.println("Block update: "+shortWaitTimeUpdate);
 			if(shortWaitTimeUpdate.isEmpty()) { // If list is empty now (but was not before) then shape has flown completely away
 				if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": Shape empty now: max fitness! Last center of mass = "+lastCenterOfMass);
@@ -186,8 +191,22 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 				if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": No movement.");
 				Triple<Vertex, Vertex, Double> result = checkCreditForDepartedBlocks(initialBlockCount, initialCenterOfMass, lastCenterOfMass, shortWaitTimeUpdate);
 				if(result != null) {
+					
+					String flyingDir = FileUtilities.getSaveDirectory() + "/possibleFlyingMachines";
+					File dir = new File(flyingDir);
+					// Create dir
+					if (!dir.exists()) {
+						dir.mkdir();
+					}
+					MinecraftLonerShapeTask.writeBlockListFile(originalBlocks, flyingDir + File.separator + "GEN"+((GenerationalEA) MMNEAT.ea).currentGeneration()+"Attempt"+attempt, "HASH"+originalBlocks.hashCode()+".txt");
+					
+					System.out.println("Flying machine from attempt "+attempt);
+					for(int i = 0; i < history.size(); i++) {
+						System.out.println(i + "." + history.get(i));
+					}
 					// Repeat until certain
 					if(attempt < ATTEMPTS_BEFORE_CONVINCED_OF_FLYING) {
+						System.out.println("Check flying machine again");
 						// Only one shape can be evaluated in this place at a time
 						synchronized(SPECIAL_CORNER) {
 							clearAreaAroundSpecialCorner();
@@ -195,6 +214,8 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 							MinecraftClient.getMinecraftClient().spawnBlocks(shiftedBlocks);
 							result = getCenterOfMassBeforeAndAfter(SPECIAL_CORNER, shiftedBlocks, attempt);
 						}
+					} else {
+						System.out.println("Machine succeeded "+ATTEMPTS_BEFORE_CONVINCED_OF_FLYING+" times!");
 					}
 					
 //					for(int i = 0; i < history.size(); i++) {
@@ -286,7 +307,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main("runNumber:99 randomSeed:99 minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftChangeCenterOfMassFitness:true minecraftNorthSouthOnly:true minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet trials:1 mu:100 maxGens:60000 minecraftContainsWholeMAPElitesArchive:true forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:false mating:true fs:false ea:edu.southwestern.evolution.mapelites.MAPElites experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:minecraftaccumulate log:MinecraftAccumulate-TESTING saveTo:TESTING mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBlockCountBinLabels minecraftPistonLabelSize:5".split(" ")); 
+			MMNEAT.main("runNumber:98 randomSeed:98 minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftChangeCenterOfMassFitness:true minecraftNorthSouthOnly:false minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet trials:1 mu:100 maxGens:60000 minecraftContainsWholeMAPElitesArchive:true forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:true mating:true fs:false ea:edu.southwestern.evolution.mapelites.MAPElites experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:minecraftaccumulate log:MinecraftAccumulate-TESTING saveTo:TESTING mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5".split(" ")); 
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
