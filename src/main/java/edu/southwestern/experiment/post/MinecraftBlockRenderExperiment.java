@@ -35,9 +35,13 @@ public class MinecraftBlockRenderExperiment implements Experiment {
 		try {
 			File file = new File(dir);
 			if(file.isDirectory()) {
-				for(String individual : file.list()) {
+				int count = 0;
+				String[] files = file.list();
+				for(String individual : files) {
+					System.out.println((count++) + " of " + files.length);
 					generateOneShapeFromFile(new File(dir + File.separator + individual));
-					MiscUtil.waitForReadStringAndEnterKeyPress("Press enter to continue");
+					System.out.println("Press enter to continue");
+					MiscUtil.waitForReadStringAndEnterKeyPress();
 				}
 			} else {
 				// Is a single text file
