@@ -251,4 +251,22 @@ public class MinecraftUtilClass {
 		// System.out.println(blocks);
 		return blocks;
 	}
+
+	/**
+	 * Take blocks meant to be spawned at the original corner, and change their coordinates so that the same shape will be spawned at the destination corner.
+	 * 
+	 * @param originalBlocks Blocks to spawn
+	 * @param originalCorner Corner where they spawn
+	 * @param destinationCorner Corner to move them to
+	 * @return Same blocks with shifted coordinates
+	 */
+	public static List<Block> shiftBlocksBetweenCorners(List<Block> originalBlocks, MinecraftCoordinates originalCorner, MinecraftCoordinates destinationCorner) {
+		ArrayList<Block> result = new ArrayList<Block>(originalBlocks.size());
+		MinecraftCoordinates change = destinationCorner.sub(originalCorner);
+		for(Block b : originalBlocks) {
+			MinecraftCoordinates newCoordinates = b.position.add(change);
+			result.add(new Block(newCoordinates, b.type, b.orientation));
+		}
+		return result;
+	}
 }

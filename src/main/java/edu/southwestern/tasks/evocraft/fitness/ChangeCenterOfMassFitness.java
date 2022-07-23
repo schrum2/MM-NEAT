@@ -1,6 +1,7 @@
 package edu.southwestern.tasks.evocraft.fitness;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -26,10 +27,27 @@ import edu.southwestern.util.datastructures.Vertex;
 public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 	// At least this many blocks must depart to count as flying
 	private static final int SUFFICIENT_DEPARTED_BLOCKS = 6;
+	// The machine must clearly fly on this many separate evaluations before being awarded such fitness
+	private static final int ATTEMPTS_BEFORE_CONVINCED_OF_FLYING = 2;
+	
 	// Flying machines that leave blocks behind get a small fitness penalty proportional to the number of remaining blocks,
 	// but scaled down to 10% of that.
 	private static final double REMAINING_BLOCK_PUNISHMENT_SCALE = 0.1;
 	private static final HashMap<MinecraftCoordinates, Triple<Vertex, Vertex, Double>> PREVIOUSLY_COMPUTED_RESULTS = new HashMap<>();
+	// Nowhere near where anything else is being evaluated
+	private static final MinecraftCoordinates SPECIAL_CORNER = new MinecraftCoordinates(-500, 300, 500);
+	private static final int SPECIAL_CORNER_BUFFER = 20;
+	
+	/**
+	 * Make sure the special area for double-checking flying shapes is really clear
+	 */
+	private static void clearAreaAroundSpecialCorner() {
+		MinecraftCoordinates lower = SPECIAL_CORNER.sub(SPECIAL_CORNER_BUFFER);
+		MinecraftCoordinates upper = SPECIAL_CORNER.add(MinecraftUtilClass.getRanges().add(SPECIAL_CORNER_BUFFER));
+		MinecraftClient.getMinecraftClient().fillCube(lower, upper, BlockType.AIR);
+		List<Block> errorCheck = null;
+		assert (errorCheck = MinecraftUtilClass.filterOutBlock(MinecraftClient.getMinecraftClient().readCube(lower, upper), BlockType.AIR)).isEmpty() : "Area not empty after clearing! "+errorCheck;
+	}
 	
 	public static void resetPreviousResults() {
 		PREVIOUSLY_COMPUTED_RESULTS.clear();
@@ -67,7 +85,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 	@Override
 	public double fitnessScore(MinecraftCoordinates corner, List<Block> originalBlocks) {
 
-		Triple<Vertex, Vertex, Double> centerOfMassBeforeAndAfter = getCenterOfMassBeforeAndAfter(corner, originalBlocks);
+		Triple<Vertex, Vertex, Double> centerOfMassBeforeAndAfter = getCenterOfMassBeforeAndAfter(corner, originalBlocks, 0);
 		// Do not erase previously computed result. Wait until other thread consumes it
 		while(PREVIOUSLY_COMPUTED_RESULTS.containsKey(corner)) {
 			try {
@@ -94,10 +112,14 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 	 * Calculates the initial and final center of mass after
 	 * a certain amount of time has passed
 	 * @param corner Coordinate of the corner of the shape
+	 * @param originalBlocks Blocks from ShapeGenerator, not from Minecraft
+	 * @param How many attempts have been made so far 
 	 * @return A triple with the initial center of mass, final center of mass, and total
 	 * 			change in distance
 	 */
-	public Triple<Vertex, Vertex, Double> getCenterOfMassBeforeAndAfter(MinecraftCoordinates corner, List<Block> originalBlocks) {
+	private Triple<Vertex, Vertex, Double> getCenterOfMassBeforeAndAfter(MinecraftCoordinates corner, List<Block> originalBlocks, int attempt) {
+		attempt++; // For the current attempt
+		
 		// Ranges before the change of space in between
 		int xrange = Parameters.parameters.integerParameter("minecraftXRange");
 		//int yrange = Parameters.parameters.integerParameter("minecraftYRange");
@@ -114,33 +136,25 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 
 		if(CommonConstants.watch) System.out.println("Original Blocks: "+originalBlocks);
 		if(CommonConstants.watch) System.out.println("Evaluate at corner: "+corner);
-		//		System.out.println("end:"+end);
-
-		double totalChangeDistance = 0.0;
-
-		// List of blocks in the area based on the corner
-		//List<Block> blocks = MinecraftClient.getMinecraftClient().readCube(corner,end);
-		//blocks = MinecraftUtilClass.filterOutBlock(blocks, BlockType.AIR);
 		
+		//ArrayList<List<Block>> history = new ArrayList<>();
+		
+		double totalChangeDistance = 0.0;
 		// These blocks will be compared with blocks read from the world, which will have only null orientations
 		List<Block> previousBlocks = MinecraftUtilClass.wipeOrientations(originalBlocks);
+		//history.add(previousBlocks);
 		int initialBlockCount = originalBlocks.size();
 		if(originalBlocks.isEmpty()) {
 			if(CommonConstants.watch) System.out.println("Empty shape: Immediate failure");
 			return new Triple<>(new Vertex(0,0,0), new Vertex(0,0,0), minFitness());
 		}
 
-		//System.out.println("List of blocks before movement: "+ Arrays.toString(blocks.stream().filter(b -> b.type() != BlockType.AIR.ordinal()).toArray()));
-
 		// Initial center of mass is where it starts
 		Vertex initialCenterOfMass = getCenterOfMass(originalBlocks);
 		Vertex lastCenterOfMass = new Vertex(initialCenterOfMass); // Copy constructor (not a copy of reference)
 		if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": Initial center of mass: " + initialCenterOfMass);
-		//System.out.println("total change vertex: " + totalChangeVertex);
-		//System.out.println(initialCenterOfMass);
-
-		boolean stop = false;
 		
+		boolean stop = false;
 		List<Block> shortWaitTimeUpdate = null;
 		
 		long shortWaitTime = Parameters.parameters.longParameter("shortTimeBetweenMinecraftReads");
@@ -155,6 +169,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 				System.exit(1);
 			}
 			shortWaitTimeUpdate = MinecraftUtilClass.filterOutBlock(MinecraftClient.getMinecraftClient().readCube(corner,end),BlockType.AIR);
+			//history.add(shortWaitTimeUpdate);
 			if(CommonConstants.watch) System.out.println("Block update: "+shortWaitTimeUpdate);
 			if(shortWaitTimeUpdate.isEmpty()) { // If list is empty now (but was not before) then shape has flown completely away
 				if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": Shape empty now: max fitness! Last center of mass = "+lastCenterOfMass);
@@ -169,9 +184,29 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 				// This means that it hasn't moved, so move on to the next.
 				// BUT What if it moves back and forth and returned to its original position?
 				if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": No movement.");
-				Triple<Vertex, Vertex, Double> result = checkCreditForDepartedBlocks(initialBlockCount,
-						initialCenterOfMass, lastCenterOfMass, shortWaitTimeUpdate);
-				if(result != null) return result;
+				Triple<Vertex, Vertex, Double> result = checkCreditForDepartedBlocks(initialBlockCount, initialCenterOfMass, lastCenterOfMass, shortWaitTimeUpdate);
+				if(result != null) {
+					// Repeat until certain
+					if(attempt < ATTEMPTS_BEFORE_CONVINCED_OF_FLYING) {
+						// Only one shape can be evaluated in this place at a time
+						synchronized(SPECIAL_CORNER) {
+							clearAreaAroundSpecialCorner();
+							List<Block> shiftedBlocks = MinecraftUtilClass.shiftBlocksBetweenCorners(originalBlocks, corner, SPECIAL_CORNER);
+							MinecraftClient.getMinecraftClient().spawnBlocks(shiftedBlocks);
+							result = getCenterOfMassBeforeAndAfter(SPECIAL_CORNER, shiftedBlocks, attempt);
+						}
+					}
+					
+//					for(int i = 0; i < history.size(); i++) {
+//						System.out.println(i + "." + history.get(i));
+//					}
+//					System.out.println("\noriginalBlocks                     = "+originalBlocks+
+//							"\ninitialCenterOfMass = "+initialCenterOfMass+"\nnextCenterOfMass = "+nextCenterOfMass+
+//							"\ncorner = "+corner+
+//							"\nbig area around is "+MinecraftUtilClass.filterOutBlock(MinecraftClient.getMinecraftClient().readCube(corner.sub(new MinecraftCoordinates(5,5,5)),end.add(new MinecraftCoordinates(5,5,5))),BlockType.AIR) );
+//						System.exit(1);
+					return result;
+				}
 				
 				stop = true;
 			} else {
@@ -203,23 +238,17 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		return centerOfMassBeforeAndAfter;
 	}
 
-	private Triple<Vertex, Vertex, Double> checkCreditForDepartedBlocks(int initialBlockCount,
-			Vertex initialCenterOfMass, Vertex lastCenterOfMass, List<Block> shortWaitTimeUpdate) {
+	private Triple<Vertex, Vertex, Double> checkCreditForDepartedBlocks(int initialBlockCount, Vertex initialCenterOfMass, Vertex lastCenterOfMass, List<Block> shortWaitTimeUpdate) {
 		int remainingBlockCount = shortWaitTimeUpdate.size(); // Could be larger than initial due to extensions
 		int departedBlockCount = initialBlockCount - remainingBlockCount; // Could be negative due to extensions
 		Triple<Vertex, Vertex, Double> result = null;
 		// It should be hard to archive credit for flying, so make sure that the number of departed blocks is sufficiently high
 		if(departedBlockCount > SUFFICIENT_DEPARTED_BLOCKS) {
 			if(CommonConstants.watch) System.out.println("Enough have departed. departedBlockCount is "+departedBlockCount+ " from initialBlockCount of "+initialBlockCount);					
-//					System.out.println( "remainingBlockCount = "+remainingBlockCount+"\ninitialBlockCount = "+initialBlockCount+"\ndepartedBlockCount = "+departedBlockCount+
-//						"\nshortWaitTimeUpdate                = "+shortWaitTimeUpdate+
-//						"\nblocks                             = "+blocks+
-//						"\noriginalBlocks                     = "+originalBlocks+
-//						"\nupdatedBlocksWithoutExtendedPistons= "+updatedBlocksWithoutExtendedPistons+
-//						"\ninitialCenterOfMass = "+initialCenterOfMass+"\nnextCenterOfMass = "+nextCenterOfMass+
-//						"\ncorner = "+corner+
-//						"\nbig area around is "+MinecraftUtilClass.filterOutBlock(MinecraftClient.getMinecraftClient().readCube(corner.sub(new MinecraftCoordinates(5,5,5)),end.add(new MinecraftCoordinates(5,5,5))),BlockType.AIR) );
-//					System.exit(1);
+
+//			System.out.println( "remainingBlockCount = "+remainingBlockCount+"\ninitialBlockCount = "+initialBlockCount+"\ndepartedBlockCount = "+departedBlockCount+
+//					"\nshortWaitTimeUpdate                = "+shortWaitTimeUpdate );
+			
 			
 			// Ship flew so far away that we award max fitness, but penalize remaining blocks
 			System.out.println(remainingBlockCount +" remaining blocks: max = " + maxFitness());
@@ -257,28 +286,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[] { "runNumber:1","randomSeed:1",
-					"base:minecraftaccumulate","log:MinecraftAccumulate-VectorCountNegativeUpDown","saveTo:VectorCountNegativeUpDown",
-					"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBlockCountEmptyCountBinLabels",
-					"minecraftXRange:2","minecraftYRange:4","minecraftZRange:3",
-					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator",
-					"minecraftChangeCenterOfMassFitness:true",
-					"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet",
-					"trials:1","mu:100","maxGens:100000",
-					"minecraftContainsWholeMAPElitesArchive:true","forceLinearArchiveLayoutInMinecraft:false",
-					"launchMinecraftServerFromJava:false","io:true","netio:true",
-					"interactWithMapElitesInWorld:true","mating:true","fs:false",
-					"ea:edu.southwestern.evolution.mapelites.MAPElites",
-					"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
-					"steadyStateIndividualsPerGeneration:100",
-					"spaceBetweenMinecraftShapes:5",
-					"task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask",
-					"watch:false","saveAllChampions:true",
-					"genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype",
-					"vectorPresenceThresholdForEachBlock:true",
-					"voxelExpressionThreshold:0.5",
-					"minecraftAccumulateChangeInCenterOfMass:true","minecraftUpDownOnly:true",
-					"parallelEvaluations:true","threads:10","parallelMAPElitesInitialize:true"}); 
+			MMNEAT.main("runNumber:99 randomSeed:99 minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftChangeCenterOfMassFitness:true minecraftNorthSouthOnly:true minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet trials:1 mu:100 maxGens:60000 minecraftContainsWholeMAPElitesArchive:true forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:false mating:true fs:false ea:edu.southwestern.evolution.mapelites.MAPElites experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:minecraftaccumulate log:MinecraftAccumulate-TESTING saveTo:TESTING mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBlockCountBinLabels minecraftPistonLabelSize:5".split(" ")); 
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}

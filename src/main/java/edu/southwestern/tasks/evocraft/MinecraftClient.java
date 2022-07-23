@@ -411,6 +411,23 @@ public class MinecraftClient extends Comm {
 			return new MinecraftCoordinates(x() * other.x(), y() * other.y(), z() * other.z());
 		}
 
+		/**
+		 * Subtract the same quantity from each coordinate
+		 * @param amount Amount to subtract
+		 * @return Resulting coordinates
+		 */
+		public MinecraftCoordinates sub(int amount) {
+			return this.sub(new MinecraftCoordinates(amount,amount,amount));
+		}
+
+		/**
+		 * Add the same quantity to each coordinate
+		 * @param amount Amount to add
+		 * @return Resulting coordinates
+		 */
+		public MinecraftCoordinates add(int amount) {
+			return this.add(new MinecraftCoordinates(amount,amount,amount));
+		}
 	}
 	
 	/**
