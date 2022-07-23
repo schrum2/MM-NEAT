@@ -28,6 +28,7 @@ public class ChangeCenterOfMassFitnessTest {
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
+		CommonConstants.netio = false;
 		Parameters.initializeParameterCollections(new String[] {"watch:true","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
 		MinecraftServer.launchServer();
 		MinecraftClient.getMinecraftClient();
@@ -158,8 +159,8 @@ public class ChangeCenterOfMassFitnessTest {
 		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet1);
 		double fitness = ff.fitnessScore(cornerBS1,blockSet1);
 		System.out.println("fitness = "+fitness);
-		assertTrue(0.42170668924365207 <= fitness);
-		assertTrue(0.5825731613780569 >= fitness);
+		assertTrue(0.3 <= fitness);
+		assertTrue(0.5 >= fitness);
 		Triple<Vertex, Vertex, Double> beforeAndAfter = ChangeCenterOfMassFitness.getPreviouslyComputedResult(cornerBS1); // Prevent lock
 		assertTrue(0.42170668924365207 <= beforeAndAfter.t3);
 		assertTrue(0.5825731613780569 >= beforeAndAfter.t3);
@@ -226,6 +227,7 @@ public class ChangeCenterOfMassFitnessTest {
 		ChangeCenterOfMassFitness.resetPreviousResults();
 
 		Parameters.initializeParameterCollections(new String[] {"minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:false","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+		CommonConstants.netio = false;
 		MinecraftCoordinates cornerBS2 = new MinecraftCoordinates(0,11,-5);
 		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 100);
 		
