@@ -148,11 +148,12 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 
 		// Shifts over the corner to the new range with the large space in between shapes
 		corner = corner.sub(MinecraftUtilClass.emptySpaceOffsets());
-		MinecraftCoordinates shiftPoint = new MinecraftCoordinates(0,SPECIAL_CORNER_BUFFER,0);
-		MinecraftCoordinates oldCorner = corner;
-		corner = corner.add(shiftPoint); // move sufficiently above the ground
-		originalBlocks = MinecraftUtilClass.shiftBlocksBetweenCorners(originalBlocks, oldCorner, corner);
-		
+		if(corner.y() - SPECIAL_CORNER_BUFFER <= MinecraftClient.GROUND_LEVEL) { // Push up if close to ground
+			MinecraftCoordinates shiftPoint = new MinecraftCoordinates(0,SPECIAL_CORNER_BUFFER,0);
+			MinecraftCoordinates oldCorner = corner;
+			corner = corner.add(shiftPoint); // move sufficiently above the ground
+			originalBlocks = MinecraftUtilClass.shiftBlocksBetweenCorners(originalBlocks, oldCorner, corner);
+		}
 		MinecraftCoordinates end = corner.add(MinecraftUtilClass.reservedSpace());
 
 		assert corner.x() <= end.x() && corner.y() <= end.y() && corner.z() <= end.z(): "corner should be less than end in each coordinate: corner = "+corner+ ", max = "+end; 
@@ -166,7 +167,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		do {
 			clearAreaAroundCorner(corner);
 			empty = areaAroundCornerEmpty(corner);
-			System.out.println("Cleared "+(++clearAttempt)+" times: empty?: "+empty);
+			if(!empty) System.out.println("Cleared "+(++clearAttempt)+" times: empty?: "+empty);
 		} while(!empty);
 
 		ArrayList<List<Block>> history = new ArrayList<>();
