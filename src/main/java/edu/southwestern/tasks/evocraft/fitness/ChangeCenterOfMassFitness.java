@@ -15,7 +15,6 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask;
 import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Triple;
 import edu.southwestern.util.datastructures.Vertex;
 import edu.southwestern.util.file.FileUtilities;
@@ -32,7 +31,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 	// At least this many blocks must depart to count as flying
 	private static final int SUFFICIENT_DEPARTED_BLOCKS = 6;
 	// The machine must clearly fly on this many separate evaluations before being awarded such fitness
-	private static final int ATTEMPTS_BEFORE_CONVINCED_OF_FLYING = 2;
+	private static final int ATTEMPTS_BEFORE_CONVINCED_OF_FLYING = 1; //2;
 	
 	// Flying machines that leave blocks behind get a small fitness penalty proportional to the number of remaining blocks,
 	// but scaled down to 10% of that.
@@ -149,6 +148,11 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 
 		// Shifts over the corner to the new range with the large space in between shapes
 		corner = corner.sub(MinecraftUtilClass.emptySpaceOffsets());
+		MinecraftCoordinates shiftPoint = new MinecraftCoordinates(0,SPECIAL_CORNER_BUFFER,0);
+		MinecraftCoordinates oldCorner = corner;
+		corner = corner.add(shiftPoint); // move sufficiently above the ground
+		originalBlocks = MinecraftUtilClass.shiftBlocksBetweenCorners(originalBlocks, oldCorner, corner);
+		
 		MinecraftCoordinates end = corner.add(MinecraftUtilClass.reservedSpace());
 
 		assert corner.x() <= end.x() && corner.y() <= end.y() && corner.z() <= end.z(): "corner should be less than end in each coordinate: corner = "+corner+ ", max = "+end; 
@@ -157,14 +161,14 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		if(CommonConstants.watch) System.out.println("Evaluate at corner: "+corner);
 		
 		// Must be clear before starting
-				boolean empty = false;
-				int clearAttempt = 0;
-				do {
-					clearAreaAroundCorner(corner);
-					empty = areaAroundCornerEmpty(corner);
-					System.out.println("Cleared "+(++clearAttempt)+" times: empty?: "+empty);
-				} while(!empty);
-		
+		boolean empty = false;
+		int clearAttempt = 0;
+		do {
+			clearAreaAroundCorner(corner);
+			empty = areaAroundCornerEmpty(corner);
+			System.out.println("Cleared "+(++clearAttempt)+" times: empty?: "+empty);
+		} while(!empty);
+
 		ArrayList<List<Block>> history = new ArrayList<>();
 		
 		double totalChangeDistance = 0.0;

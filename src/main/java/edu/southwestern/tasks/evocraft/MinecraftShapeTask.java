@@ -20,6 +20,7 @@ import edu.southwestern.tasks.BoundedTask;
 import edu.southwestern.tasks.SinglePopulationTask;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
+import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
 import edu.southwestern.tasks.evocraft.blocks.BlockSet;
 import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBinLabels;
 import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBlockCountBinLabels;
@@ -235,6 +236,14 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		double[] fitnessScores = calculateFitnessScores(corner,fitnessFunctions,blocks);
 		// It is possible this is not even being used (null result), but the call is needed to prevent deadlock otherwise
 		Triple<Vertex, Vertex, Double> centerOfMassBeforeAndAfter = ChangeCenterOfMassFitness.getPreviouslyComputedResult(corner);
+		double deltaX = 0;
+		double deltaY = 0;
+		double deltaZ = 0;
+		if(centerOfMassBeforeAndAfter != null) {
+			deltaX = centerOfMassBeforeAndAfter.t2.x - centerOfMassBeforeAndAfter.t1.x;
+			deltaY = centerOfMassBeforeAndAfter.t2.y - centerOfMassBeforeAndAfter.t1.y;
+			deltaZ = centerOfMassBeforeAndAfter.t2.z - centerOfMassBeforeAndAfter.t1.z;
+		}
 		Score<T> score = new Score<T>(genome, fitnessScores);
 		if(MMNEAT.usingDiversityBinningScheme) {
 			//System.out.println("evaluate "+genome.getId() + " at " + corner + ": scores = "+ Arrays.toString(fitnessScores));
@@ -248,9 +257,9 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			
 			// For the directional binning scheme
 			if(centerOfMassBeforeAndAfter != null) {
-				behaviorMap.put("x-movement", centerOfMassBeforeAndAfter.t2.x - centerOfMassBeforeAndAfter.t1.x);
-				behaviorMap.put("y-movement", centerOfMassBeforeAndAfter.t2.y - centerOfMassBeforeAndAfter.t1.y);
-				behaviorMap.put("z-movement", centerOfMassBeforeAndAfter.t2.z - centerOfMassBeforeAndAfter.t1.z);
+				behaviorMap.put("x-movement", deltaX);
+				behaviorMap.put("y-movement", deltaY);
+				behaviorMap.put("z-movement", deltaZ);
 			}
 			
 			double binScore = qualityScore(fitnessScores); 
@@ -276,10 +285,21 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			if (!dir.exists()) {
 				dir.mkdir();
 			}
+			Orientation flyingDirection = directionOfMaximumDisplacement(deltaX,deltaY,deltaZ);
 			String gen = "GEN"+(MMNEAT.ea instanceof GenerationalEA ? ((GenerationalEA) MMNEAT.ea).currentGeneration() : "ME");
-			MinecraftLonerShapeTask.writeBlockListFile(blocks, flyingDir + File.separator + gen+"ID"+genome.getId(), "FITNESS"+fitnessScores[0]+".txt");
+			MinecraftLonerShapeTask.writeBlockListFile(blocks, flyingDir + File.separator + gen+"ID"+genome.getId(), "FITNESS"+fitnessScores[0]+"DIR"+flyingDirection+".txt");
 		}
 		return score;
+	}
+
+	private static Orientation directionOfMaximumDisplacement(double deltaX, double deltaY, double deltaZ) {
+		if(Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > Math.abs(deltaZ)) {
+			return (deltaX > 0) ? Orientation.NORTH : Orientation.SOUTH;
+		} else if(Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > Math.abs(deltaZ)) {
+			return (deltaY > 0) ? Orientation.UP : Orientation.DOWN;
+		} else {
+			return (deltaZ > 0) ? Orientation.EAST : Orientation.WEST;
+		}
 	}
 
 	/**
