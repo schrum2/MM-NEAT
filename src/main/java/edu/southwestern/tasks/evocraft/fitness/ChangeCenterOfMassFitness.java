@@ -15,6 +15,7 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask;
 import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Triple;
 import edu.southwestern.util.datastructures.Vertex;
 import edu.southwestern.util.file.FileUtilities;
@@ -45,11 +46,26 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 	 * Make sure the special area for double-checking flying shapes is really clear
 	 */
 	public static void clearAreaAroundSpecialCorner() {
-		MinecraftCoordinates lower = SPECIAL_CORNER.sub(SPECIAL_CORNER_BUFFER);
-		MinecraftCoordinates upper = SPECIAL_CORNER.add(MinecraftUtilClass.getRanges().add(SPECIAL_CORNER_BUFFER));
+		clearAreaAroundCorner(SPECIAL_CORNER);
+	}
+	
+	public static void clearAreaAroundCorner(MinecraftCoordinates corner) {
+		MinecraftCoordinates lower = corner.sub(SPECIAL_CORNER_BUFFER);
+		MinecraftCoordinates upper = corner.add(MinecraftUtilClass.getRanges().add(SPECIAL_CORNER_BUFFER));
 		MinecraftClient.getMinecraftClient().fillCube(lower, upper, BlockType.AIR);
 		List<Block> errorCheck = null;
-		assert (errorCheck = MinecraftUtilClass.filterOutBlock(MinecraftClient.getMinecraftClient().readCube(lower, upper), BlockType.AIR)).isEmpty() : "Area not empty after clearing! "+errorCheck;
+		assert areaAroundCornerEmpty(corner) : "Area not empty after clearing! "+errorCheck;
+	}
+	
+	public static boolean areaAroundCornerEmpty(MinecraftCoordinates corner) {
+		MinecraftCoordinates lower = corner.sub(SPECIAL_CORNER_BUFFER);
+		MinecraftCoordinates upper = corner.add(MinecraftUtilClass.getRanges().add(SPECIAL_CORNER_BUFFER));
+		List<Block> errorCheck = MinecraftUtilClass.filterOutBlock(MinecraftClient.getMinecraftClient().readCube(lower, upper), BlockType.AIR);
+//		if(!errorCheck.isEmpty()) {
+//			System.out.println("NOT EMPTY at corner "+corner+"\n"+errorCheck);
+//			MiscUtil.waitForReadStringAndEnterKeyPress();
+//		}
+		return errorCheck.isEmpty();
 	}
 	
 	public static void resetPreviousResults() {
@@ -140,6 +156,15 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		if(CommonConstants.watch) System.out.println("Original Blocks: "+originalBlocks);
 		if(CommonConstants.watch) System.out.println("Evaluate at corner: "+corner);
 		
+		// Must be clear before starting
+				boolean empty = false;
+				int clearAttempt = 0;
+				do {
+					clearAreaAroundCorner(corner);
+					empty = areaAroundCornerEmpty(corner);
+					System.out.println("Cleared "+(++clearAttempt)+" times: empty?: "+empty);
+				} while(!empty);
+		
 		ArrayList<List<Block>> history = new ArrayList<>();
 		
 		double totalChangeDistance = 0.0;
@@ -160,6 +185,9 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		
 		boolean stop = false;
 		List<Block> shortWaitTimeUpdate = null;
+		
+		// Spawn the blocks!
+		MinecraftClient.getMinecraftClient().spawnBlocks(originalBlocks);
 		
 		long shortWaitTime = Parameters.parameters.longParameter("shortTimeBetweenMinecraftReads");
 		long startTime = System.currentTimeMillis();
