@@ -42,6 +42,7 @@ import edu.southwestern.util.file.FileUtilities;
 
 
 public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTask, BoundedTask {
+
 	// Visible within package
 	ArrayList<MinecraftFitnessFunction> fitnessFunctions;
 	private ArrayList<MinecraftCoordinates> corners;
@@ -277,7 +278,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			assert !(minecraftBinLabels instanceof MinecraftMAPElitesBlockCountBinLabels) || blocks.size() == (int) ((Double) behaviorMap.get("OccupiedCountFitness")).doubleValue() : behaviorMap + ":" + blocks;
 		} 
 		
-		if(CommonConstants.netio && Parameters.parameters.booleanParameter("minecraftChangeCenterOfMassFitness") && fitnessScores[0] > fitnessFunctions.get(0).maxFitness() - 5) {
+		if(CommonConstants.netio && Parameters.parameters.booleanParameter("minecraftChangeCenterOfMassFitness") && certainFlying(fitnessFunctions, fitnessScores[0])) {
 			// Assuming that change in center of mass is at index 0, and that 5 is a suitable threshold for penalties to the max fitness
 			String flyingDir = FileUtilities.getSaveDirectory() + "/flyingMachines";
 			File dir = new File(flyingDir);
@@ -292,6 +293,31 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		return score;
 	}
 
+	public boolean certainFlying(double fitnessScore) {
+		return certainFlying(fitnessFunctions, fitnessScore);
+	}
+	
+	/**
+	 * A shape with a fitness of this amount must be flying (assumes first/only fitness is change in center of mass)
+	 * 
+	 * @param fitnessFunctions
+	 * @param fitnessScores
+	 * @return
+	 */
+	public static boolean certainFlying(ArrayList<MinecraftFitnessFunction> fitnessFunctions, double fitnessScore) {
+		assert fitnessFunctions.get(0) instanceof ChangeCenterOfMassFitness;
+		assert Parameters.parameters.booleanParameter("minecraftChangeCenterOfMassFitness");
+		return fitnessScore > fitnessFunctions.get(0).maxFitness() - ChangeCenterOfMassFitness.FLYING_PENALTY_BUFFER;
+	}
+
+	/**
+	 * Which orientation does the shape seem to be moving in?
+	 * 
+	 * @param deltaX
+	 * @param deltaY
+	 * @param deltaZ
+	 * @return
+	 */
 	private static Orientation directionOfMaximumDisplacement(double deltaX, double deltaY, double deltaZ) {
 		if(Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > Math.abs(deltaZ)) {
 			return (deltaX > 0) ? Orientation.NORTH : Orientation.SOUTH;
@@ -310,7 +336,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	 * @return Single quality score
 	 */
 	public static double qualityScore(double[] fitnessScores) {
-		return fitnessScores[0]; // TODO: CHANGE THIS?
+		return fitnessScores[0]; // TODO: CHANGE THIS? Other code depends on it now
 	}
 
 	/**

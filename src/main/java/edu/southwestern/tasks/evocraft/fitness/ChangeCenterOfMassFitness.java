@@ -28,6 +28,8 @@ import edu.southwestern.util.file.FileUtilities;
  *
  */
 public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
+	// Assume that the remaining block penalty will not be greater than this (should actually be much less)
+	public static final double FLYING_PENALTY_BUFFER = 5;
 	// At least this many blocks must depart to count as flying
 	private static final int SUFFICIENT_DEPARTED_BLOCKS = 6;
 	// The machine must clearly fly on this many separate evaluations before being awarded such fitness
@@ -88,7 +90,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		if(Parameters.parameters.booleanParameter("minecraftAccumulateChangeInCenterOfMass")) return ((Parameters.parameters.longParameter("minecraftMandatoryWaitTime")/Parameters.parameters.longParameter("shortTimeBetweenMinecraftReads")) + 1) * overestimatedDistanceToEdge();
 		else return overestimatedDistanceToEdge();
 	}
-
+	
 	/**
 	 * About the distance from the center of the area the shape is generated in to
 	 * the edge of the space the shape is generated in.
