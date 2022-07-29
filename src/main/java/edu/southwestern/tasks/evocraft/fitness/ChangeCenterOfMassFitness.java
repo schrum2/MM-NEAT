@@ -221,7 +221,9 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 				// This means that it hasn't moved, so move on to the next.
 				// BUT What if it moves back and forth and returned to its original position?
 				if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": No movement.");
-				Triple<Vertex, Vertex, Double> result = checkCreditForDepartedBlocks(initialBlockCount, initialCenterOfMass, lastCenterOfMass, shortWaitTimeUpdate);
+				// Compute farthest center of mass from history
+				Vertex farthestCenterOfMass = getFarthestCenterOfMass(history, initialCenterOfMass, lastCenterOfMass);
+				Triple<Vertex, Vertex, Double> result = checkCreditForDepartedBlocks(initialBlockCount, initialCenterOfMass, farthestCenterOfMass, shortWaitTimeUpdate);
 				if(result != null) {
 					if(CommonConstants.netio) {
 						String flyingDir = FileUtilities.getSaveDirectory() + "/possibleFlyingMachines";
@@ -275,7 +277,8 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		}
 		
 		// It is possible that blocks flew away, but some remaining component kept oscillating until the end. This is still a flying machine though.
-		Triple<Vertex, Vertex, Double> result = checkCreditForDepartedBlocks(initialBlockCount, initialCenterOfMass, lastCenterOfMass, shortWaitTimeUpdate);
+		Vertex farthestCenterOfMass = getFarthestCenterOfMass(history, initialCenterOfMass, lastCenterOfMass);
+		Triple<Vertex, Vertex, Double> result = checkCreditForDepartedBlocks(initialBlockCount, initialCenterOfMass, farthestCenterOfMass, shortWaitTimeUpdate);
 		if(result != null) return result;
 		
 		// Machine did not fly away
@@ -289,6 +292,27 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		}
 		if(CommonConstants.watch) System.out.println("Final result "+centerOfMassBeforeAndAfter);
 		return centerOfMassBeforeAndAfter;
+	}
+
+	/**
+	 * @param history
+	 * @param initialCenterOfMass
+	 * @param lastCenterOfMass
+	 * @return
+	 */
+	public Vertex getFarthestCenterOfMass(ArrayList<List<Block>> history, Vertex initialCenterOfMass,
+			Vertex lastCenterOfMass) {
+		Vertex farthestCenterOfMass = lastCenterOfMass; // Assume last location was farthest
+		double farthestDistance = lastCenterOfMass.distance(initialCenterOfMass);
+		for(List<Block> blocks : history) {
+			Vertex v = getCenterOfMass(blocks);
+			double distance = v.distance(initialCenterOfMass);
+			if(distance > farthestDistance) {
+				farthestDistance = distance;
+				farthestCenterOfMass = v;
+			}
+		}
+		return farthestCenterOfMass;
 	}
 
 	private Triple<Vertex, Vertex, Double> checkCreditForDepartedBlocks(int initialBlockCount, Vertex initialCenterOfMass, Vertex lastCenterOfMass, List<Block> shortWaitTimeUpdate) {
