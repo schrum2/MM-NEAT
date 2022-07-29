@@ -585,7 +585,11 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 
 	@Override
 	public void finalCleanup() {
-		running = false; // Stop the interactive loop
+		if(!Parameters.parameters.booleanParameter("interactWithMinecraftForever")) {
+			running = false; // Stop the interactive loop
+		}
+
+		
 		while(!interactiveLoopFinished) {
 			// Let interactive loop finish
 			try {
