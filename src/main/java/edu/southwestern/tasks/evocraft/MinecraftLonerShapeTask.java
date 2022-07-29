@@ -592,7 +592,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			running = false; // Stop the interactive loop
 		}
 		
-		if(MMNEAT.usingDiversityBinningScheme && CommonConstants.netio) {
+		if(Parameters.parameters.booleanParameter("minecraftChangeCenterOfMassFitness") && MMNEAT.usingDiversityBinningScheme && CommonConstants.netio) {
 			System.out.println("Write block lists for all flying elites to finalFlyingMachines");
 			
 			String flyingDir = FileUtilities.getSaveDirectory() + "/finalFlyingMachines";
