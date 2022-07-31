@@ -39,6 +39,7 @@ public class MinecraftBlockRenderExperiment implements Experiment {
 				String[] files = file.list();
 				for(String individual : files) {
 					System.out.println((count++) + " of " + files.length);
+					System.out.println(individual);
 					generateOneShapeFromFile(new File(dir + File.separator + individual));
 					System.out.println("Press enter to continue");
 					MiscUtil.waitForReadStringAndEnterKeyPress();

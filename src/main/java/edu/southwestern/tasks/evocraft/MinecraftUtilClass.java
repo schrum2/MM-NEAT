@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+import cern.colt.Arrays;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
@@ -260,15 +261,22 @@ public class MinecraftUtilClass {
 			}
 			
 			String[] coordinates = blockVals[1].split(","); // splits coordinates token into the three coordinates x/y/z 
-			int x = Integer.parseInt(coordinates[0].substring(1)); // gets rid of '(' from x coordinate sub-token
-			int y = Integer.parseInt(coordinates[1]); // y coordinate
-			int z = Integer.parseInt(coordinates[2].substring(0, coordinates[2].length()-1)); // gets rid of ')' from z coordinate
-			
-			String orientation = blockVals[2].substring(0, blockVals[2].length()-1); // gets rid of "]" from orientation token
-			
-			// b is the new block to add to blocks
-			Block b = new Block(new MinecraftCoordinates(x,y,z), BlockType.valueOf(bType), Orientation.valueOf(orientation));
-			blocks.add(b);		
+			try {
+				int x = Integer.parseInt(coordinates[0].substring(1)); // gets rid of '(' from x coordinate sub-token
+				int y = Integer.parseInt(coordinates[1]); // y coordinate
+				int z = Integer.parseInt(coordinates[2].substring(0, coordinates[2].length()-1)); // gets rid of ')' from z coordinate
+
+				String orientation = blockVals[2].substring(0, blockVals[2].length()-1); // gets rid of "]" from orientation token
+
+				// b is the new block to add to blocks
+				Block b = new Block(new MinecraftCoordinates(x,y,z), BlockType.valueOf(bType), Orientation.valueOf(orientation));
+				blocks.add(b);
+			} catch(NumberFormatException e) {
+				System.out.println(line);
+				System.out.println(Arrays.toString(blockVals));
+				System.out.println(Arrays.toString(coordinates));
+				throw e;
+			}
 		}
 		s.close(); // close the scanner
 		// System.out.println(blocks);
