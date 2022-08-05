@@ -577,8 +577,12 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 	 * @param x index of button in question
 	 */
 	protected void resetButton(Genotype<T> individual, int x, boolean selected) { 
+		resetButton(individual, x, selected, true);
+	}	
+	
+	protected void resetButton(Genotype<T> individual, int x, boolean selected, boolean allowCachedImages) { 
 		if(!selected) scores.add(new Score<T>(individual, new double[]{0}, null));
-		setButtonImage(showNetwork ? getNetwork(individual) : getButtonImage(true, individual.getPhenotype(), buttonWidth, buttonHeight, inputMultipliers), x);
+		setButtonImage(showNetwork ? getNetwork(individual) : getButtonImage(allowCachedImages, individual.getPhenotype(), buttonWidth, buttonHeight, inputMultipliers), x);
 		if(!selected) chosen[x] = false;
 		buttons.get(x).setBorder(BorderFactory.createLineBorder(selected ? Color.BLUE : Color.lightGray, BORDER_THICKNESS));
 	}
@@ -730,7 +734,7 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 			resetButton(newPop.get(i), i, false);
 		}	
 	}
-
+	
 	/**
 	 * Saves all currently clicked images
 	 */
@@ -1070,11 +1074,17 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 	public abstract int numCPPNOutputs();
 	
 	@SuppressWarnings("unchecked")
-	public <E> TWEANN getTWEANNComponent(T phenotype) {
+	public static <E,F> TWEANN getTWEANNComponent(F phenotype) {
 		if(phenotype instanceof NetworkPlusParameters) {
 			return ((NetworkPlusParameters<TWEANN,E>) phenotype).t1;
 		} else {
 			return (TWEANN) phenotype;
 		}
+	}
+	
+	@Override
+	public void postConstructionInitialization() {
+		// Since these tasks use real-vector genotypes, do not set the NN params
+		if(!(MMNEAT.task instanceof InteractiveGANLevelEvolutionTask)) MMNEAT.setNNInputParameters(numCPPNInputs(), numCPPNOutputs());
 	}
 }

@@ -21,6 +21,7 @@ import ch.idsia.mario.engine.level.Level;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.interactive.InteractiveGANLevelEvolutionTask;
+import edu.southwestern.tasks.mario.MarioGANLevelTask;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.mario.gan.MarioGANUtil;
 import edu.southwestern.tasks.mario.level.MarioLevelUtil;
@@ -78,7 +79,7 @@ public class MarioGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 					int oldValue = Parameters.parameters.integerParameter("marioGANLevelChunks");
 					int newValue = (int) source.getValue();
 					Parameters.parameters.setInteger("marioGANLevelChunks", newValue);
-
+					MarioGANLevelTask.forgetStaticLowerUpperBounds();
 					if(oldValue != newValue) {
 						int oldLength = oldValue * GANProcess.latentVectorLength();
 						int newLength = newValue * GANProcess.latentVectorLength();
@@ -207,6 +208,16 @@ public class MarioGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 	@Override
 	public List<List<Integer>> levelListRepresentation(double[] latentVector) {
 		return MarioGANUtil.generateLevelListRepresentationFromGAN(latentVector);
+	}
+
+	@Override
+	public double[] getUpperBounds() {
+		return MarioGANLevelTask.getStaticUpperBounds();
+	}
+
+	@Override
+	public double[] getLowerBounds() {
+		return MarioGANLevelTask.getStaticLowerBounds();
 	}
 
 }

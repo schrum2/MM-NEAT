@@ -10,6 +10,7 @@ import java.util.Scanner;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.BoundedTask;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.mario.gan.reader.JsonReader;
 import edu.southwestern.util.datastructures.ArrayUtil;
@@ -19,7 +20,10 @@ import edu.southwestern.util.datastructures.ArrayUtil;
  * @author kdste
  *
  */
-public class LodeRunnerGANLevelTask extends LodeRunnerLevelTask<List<Double>> {
+public class LodeRunnerGANLevelTask extends LodeRunnerLevelTask<List<Double>> implements BoundedTask {
+	
+	private static double[] upper;
+	private static double[] lower;
 
 	public static void main(String[] args) {
 //		try {
@@ -146,6 +150,26 @@ public class LodeRunnerGANLevelTask extends LodeRunnerLevelTask<List<Double>> {
 		double[] doubleArray = ArrayUtil.doubleArrayFromList(latentVector);
 		List<List<Integer>> level = LodeRunnerGANUtil.generateOneLevelListRepresentationFromGAN(doubleArray);
  		return level;
+	}
+
+	public static double[] getStaticUpperBounds() {
+		if(upper == null) upper = ArrayUtil.doubleOnes(GANProcess.latentVectorLength());
+		return upper;
+	}
+
+	public static double[] getStaticLowerBounds() {
+		if(lower == null) lower = ArrayUtil.doubleNegativeOnes(GANProcess.latentVectorLength());
+		return lower;
+	}
+
+	@Override
+	public double[] getUpperBounds() {
+		return getStaticUpperBounds();
+	}
+
+	@Override
+	public double[] getLowerBounds() {
+		return getStaticLowerBounds();
 	}
 
 }

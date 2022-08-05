@@ -6,19 +6,30 @@ import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.LinkedList;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import com.aqwis.SimpleTiledZentangle;
 import com.aqwis.models.SimpleTiledZentangleWFCModel;
@@ -32,6 +43,7 @@ import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.BoundedTask;
 import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
 import edu.southwestern.util.BooleanUtil;
 import edu.southwestern.util.graphics.GraphicsUtil;
@@ -52,8 +64,12 @@ import edu.southwestern.util.random.RandomNumbers;
  *
  * @param <T>
  */
-public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<T> {
+public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<T> implements BoundedTask {
 
+	// These upper and lower bounds are for enhanced CPPN genotypes only (encoding scale, rotation, and translation)
+	private static double[] lower;
+	private static double[] upper;
+	
 	private static final int MAX_SELECTABLE_BEFORE_MIXING = 6;
 
 	private static final int MAX_TILE_SIZE_POWER = 5;
@@ -64,6 +80,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 	public static final int CPPN_NUM_OUTPUTS = 3;
 
 	private static final int ZENTANGLE_BUTTON_INDEX = -8;
+	private static final int EDITPIC_BUTTON_INDEX = -9;
 
 	private static final int MAX_POSSIBLE_PATTERNS = 6; // Will this always be the max for Zentangles?
 
@@ -88,6 +105,20 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 				resetButtons(true);
 			}
 		});
+		
+		// A check box that switches the HSB filter method
+		JCheckBox standardHSB = new JCheckBox("standardHSB",
+				Parameters.parameters.booleanParameter("standardPicBreederHSBRestriction"));
+		standardHSB.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("Change HSB Restrictions");
+				// Switch to opposite of current setting
+				Parameters.parameters.changeBoolean("standardPicBreederHSBRestriction");
+				// Need to change all images and re-load
+				resetButtons(true);
+			}
+		});
 
 		// A check box that switches the output between two brightness levels and
 		// continuous
@@ -107,6 +138,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 		imageTweaks.setLayout(new GridLayout(2, 1, 2, 2));
 		imageTweaks.add(blackAndWhite);
 		imageTweaks.add(stark);
+		imageTweaks.add(standardHSB);
 		top.add(imageTweaks);
 
 		// Add the Zentangle button
@@ -125,10 +157,405 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 			}
 
 		});
+		
+		ImageIcon editPic = new ImageIcon("Edit-Pic");
+		Image editPic1 = editPic.getImage().getScaledInstance(getActionButtonWidth(), getActionButtonHeight(), 1);
+		JButton editPicButton = new JButton(new ImageIcon(editPic1));
+		editPicButton.setPreferredSize(new Dimension(getActionButtonWidth(), getActionButtonHeight()));
+		editPicButton.setText("Edit-Pic");
+		editPicButton.setName("" + EDITPIC_BUTTON_INDEX);
+		editPicButton.setToolTipText("Rotate, scale, or translate in the x or y direction");
+		editPicButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg1) {
+				editPic();
+			}
+
+			private int scaleUpToInt(double scale) {
+				return (int) (scale * 100);
+			}
+			
+			private double scaleBackToDouble(int scale) {
+				return scale / 100.0;
+			}
+			
+			private void editPic() {
+				
+				// Error messages if the user selects either none or more than one image
+				if(selectedItems.size() == 0) {
+					JOptionPane.showMessageDialog(null, "Must select an individual to edit.");
+					return; // Do not edit image
+				}
+				if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface") && selectedItems.size() != 1) {
+					JOptionPane.showMessageDialog(null, "Select only one individual to modify.");
+					return; // Do not edit image
+				}
+
+
+				JFrame explorer = new JFrame("Edit Pic");
+				explorer.addWindowListener(new WindowAdapter() {
+					// When the Edit-Pic window closes
+					public void windowClosing(WindowEvent e) {
+						// For plain CPPNs, update all images based on the changed rotate, scale, and translation
+						resetButtons(true);
+					}
+				});
+
+				int picToEdit = selectedItems.get(selectedItems.size() - 1);
+
+
+				JPanel main = new JPanel(new GridLayout(1,4));
+
+
+				// Labels for each of the modifiers
+				JPanel values = new JPanel(new GridLayout(4,1));
+
+				JPanel sliders = new JPanel(new GridLayout(4,1));
+				
+				JPanel textBox = new JPanel(new GridLayout(4,1));
+
+
+				T phenotype = scores.get(picToEdit).individual.getPhenotype();
+				double rotationalValue, scaleValue, xTranslationValue, yTranslationValue;
+				if(phenotype instanceof NetworkPlusParameters) {
+					// Settings come from specific phenotype
+					@SuppressWarnings("unchecked")
+					NetworkPlusParameters<TWEANN,ArrayList<Double>> npp = (NetworkPlusParameters<TWEANN,ArrayList<Double>>) phenotype;
+					ArrayList<Double> scaleRotationTranslation = npp.t2;
+					scaleValue = scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_SCALE);
+					rotationalValue = scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_ROTATION); 
+					xTranslationValue = scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_DELTA_X); 
+					yTranslationValue = scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_DELTA_Y);					
+				} else {
+					// Settings are the generic ones applied to all the images
+					scaleValue = Parameters.parameters.doubleParameter("picbreederImageScale");
+					rotationalValue = Parameters.parameters.doubleParameter("picbreederImageRotation");
+					xTranslationValue = Parameters.parameters.doubleParameter("picbreederImageTranslationX");
+					yTranslationValue = Parameters.parameters.doubleParameter("picbreederImageTranslationY");
+				}
+				
+				// Label for scale
+				JLabel scale = new JLabel("scale");
+				values.add(scale);
+				// Slider for scale
+				Hashtable<Integer,JLabel> scaleLabels = new Hashtable<>();
+				scaleLabels.put(scaleUpToInt(Parameters.parameters.doubleParameter("minScale")), new JLabel(""+Parameters.parameters.doubleParameter("minScale")));
+				scaleLabels.put(scaleUpToInt(Parameters.parameters.doubleParameter("maxScale")), new JLabel(""+Parameters.parameters.doubleParameter("maxScale")));
+				JSlider scaleSlider = new JSlider(JSlider.HORIZONTAL, scaleUpToInt(Parameters.parameters.doubleParameter("minScale")), scaleUpToInt(Parameters.parameters.doubleParameter("maxScale")), scaleUpToInt(scaleValue));
+				scaleSlider.setLabelTable(scaleLabels);
+				scaleSlider.setPaintLabels(true);
+				sliders.add(scaleSlider);
+
+				// Label for rotation
+				JLabel rotation = new JLabel("rotation");
+				values.add(rotation);
+				// Slider for rotation
+				Hashtable<Integer,JLabel> rotationLabels = new Hashtable<>();
+				rotationLabels.put(0, new JLabel(""+ 0));
+				rotationLabels.put(scaleUpToInt(2*Math.PI), new JLabel(String.format("%.2f",2*Math.PI))); 
+				JSlider rotationSlider = new JSlider(JSlider.HORIZONTAL, 0, scaleUpToInt(Parameters.parameters.booleanParameter("enhancedCPPNCanRotate") ? 2*Math.PI : 0.0), scaleUpToInt(rotationalValue));
+				rotationSlider.setLabelTable(rotationLabels);
+				rotationSlider.setPaintLabels(true);
+				sliders.add(rotationSlider);
+
+				// Label for translation in the x axis
+				// this is labeled wrong on purpose because the current implementation
+				// move the image in the y direction
+				JLabel translationX = new JLabel("x translation");
+				values.add(translationX);
+				// Slider for translation in the x axis
+				Hashtable<Integer,JLabel> transXLabels = new Hashtable<>();
+				transXLabels.put(scaleUpToInt(-Parameters.parameters.doubleParameter("imageCenterTranslationRange")), new JLabel(""+(-Parameters.parameters.doubleParameter("imageCenterTranslationRange"))));
+				transXLabels.put(scaleUpToInt(Parameters.parameters.doubleParameter("imageCenterTranslationRange")), new JLabel(""+Parameters.parameters.doubleParameter("imageCenterTranslationRange")));
+				JSlider transXSlider = new JSlider(JSlider.HORIZONTAL, scaleUpToInt(-Parameters.parameters.doubleParameter("imageCenterTranslationRange")), scaleUpToInt(Parameters.parameters.doubleParameter("imageCenterTranslationRange")), scaleUpToInt(xTranslationValue));
+				transXSlider.setLabelTable(transXLabels);
+				transXSlider.setPaintLabels(true);
+				sliders.add(transXSlider);
+
+				// Label for translation in the y axis
+				// this is labeled wrong on purpose because the current implementation
+				// move the image in the x direction
+				JLabel translationY = new JLabel("y translation"); 
+				values.add(translationY);
+				// Slider for the translation in y axis
+				Hashtable<Integer,JLabel> transYLabels = new Hashtable<>();
+				transYLabels.put(scaleUpToInt(-Parameters.parameters.doubleParameter("imageCenterTranslationRange")), new JLabel(""+(-Parameters.parameters.doubleParameter("imageCenterTranslationRange"))));
+				transYLabels.put(scaleUpToInt(Parameters.parameters.doubleParameter("imageCenterTranslationRange")), new JLabel(""+Parameters.parameters.doubleParameter("imageCenterTranslationRange")));
+				JSlider transYSlider =  new JSlider(JSlider.HORIZONTAL, scaleUpToInt(-Parameters.parameters.doubleParameter("imageCenterTranslationRange")), scaleUpToInt(Parameters.parameters.doubleParameter("imageCenterTranslationRange")), scaleUpToInt(yTranslationValue));
+				transYSlider.setLabelTable(transYLabels);
+				transYSlider.setPaintLabels(true);
+				sliders.add(transYSlider);
+
+				// Adds the labels to the window
+				main.add(values);
+				main.add(sliders);
+
+				
+				JTextField scaleBox = new JTextField(0);
+				scaleBox.setText(String.format("%.2f", scaleValue));
+				scaleBox.addKeyListener(new KeyListener() {
+					
+					/**
+					 * Detects if the user has pressed enter to then
+					 * update the slider for the scaling and therefore the image
+					 * @param e Event that indicate a key stroke occurred
+					 */
+					@Override
+					public void keyPressed(KeyEvent e) {
+						if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+							String typed = scaleBox.getText();
+							scaleSlider.setValue(0);
+							if(!typed.matches("-*\\d+(\\.\\d*)?")) {
+								return;
+							}
+							double value = Double.parseDouble(typed)*100;
+							scaleSlider.setValue((int)value);
+						}
+					}
+
+					@Override
+					public void keyReleased(KeyEvent e) {
+					}
+					
+					@Override
+					public void keyTyped(KeyEvent e) {
+						
+					}
+					
+				});
+				textBox.add(scaleBox);
+				
+				JTextField rotationBox = new JTextField(0);
+				rotationBox.setText(String.format("%.2f", rotationalValue));
+				rotationBox.addKeyListener(new KeyListener() {
+
+					/**
+					 * Detects if the user has pressed enter to then
+					 * update the slider for the rotation and therefore the image
+					 * @param e Event that indicate a key stroke occurred
+					 */
+					@Override
+					public void keyPressed(KeyEvent e) {
+						if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+							String typed = rotationBox.getText();
+							rotationSlider.setValue(0);
+							if(!typed.matches("-*\\d+(\\.\\d*)?")) {
+								return;
+							}
+							double value = Double.parseDouble(typed)*100;
+							rotationSlider.setValue((int)value);
+						}
+					}
+
+					@Override
+					public void keyReleased(KeyEvent e) {
+					}
+					
+					@Override
+					public void keyTyped(KeyEvent e) {
+					}
+
+				});
+				textBox.add(rotationBox);
+				
+				JTextField xTransBox = new JTextField(0);
+				xTransBox.setText(String.format("%.2f", xTranslationValue));
+				xTransBox.addKeyListener(new KeyListener() {
+
+					/**
+					 * Detects if the user has pressed enter to then
+					 * update the slider for the x translation and therefore the image
+					 * @param e Event that indicate a key stroke occurred
+					 */
+					@Override
+					public void keyPressed(KeyEvent e) {
+						if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+							String typed = xTransBox.getText();
+							transXSlider.setValue(0);
+							if(!typed.matches("-*\\d+(\\.\\d*)?")) {
+								return;
+							}
+							double value = Double.parseDouble(typed)*100;
+							transXSlider.setValue((int)value);
+						}
+					}
+
+					@Override
+					public void keyReleased(KeyEvent e) {
+					}
+					
+					@Override
+					public void keyTyped(KeyEvent e) {
+					}
+
+				});
+				textBox.add(xTransBox);
+				
+				JTextField yTransBox = new JTextField(0);
+				yTransBox.setText(String.format("%.2f", yTranslationValue));
+				yTransBox.addKeyListener(new KeyListener() {
+
+					/**
+					 * Detects if the user has pressed enter to then
+					 * update the slider for the y translation and therefore the image
+					 * @param e Event that indicate a key stroke occurred
+					 */
+					@Override
+					public void keyPressed(KeyEvent e) {
+						if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+							String typed = yTransBox.getText();
+							transYSlider.setValue(0);
+							if(!typed.matches("-*\\d+(\\.\\d*)?")) {
+								return;
+							}
+							double value = Double.parseDouble(typed)*100;
+							transYSlider.setValue((int)value);
+						}
+					}
+
+					@Override
+					public void keyReleased(KeyEvent e) {
+					}
+					
+					@Override
+					public void keyTyped(KeyEvent e) {
+					}
+
+					
+				});
+				textBox.add(yTransBox);
+				
+				main.add(textBox);
+				
+				
+				// Picture of the image that was selected to change
+				ImageIcon image = new ImageIcon(getButtonImage(phenotype, buttonWidth, buttonHeight, inputMultipliers));
+				JLabel imageButton = new JLabel(image);
+				main.add(imageButton);
+
+				scaleSlider.addChangeListener(new ChangeListener() {
+
+					@SuppressWarnings("unchecked")
+					@Override
+					public void stateChanged(ChangeEvent e) {
+						// get value
+						JSlider source = (JSlider)e.getSource();
+						if(!source.getValueIsAdjusting()) {
+							int newValue = (int) source.getValue();
+							double scaledValue = scaleBackToDouble(newValue);
+							scaleBox.setText(String.valueOf(scaledValue));
+							// Actually change the value of the phenotype in the population
+							if(phenotype instanceof NetworkPlusParameters) {
+								((NetworkPlusParameters<TWEANN,ArrayList<Double>>) phenotype).t2.set(EnhancedCPPNPictureGenotype.INDEX_SCALE, scaledValue);
+							} else {
+								// Settings are the generic ones applied to all the images
+								Parameters.parameters.setDouble("picbreederImageScale", scaledValue);
+							}
+							// Update image
+							ImageIcon img = new ImageIcon(getButtonImage(phenotype, buttonWidth, buttonHeight, inputMultipliers));
+							imageButton.setIcon(img);
+						}	
+					}
+				});
+				
+				
+				rotationSlider.addChangeListener(new ChangeListener() {
+
+					@SuppressWarnings("unchecked")
+					@Override
+					public void stateChanged(ChangeEvent e) {
+						// get value
+						JSlider source = (JSlider)e.getSource();
+						if(!source.getValueIsAdjusting()) {
+							int newValue = (int) source.getValue();
+							double rotationValue = scaleBackToDouble(newValue);
+							rotationBox.setText(String.valueOf(rotationValue));
+							// Actually change the value of the phenotype in the population
+							if(phenotype instanceof NetworkPlusParameters) {
+								((NetworkPlusParameters<TWEANN,ArrayList<Double>>) phenotype).t2.set(EnhancedCPPNPictureGenotype.INDEX_ROTATION, rotationValue);					
+							} else {
+								// Settings are the generic ones applied to all the images
+								Parameters.parameters.setDouble("picbreederImageRotation", rotationValue);
+							}
+							// Update image
+							ImageIcon img = new ImageIcon(getButtonImage(phenotype, buttonWidth, buttonHeight, inputMultipliers));
+							imageButton.setIcon(img);
+						}	
+					}
+						
+				});
+
+				transXSlider.addChangeListener(new ChangeListener() {
+
+					@SuppressWarnings("unchecked")
+					@Override
+					public void stateChanged(ChangeEvent e) {
+						
+						 
+						// get value
+						JSlider source = (JSlider)e.getSource();
+						if(!source.getValueIsAdjusting()) {
+							int newValue = (int) source.getValue();
+							double transXValue = scaleBackToDouble(newValue);
+							xTransBox.setText(String.valueOf(transXValue));
+							// Actually change the value of the phenotype in the population
+							if(phenotype instanceof NetworkPlusParameters) {
+								((NetworkPlusParameters<TWEANN,ArrayList<Double>>) phenotype).t2.set(EnhancedCPPNPictureGenotype.INDEX_DELTA_X, transXValue);
+							} else {
+								// Settings are the generic ones applied to all the images
+								Parameters.parameters.setDouble("picbreederImageTranslationX", transXValue);
+							}
+							// Update image
+							ImageIcon img = new ImageIcon(getButtonImage(phenotype, buttonWidth, buttonHeight, inputMultipliers));
+							imageButton.setIcon(img);
+						}	
+					}
+						
+				});
+				
+				transYSlider.addChangeListener(new ChangeListener() {
+
+					@SuppressWarnings("unchecked")
+					@Override
+					public void stateChanged(ChangeEvent e) {
+						// get value
+						JSlider source = (JSlider)e.getSource();
+						if(!source.getValueIsAdjusting()) {
+							int newValue = (int) source.getValue();
+							double transYValue = scaleBackToDouble(newValue);
+							yTransBox.setText(String.valueOf(transYValue));
+							// Actually change the value of the phenotype in the population
+							if(phenotype instanceof NetworkPlusParameters) {
+								((NetworkPlusParameters<TWEANN,ArrayList<Double>>) phenotype).t2.set(EnhancedCPPNPictureGenotype.INDEX_DELTA_Y, transYValue);
+							} else {
+								// Settings are the generic ones applied to all the images
+								Parameters.parameters.setDouble("picbreederImageTranslationY", transYValue);
+							}
+							// Update image
+							ImageIcon img = new ImageIcon(getButtonImage(phenotype, buttonWidth, buttonHeight, inputMultipliers));
+							imageButton.setIcon(img);
+						}	
+					}
+						
+				});
+				
+				
+				
+				// Makes all the labels visible
+				explorer.add(main);
+				explorer.pack();
+				explorer.setVisible(true);
+			}
+
+		});
+		top.add(editPicButton);
 
 		if (!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {
 			top.add(zentangleButton);
 		}
+		
+		
 	}
 
 	/**
@@ -147,10 +574,11 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 		if(phenotype instanceof NetworkPlusParameters) { // CPPN with extra scale and rotation parameters
 			NetworkPlusParameters<TWEANN,ArrayList<Double>> npp = (NetworkPlusParameters<TWEANN,ArrayList<Double>>) phenotype;
 			ArrayList<Double> scaleRotationTranslation = npp.t2;
+			System.out.println("Enhanced:"+scaleRotationTranslation);
 			//System.out.println("Scale, Rotation, and Translation (x,y): " + scaleRotationTranslation);
 			return GraphicsUtil.imageFromCPPN(phenotype, imageWidth, imageHeight, inputMultiples, -1, scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_SCALE), scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_ROTATION), scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_DELTA_X), scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_DELTA_Y));
 		} else { // Plain CPPN/TWEANGenotype
-			return GraphicsUtil.imageFromCPPN((Network) phenotype, imageHeight, imageWidth, inputMultiples, -1, Parameters.parameters.doubleParameter("picbreederImageScale"), Parameters.parameters.doubleParameter("picbreederImageRotation"), Parameters.parameters.doubleParameter("picbreederImageTranslationX"), Parameters.parameters.doubleParameter("picbreederImageTranslationY"));
+			return GraphicsUtil.imageFromCPPN((Network) phenotype, imageWidth, imageHeight, inputMultiples, -1, Parameters.parameters.doubleParameter("picbreederImageScale"), Parameters.parameters.doubleParameter("picbreederImageRotation"), Parameters.parameters.doubleParameter("picbreederImageTranslationX"), Parameters.parameters.doubleParameter("picbreederImageTranslationY"));
 		}
 	}
 	
@@ -398,6 +826,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 			}
 		}
 	}
+	
 
 	/**
 	 * X and Y input labels, distance from center is useful for radial distance,
@@ -405,6 +834,10 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 	 */
 	@Override
 	public String[] sensorLabels() {
+		return staticSensorLabels();
+	}
+	
+	public static String[] staticSensorLabels() {
 		return new String[] { "X-coordinate", "Y-coordinate", "distance from center", "bias" };
 	}
 
@@ -413,6 +846,11 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 	 */
 	@Override
 	public String[] outputLabels() {
+		return staticOutputLabels();
+	}
+	
+	
+	public static String[] staticOutputLabels() {
 		return new String[] { "hue-value", "saturation-value", "brightness-value" };
 	}
 
@@ -485,8 +923,12 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 		try {
 			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:16", "maxGens:500",
 					"zentangleTileDim:100", 
+					//"base:extendedPicbreeder", "log:ExtendedPicbreeder-Interactive", "saveTo:Interactive",
 					"genotype:edu.southwestern.evolution.genotypes.EnhancedCPPNPictureGenotype",
-					"io:false", "netio:false", "mating:true", "fs:false", "starkPicbreeder:true",
+					"io:false", "netio:false", "mating:true", "fs:false", "starkPicbreeder:false",
+					//"imageCenterTranslationRange:0.0", // Uncomment to turn off evolution of translation 
+					//"minScale:1.0", "maxScale:1.0", // Uncomment to turn off evolution of scale
+					//"enhancedCPPNCanRotate:false", // Uncomment to turn off evolution of rotation
 					"task:edu.southwestern.tasks.interactive.picbreeder.PicbreederTask", "allowMultipleFunctions:true",
 					"ftype:0", "watch:true", "netChangeActivationRate:0.3", "cleanFrequency:-1",
 					"simplifiedInteractiveInterface:false", "recurrency:false", "saveAllChampions:true",
@@ -496,7 +938,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 					"includeIdFunction:true", "includeTriangleWaveFunction:false", "includeSquareWaveFunction:false",
 					"includeFullSawtoothFunction:false", "includeSigmoidFunction:false", "includeAbsValFunction:false",
 					"includeSawtoothFunction:false", "allowInteractiveSave:true", 
-					"picbreederImageScale:10.0", "picbreederImageRotation:0.0", // <- Not relevant when EnhancedCPPNPictureGenotype is used
+					//"picbreederImageScale:10.0", "picbreederImageRotation:0.0", // <- Not relevant when EnhancedCPPNPictureGenotype is used
 					"picbreederImageTranslationX:0.0", "picbreederImageTranslationY:0.0"});  // <- Not relevant when EnhancedCPPNPictureGenotype is used
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
@@ -517,5 +959,24 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 	@Override
 	protected String getFileExtension() {
 		return "bmp";
+	}
+
+	public static double[] getStaticUpperBounds() {
+		if(upper == null) upper = new double[] {Parameters.parameters.doubleParameter("maxScale"), Parameters.parameters.booleanParameter("enhancedCPPNCanRotate") ? 2*Math.PI : 0.0, Parameters.parameters.doubleParameter("imageCenterTranslationRange"), Parameters.parameters.doubleParameter("imageCenterTranslationRange")};		
+		return upper;
+	}
+
+	public static double[] getStaticLowerBounds() {
+		if(lower == null) lower = new double[] {Parameters.parameters.doubleParameter("minScale"), 0, -Parameters.parameters.doubleParameter("imageCenterTranslationRange"), -Parameters.parameters.doubleParameter("imageCenterTranslationRange")};
+		return lower;
+	}
+
+	@Override
+	public double[] getUpperBounds() {
+		return getStaticUpperBounds();
+	}
+
+	public double[] getLowerBounds() {
+		return getStaticLowerBounds();
 	}
 }

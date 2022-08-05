@@ -12,7 +12,7 @@ import edu.southwestern.tasks.motests.testfunctions.FunctionOptimizationSet;
 public class MultipleFunctionMaximization extends MultipleFunctionOptimization {
 
 	public MultipleFunctionMaximization() {
-		this(MMNEAT.fos);
+		this(MultipleFunctionOptimization.setupFunctionOptimization());
 	}
 
 	public MultipleFunctionMaximization(FunctionOptimizationSet fos) {

@@ -23,12 +23,14 @@ import edu.southwestern.MMNEAT.MMNEAT;
 //import edu.southwestern.evolution.GenerationalEA;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.mapelites.Archive;
-import edu.southwestern.evolution.mapelites.generalmappings.*;
+import edu.southwestern.evolution.mapelites.generalmappings.LatentVariablePartitionSumBinLabels;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.NoisyLonerTask;
 import edu.southwestern.tasks.export.JsonLevelGenerationTask;
+import edu.southwestern.tasks.interactive.megaman.MegaManCPPNtoGANLevelBreederTask;
+import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.megaman.astar.MegaManState;
 import edu.southwestern.tasks.megaman.astar.MegaManState.MegaManAction;
 import edu.southwestern.util.MiscUtil;
@@ -46,7 +48,7 @@ import edu.southwestern.util.graphics.GraphicsUtil;
  *
  *
  */
-public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> implements JsonLevelGenerationTask<T>{
+public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> implements JsonLevelGenerationTask<T>{	
 	private int numFitnessFunctions = 0; 
 	private static final int NUM_OTHER_SCORES = 12;
 
@@ -108,11 +110,11 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> implements J
 
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num, HashMap<String,Object> behaviorCharacteristics) {
-		MegaManTrackSegmentType segmentCount = new MegaManTrackSegmentType();
+		MegaManTrackSegmentType segmentTypeTracker = new MegaManTrackSegmentType();
 		// Passing this parameter inside the hash map instead of as a normal parameter is confusing, 
 		// but allows this class to conform to the JsonLevelGenerationTask easily.
-		behaviorCharacteristics.put("segmentTracker",segmentCount); 
-		List<List<Integer>> level = getMegaManLevelListRepresentationFromGenotype(individual, segmentCount); //gets a level 
+		behaviorCharacteristics.put("segmentTracker",segmentTypeTracker); 
+		List<List<Integer>> level = getMegaManLevelListRepresentationFromGenotype(individual, segmentTypeTracker); //gets a level 
 		// 0 represents the ignored pseudo-random seed
 		return evaluateOneLevel(level, 0, individual, behaviorCharacteristics);
 	}
@@ -128,7 +130,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> implements J
 	 */
 	public Pair<double[], double[]> evaluateOneLevel(List<List<Integer>> level, double psuedoRandomSeed, Genotype<T> individual, HashMap<String,Object> behaviorCharacteristics) {
 		if(!behaviorCharacteristics.containsKey("segmentTracker")) behaviorCharacteristics.put("segmentTracker", new MegaManTrackSegmentType());
-		MegaManTrackSegmentType segmentCount = (MegaManTrackSegmentType) behaviorCharacteristics.get("segmentTracker");
+		MegaManTrackSegmentType segmentTypeTracker = (MegaManTrackSegmentType) behaviorCharacteristics.get("segmentTracker");
 		long genotypeId = individual.getId();
 		ArrayList<Double> fitnesses = new ArrayList<>(numFitnessFunctions); //initializes the fitness function array 
 		Quad<HashSet<MegaManState>, ArrayList<MegaManAction>, MegaManState, Double> aStarResults = MegaManLevelAnalysisUtil.performAStarSearchAndCalculateAStarDistance(level);
@@ -144,7 +146,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> implements J
 		double numWallEnemies = miscEnemyInfo.get("numWallEnemies");
 		double numGroundEnemies = miscEnemyInfo.get("numGroundEnemies");
 		double numFlyingEnemies = miscEnemyInfo.get("numFlyingEnemies");
-		HashMap<String,Integer> miscChunkInfo = segmentCount.findMiscSegments();
+		HashMap<String,Integer> miscChunkInfo = segmentTypeTracker.findMiscSegments();
 		double numRightSegments = miscChunkInfo.get("numRight");
 		double numLeftSegments = miscChunkInfo.get("numLeft");
 		double numUpSegments = miscChunkInfo.get("numUp");
@@ -379,8 +381,14 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> implements J
 	/**
 	 * Extract real-valued latent vector from genotype and then send to GAN to get a MegaMan level
 	 */
-	public abstract List<List<Integer>> getMegaManLevelListRepresentationFromGenotype(Genotype<T> individual, MegaManTrackSegmentType segmentCount);
+	public abstract List<List<Integer>> getMegaManLevelListRepresentationFromGenotype(Genotype<T> individual, MegaManTrackSegmentType segmentTypeTracker);
 	
+	@Override
+	public void postConstructionInitialization() {
+		GANProcess.type = GANProcess.GAN_TYPE.MEGA_MAN;
+		// Ok to set the CPPN input parameters even if they are not used
+		MMNEAT.setNNInputParameters(MegaManCPPNtoGANLevelBreederTask.SENSOR_LABELS.length, MegaManCPPNtoGANLevelBreederTask.staticNumCPPNOutputs());
+	}
 	
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		// Test comparison that isn't working

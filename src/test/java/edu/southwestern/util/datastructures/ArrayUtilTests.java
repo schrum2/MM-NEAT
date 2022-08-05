@@ -49,7 +49,14 @@ public class ArrayUtilTests {
 		
 	}
 	
-	
+	@Test
+	public void range_test()  {
+		assertArrayEquals(new int[] {0,1,2,3,4,5}, ArrayUtil.range(0, 6, 1));
+		assertArrayEquals(new int[] {3,4,5}, ArrayUtil.range(3, 6, 1));
+		assertArrayEquals(new int[] {0,2,4}, ArrayUtil.range(0, 6, 2));
+		assertArrayEquals(new int[] {0,3}, ArrayUtil.range(0, 6, 3));
+		assertArrayEquals(new int[] {5,12,19,26,33,40}, ArrayUtil.range(5, 41, 7));
+	}
 	
 	/**
 	 * Tests that the given number of "1"s is returned in a int[]
@@ -609,22 +616,22 @@ public class ArrayUtilTests {
 		assertEquals(ArrayUtil.setCardinality(base), 6);
 	}
 
-	@Test
-	public void pairwiseMinimum_test() {
-		INDArray a1 = Nd4j.create(new double[] {1, 2,3, 4,5, 6, 7, 8,-34});
-		INDArray a2 = Nd4j.create(new double[] {4,-2,5,-4,5,20,-7,-8,-2});
-		
-		INDArray originalA1 = a1.dup();
-		INDArray originalA2 = a2.dup();
-		
-		ArrayUtil.pairwiseMinimum(a1, a2);
-		
-		assertFalse(a1.equals(originalA1)); // a1 is changed, so they are not equal
-		
-		INDArray expected = Nd4j.create(new double[] {1,-2,3,-4,5,6,-7,-8,-34});
-		assertEquals(expected,a1); // New result for a1
-		
-		assertEquals(a2, originalA2); // a2 does not change
-	}
+//	@Test
+//	public void pairwiseMinimum_test() {
+//		INDArray a1 = Nd4j.create(new double[] {1, 2,3, 4,5, 6, 7, 8,-34});
+//		INDArray a2 = Nd4j.create(new double[] {4,-2,5,-4,5,20,-7,-8,-2});
+//		
+//		INDArray originalA1 = a1.dup();
+//		INDArray originalA2 = a2.dup();
+//		
+//		ArrayUtil.pairwiseMinimum(a1, a2);
+//		
+//		assertFalse(a1.equals(originalA1)); // a1 is changed, so they are not equal
+//		
+//		INDArray expected = Nd4j.create(new double[] {1,-2,3,-4,5,6,-7,-8,-34});
+//		assertEquals(expected,a1); // New result for a1
+//		
+//		assertEquals(a2, originalA2); // a2 does not change
+//	}
 
 }

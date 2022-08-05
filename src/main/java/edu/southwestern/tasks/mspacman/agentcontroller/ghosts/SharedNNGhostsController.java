@@ -1,16 +1,16 @@
 package edu.southwestern.tasks.mspacman.agentcontroller.ghosts;
 
-import edu.southwestern.MMNEAT.MMNEAT;
+import java.util.EnumMap;
+
 import edu.southwestern.networks.Network;
+import edu.southwestern.tasks.mspacman.MsPacManTask;
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
 import edu.southwestern.tasks.mspacman.sensors.ghosts.GhostControllerInputOutputMediator;
 import oldpacman.controllers.NewGhostController;
-import oldpacman.game.Game;
-import pacman.controllers.IndividualGhostController;
 import oldpacman.game.Constants.GHOST;
 import oldpacman.game.Constants.MOVE;
-
-import java.util.EnumMap;
+import oldpacman.game.Game;
+import pacman.controllers.IndividualGhostController;
 
 /**
  *
@@ -27,13 +27,13 @@ public abstract class SharedNNGhostsController extends NewGhostController {
 
 	public SharedNNGhostsController(Network n) {
 		this.nn = n;
-		this.inputMediator = MMNEAT.ghostsInputOutputMediator;
+		this.inputMediator = MsPacManTask.ghostsInputOutputMediator;
 		this.controllers = null;
 	}
 	
 	public SharedNNGhostsController(Network n, EnumMap<GHOST, IndividualGhostController> map) {
 		this.nn = n;
-		this.inputMediator = MMNEAT.ghostsInputOutputMediator;
+		this.inputMediator = MsPacManTask.ghostsInputOutputMediator;
 		this.controllers = map;
 	}
 

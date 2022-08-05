@@ -9,6 +9,7 @@ import edu.southwestern.tasks.NoisyLonerTask;
 import edu.southwestern.tasks.gvgai.GVGAIUtil;
 import edu.southwestern.tasks.gvgai.GVGAIUtil.GameBundle;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
+import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.util.datastructures.Pair;
 import gvgai.core.vgdl.VGDLFactory;
 import gvgai.core.vgdl.VGDLRegistry;
@@ -61,5 +62,10 @@ public abstract class ZeldaLevelTask<T> extends NoisyLonerTask<T> {
 		}
 		
 		return new Pair<double[], double[]>(new double[]{maxDistanceS, maxDistanceN, maxDistanceE, maxDistanceW}, new double[0]);
+	}
+	
+	@Override
+	public void postConstructionInitialization() {
+		GANProcess.type = GANProcess.GAN_TYPE.ZELDA;
 	}
 }

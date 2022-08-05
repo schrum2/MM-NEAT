@@ -12,10 +12,10 @@ import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.networks.ActivationFunctions;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.file.Serialization;
 import edu.southwestern.util.graphics.AnimationUtil;
 import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.graphics.GraphicsUtil;
-import wox.serial.Easy;
 
 /**
  * Quick and dirty class to take a CPPN for creating 2D animations,
@@ -30,7 +30,9 @@ public class IndividualFrameLoader {
 		Parameters.initializeParameterCollections(new String[] {"io:false","netio:false","allowMultipleFunctions:true","recurrency:false"});
 		MMNEAT.loadClasses();
 		ActivationFunctions.resetFunctionSet();
-		TWEANNGenotype tg = (TWEANNGenotype) Easy.load("AnimationBreeder-Control19_gen14_4.xml");
+		// THIS WILL NOT WORK
+		if(true) throw new UnsupportedOperationException("Serialization method has changed. Cannot load old xml files.");
+		TWEANNGenotype tg = (TWEANNGenotype) Serialization.load("AnimationBreeder-Control19_gen14_4.xml");
 		System.out.println(tg);
 		//EvolutionaryHistory.initArchetype(0, null, (TWEANNGenotype) tg.copy());
 				

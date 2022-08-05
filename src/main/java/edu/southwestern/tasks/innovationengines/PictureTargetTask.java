@@ -26,6 +26,7 @@ import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.BoundedTask;
 import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.tasks.interactive.picbreeder.PicbreederTask;
 import edu.southwestern.tasks.testmatch.MatchDataTask;
@@ -36,7 +37,29 @@ import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.graphics.GraphicsUtil;
 import edu.southwestern.util.stats.StatisticsUtilities;
 
-public class PictureTargetTask<T extends Network> extends LonerTask<T> {
+/**
+ * The goal of this is to use MAP Elites combined with an Autoencoder to
+ * evolve a target image. This isn't really an "Innovation Engine" and should
+ * perhaps be moved, but it doesn't fit elsewhere either. The idea is
+ * to periodically train the Autoencoder (a python script) on the image
+ * archive so that it can be used to measure how similar new images are
+ * to old images. However, we found that in practice we seem to do better
+ * without the Autoencoder, instead relying only on the number of neurons
+ * in the CPPNs.
+ * 
+ * This whole idea was inspired by previous research, though our results
+ * seem to have come out slightly different. Here is the original work
+ * we built on:
+ * 
+ * Adam Gaier, Alexander Asteroth, and Jean-Baptiste Mouret. 2019. Are Quality
+ * Diversity Algorithms Better at Generating Stepping Stones than Objective-based
+ * Search?. In Genetic and Evolutionary Computation Conference Companion, ACM.
+ * 
+ * @author Anna Wicker and Jacob Schrum
+ *
+ * @param <T>
+ */
+public class PictureTargetTask<T extends Network> extends LonerTask<T> implements BoundedTask {
 	
 	public static final String IMAGE_MATCH_PATH = "data" + File.separator + "imagematch";
 	private BufferedImage img = null;
@@ -332,5 +355,20 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 				"includeTriangleWaveFunction:false", 
 				"includeSquareWaveFunction:false", "blackAndWhitePicbreeder:true",
 				"deleteOldArchives:true", "dynamicAutoencoderIntervals:true", "convolutionalAutoencoder:false"}); 
+	}
+
+	@Override
+	public double[] getUpperBounds() {
+		return PicbreederTask.getStaticUpperBounds();
+	}
+
+	@Override
+	public double[] getLowerBounds() {
+		return PicbreederTask.getStaticLowerBounds();
+	}
+
+	@Override
+	public void postConstructionInitialization() {
+		MMNEAT.setNNInputParameters(numCPPNInputs(), numCPPNOutputs());
 	}
 }

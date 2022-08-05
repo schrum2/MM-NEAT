@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.rlcommunity.environments.tetris.TetrisState;
 
-import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.networks.Network;
 import edu.southwestern.networks.hyperneat.HyperNEATTask;
 import edu.southwestern.networks.hyperneat.HyperNEATUtil;
@@ -13,6 +12,7 @@ import edu.southwestern.networks.hyperneat.Substrate;
 import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.rlglue.RLGlueTask;
 import edu.southwestern.tasks.rlglue.featureextractors.tetris.ExtendedBertsekasTsitsiklisTetrisExtractor;
 import edu.southwestern.tasks.rlglue.featureextractors.tetris.RawTetrisStateExtractor;
 import edu.southwestern.util.datastructures.Pair;
@@ -28,7 +28,7 @@ public class HyperNEATTetrisTask<T extends Network> extends TetrisTask<T> implem
 	private static List<Substrate> substrateInformation = null;
 	private static List<SubstrateConnectivity> substrateConnectivity = null; 
 	// Value should be defined when class is constructed by a ClassCreation call, after the rlGlueExtractor is specified.
-	private final boolean TWO_DIMENSIONAL_SUBSTRATES = MMNEAT.rlGlueExtractor instanceof RawTetrisStateExtractor;
+	private final boolean TWO_DIMENSIONAL_SUBSTRATES = RLGlueTask.rlGlueExtractor instanceof RawTetrisStateExtractor;
 	// Even if the substrates are 2D, the CPPN inputs may need to be overridden to be 1D with certain substrate mappings
 	public static boolean reduce2DTo1D = false; // This can affect CPPNs via the numCPPNInputs and filterCPPNInputs methods.
 
@@ -76,11 +76,11 @@ public class HyperNEATTetrisTask<T extends Network> extends TetrisTask<T> implem
 			boolean split = CommonConstants.splitRawTetrisInputs;
 
 			// Different extractors correspond to different substrate configurations
-			if(MMNEAT.rlGlueExtractor instanceof RawTetrisStateExtractor) { // 2D grid of blocks			
+			if(RLGlueTask.rlGlueExtractor instanceof RawTetrisStateExtractor) { // 2D grid of blocks			
 				List<Triple<String,Integer,Integer>> output = new LinkedList<>();
 				output.add(new Triple<>("output:utility", 1, 1));
 				substrateInformation = HyperNEATUtil.getSubstrateInformation(worldWidth, worldHeight, split ? 2 : 1, output);				
-			} else if(MMNEAT.rlGlueExtractor instanceof ExtendedBertsekasTsitsiklisTetrisExtractor) { // Several 1D input substrates
+			} else if(RLGlueTask.rlGlueExtractor instanceof ExtendedBertsekasTsitsiklisTetrisExtractor) { // Several 1D input substrates
 				substrateInformation = new LinkedList<Substrate>();
 				
 				Substrate heights = new Substrate(new Pair<Integer,Integer>(worldWidth,1), Substrate.INPUT_SUBSTRATE, new Triple<Integer,Integer,Integer>(0,0,0), "heights");	
@@ -103,7 +103,7 @@ public class HyperNEATTetrisTask<T extends Network> extends TetrisTask<T> implem
 					for(int k = 0; k < processingWidth; k++) {
 						// Not sure processSubCoord coordinates make sense
 						Triple<Integer, Integer, Integer> processSubCoord = new Triple<Integer, Integer, Integer>(k, outputDepth += SUBSTRATE_COORDINATES, 0);
-						Substrate processSub = new Substrate(new Pair<Integer,Integer>(MMNEAT.rlGlueExtractor.numFeatures(),1), Substrate.PROCCESS_SUBSTRATE, processSubCoord, "process(" + k + "," + i + ")");
+						Substrate processSub = new Substrate(new Pair<Integer,Integer>(RLGlueTask.rlGlueExtractor.numFeatures(),1), Substrate.PROCCESS_SUBSTRATE, processSubCoord, "process(" + k + "," + i + ")");
 						substrateInformation.add(processSub);
 					}
 				}
@@ -127,11 +127,11 @@ public class HyperNEATTetrisTask<T extends Network> extends TetrisTask<T> implem
 	public List<SubstrateConnectivity> getSubstrateConnectivity() {
 		if (substrateConnectivity == null) { // Generate once and save to be reused later
 			// Different extractors correspond to different substrate configurations
-			if(MMNEAT.rlGlueExtractor instanceof RawTetrisStateExtractor) {			
+			if(RLGlueTask.rlGlueExtractor instanceof RawTetrisStateExtractor) {			
 				List<String> outputNames = new LinkedList<>();
 				outputNames.add("output:utility");
 				substrateConnectivity = HyperNEATUtil.getSubstrateConnectivity(CommonConstants.splitRawTetrisInputs ? 2 : 1, outputNames);				
-			} else if(MMNEAT.rlGlueExtractor instanceof ExtendedBertsekasTsitsiklisTetrisExtractor) {	
+			} else if(RLGlueTask.rlGlueExtractor instanceof ExtendedBertsekasTsitsiklisTetrisExtractor) {	
 				substrateConnectivity = new LinkedList<SubstrateConnectivity>();
 				if(numProcessLayers > 0) {
 					for(int k = 0; k < processingWidth; k++) {

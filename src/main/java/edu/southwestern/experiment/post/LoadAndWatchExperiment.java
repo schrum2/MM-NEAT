@@ -40,6 +40,7 @@ public final class LoadAndWatchExperiment<T> implements Experiment {
 		} else {
 			System.out.println("Loading: " + lastSavedDir);
 			population = PopulationUtil.load(lastSavedDir);
+			assert population.size() > 0;
 			if (Parameters.parameters.booleanParameter("onlyWatchPareto")) {
 				NSGA2Score<T>[] scores = null;
 				try {
@@ -49,8 +50,12 @@ public final class LoadAndWatchExperiment<T> implements Experiment {
 					System.exit(1);
 				}
 				PopulationUtil.pruneDownToParetoFront(population, scores);
+				assert population.size() > 0;
 			}
 		}
+		
+		PopulationUtil.saveGraphVizNetworks(population);
+
 	}
 
 	/**
@@ -68,5 +73,9 @@ public final class LoadAndWatchExperiment<T> implements Experiment {
 	@Override
 	public boolean shouldStop() {
 		return true;
+	}
+	
+	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
+		MMNEAT.main("runNumber:0 experiment:edu.southwestern.experiment.post.LoadAndWatchExperiment base:tetris log:Tetris-PlainFeatures saveTo:PlainFeatures trials:1 watch:true showNetworks:true io:false netio:false onlyWatchPareto:true printFitness:true animateNetwork:false monitorInputs:true".split(" "));
 	}
 }

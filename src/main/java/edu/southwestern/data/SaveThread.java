@@ -1,7 +1,8 @@
 package edu.southwestern.data;
 
 import java.util.concurrent.Callable;
-import wox.serial.Easy;
+
+import edu.southwestern.util.file.Serialization;
 
 /**
  * Save file in a thread, so that the file system operations can be distributed.
@@ -23,7 +24,7 @@ public class SaveThread<T> implements Callable<Boolean> {
 	@Override
 	public Boolean call() {
 		try {
-			Easy.save(object, filename);
+			Serialization.save(object, filename);
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();

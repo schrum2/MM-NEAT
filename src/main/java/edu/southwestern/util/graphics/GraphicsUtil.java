@@ -14,6 +14,7 @@ import javax.imageio.ImageIO;
 
 import org.nd4j.linalg.api.ndarray.INDArray;
 
+import edu.southwestern.networks.ActivationFunctions;
 import edu.southwestern.networks.Network;
 import edu.southwestern.networks.activationfunctions.FullLinearPiecewiseFunction;
 import edu.southwestern.networks.activationfunctions.HalfLinearPiecewiseFunction;
@@ -135,6 +136,7 @@ public class GraphicsUtil {
 			for (int y = 0; y < imageHeight; y++) {				
 				// network outputs computed on hsb, not rgb scale because
 				float[] hsb = getHSBFromCPPN(n, x, y, imageWidth, imageHeight, inputMultiples, time, scale, rotation, deltaX, deltaY);
+				//System.out.println(Arrays.toString(hsb));
 				maxB = Math.max(maxB, hsb[BRIGHTNESS_INDEX]);
 				minB = Math.min(minB, hsb[BRIGHTNESS_INDEX]);
 				if(Parameters.parameters.booleanParameter("blackAndWhitePicbreeder")) { // black and white
@@ -482,9 +484,23 @@ public class GraphicsUtil {
 	 * @return scaled HSB information in float array
 	 */
 	public static float[] rangeRestrictHSB(double[] hsb) {
-		return new float[] { (float) FullLinearPiecewiseFunction.fullLinear(hsb[HUE_INDEX]),
-				(float) HalfLinearPiecewiseFunction.halfLinear(hsb[SATURATION_INDEX]),
-				(float) Math.abs(FullLinearPiecewiseFunction.fullLinear(hsb[BRIGHTNESS_INDEX])) };
+		if(Parameters.parameters.booleanParameter("standardPicBreederHSBRestriction")) {
+			// This is the original Picbreeder code that I have used for a while, but even the comment
+			// above (from long ago) indicates problems with saturation. These are exacerbated with the
+			// enhanced genotypes (especially when scale change is allowed), hence the alternative below.
+			return new float[] { 
+					(float) FullLinearPiecewiseFunction.fullLinear(hsb[HUE_INDEX]),
+					(float) HalfLinearPiecewiseFunction.halfLinear(hsb[SATURATION_INDEX]),
+					(float) Math.abs(FullLinearPiecewiseFunction.fullLinear(hsb[BRIGHTNESS_INDEX])) 
+			};
+		} else {
+			// This new code is a possible alternative for enhanced genotypes
+			return new float[] { 
+					(float) ActivationFunctions.fullSawtooth(hsb[HUE_INDEX],2),	// Wraps around the Hue cylinder
+					(float) Math.abs(FullLinearPiecewiseFunction.fullLinear(hsb[SATURATION_INDEX])), // Smooth out transition from positive to negative
+					(float) Math.abs(FullLinearPiecewiseFunction.fullLinear(hsb[BRIGHTNESS_INDEX])) // No change
+			};
+		}
 	}
 
 	/**

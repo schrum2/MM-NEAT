@@ -80,7 +80,7 @@ public class AnimationUtil {
 				}
 				
 				if(Parameters.parameters.booleanParameter("AnimateRotation")) {
-					rotation = scaleAndRotationOutputs[CPPN_OUTPUT_INDEX_ROTATION] * Math.PI; // Mult by Math.PI
+					rotation = scaleAndRotationOutputs[CPPN_OUTPUT_INDEX_ROTATION] * Math.PI; // Multiply by Math.PI
 				}
 				
 				if(Parameters.parameters.booleanParameter("AnimateDeltaX")) {
@@ -116,7 +116,7 @@ public class AnimationUtil {
 	public static BufferedImage[] shapesFromCPPN(Network n, int imageWidth, int imageHeight, int startTime, int endTime, Color color, double heading, double pitch, double[] inputMultiples) {
 		BufferedImage[] images = new BufferedImage[endTime-startTime];
 		for(int i = startTime; i < endTime; i++) {
-			images[i-startTime] = ThreeDimensionalUtil.currentImageFromCPPN(n, imageWidth, imageHeight, ThreeDimensionalObjectBreederTask.CUBE_SIDE_LENGTH, ThreeDimensionalObjectBreederTask.SHAPE_HEIGHT,ThreeDimensionalObjectBreederTask.SHAPE_WIDTH, ThreeDimensionalObjectBreederTask.SHAPE_DEPTH, color, heading, pitch, inputMultiples, i/FRAMES_PER_SEC);
+			images[i-startTime] = ThreeDimensionalUtil.currentImageFromCPPN(n, imageWidth, imageHeight, ThreeDimensionalObjectBreederTask.CUBE_SIDE_LENGTH, ThreeDimensionalObjectBreederTask.SHAPE_HEIGHT,ThreeDimensionalObjectBreederTask.SHAPE_WIDTH, ThreeDimensionalObjectBreederTask.SHAPE_DEPTH, color, heading, pitch, inputMultiples, i/FRAMES_PER_SEC, Parameters.parameters.booleanParameter("objectBreederDistanceInEachPlane"));
 		}
 		return images;
 	}		

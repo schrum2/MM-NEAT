@@ -15,7 +15,7 @@ public class PuddleWorldTask<T extends Network> extends RLGlueTask<T> {
 	
 	public PuddleWorldTask() {
 		super();
-		boolean puddleWorld = (MMNEAT.rlGlueEnvironment instanceof PuddleWorld);
+		boolean puddleWorld = (RLGlueTask.environment instanceof PuddleWorld);
 		moPuddleWorld = puddleWorld && Parameters.parameters.booleanParameter("moPuddleWorld");
 		
 		if (moPuddleWorld) {

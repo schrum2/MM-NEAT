@@ -25,8 +25,10 @@ import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.file.FileUtilities;
+import edu.southwestern.util.file.SERFilter;
+import edu.southwestern.util.file.Serialization;
+import edu.southwestern.util.file.XMLFilter;
 import edu.southwestern.util.stats.StatisticsUtilities;
-import wox.serial.Easy;
 
 /**
  * Experiment for comparing different MAP Elites 
@@ -71,11 +73,7 @@ public class CompareMAPElitesBinningSchemeExperiment<T> implements Experiment {
 		MMNEAT.ea = newMAPElites; // set EA to new MAP Elites
 		Archive<T> comparedArchive = newMAPElites.getArchive(); // Get new archive
 		
-		FilenameFilter filter = new FilenameFilter() { // filter only *.xml files from old directory
-            public boolean accept(File dir, String name) {
-                return name.endsWith(".xml");
-            }
-        };
+		FilenameFilter filter = (Parameters.parameters.booleanParameter("useWoxSerialization")) ? new XMLFilter() : new SERFilter();
         
         LonerTask task = (LonerTask) MMNEAT.task;
         String[] directoryFiles = new File(dir).list(filter);
@@ -114,7 +112,7 @@ public class CompareMAPElitesBinningSchemeExperiment<T> implements Experiment {
         	
         } else {
         	for (String oneFile : directoryFiles) { // get each xml, evaluate it, and add it to the new archive
-        		Genotype<T> geno = (Genotype<T>) Easy.load(dir+"\\"+oneFile);
+        		Genotype<T> geno = (Genotype<T>) Serialization.load(dir+"\\"+oneFile);
         		Score<T> evalScore = task.evaluateOne(geno);
         		comparedArchive.add(evalScore);
         	}
@@ -140,14 +138,14 @@ public class CompareMAPElitesBinningSchemeExperiment<T> implements Experiment {
 	
 	
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
-		String arg1 = "zeldadungeonsdistinctbtrooms";
-		String arg2 = "ZeldaDungeonsDistinctBTRooms";
-		String arg3 = "Direct2GAN";
-		String arg4 = "1";
-		String arg5 = "1";
-		String arg6 = "edu.southwestern.tasks.zelda.ZeldaMAPElitesWallWaterRoomsBinLabels";
+		String base = "mariopdsl";
+		String logPrefix = "MarioPDSL";
+		String saveTo = "FullDirect2GAN";
+		String runNumber = "0";
+		String binningScheme = "edu.southwestern.tasks.mario.binningschemes.MarioMAPElitesPercentDecorateCoverageAndLeniencyBinLabels";
 		//MMNEAT.main(("runNumber:0 parallelEvaluations:false base:mariolevelsdecoratensleniency log:MarioLevelsDecorateNSLeniency-CPPNThenDirect2GAN saveTo:CPPNThenDirect2GAN trials:1 experiment:edu.southwestern.experiment.post.CompareMAPElitesBinningSchemeExperiment mapElitesBinLabels:edu.southwestern.tasks.mario.MarioMAPElitesDistinctChunksNSAndDecorationBinLabels").split(" "));
-		MMNEAT.main(("runNumber:"+arg4+" parallelEvaluations:true threads:20 base:"+arg1+" log:"+arg2+"-"+arg3+" saveTo:"+arg3+" trials:"+arg5+" experiment:edu.southwestern.experiment.post.CompareMAPElitesBinningSchemeExperiment mapElitesBinLabels:"+arg6+" logLock:true io:false").split(" "));
+		//MMNEAT.main(("runNumber:"+runNumber+" parallelEvaluations:true threads:20 base:"+base+" log:"+logPrefix+"-"+saveTo+" saveTo:"+saveTo+" trials:1 experiment:edu.southwestern.experiment.post.CompareMAPElitesBinningSchemeExperiment mapElitesBinLabels:"+binningScheme+" logLock:true io:false").split(" "));
+		MMNEAT.main(("runNumber:"+runNumber+" parallelEvaluations:true threads:20 base:"+base+" log:"+logPrefix+"-"+saveTo+" saveTo:"+saveTo+" trials:1 experiment:edu.southwestern.experiment.post.CompareMAPElitesBinningSchemeExperiment mapElitesBinLabels:"+binningScheme+" logLock:true io:false marioMinDecorationIndex:1 marioMaxDecorationIndex:5 marioMinLeniencyIndex:3 marioMaxLeniencyIndex:5 marioMinSpaceCoverageIndex:0 marioMaxSpaceCoverageIndex:8").split(" "));
 	}
 	
 	
@@ -179,7 +177,7 @@ public class CompareMAPElitesBinningSchemeExperiment<T> implements Experiment {
 		@SuppressWarnings("unchecked")
 		@Override
 		public Score<T> call() throws Exception {
-			Genotype<T> geno = (Genotype<T>) Easy.load(dir+"\\"+fileName);
+			Genotype<T> geno = (Genotype<T>) Serialization.load(dir+"\\"+fileName);
     		Score<T> evalScore = task.evaluateOne(geno);
 			return evalScore;
 		}

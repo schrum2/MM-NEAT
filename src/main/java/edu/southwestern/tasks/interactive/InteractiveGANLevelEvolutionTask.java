@@ -37,6 +37,7 @@ import edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.BoundedTask;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.graphics.GraphicsUtil;
@@ -46,7 +47,7 @@ import edu.southwestern.util.graphics.GraphicsUtil;
  * @author Jacob Schrum
  *
  */
-public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolutionTask<ArrayList<Double>> {
+public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolutionTask<ArrayList<Double>> implements BoundedTask {
 
 	// Should exceed any of the CPPN inputs or other interface buttons
 	public static final int PLAY_BUTTON_INDEX = -20; 
@@ -92,23 +93,27 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 		// Whether Play buttons are hidden
 		this.isPlayable = isPlayable;
 
+		// File load button
 		JButton fileLoadButton = new JButton();
 		fileLoadButton.setText("SetGANModel");
 		fileLoadButton.setName("" + FILE_LOADER_BUTTON_INDEX);
 		fileLoadButton.addActionListener(this);
 
+		// Explore Latent Space button
 		JButton vectorExplorerButton = new JButton();
 		vectorExplorerButton.setText("ExploreLatentSpace");
 		vectorExplorerButton.setToolTipText("Change individual numbers in the latent vector used by the GAN to generate a selected individual.");
 		vectorExplorerButton.setName("" + VECTOR_EXPLORER_BUTTON_INDEX);
 		vectorExplorerButton.addActionListener(this);
 
+		// Interpolation Button
 		JButton interpolationButton = new JButton();
 		interpolationButton.setText("Interpolate");
 		interpolationButton.setName("" + INTERPOLATE_BUTTON_INDEX);
 		interpolationButton.setToolTipText("Select two individuals and then explore the latent space along the line connecting their two latent vectors.");
 		interpolationButton.addActionListener(this);
 
+		// Randomize Button
 		JButton randomizeButton = new JButton();
 		randomizeButton.setText("Randomize");
 		randomizeButton.setToolTipText("Replace selected individuals with new random latent vectors.");

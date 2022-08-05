@@ -51,28 +51,51 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 	
 	private List<List<Integer>> level;
 	private Point orb; 
-	//private HashSet<Point> dugHoles; // Too expensive to track the dug up spaces in the state. Just allow the agent to move downward through diggable blocks
 	public int currentX; 
 	public int currentY;
 	private int jumpVelocity;
 	private int fallHorizontalModInt;
-	//private boolean climbing;
-	//the distance to the level orb
-	public static Heuristic<MegaManAction,MegaManState> manhattanToOrb = new Heuristic<MegaManAction,MegaManState>(){
+	
+	//the distance to the level orb, anonymous class
+	public static Heuristic<MegaManAction,MegaManState> orbHeuristic = new Heuristic<MegaManAction,MegaManState>(){
 
 		@Override
 		public double h(MegaManState s) {
 			Point orb = s.orb;
 			int xDistance = Math.abs(s.currentX - orb.x);
 			int yDistance = Math.abs(s.currentY - orb.y);
-			double maxDistance = xDistance+yDistance;
+			double maxDistance = Math.max(xDistance,yDistance);
 			return maxDistance;
 		}
 	
 	};
+	
+//Original Manhattan distance to the orb. It has been replaced, as the Manhattan distance is not admissible
+//	
+//	public static Heuristic<MegaManAction,MegaManState> manhattanToOrb = new Heuristic<MegaManAction,MegaManState>(){
+//
+//		@Override
+//		public double h(MegaManState s) {
+//			Point orb = s.orb;
+//			int xDistance = Math.abs(s.currentX - orb.x);
+//			int yDistance = Math.abs(s.currentY - orb.y);
+//			double maxDistance = xDistance+yDistance;
+//			return maxDistance;
+//		}
+//	
+//	};
 
 	
-	public  static class MegaManAction implements Action{
+////New heuristic; both are here for trouble shooting, only difference is maxDistance
+	
+//	Point orb = s.orb;
+//	int xDistance = Math.abs(s.currentX - orb.x);
+//	int yDistance = Math.abs(s.currentY - orb.y);
+//	double maxDistance = Math.max(xDistance,yDistance);
+//	return maxDistance;
+//	
+	
+	public static class MegaManAction implements Action{
 		public enum MOVE {RIGHT,LEFT,UP,DOWN, JUMP};
 		private MOVE movement;
 		/**
@@ -107,17 +130,12 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 		 */
 		public String toString() {
 			return movement.toString();
-		}
-		
-		
-		
-		
-		
+		}	
 	}
 	
 	/**
-	 * Fills a set with points, to keep a reference of where the gold is in the level
-	 * then removes them and makes them emtpy spaces 
+	 * Fills a set with points, to keep a reference of where the goal is in the level
+	 * then removes them and makes them empty spaces 
 	 * @param level A level 
 	 * @return Set of points 
 	 */
@@ -148,20 +166,14 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 	}
 	/**
 	 * Constructor that takes a level and a start point. 
-	 * This construct is can be used to specify a starting point for easier testing 
+	 * This construct can be used to specify a starting point for easier testing 
 	 * @param level Level in JSON form 
 	 * @param start The spawn point 
 	 */
 	public MegaManState(List<List<Integer>> level, Point start) {
-		this(level, getJumpVelocity(), getOrb(level), start.x, start.y, getFallHorizontalModInt());
+		this(level, 0, getOrb(level), start.x, start.y, 0);
 	}
-	private static int getFallHorizontalModInt() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-	private static int getJumpVelocity() {
-		return 0;
-	}
+
 	public MegaManState(List<List<Integer>> level, int jumpVelocity, Point orb, int currentX, int currentY, int fallHorizontalModInt) {
 		this.level = level;
 		this.orb = orb;
@@ -340,7 +352,6 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 		for(int i = 0; !done && i < level.size(); i++) {
 			for(int j = 0; !done && j < level.get(i).size(); j++){
 				tile = level.get(i).get(j);
-				//System.out.println("The tile at " + j + "," + i + " = " +tile);
 				if(tile == MEGA_MAN_TILE_SPAWN) {//7 maps to spawn point  
 					start = new Point(j, i);
 					level.get(i).set(j, MEGA_MAN_TILE_EMPTY);//removes spawn point and places an empty tile 
@@ -348,7 +359,6 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 				}
 			}
 		}
-		//System.out.println(start.toString());
 		return start;
 	}
 	/**
@@ -371,11 +381,8 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 			if(s.getSuccessor(new MegaManAction(move)) != null) {
 				vaildActions.add(new MegaManAction(move));
 			}
-//			MegaManAction a = new MegaManAction(move);
-//			System.out.println(s+"\t"+move+"\t"+s.getSuccessor(a));
 		}
-		return vaildActions;
-		
+		return vaildActions;	
 	}
 
 	@Override
@@ -383,7 +390,6 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 	 * checks if the current position is the level orb
 	 */
 	public boolean isGoal() {
-		// TODO Auto-generated method stub
 		return currentX==orb.x&&currentY==orb.y;
 	}
 	@Override
@@ -406,7 +412,6 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 	public double stepCost(State<MegaManAction> s, MegaManAction a) {
 		return 1;
 	}
-	
 	
 	@Override
 	/**
@@ -462,7 +467,6 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 		fullLevel.get(start.currentY).set(start.currentX, MEGA_MAN_TILE_SPAWN);// puts the spawn back into the visualization
 		//for(Point p : start.orb) { //puts all the gold back 
 			fullLevel.get(getOrb(level).y).set(getOrb(level).x, MEGA_MAN_TILE_ORB);
-		//!!
 		BufferedImage visualPath = MegaManRenderUtil.createBufferedImage(fullLevel, level.get(0).size()*MegaManRenderUtil.MEGA_MAN_TILE_X, 
 				level.size()*MegaManRenderUtil.MEGA_MAN_TILE_Y);
 		if(mostRecentVisited != null) {
@@ -534,7 +538,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 				, "megaManAStarJumpHeight:4" });
 		MegaManVGLCUtil.printLevel(level);
 		MegaManState start = new MegaManState(level);
-		Search<MegaManAction,MegaManState> search = new AStarSearch<>(MegaManState.manhattanToOrb);
+		Search<MegaManAction,MegaManState> search = new AStarSearch<>(MegaManState.orbHeuristic);
 		HashSet<MegaManState> mostRecentVisited = null;
 		ArrayList<MegaManAction> actionSequence = null;
 		try {

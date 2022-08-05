@@ -16,6 +16,7 @@ import edu.southwestern.util.random.RandomGenerator;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.stats.StatisticsUtilities;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -24,8 +25,10 @@ import java.util.*;
  *
  * @author Jacob Schrum
  */
-public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
+public class TWEANNGenotype implements NetworkGenotype<TWEANN>, Serializable {
 
+	private static final long serialVersionUID = 1L;
+	
 	// If this is true, then plain Node and Link genes are used instead 
 	// of full genes with extra fields. 
 	public static boolean smallerGenotypes = false;
@@ -35,9 +38,14 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	 *
 	 * @author Jacob Schrum
 	 */
-	public static abstract class Gene {
+	public static abstract class Gene implements Serializable {
+		private static final long serialVersionUID = 1L;
 		public long innovation; // unique number for each gene
 
+		protected Gene() {
+			// For serialization only
+		}
+		
 		private Gene(long innovation) {
 			this.innovation = innovation;
 		}
@@ -74,6 +82,8 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	 * @author Jacob Schrum
 	 */
 	public static class NodeGene extends Gene {
+
+		private static final long serialVersionUID = 1L;
 		public int ntype;
 		public int ftype;
 		protected double bias;
@@ -169,6 +179,8 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	 * @author Jacob Schrum
 	 */
 	public static class FullNodeGene extends NodeGene {
+
+		private static final long serialVersionUID = 1L;
 		protected boolean fromCombiningCrossover = false;
 		protected boolean frozen;
 
@@ -233,6 +245,8 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	 * @author Devon Fulcher
 	 */
 	public static class NormalizedMemoryNodeGene extends FullNodeGene{
+
+		private static final long serialVersionUID = 1L;
 		private double gamma;
 		private double beta;
 
@@ -264,6 +278,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	 */
 	public static class LinkGene extends Gene {
 
+		private static final long serialVersionUID = 1L;
 		public long sourceInnovation;
 		public long targetInnovation;
 		public double weight;
@@ -347,6 +362,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	 */
 	public static class FullLinkGene extends LinkGene {
 
+		private static final long serialVersionUID = 1L;
 		protected boolean active;
 		protected boolean recurrent;
 		protected boolean frozen;
@@ -1052,6 +1068,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	 * @return any node innovation number in network
 	 */
 	private long getRandomLinkSourceNodeInnovationNumber() {
+		assert nodes.size() != 0 : "Network somehow has no nodes";
 		return nodes.get(RandomNumbers.randomGenerator.nextInt(nodes.size() + (CommonConstants.recurrency ? 0 : -1))).innovation;
 	}
 
@@ -1076,6 +1093,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	 */
 	private long getRandomAlterableConnectedNodeInnovationNumber(long source, boolean includeInputs) {
 		int sourceIndex = indexOfNodeInnovation(source);
+		assert sourceIndex != -1 : "Could not find source innovation: " + sourceIndex + "\n" + this;
 		// Use of set prevents duplicates, insuring fair random choice
 		HashSet<Long> sourceInnovationNumbers = new HashSet<Long>();
 		for (LinkGene l : links) {
@@ -1139,6 +1157,8 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 		if (getLinkBetween(sourceInnovation, targetInnovation) == null) {
 			int target = indexOfNodeInnovation(targetInnovation);
 			int source = indexOfNodeInnovation(sourceInnovation);
+			assert target != -1 : "Target node innovation does not exist: " + target + "\n" + this;
+			assert source != -1 : "Source node innovation does not exist: " + source + "\n" + this;
 			// System.out.println(nodeInnovation + "->" + sourceInnovation);
 			LinkGene lg = newLinkGene(sourceInnovation, targetInnovation, weight, innovation, target <= source);
 			links.add(lg);
@@ -2030,14 +2050,15 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	 */
 	public static void sortNodeGenesByLinkConnectivity(TWEANNGenotype tg) {
 		// First remove links from output layer to hidden layer (why do these exist?)
-		//    	Iterator<LinkGene> itr = tg.links.iterator();
-		//    	while(itr.hasNext()) {
-		//    		LinkGene lg = itr.next();
-		//    		if(tg.getNodeWithInnovation(lg.sourceInnovation).ntype == TWEANN.Node.NTYPE_OUTPUT && 
-		//    		   tg.getNodeWithInnovation(lg.targetInnovation).ntype == TWEANN.Node.NTYPE_HIDDEN) {
-		//    			itr.remove(); // No more cycle
-		//    		}
-		//    	}
+		Iterator<LinkGene> itr = tg.links.iterator();
+		while(itr.hasNext()) {
+			LinkGene lg = itr.next();
+			if(tg.getNodeWithInnovation(lg.sourceInnovation).ntype == TWEANN.Node.NTYPE_OUTPUT && 
+					tg.getNodeWithInnovation(lg.targetInnovation).ntype == TWEANN.Node.NTYPE_HIDDEN) {
+				//System.out.println("Removing link from output to hidden: "+lg);
+				itr.remove(); // No more cycle
+			}
+		}
 		// Key = target innovation number, value = set of innovation numbers for all source nodes with a link to this target
 		HashMap<Long, Set<Long>> incoming = new HashMap<>();
 		for(NodeGene n : tg.nodes) {
@@ -2048,6 +2069,8 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 			// Add innovation for each source neuron with a link to the target
 			incoming.get(lg.targetInnovation).add(lg.sourceInnovation);
 		}
+		
+		//System.out.println("DEBUG 596: "+incoming.get(596L));
 
 		ArrayList<NodeGene> newNodes = new ArrayList<>(tg.nodes.size());
 		LinkedList<NodeGene> noIncoming = new LinkedList<>();
@@ -2061,18 +2084,18 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 			//System.out.println("Consider: " + first);
 			// Don't add output neurons. They must be added at the end
 			//if(first.ntype != TWEANN.Node.NTYPE_OUTPUT) {
-			//System.out.println("Add newNodes: " + first);
+			//System.out.println("\tAdd newNodes: " + first);
 			newNodes.add(first); // Node appears at end of new node list
 			//}
 			for(LinkGene lg : tg.links) { // Bit inefficient
 				if(lg.sourceInnovation == first.innovation) { // A link from the node aded to the list
-					//System.out.println("Remove link: " + lg);
+					//System.out.println("\tRemove link: " + lg);
 					incoming.get(lg.targetInnovation).remove(lg.sourceInnovation); // Remove that link
 					if(incoming.get(lg.targetInnovation).isEmpty()) { // No more incoming links
 						// Add to noIncoming list
 						for(NodeGene ng : tg.nodes) {
 							if(ng.innovation == lg.targetInnovation && ng.ntype != TWEANN.Node.NTYPE_OUTPUT) {
-								//System.out.println("Add noIncoming: " + ng);
+								//System.out.println("\tAdd noIncoming: " + ng);
 								noIncoming.add(ng);
 								break;
 							}
@@ -2085,9 +2108,48 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 		for(int i = 0; i < tg.numOut; i++) {
 			newNodes.add(tg.nodes.get(tg.outputStartIndex() + i));
 		}
+		
+		// Loops through to add back any nodes that went missing after topological sort
+		// they are added after all the hidden neurons and before the output neurons
+//		for(int i = 0; i < tg.nodes.size(); i++) {
+//			if(getNodeGene(tg.nodes.get(i).innovation,newNodes) == null) {
+//				newNodes.add(newNodes.size() - tg.numOut, tg.nodes.get(i));
+//			}
+//		}
+		
+		
 		// Replace nodes with sorted nodes
 		tg.nodes = newNodes;
+
+		// Loop through tg.links and remove any link whose source or target innovation number
+		// does not have a corresponding node in tg.nodes
+		itr = tg.links.iterator();
+		while(itr.hasNext()) {
+			LinkGene lg = itr.next();
+			NodeGene ngSource = getNodeGene(lg.sourceInnovation, tg.nodes);
+			NodeGene ngTarget = getNodeGene(lg.targetInnovation, tg.nodes);
+			if(ngSource == null || ngTarget == null) {
+				itr.remove(); // No more cycle
+			}
+		}
+		
 	}
+	
+	/**
+	 * Return given NodeGene in nodes list if it exists, or null otherwise
+	 * @param innovation Innovation number
+	 * @return NodeGene or null if absent
+	 */
+	public static NodeGene getNodeGene(long innovation, List<NodeGene> nodes) {
+		//this.nodes;
+		for(int i = 0; i < nodes.size(); i++) {
+			if(innovation == nodes.get(i).innovation) {
+				return nodes.get(i);
+			}
+		}
+		return null;
+	}
+	
 
 	/**
 	 * Indicates whether there is any path from one node gene to another.
@@ -2134,6 +2196,67 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	 */
 	public int outputStartIndex() {
 		return nodes.size() - numOut;
+	}
+	
+	/**
+	 * Returns a string of the contents of the GraphViz file that
+	 * would draw a network
+	 * 
+	 * @return String of the contents in GraphViz file
+	 */
+	public String toGraphViz(String[] inputs, String[] outputs) {
+		StringBuilder string = new StringBuilder();
+		string.append("digraph {\nnode[fontsize=9 height=0.2 shape=circle width=0.2]");
+		
+		HashMap<Long,String> innovationToLabel = new HashMap<>();
+		
+		for(int i=0; i < nodes.size(); i++) {
+			if(i >= nodes.size() - numOut) {
+				assert nodes.get(i).ntype == TWEANN.Node.NTYPE_OUTPUT;
+				string.append("\n" + "\"" + outputs[i - (nodes.size() - numOut)]+ "\"");
+				string.append("[fillcolor=lightblue style=filled]");
+				innovationToLabel.put(nodes.get(i).innovation,outputs[i - (nodes.size() - numOut)]);
+			}
+			else if(i < numIn) {
+				assert nodes.get(i).ntype == TWEANN.Node.NTYPE_INPUT;
+				string.append("\n" + "\"" + inputs[i] + "\"");
+				string.append("[fillcolor=lightgray shape=box style=filled]");
+				innovationToLabel.put(nodes.get(i).innovation,inputs[i]);
+			}
+			else {
+				assert i >= numIn;
+				assert i < nodes.size() - numOut;
+				assert nodes.get(i).ntype == TWEANN.Node.NTYPE_HIDDEN;
+				string.append("\n" + nodes.get(i).innovation);
+				string.append("[fillcolor=white style=filled]");
+			}
+		}
+	
+		for(LinkGene lg : links) {
+			if(innovationToLabel.containsKey(lg.sourceInnovation))
+				string.append("\n" + "\""  + innovationToLabel.get(lg.sourceInnovation)+ "\"");
+			else
+				string.append("\n"+ lg.sourceInnovation);
+			
+			if(innovationToLabel.containsKey(lg.targetInnovation))
+				string.append("->" + "\"" + innovationToLabel.get(lg.targetInnovation)+ "\"");
+			else
+				string.append("->"+ lg.targetInnovation);
+			
+			String color;
+			if(lg.weight < 0) {
+				color = "red";
+			} else {
+				assert lg.weight > 0;
+				color = "green";
+			}
+			
+			string.append("[color="+color+" penwidth="+Math.abs(lg.weight)+" style=solid]");
+		}
+		
+		string.append("}");
+		
+		return string.toString();
 	}
 
 	/**

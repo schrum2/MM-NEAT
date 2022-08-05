@@ -6,14 +6,18 @@ import java.util.ArrayList;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.BoundedTask;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import edu.southwestern.tasks.interactive.gvgai.ZeldaCPPNtoGANLevelBreederTask;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
 
-public class ZeldaGANDungeonTask extends ZeldaDungeonTask<ArrayList<Double>>{
+public class ZeldaGANDungeonTask extends ZeldaDungeonTask<ArrayList<Double>> implements BoundedTask {
 
+	private static double[] lower;
+	private static double[] upper;
+	
 	private int segmentLength;
 
 	/**
@@ -76,5 +80,23 @@ public class ZeldaGANDungeonTask extends ZeldaDungeonTask<ArrayList<Double>>{
 	 */
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		MMNEAT.main("runNumber:0 randomSeed:0 zeldaDungeonDistanceFitness:true zeldaDungeonFewRoomFitness:false zeldaDungeonTraversedRoomFitness:true zeldaDungeonRandomFitness:false watch:false trials:1 mu:10 makeZeldaLevelsPlayable:false base:zeldagan log:ZeldaGAN-DistTraversed saveTo:DistTraversed zeldaGANLevelWidthChunks:10 zeldaGANLevelHeightChunks:10 zeldaGANModel:ZeldaDungeonsAll3Tiles_10000_10.pth maxGens:500 io:true netio:true GANInputSize:10 mating:true fs:false task:edu.southwestern.tasks.zelda.ZeldaGANDungeonTask cleanOldNetworks:false zeldaGANUsesOriginalEncoding:false cleanFrequency:-1 saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype".split(" "));
+	}
+	
+	public static double[] getStaticUpperBounds() {
+		if(upper == null) upper = ArrayUtil.doubleOnes(ZeldaGANDungeonTask.genomeLength()); // all ones
+		return upper;
+	}
+	
+	public static double[] getStaticLowerBounds() {
+		if(lower == null) lower = ArrayUtil.doubleNegativeOnes(ZeldaGANDungeonTask.genomeLength()); // all -1
+		return lower;
+	}
+	@Override
+	public double[] getUpperBounds() {
+		return getStaticUpperBounds();
+	}
+	@Override
+	public double[] getLowerBounds() {
+		return getStaticLowerBounds();
 	}
 }

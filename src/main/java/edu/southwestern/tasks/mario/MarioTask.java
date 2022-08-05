@@ -256,5 +256,10 @@ public class MarioTask<T extends Network> extends NoisyLonerTask<T> implements N
 	@Override
 	public void flushSubstrateMemory() {
 		// Does nothing: This task does not cache substrate information
+	}
+
+	@Override
+	public void postConstructionInitialization() {
+		MMNEAT.setNNInputParameters(((Parameters.parameters.integerParameter("marioInputWidth") * Parameters.parameters.integerParameter("marioInputHeight")) * 2) + 1, MarioTask.MARIO_OUTPUTS); //hard coded for now, 5 button outputs
 	}	
 }

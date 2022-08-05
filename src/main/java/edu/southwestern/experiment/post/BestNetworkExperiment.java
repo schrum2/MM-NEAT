@@ -1,13 +1,17 @@
 package edu.southwestern.experiment.post;
 
-import edu.southwestern.evolution.genotypes.Genotype;
-import edu.southwestern.experiment.Experiment;
+import java.util.ArrayList;
+
 import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.experiment.Experiment;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
+import edu.southwestern.util.PopulationUtil;
 import edu.southwestern.util.file.FileUtilities;
+import edu.southwestern.util.file.Serialization;
 import edu.southwestern.util.random.RandomNumbers;
-import wox.serial.Easy;
 
 /**
  * This really only works for Ms. Pac-Man (rename it?).
@@ -24,12 +28,20 @@ public class BestNetworkExperiment implements Experiment {
 	// Will probably always be a TWEANNGenotype, but it doesn't need to be
 	@SuppressWarnings("rawtypes")
 	private Genotype net;
-
+	
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void init() {
 		String dir = FileUtilities.getSaveDirectory() + "/bestPacMan";
-		net = (Genotype) Easy.load(dir + "/bestPacMan.xml");
+		net = (Genotype) Serialization.load(dir + "/bestPacMan");
+		
+		if(net instanceof TWEANNGenotype) {
+			ArrayList<Genotype<TWEANNGenotype>> genotypes = new ArrayList<Genotype<TWEANNGenotype>>();
+			genotypes.add(net);
+			PopulationUtil.saveGraphVizNetworks(genotypes);
+			 
+		}
+
 	}
 
 	// Will always be running the Ms. Pac-Man experiment

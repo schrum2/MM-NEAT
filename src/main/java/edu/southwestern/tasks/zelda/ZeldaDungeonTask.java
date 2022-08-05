@@ -15,6 +15,7 @@ import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.mapelites.Archive;
 import edu.southwestern.evolution.mapelites.generalmappings.LatentVariablePartitionSumBinLabels;
+import edu.southwestern.evolution.mapelites.generalmappings.LevelTraversalPathBinLabels;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
@@ -25,6 +26,8 @@ import edu.southwestern.tasks.gvgai.zelda.dungeon.DungeonUtil;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
+import edu.southwestern.tasks.interactive.gvgai.ZeldaCPPNtoGANLevelBreederTask;
+import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
@@ -39,7 +42,6 @@ import me.jakerg.rougelike.Tile;
 public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 
 	private int numObjectives;
-	private double fitnessSaveThreshold = Parameters.parameters.doubleParameter("fitnessSaveThreshold");
 	
 	public ZeldaDungeonTask() {
 		// Objective functions
@@ -111,7 +113,6 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 
 	public abstract Dungeon getZeldaDungeonFromGenotype(Genotype<T> individual); //gets the dungeon from the genotype
 
-	@SuppressWarnings("unchecked")
 	@Override
 	/**
 	 * 
@@ -121,6 +122,43 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 	 */
 	public Score<T> evaluate(Genotype<T> individual) {
 		Dungeon dungeon = getZeldaDungeonFromGenotype(individual);
+		
+		Score<T> result = evaluateDungeon(individual, dungeon);
+		
+		if(CommonConstants.watch) {
+			//prompts user to play or continue
+			System.out.println("Enter 'P' to play, or just press Enter to continue");
+			String input = MiscUtil.waitForReadStringAndEnterKeyPress();
+			System.out.println("Entered \""+input+"\"");
+			//if the user entered P or p, then run
+			if(input.toLowerCase().equals("p")) {
+				new Thread() {
+					@Override
+					public void run() {
+						// Repeat dungeon generation to remove visited marks
+						Dungeon dungeon = getZeldaDungeonFromGenotype(individual);
+						RougelikeApp.startDungeon(dungeon);
+					}
+				}.start();
+				System.out.println("Press enter");
+				MiscUtil.waitForReadStringAndEnterKeyPress();
+			}
+		}
+		
+		return result;
+	}
+
+	/**
+	 * Evaluate the dungeon. Dungeon has already been derived from genotype,
+	 * but the individual is still needed to access its id and some other features.
+	 * However, the genotype could also be a dummy individual.
+	 * 
+	 * @param individual genotype that generated dungeon, or some dummy genotype
+	 * @param dungeon Dungeon to be evaluated
+	 * @return Score instance for the evaluated dungeon
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> Score<T> evaluateDungeon(Genotype<T> individual, Dungeon dungeon) {
 		int distanceToTriforce = -100; // Very bad fitness if level is not beatable 
 		int numRooms = 0; //number of rooms
 		int searchStatesVisited = 0; //number of search states visited
@@ -238,23 +276,6 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 					int currentGen = MMNEAT.ea instanceof GenerationalEA ? ((GenerationalEA) MMNEAT.ea).currentGeneration() : -1;
 					//saves image
 					if(Parameters.parameters.booleanParameter("io")) GraphicsUtil.saveImage(image, saveDir + File.separator + (currentGen == 0 ? "initial" : "gen"+ currentGen) + File.separator + "Dungeon"+individual.getId()+".png");
-					//prompts user to play or continue
-					System.out.println("Enter 'P' to play, or just press Enter to continue");
-					String input = MiscUtil.waitForReadStringAndEnterKeyPress();
-					System.out.println("Entered \""+input+"\"");
-					//if the user entered P or p, then run
-					if(input.toLowerCase().equals("p")) {
-						new Thread() {
-							@Override
-							public void run() {
-								// Repeat dungeon generation to remove visited marks
-								Dungeon dungeon = getZeldaDungeonFromGenotype(individual);
-								RougelikeApp.startDungeon(dungeon);
-							}
-						}.start();
-						System.out.println("Press enter");
-						MiscUtil.waitForReadStringAndEnterKeyPress();
-					}
 				}
 
 			} catch(IllegalStateException e) {
@@ -280,6 +301,10 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 						behaviorMap.put("Solution Vector", latentVector);
 					}
 					
+					if (MMNEAT.getArchiveBinLabelsClass() instanceof LevelTraversalPathBinLabels) {
+						behaviorMap.put("Level Path", mostRecentVisited);
+					}
+					
 					int dim1D = MMNEAT.getArchiveBinLabelsClass().oneDimensionalIndex(behaviorMap);
 					behaviorMap.put("dim1D", dim1D); // Save so it does not need to be computed again
 					
@@ -297,7 +322,7 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 						Score<T> elite = archive.getElite(dim1D);
 						// If the bin is empty, or the candidate is better than the elite for that bin's score
 						if(elite == null || mapElitesBinScore > elite.behaviorIndexScore()) {
-							if(mapElitesBinScore > fitnessSaveThreshold) {
+							if(mapElitesBinScore > Parameters.parameters.doubleParameter("fitnessSaveThreshold")) {
 								// CHANGE!
 								BufferedImage imagePath = DungeonUtil.imageOfDungeon(dungeon, mostRecentVisited, solutionPath);
 								BufferedImage imagePlain = DungeonUtil.imageOfDungeon(dungeon, null, null);
@@ -351,6 +376,15 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 		Score<T> result = new Score<>(individual, scores, null, other);
 		result.assignMAPElitesBehaviorMapAndScore(behaviorMap);
 		return result;
+	}
+	
+	@Override
+	public void postConstructionInitialization() {
+		GANProcess.type = GANProcess.GAN_TYPE.ZELDA;
+		if(MMNEAT.task instanceof ZeldaCPPNtoGANDungeonTask || MMNEAT.task instanceof ZeldaCPPNOrDirectToGANDungeonTask) {
+			// Evolving CPPNs that create latent vectors that are sent to a GAN
+			MMNEAT.setNNInputParameters(ZeldaCPPNtoGANLevelBreederTask.SENSOR_LABELS.length, GANProcess.latentVectorLength()+ZeldaCPPNtoGANLevelBreederTask.numberOfNonLatentVariables());
+		}
 	}
 	
 	/**

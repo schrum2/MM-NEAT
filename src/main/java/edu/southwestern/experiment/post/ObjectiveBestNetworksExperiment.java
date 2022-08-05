@@ -1,10 +1,13 @@
 package edu.southwestern.experiment.post;
 
+import java.io.*;
 import java.util.ArrayList;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.experiment.Experiment;
+import edu.southwestern.networks.NetworkTask;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
@@ -34,15 +37,18 @@ public class ObjectiveBestNetworksExperiment<T> implements Experiment {
 			genotypes = new ArrayList<Genotype<T>>();
 			for(int i = 0; i < MMNEAT.task.numObjectives(); i++) {
 				int lastGen = Parameters.parameters.integerParameter("lastSavedGeneration");
-				String file = FileUtilities.getSaveDirectory() + "/bestObjectives/gen" + lastGen + "_bestIn"+i+".xml";
+				String file = FileUtilities.getSaveDirectory() + "/bestObjectives/gen" + lastGen + "_bestIn"+i;
 				genotypes.add((Genotype<T>) PopulationUtil.extractGenotype(file));
 			}
 		} else {
 			String dir = FileUtilities.getSaveDirectory() + "/bestObjectives";
 			genotypes = PopulationUtil.load(dir);
 		}
+		
+		PopulationUtil.saveGraphVizNetworks(genotypes);
 	}
 
+	
 	/**
 	 * Evaluate each individual. Only works for Loner Tasks
 	 */

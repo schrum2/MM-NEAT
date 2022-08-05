@@ -1,0 +1,8 @@
+AllHeatMaps.bat
+AllCombinedHeatMaps.bat
+AllDiffHeatMaps.bat
+AllAverageHeatMaps.bat
+AllBestHeatMaps.bat
+AllFillCounts.bat
+AllQD.bat
+AllBeatableGroup.bat

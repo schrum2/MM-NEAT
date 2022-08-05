@@ -58,7 +58,7 @@ public class HalfBlackAndColorsInLightPortionImageFitness implements ImageFitnes
 
 	@Override
 	public int numberObjectives() {
-		return 1;
+		return 4;
 	}
 
 }

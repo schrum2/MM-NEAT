@@ -17,7 +17,6 @@
     <java.version>1.8</java.version>
   
         <unirest.version>1.4.9</unirest.version>
-        <jackson.version>2.5.1</jackson.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <nd4j.version>1.0.0-beta7</nd4j.version>
         <dl4j.version>1.0.0-beta7</dl4j.version>
@@ -38,12 +37,9 @@
         <nd4j.backend>nd4j-native</nd4j.backend>
         <!-- <nd4j.backend>nd4j-cuda-8.0-platform</nd4j.backend> -->
 
-		<jackson.version>2.11.1</jackson.version>
-
 		<!-- Change these below? -->
         <datavec.version>1.0.0-beta7</datavec.version>
         <arbiter.version>1.0.0-beta7</arbiter.version>
-        <rl4j.version>1.0.0-beta7</rl4j.version>
 
   </properties>
 
@@ -116,11 +112,6 @@
 	  <id>jitpack.io</id>
 	  <url>https://jitpack.io</url>
 	</repository>
-	
-     <repository>
-	  <id>jfrog</id>
-	  <url>https://repo.jfrog.org/artifactory/plugins-releases/</url>
-	</repository>	
 </repositories>
 
     <distributionManagement>
@@ -156,19 +147,6 @@
     </dependencyManagement>
 
   <dependencies>
- 
-<!-- To replace wox -->
-<dependency>
-    <groupId>com.fasterxml.jackson.dataformat</groupId>
-    <artifactId>jackson-dataformat-xml</artifactId>
-    <version>${jackson.version}</version>
-</dependency>
-
-<dependency>
-    <groupId>com.fasterxml.jackson.module</groupId>
-    <artifactId>jackson-module-paranamer</artifactId>
-    <version>${jackson.version}</version>
-</dependency>
   
 <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
 <!-- Needed for DL4J? Why is it not brought in as dependency? -->
@@ -209,6 +187,16 @@
     	<version>2.7.1</version>
 	</dependency>
   
+<dependency>
+    <groupId>org.datavec</groupId>
+    <artifactId>datavec-api</artifactId>
+    <version>${datavec.version}</version>
+</dependency>
+<dependency>
+    <groupId>org.datavec</groupId>
+    <artifactId>datavec-data-image</artifactId>
+    <version>${datavec.version}</version>
+</dependency>
   
   	<!-- DL4J and RL4J -->
         <dependency>
@@ -217,15 +205,10 @@
             <version>${nd4j.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.deeplearning4j</groupId>
-            <artifactId>rl4j-core</artifactId>
-            <version>${rl4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.deeplearning4j</groupId>
-            <artifactId>rl4j-gym</artifactId>
-            <version>${rl4j.version}</version>
-        </dependency>
+    <groupId>org.deeplearning4j</groupId>
+    	<artifactId>deeplearning4j-datasets</artifactId>
+    	<version>${dl4j.version}</version>
+	</dependency>
 		<dependency>
     		<groupId>org.deeplearning4j</groupId>
     		<artifactId>deeplearning4j-zoo</artifactId>
@@ -266,14 +249,6 @@
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
         </dependency>
-
-<!-- https://mvnrepository.com/artifact/org.reflections/reflections-maven -->
-<!-- This is part of Java, but the latest versions restrict it as "not API" -->
-<dependency>
-    <groupId>org.reflections</groupId>
-    <artifactId>reflections-maven</artifactId>
-    <version>0.9.8</version>
-</dependency>
 
 <!-- This is part of Java, but the latest versions restrict it as "not API" -->
         <dependency>

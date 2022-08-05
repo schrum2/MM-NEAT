@@ -1,5 +1,10 @@
 package edu.southwestern.tasks.mario.gan;
 
+// For the three possible tile counts in Zelda
+import static edu.southwestern.tasks.gvgai.zelda.ZeldaGANUtil.ZELDA_GAN_EXPANDED_TILE_NUMBER;
+import static edu.southwestern.tasks.gvgai.zelda.ZeldaGANUtil.ZELDA_GAN_ORIGINAL_TILE_NUMBER;
+import static edu.southwestern.tasks.gvgai.zelda.ZeldaGANUtil.ZELDA_GAN_REDUCED_TILE_NUMBER;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -8,12 +13,10 @@ import java.io.PrintStream;
 import java.lang.ProcessBuilder.Redirect;
 
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.interactive.gvgai.ZeldaCPPNtoGANLevelBreederTask;
 import edu.southwestern.tasks.loderunner.LodeRunnerGANUtil;
 import edu.southwestern.tasks.megaman.gan.MegaManGANUtil;
 import edu.southwestern.util.PythonUtil;
-
-// For the three possible tile counts in Zelda
-import static edu.southwestern.tasks.gvgai.zelda.ZeldaGANUtil.*;
 
 public class GANProcess extends Comm {
 	
@@ -47,6 +50,23 @@ public class GANProcess extends Comm {
 	}
 	
 	/**
+	 * method to determine the number of variables associated with each segment
+	 * @return num variables in each segment
+	 */
+	public static int evolvedSegmentLength() {
+		switch(type) {
+		case MARIO:
+			return Parameters.parameters.integerParameter("GANInputSize");
+		case ZELDA:
+			return Parameters.parameters.integerParameter("GANInputSize")+ZeldaCPPNtoGANLevelBreederTask.numberOfNonLatentVariables();
+		case LODE_RUNNER:
+			return Parameters.parameters.integerParameter("GANInputSize");
+		case MEGA_MAN:
+			return Parameters.parameters.booleanParameter("megaManAllowsLeftSegments") ? Parameters.parameters.integerParameter("GANInputSize") + 4 : Parameters.parameters.integerParameter("GANInputSize") + 3;
+		}
+		return -1;
+	}
+	/**
 	 * Destroy GAN process so a new one can be started
 	 */
 	public static void terminateGANProcess() {
@@ -58,10 +78,11 @@ public class GANProcess extends Comm {
 	
 	/**
 	 * Start the GAN process running in Python if it has not started already.
-	 * Otherwise, just return the reference to the process.
-	 * @return Process running the Mario GAN
+	 * Otherwise, just return the reference to the process. The method is synchronized
+	 * so that only one thread can attempt booting up the GAN at a time.
+	 * @return Process running the Mario GAN, and othetr Game GANs
 	 */
-	public static GANProcess getGANProcess() {
+	public static synchronized GANProcess getGANProcess() {
 		// This code comes from the constructor for MarioEvalFunction in the MarioGAN project
 		if(ganProcess == null) {
 			PythonUtil.setPythonProgram();
