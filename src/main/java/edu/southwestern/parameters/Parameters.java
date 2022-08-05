@@ -19,6 +19,9 @@ import edu.southwestern.gridTorus.controllers.PreyFleeClosestPredatorController;
 import edu.southwestern.networks.ActivationFunctions;
 import edu.southwestern.networks.dl4j.VGG19Wrapper;
 import edu.southwestern.networks.hyperneat.CenteredSubstrateMapping;
+import edu.southwestern.tasks.evocraft.MinecraftClient;
+import edu.southwestern.tasks.evocraft.blocks.MachineBlockSet;
+import edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGenerator;
 import edu.southwestern.tasks.gvgai.player.GVGAIOneStepNNPlayer;
 import edu.southwestern.tasks.gvgai.zelda.level.SimpleLoader;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaHumanSubjectStudy2019GraphGrammar;
@@ -241,8 +244,8 @@ public class Parameters {
 		integerOptions.add("GANInputSize", 32, "Latent vector input size for GAN level evolution");
 		integerOptions.add("marioGANLevelChunks", 1, "Number of level segments to combine into one level when evolving MarioGAN");
 		integerOptions.add("megaManGANLevelChunks", 1, "Number of level segments to combine into one level when evolving MegaManGAN");
-		integerOptions.add("megaManAuxVarsStart", 0, "whether or not we're maximizing enemies");
-		integerOptions.add("megaManAuxVarsEnd", 3, "whether or not we're maximizing enemies");
+		integerOptions.add("megaManAuxVarsStart", 0, "whether or not we're maximizing enemies"); // Better as final constant than param?
+		integerOptions.add("megaManAuxVarsEnd", 3, "whether or not we're maximizing enemies"); // Better as final constant than param?
 		integerOptions.add("marioInputHeight", 3, "The height for a Mario input section");
 		integerOptions.add("marioInputStartX", -1, "The x coordinate offset for Mario inputs grid");
 		integerOptions.add("marioInputStartY", -1, "The y coordinate offset for Mario inputs grid");
@@ -315,7 +318,7 @@ public class Parameters {
 		integerOptions.add("substrateWeightSize", 1, "dimension of individual weights in substrate visualization");
 		integerOptions.add("syllabusSize", 10, "Number of examples in BD syllabus");
 		integerOptions.add("teams", 1, "Number of teams each individual is evaluated in for coevolution");
-		integerOptions.add("threads", 4, "Number of threads if evaluating in parallel");
+		integerOptions.add("threads", 10, "Number of threads if evaluating in parallel");
 		integerOptions.add("aStarSearchBudget", 100000, "Number of iterations after which A* gives up with exception");
 		integerOptions.add("dungeonGenerationFailChances", 10, "If dungeon cannot be created in 10 tries, then assign worst fitness.");
 		integerOptions.add("tickLimit", 4000, "used in customExecutor. Number of ticks permitted?");
@@ -355,11 +358,44 @@ public class Parameters {
 		integerOptions.add("numRotationIntervals", 3, "Determines by how much to divide the rotation value in the CPPNNeuronScaleRotationDeltaXDeltaY binning scheme.");
 		integerOptions.add("numTranslationIntervals", 3, "Determines by how much to divide the translation value in the CPPNNeuronScaleRotationDeltaXDeltaY binning scheme.");
 		integerOptions.add("marioStatBasedMEBinIntervals", 10, "Number of bins in Mario tasks related to Decoration, Negative Space, Leniency, and Distinct Chunks.");
+		integerOptions.add("minecraftXRange", 10, "Units in x-dimension for evolved Minecraft shapes");
+		integerOptions.add("minecraftYRange", 10, "Units in y-dimension for evolved Minecraft shapes");
+		integerOptions.add("minecraftZRange", 10, "Units in z-dimension for evolved Minecraft shapes");
+		integerOptions.add("minecraftDesiredBlockType", MinecraftClient.BlockType.REDSTONE_BLOCK.ordinal(), "Type desired by TypeCountFitness");
+		integerOptions.add("minecraftDesiredBlockCount", 0, "Count desired by TypeTargetFitness");
+		integerOptions.add("minecraftMaxSnakeLength", 100, "Maximum length that a generated snake can be");
+		integerOptions.add("spaceBetweenMinecraftShapes", 5, "The space in blocks that are in between each of the generated minecraft structures");
+		integerOptions.add("minecraftAmountOfBlocksToEvolve", 5, "The ammount of possible blocks that can be evolved by CPPN");
+		integerOptions.add("interactiveSleepTimer", 1000, "The ammount of time the interactive thread sleeps for");
+		integerOptions.add("extraSpaceBetweenMinecraftShapes", 50, "The extra space that will be in between the shapes being evaluated");
+		integerOptions.add("startX", 0, "The X coordinate the shapes are generated on");
+		integerOptions.add("startY", 5, "The Y coordinate the shapes are generated on");
+		integerOptions.add("startZ", 0, "The Z coordinate the shapes are generated on");
+		integerOptions.add("minecraftClearDimension", 200, "The coordinates to clear the space for the archive");
+		integerOptions.add("minecraftClearSleepTimer", 200, "How long the thread should sleep between sending a clear command to python");
+		integerOptions.add("minecraftNumberOfBinsForMovement", 3,"The amount of bins for each side of the flying machine movement");
+		integerOptions.add("marioMinDecorationIndex", 0, "Lowest interval index for MAP Elites dimension associated with Mario level decoration");
+		integerOptions.add("marioMaxDecorationIndex", 10000, "Highest interval index for MAP Elites dimension associated with Mario level decoration");
+		integerOptions.add("marioMinLeniencyIndex", 0, "Lowest interval index for MAP Elites dimension associated with Mario level leniency");
+		integerOptions.add("marioMaxLeniencyIndex", 10000, "Highest interval index for MAP Elites dimension associated with Mario level leniency");
+		integerOptions.add("marioMinSpaceCoverageIndex", 0, "Lowest interval index for MAP Elites dimension associated with Mario level Space Coverage");
+		integerOptions.add("marioMaxSpaceCoverageIndex", 10000, "Highest interval index for MAP Elites dimension associated with Mario level Space Coverage");
+		integerOptions.add("zeldaMinWallIndex", 0, "Lowest interval index for MAP Elites dimension associated with Zelda Dungeon Wall Tiles");
+		integerOptions.add("zeldaMaxWallIndex", 10000, "Highest interval index for MAP Elites dimension associated with Zelda Dungeon Wall Tiles");
+		integerOptions.add("zeldaMinWaterIndex", 0, "Lowest interval index for MAP Elites dimension associated with Zelda Dungeon Water Tiles");
+		integerOptions.add("zeldaMaxWaterIndex", 10000, "Highest interval index for MAP Elites dimension associated with Zelda Dungeon Water Tiles");
+		integerOptions.add("zeldaMinReachableRooms", 0, "Lowest interval index for MAP Elites dimension associated with Zelda Dungeon Reachable Rooms");
+		integerOptions.add("zeldaMaxReachableRooms", 1000000, "Highest interval index for MAP Elites dimension associated with Zelda Dungeon Reachable Rooms");
+		integerOptions.add("minecraftPistonLabelSize", 6, "Dictates amount of bin labels made for MinecraftMAPElitesNorthSouthPistonCountBinLabels");
 		
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
+		longOptions.add("minecraftMandatoryWaitTime", 10000L, "The mandatory amount of time that the block movement fitness function should wait before reading in the corner again");
+		longOptions.add("shortTimeBetweenMinecraftReads", 1000L, "The amount of time that change center of mass fitness function waits before reading in the area again");
+
 		// Boolean parameters 
+		booleanOptions.add("steadyStateArchetypeSaving", true, "Steady state evolution updates the NN archetype. Turn off to increase speed, but lose ability to resume from crash.");
 		booleanOptions.add("useWoxSerialization", true, "Use the deprecated Wox serialization. I hope to phase this out, but the setting is useful during transition");
 		booleanOptions.add("drawMarioOverlayText", true, "When playing Mario, lots of useful debugging text is displayed");
 		booleanOptions.add("marioSimpleAStarDistance", false, "Length of a simple A* path through level (not actual simulation)");
@@ -762,7 +798,7 @@ public class Parameters {
 		booleanOptions.add("lodeRunnerAllowsLinearIncreasingEnemyCount", false, "Adds linear increasing enemy count as a fitness function when true");
 		booleanOptions.add("lodeRunnerAllowsLinearIncreasingTreasureCount", false, "Adds linear increasing treasure count as a fitness function when true");
 		booleanOptions.add("allowWeirdLodeRunnerActions", false, "Allows the A* model to use weird side ways digging to be able to beat more levels");
-		booleanOptions.add("smartLodeRunnerEnemies", false, "Sets enhanced enemy AI for enemies in lode runner.");
+		booleanOptions.add("smartLodeRunnerEnemies", false, "Sets enhanced enemy AI for enemies in lode runner (does not really work).");
 		booleanOptions.add("animateWithScaleRotationTranslation", false, "Animate with scale and rotation when true.");
 		booleanOptions.add("useWoolleyImageMatchFitness", false, "Use the fitness calculation from the Woolley paper if true.");
 		booleanOptions.add("useRMSEImageMatchFitness", false, "Use RMSE as the fitness calculation if true.");
@@ -781,6 +817,34 @@ public class Parameters {
 		booleanOptions.add("enhancedCPPNCanRotate", true, "Whether enhanced CPPN picture genotype can change the image rotation.");
 		booleanOptions.add("standardPicBreederHSBRestriction", true, "Restrict CPPN output HSB values as in original Picbreeder (false mode is better for enhanced genotypes).");
 		booleanOptions.add("segmentSwapAuxiliaryVarialbes", true, "Whether to swap aux variables in SegmentSwapMutation.");
+		booleanOptions.add("parallelMAPElitesInitialize", false, "Initial archive members are evaluated in parallel for MAP Elites.");
+		booleanOptions.add("objectBreederDistanceInEachPlane", false, "CPPN inputs for object breeder include distances projected to each 2D plane.");
+		booleanOptions.add("searchContinuesAfterSuccess", false, "Graph search algorithms will keep searching even after a solution is found (collecting set of all reachable locations).");
+		booleanOptions.add("minecraftTypeCountFitness", false, "Minecraft shapes try to maximize number of occurrences of a particular block type");
+		booleanOptions.add("minecraftOccupiedCountFitness", false, "Minecraft shapes try to maximize number of non-AIR blocks");
+		booleanOptions.add("minecraftTypeTargetFitness", false, "Minecraft shapes try to match a desired number");
+		booleanOptions.add("minecraftEvolveOrientation", true, "Evolves the orientation of the blocks being generated");
+		booleanOptions.add("minecraftDiversityBlockFitness", false, "Minecraft shapes try to maximize the amount of block types in each structure");
+		booleanOptions.add("minecraftRedirectConfinedSnakes", false, "Confines the snakes to a given area and will redirect the snake when the next direction is out of bounds");
+		booleanOptions.add("minecraftStopConfinedSnakes", false, "Confines the snakes to a given area and will stop the snake when the next direction is out of bounds");
+		booleanOptions.add("launchMinecraftServerFromJava", true, "The Java code can launch a server, or it can simply join whatever server is already running on the localhost");
+		booleanOptions.add("minecraftContainsWholeMAPElitesArchive", true, "Spawns in the MAP Elite archive in the Minecraft world");
+		booleanOptions.add("forceLinearArchiveLayoutInMinecraft", false, "minecraftContainsWholeMAPElitesArchive must be true for this. Generates shape in a linear fashion, as opposed to in 2D or 3D");
+		booleanOptions.add("minecraftChangeCenterOfMassFitness", false, "Calculates the change in position of a shapes center of mass.");
+		booleanOptions.add("NegativeSpaceCountFitness", false, "Tries to maximixe the negative space in a shape that i generated");
+		booleanOptions.add("minecraftAccumulateChangeInCenterOfMass", false, "Adds up the changes in center of mass instead of calculating the difference");
+		booleanOptions.add("vectorPresenceThresholdForEachBlock", false, "Determines whether the vector presence will be normal, or two times larger");
+		booleanOptions.add("interactWithMapElitesInWorld", true, "Ability to reset or delete map elites in the archive");
+		booleanOptions.add("interactWithMinecraftForever", false, "Keep interacting with Minecraft even after experiment completion");
+		booleanOptions.add("minecraftEndEvalNoMovement", true, "Change center of mass fitness function ends evaluation of a structure when no movement is detected");
+		booleanOptions.add("oneOutputLabelForBlockTypeCPPN", false, "Determines whether CPPN will use only one output for determining the block type.");
+		booleanOptions.add("oneOutputLabelForBlockOrientationCPPN", false, "Determines whether CPPN will use only one output for determining the block orientation.");
+		booleanOptions.add("minecraftNorthSouthOnly", false, "Determines whether only the North and South orientations will be used.");
+		booleanOptions.add("displayDiagonally", true, "Displays the Minecraft shapes diagonally in the world");
+		booleanOptions.add("bedrockTestChambers", false, "Places walls made of bedrock around the flying machines");
+		booleanOptions.add("minecraftUpDownOnly", false, "Determines whether only the Up and Down orientations will be used.");
+		booleanOptions.add("minecraftFakeTestFitness", false, "Not a real fitness function, used for testing forcing offspring");
+		booleanOptions.add("minecraftSkipInitialClear", false, "Option to skip the initial clear of the world and immediatly start spawning shapes");
 		
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
@@ -870,7 +934,7 @@ public class Parameters {
 		doubleOptions.add("GANSegmentSwapMutationRate", 0.0, "Segment swap mutation rate.");
 		doubleOptions.add("GANSegmentCopyMutationRate", 0.0, "Segment copy mutation rate.");
 		doubleOptions.add("anyRealVectorModificationRate", 1.0, "The chance to use either perturb or polynomial mutation");
-
+		doubleOptions.add("voxelExpressionThreshold", 0.1, "The value that determines the presence of a block");
 		
 		// String parameters
 		stringOptions.add("marioTargetLevel", "data\\VGLC\\SuperMarioBrosNewEncoding\\overworld\\mario-1-1.txt", "Relative path to json file with Mario level to target");
@@ -931,6 +995,8 @@ public class Parameters {
 		stringOptions.add("archiveSubDirectoryName", "archive", "Directory name to store archive files in a MAP Elites run");
 		stringOptions.add("latestIterationSaved", "iterationX", "The last iteration of PictureTargetTask to be saved.");
 		
+		stringOptions.add("minecraftBlockListTextFile", "", "The file name of a MAPElite shape from that archive that is going to be spawned.");
+		
 		// Class options
 		classOptions.add("zeldaGrammarRules", ZeldaHumanSubjectStudy2019GraphGrammar.class, "Determines what ruleset we're using");
 		classOptions.add("zeldaGraphBackBone", HumanSubjectStudy2019Graph.class, "Constructs the graph for the rules of the ZeldaGraphGrammar");
@@ -964,7 +1030,6 @@ public class Parameters {
 		classOptions.add("rlGlueEnvironment", null, "Environment/domain for an RL-Glue problem");
 		classOptions.add("rlGlueExtractor", StateVariableExtractor.class, "Feature extractor to get input features from RL-Glue observations");
 		classOptions.add("staticPacMan", StarterPacMan.class, "Pac-Man used to evolve ghosts against");
-		//popacman.examples.StarterPacMan.MyPacMan.class 
 		classOptions.add("staticPacManPO", popacman.examples.StarterPacMan.MyPacMan.class, "Pac-Man used to evolve PO ghosts against");
 		classOptions.add("staticPredatorController", AggressivePredatorController.class, "This parameter specifies the predator controller that prey evolve against");
 		classOptions.add("staticPreyController", PreyFleeClosestPredatorController.class, "This parameter specifies the prey controller that predators evolve against");
@@ -979,6 +1044,8 @@ public class Parameters {
 		classOptions.add("utWeaponManager", SimpleWeaponManager.class, "Weapon management for UT2004 bot");
 		classOptions.add("weightPerturber", GaussianGenerator.class, "Random generator used to perturb mutated weights");
 		classOptions.add("zeldaLevelLoader", SimpleLoader.class, "Loader to use when the dungeon is picking levels");
+		classOptions.add("minecraftShapeGenerator", ThreeDimensionalVolumeGenerator.class, "Defines the manner in which shapes are generated from genomes in Minecraft");
+		classOptions.add("minecraftBlockSet", MachineBlockSet.class, "Sets block set to be machine block set");
 	}
 
 	/**

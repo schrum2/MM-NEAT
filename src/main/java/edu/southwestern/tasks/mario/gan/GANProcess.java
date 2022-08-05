@@ -1,5 +1,10 @@
 package edu.southwestern.tasks.mario.gan;
 
+// For the three possible tile counts in Zelda
+import static edu.southwestern.tasks.gvgai.zelda.ZeldaGANUtil.ZELDA_GAN_EXPANDED_TILE_NUMBER;
+import static edu.southwestern.tasks.gvgai.zelda.ZeldaGANUtil.ZELDA_GAN_ORIGINAL_TILE_NUMBER;
+import static edu.southwestern.tasks.gvgai.zelda.ZeldaGANUtil.ZELDA_GAN_REDUCED_TILE_NUMBER;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -8,13 +13,10 @@ import java.io.PrintStream;
 import java.lang.ProcessBuilder.Redirect;
 
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.interactive.gvgai.ZeldaCPPNtoGANLevelBreederTask;
 import edu.southwestern.tasks.loderunner.LodeRunnerGANUtil;
 import edu.southwestern.tasks.megaman.gan.MegaManGANUtil;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.PythonUtil;
-
-// For the three possible tile counts in Zelda
-import static edu.southwestern.tasks.gvgai.zelda.ZeldaGANUtil.*;
 
 public class GANProcess extends Comm {
 	
@@ -56,7 +58,7 @@ public class GANProcess extends Comm {
 		case MARIO:
 			return Parameters.parameters.integerParameter("GANInputSize");
 		case ZELDA:
-			throw new UnsupportedOperationException("FIX THIS, HOW MANY AUX VARIABLES FOR ZELDA");
+			return Parameters.parameters.integerParameter("GANInputSize")+ZeldaCPPNtoGANLevelBreederTask.numberOfNonLatentVariables();
 		case LODE_RUNNER:
 			return Parameters.parameters.integerParameter("GANInputSize");
 		case MEGA_MAN:

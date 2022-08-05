@@ -2108,6 +2108,16 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN>, Serializable {
 		for(int i = 0; i < tg.numOut; i++) {
 			newNodes.add(tg.nodes.get(tg.outputStartIndex() + i));
 		}
+		
+		// Loops through to add back any nodes that went missing after topological sort
+		// they are added after all the hidden neurons and before the output neurons
+//		for(int i = 0; i < tg.nodes.size(); i++) {
+//			if(getNodeGene(tg.nodes.get(i).innovation,newNodes) == null) {
+//				newNodes.add(newNodes.size() - tg.numOut, tg.nodes.get(i));
+//			}
+//		}
+		
+		
 		// Replace nodes with sorted nodes
 		tg.nodes = newNodes;
 
@@ -2186,6 +2196,67 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN>, Serializable {
 	 */
 	public int outputStartIndex() {
 		return nodes.size() - numOut;
+	}
+	
+	/**
+	 * Returns a string of the contents of the GraphViz file that
+	 * would draw a network
+	 * 
+	 * @return String of the contents in GraphViz file
+	 */
+	public String toGraphViz(String[] inputs, String[] outputs) {
+		StringBuilder string = new StringBuilder();
+		string.append("digraph {\nnode[fontsize=9 height=0.2 shape=circle width=0.2]");
+		
+		HashMap<Long,String> innovationToLabel = new HashMap<>();
+		
+		for(int i=0; i < nodes.size(); i++) {
+			if(i >= nodes.size() - numOut) {
+				assert nodes.get(i).ntype == TWEANN.Node.NTYPE_OUTPUT;
+				string.append("\n" + "\"" + outputs[i - (nodes.size() - numOut)]+ "\"");
+				string.append("[fillcolor=lightblue style=filled]");
+				innovationToLabel.put(nodes.get(i).innovation,outputs[i - (nodes.size() - numOut)]);
+			}
+			else if(i < numIn) {
+				assert nodes.get(i).ntype == TWEANN.Node.NTYPE_INPUT;
+				string.append("\n" + "\"" + inputs[i] + "\"");
+				string.append("[fillcolor=lightgray shape=box style=filled]");
+				innovationToLabel.put(nodes.get(i).innovation,inputs[i]);
+			}
+			else {
+				assert i >= numIn;
+				assert i < nodes.size() - numOut;
+				assert nodes.get(i).ntype == TWEANN.Node.NTYPE_HIDDEN;
+				string.append("\n" + nodes.get(i).innovation);
+				string.append("[fillcolor=white style=filled]");
+			}
+		}
+	
+		for(LinkGene lg : links) {
+			if(innovationToLabel.containsKey(lg.sourceInnovation))
+				string.append("\n" + "\""  + innovationToLabel.get(lg.sourceInnovation)+ "\"");
+			else
+				string.append("\n"+ lg.sourceInnovation);
+			
+			if(innovationToLabel.containsKey(lg.targetInnovation))
+				string.append("->" + "\"" + innovationToLabel.get(lg.targetInnovation)+ "\"");
+			else
+				string.append("->"+ lg.targetInnovation);
+			
+			String color;
+			if(lg.weight < 0) {
+				color = "red";
+			} else {
+				assert lg.weight > 0;
+				color = "green";
+			}
+			
+			string.append("[color="+color+" penwidth="+Math.abs(lg.weight)+" style=solid]");
+		}
+		
+		string.append("}");
+		
+		return string.toString();
 	}
 
 	/**

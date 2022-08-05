@@ -151,7 +151,40 @@ public class ArrayUtil {
 		}
 		return ones;
 	}
+	
+	/**
+	 * Returns primitive int array of a given size containing only
+	 * copies of the specified number
+	 * @param size Desired size of array
+	 * @param num Specified integer to fill array
+	 * @return Array of ints of size 'size' where every value equals num
+	 */
+	public static int[] intSpecified(int size, int num) {
+		int[] ones = new int[size];
+		for (int i = 0; i < ones.length; i++) {
+			ones[i] = num;
+		}
+		return ones;
+	}
 
+	/**
+	 * Return an array of numbers from start (inclusive) to 
+	 * end (exclusive) with the given step size between elements.
+	 * Modeled after the Python range function.
+	 * 
+	 * @param start first value in result array
+	 * @param end no value in result array is greater than or equal to this
+	 * @param step difference between adjacent array elements
+	 * @return array of start, start+step, start+2*step, ... for values less than end
+	 */
+	public static int[] range(int start, int end, int step) {
+		int[] result = new int[(int) Math.ceil((end - start)/(1.0 * step))];
+		for(int i = 0; i < result.length; i++) {
+			result[i] = start + i*step;
+		}
+		return result;
+	}
+	
 	/**
 	 * creates a new array of primitive ints with the same contents as List<Integer> input
 	 * 
@@ -271,6 +304,23 @@ public class ArrayUtil {
 		return false;
 	}
 
+	/**
+	 * Combine two String arrays into one array starting with the elements of the
+	 * first array and ending with the elements of the second array
+	 *
+	 * @param a
+	 *            starting elements
+	 * @param b
+	 *            ending elements
+	 * @return combined array
+	 */
+	public static String[] combineArrays(String[] a, String[] b) {
+		String[] result = new String[a.length + b.length];
+		System.arraycopy(a, 0, result, 0, a.length);
+		System.arraycopy(b, 0, result, a.length, b.length);
+		return result;
+	}
+	
 	/**
 	 * Combine two int arrays into one array starting with the elements of the
 	 * first array and ending with the elements of the second array
@@ -938,6 +988,21 @@ public class ArrayUtil {
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * True if the item is contained in the array
+	 * 
+	 * @param <T> type of item
+	 * @param array Array to search
+	 * @param item item to look for
+	 * @return true if present, false otherwise
+	 */
+	public static <T> boolean contains(T[] array, T item) {
+		for(T x : array) {
+			if(x.equals(item)) return true;
+		}
+		return false;
 	}
 
 	/**

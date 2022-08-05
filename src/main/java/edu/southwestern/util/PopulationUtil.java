@@ -2,6 +2,7 @@ package edu.southwestern.util;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,12 +13,14 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.data.SaveThread;
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.GenerationalEA;
 import edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype;
+import edu.southwestern.evolution.genotypes.CPPNOrBlockVectorGenotype;
 import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.CombinedGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
@@ -32,6 +35,7 @@ import edu.southwestern.evolution.mutation.tweann.CauchyDeltaCodeMutation;
 import edu.southwestern.evolution.mutation.tweann.WeightRandomReplacement;
 import edu.southwestern.evolution.nsga2.NSGA2;
 import edu.southwestern.evolution.nsga2.NSGA2Score;
+import edu.southwestern.networks.NetworkTask;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.networks.hyperneat.HyperNEATTask;
 import edu.southwestern.parameters.CommonConstants;
@@ -265,6 +269,11 @@ public class PopulationUtil {
 					for (int i = 0; i < size; i++) {
 						afrr.mutate((Genotype<TWEANN>) ((CPPNOrDirectToGANGenotype) parents.get(i)).getCurrentGenotype());
 					}	
+				} else if(parents.get(0) instanceof CPPNOrBlockVectorGenotype) {
+					// TWEANNGenotype is the first form of this genotype
+					for (int i = 0; i < size; i++) {
+						afrr.mutate((Genotype<TWEANN>) ((CPPNOrBlockVectorGenotype) parents.get(i)).getCurrentGenotype());
+					}	
 				} else if(parents.get(0) instanceof HyperNEATCPPNforDL4JGenotype) {
 					// Mutate the CPPN within the HyperNEATCPPNforDL4JGenotype
 					for (int i = 0; i < size; i++) {
@@ -409,7 +418,10 @@ public class PopulationUtil {
 	 *            How many layers to keep
 	 */
 	public static <T> void pruneDownToTopParetoLayers(ArrayList<Genotype<T>> population, NSGA2Score<T>[] scores, int layers) {
+		assert layers > 0;
+		assert scores.length > 0;
 		ArrayList<ArrayList<NSGA2Score<T>>> fronts = NSGA2.getParetoLayers(scores);		
+		assert fronts.size() > 0;
 		// Reduce population to only contain top Pareto layers
 		Iterator<Genotype<T>> itr = population.iterator();
 		System.out.println("Reducing to top " + layers + " Pareto layers");
@@ -428,6 +440,7 @@ public class PopulationUtil {
 			}
 			if (!found) {
 				itr.remove();
+				assert population.size() > 0 : Arrays.stream(scores).map( s -> Arrays.toString(s.scores)).collect(Collectors.toList());
 			}
 		}
 	}
@@ -542,7 +555,8 @@ public class PopulationUtil {
 		int i = 0;
 		while (s.hasNextLine()) {
 			Scanner line = new Scanner(s.nextLine());
-			//int withinGen = line.nextInt();
+			@SuppressWarnings("unused")
+			int withinGen = line.nextInt(); // Not used, but must be read from file
 			long offspringId = line.nextLong();
 			ArrayList<Double> scores = new ArrayList<Double>();
 			while (line.hasNext()) {
@@ -908,4 +922,42 @@ public class PopulationUtil {
 		}
 		return children;
 	}
+	
+	/**
+	 * Saves the text necessary to view the genotypes neural network via graphviz.
+	 * 
+	 * @param <T> Generic type T
+	 * @param genotypes that will have their neural networks saved in a text file.
+	 */
+	public static <T> void saveGraphVizNetworks(ArrayList<Genotype<T>> genotypes) {
+		// check
+		// check if the first genome is a TWEANNGenotype
+		if(genotypes.get(0) instanceof TWEANNGenotype) {
+			// make new sub-dir "GraphVizNetworks"
+			File f = new File(FileUtilities.getSaveDirectory() +"/GraphVizNetworks");
+			if (!f.exists()) f.mkdirs();
+			
+			// loop through all genotypes and create a file for each one containing toGraphViz method result
+			String[] inputs = ((NetworkTask) MMNEAT.task).sensorLabels(); // get input labels
+			String[] outputs = ((NetworkTask) MMNEAT.task).outputLabels(); // get output labels
+			for(int i = 0; i < genotypes.size(); i++) {
+				// use ((NetworkTask) MMNEAT.task)
+				String nnString = ((TWEANNGenotype) genotypes.get(i)).toGraphViz(inputs, outputs);
+				//String nnString = TWEANNGenotype.toGraphViz(inputs, outputs);
+				File newNeuralNetowrkFile = new File(FileUtilities.getSaveDirectory() + "/GraphVizNetworks/neuralnetwork"+genotypes.get(i).getId()+".txt");
+				
+				// write to new file the output of toGraphViz method
+				try {
+					FileWriter fw = new FileWriter(newNeuralNetowrkFile);
+					fw.write(nnString);
+					fw.close();
+				} catch(Exception e) {
+					System.out.println(e);
+				}
+				
+			}
+
+		}
+	}
+
 }

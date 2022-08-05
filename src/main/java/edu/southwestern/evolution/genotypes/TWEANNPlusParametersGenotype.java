@@ -38,7 +38,6 @@ public class TWEANNPlusParametersGenotype<E> implements Genotype<NetworkPlusPara
 		return combined.getParentIDs();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Genotype<NetworkPlusParameters<TWEANN,E>> copy() {
 		CombinedGenotype<TWEANN,E> cc = (CombinedGenotype<TWEANN, E>) combined.copy();
@@ -51,7 +50,6 @@ public class TWEANNPlusParametersGenotype<E> implements Genotype<NetworkPlusPara
 	}
 
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Genotype<NetworkPlusParameters<TWEANN,E>> crossover(Genotype<NetworkPlusParameters<TWEANN,E>> g) {
 		CombinedGenotype<TWEANN,E> child = (CombinedGenotype<TWEANN, E>) combined.crossover(((TWEANNPlusParametersGenotype<E>) g).combined);
@@ -64,7 +62,6 @@ public class TWEANNPlusParametersGenotype<E> implements Genotype<NetworkPlusPara
 		return new NetworkPlusParameters<TWEANN,E>(pair.t1, pair.t2);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Genotype<NetworkPlusParameters<TWEANN,E>> newInstance() {
 		CombinedGenotype<TWEANN,E> instance = (CombinedGenotype<TWEANN, E>) combined.newInstance();

@@ -71,6 +71,10 @@ public class Score<T> {
 		mapElitesSoleBinQualityScore = score;
 	}
 
+	public Score(HashMap<String,Object> map, Genotype<T> individual, double[] scores) {
+		this(individual, scores, map, ((Double) map.get("binScore")).doubleValue());
+	}	
+	
 	public Score(Genotype<T> individual, double[] scores, HashMap<String,Object> map, double score) {
 		this(individual, scores, null, new double[0]);
 		oneMAPEliteMap = map;

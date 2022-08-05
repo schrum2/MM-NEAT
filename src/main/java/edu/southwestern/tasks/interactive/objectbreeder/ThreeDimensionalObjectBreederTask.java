@@ -265,11 +265,11 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 		shapes = new HashMap<Long,List<Triangle>>();
 		//for every g in population, puts the shapes
 		for(Genotype<TWEANN> g : population) {
-			shapes.put(g.getId(), ThreeDimensionalUtil.trianglesFromCPPN(g.getPhenotype(), buttonWidth, buttonHeight, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, color, getInputMultipliers()));
+			shapes.put(g.getId(), ThreeDimensionalUtil.trianglesFromCPPN(g.getPhenotype(), buttonWidth, buttonHeight, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, color, getInputMultipliers(), Parameters.parameters.booleanParameter("objectBreederDistanceInEachPlane")));
 		}
 		return super.evaluateAll(population); // wait for user choices
 	}
-	
+
 	@Override
 	/**
 	 * resets the buttons. if hardReset is true, the cache is cleared
@@ -304,7 +304,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 			assert inputMultipliers.length == numCPPNInputs() : "Number of inputs should always match CPPN inputs! " + inputMultipliers.length + " vs " + numCPPNInputs();
 			//for each s in scores, set the shapes
 			for(Score<TWEANN> s : scores) {
-				shapes.put(s.individual.getId(), ThreeDimensionalUtil.trianglesFromCPPN(s.individual.getPhenotype(), buttonWidth, buttonHeight, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, color, inputMultipliers));
+				shapes.put(s.individual.getId(), ThreeDimensionalUtil.trianglesFromCPPN(s.individual.getPhenotype(), buttonWidth, buttonHeight, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, color, inputMultipliers, Parameters.parameters.booleanParameter("objectBreederDistanceInEachPlane")));
 			}		
 		}
 		super.resetButtons(hardReset); //calls the super resetButtons method with hardReset boolean
@@ -334,7 +334,11 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 	 * @return the sensorLabels
 	 */
 	public String[] sensorLabels() {
-		return new String[] { "X-coordinate", "Y-coordinate", "Z-coordinate", "distance from center", "bias" };
+		if(Parameters.parameters.booleanParameter("objectBreederDistanceInEachPlane")) {
+			return new String[] { "X", "Y", "Z", "R", "R-XY", "R-YZ", "R-XZ", "bias" };
+		} else {
+			return new String[] { "X", "Y", "Z", "R", "bias" };
+		}
 	}
 
 	@Override
@@ -361,7 +365,8 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 	 * @return CPPN_NUM_INPUTS - the number of CPPN inputs
 	 */
 	public int numCPPNInputs() {
-		return CPPN_NUM_INPUTS;
+		// Possibly add distances in three planes
+		return CPPN_NUM_INPUTS + (Parameters.parameters.booleanParameter("objectBreederDistanceInEachPlane") ? 3 : 0);
 	}
 
 	@Override
@@ -386,7 +391,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 	protected BufferedImage getButtonImage(TWEANN phenotype, int width, int height, double[] inputMultipliers) {
 		// If reset button cleared out triangles, then load again right before displaying
 		if(!shapes.containsKey(phenotype.getId())) {
-			shapes.put(phenotype.getId(), ThreeDimensionalUtil.trianglesFromCPPN(phenotype, buttonWidth, buttonHeight, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, color, getInputMultipliers()));
+			shapes.put(phenotype.getId(), ThreeDimensionalUtil.trianglesFromCPPN(phenotype, buttonWidth, buttonHeight, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, color, getInputMultipliers(), Parameters.parameters.booleanParameter("objectBreederDistanceInEachPlane")));
 		}		
 		return ThreeDimensionalUtil.imageFromTriangles(shapes.get(phenotype.getId()), buttonWidth, buttonHeight, heading, pitch, null);
 	}
@@ -412,7 +417,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 	 */
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:5","randomSeed:5","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true", "allowCubeDisplacement:true", "simplifiedInteractiveInterface:false","fs:false", "task:edu.southwestern.tasks.interactive.objectbreeder.ThreeDimensionalObjectBreederTask","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:500","imageHeight:500","imageSize:200","defaultFramePause:50","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:false","includeSquareWaveFunction:false","includeFullSawtoothFunction:false","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false"});
+			MMNEAT.main(new String[]{"runNumber:5","randomSeed:5","trials:1","mu:16","maxGens:500","objectBreederDistanceInEachPlane:true","io:false","netio:false","mating:true", "allowCubeDisplacement:true", "simplifiedInteractiveInterface:false","fs:false", "task:edu.southwestern.tasks.interactive.objectbreeder.ThreeDimensionalObjectBreederTask","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:500","imageHeight:500","imageSize:200","defaultFramePause:50","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:false","includeSquareWaveFunction:false","includeFullSawtoothFunction:false","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}

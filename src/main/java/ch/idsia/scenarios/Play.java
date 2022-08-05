@@ -31,7 +31,7 @@ public class Play {
         }
         EvaluationOptions options = new CmdLineOptions(new String[0]);
         
-        LevelScene.twoPlayers = true; // TODO: find better way to set this
+        LevelScene.twoPlayers = false; // TODO: find better way to set this
         if(LevelScene.twoPlayers) {
         	// Give human a chance to get bearings before other agent starts moving
         	MarioComponent.startDelay = 5000;

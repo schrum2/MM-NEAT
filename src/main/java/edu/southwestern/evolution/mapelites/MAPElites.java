@@ -5,9 +5,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
 import java.util.Vector;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -18,6 +19,7 @@ import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.SteadyStateEA;
 import edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype;
+import edu.southwestern.evolution.genotypes.CPPNOrBlockVectorGenotype;
 import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.RealValuedGenotype;
@@ -27,16 +29,22 @@ import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
+import edu.southwestern.tasks.evocraft.MinecraftClient;
+import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
+import edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask;
+import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBinLabels;
 import edu.southwestern.tasks.innovationengines.PictureTargetTask;
 import edu.southwestern.tasks.interactive.picbreeder.PicbreederTask;
 import edu.southwestern.tasks.loderunner.LodeRunnerLevelTask;
 import edu.southwestern.util.PopulationUtil;
 import edu.southwestern.util.PythonUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.file.Serialization;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.stats.StatisticsUtilities;
+
 
 /**
  * My version of Multi-dimensional Archive of Phenotypic Elites (MAP-Elites), the quality diversity (QD)
@@ -72,7 +80,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	private boolean saveImageArchives;
 
 	public BinLabels getBinLabelsClass() {
-		return archive.getBinLabelsClass();
+		return archive.getBinMapping();
 	}
 	
 	public MAPElites() {
@@ -92,7 +100,8 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			archiveLog = new MMNEATLog(infix, false, false, false, true); 
 			fillLog = new MMNEATLog("Fill", false, false, false, true);
 			// Can't check MMNEAT.genotype since MMNEAT.ea is initialized before MMNEAT.genotype
-			boolean cppnDirLogging = Parameters.parameters.classParameter("genotype").equals(CPPNOrDirectToGANGenotype.class);
+			boolean cppnDirLogging = Parameters.parameters.classParameter("genotype").equals(CPPNOrDirectToGANGenotype.class) ||
+									 Parameters.parameters.classParameter("genotype").equals(CPPNOrBlockVectorGenotype.class);
 			if(cppnDirLogging) {
 				cppnThenDirectLog = new MMNEATLog("cppnToDirect", false, false, false, true);
 				cppnVsDirectFitnessLog = new MMNEATLog("cppnVsDirectFitness", false, false, false, true);
@@ -300,71 +309,107 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			emitterMeanLog = new MMNEATLog("EmitterMeans", false, false, false, true);
 		}
 		saveImageArchives = MMNEAT.task instanceof PictureTargetTask;
+		ArrayList<Genotype<T>> startingPopulation; // Will be new or from saved archive
 		if(iterations > 0) {
-			int numLabels = archive.getBinMapping().binLabels().size();
+			startingPopulation = new ArrayList<>();
+			//int numLabels = archive.getBinMapping().binLabels().size();
 			// Loading from saved archive
 			String archiveDir = archive.getArchiveDirectory();
 			List<String> binLabels = archive.getBinMapping().binLabels();
+			Serialization.debug = false; // Don't print stack trace for missing files
 			// Load each elite from xml file into archive
 			for(int i = 0; i < binLabels.size(); i++) {
-				String binDir = archiveDir + "/" + binLabels.get(i) + "/";
-				Genotype<T> elite = (Genotype<T>) Serialization.load(binDir + "elite"); // Load genotype
-				// Load behavior scores
-				ArrayList<Double> scores = new ArrayList<Double>(numLabels); 
-				try {
-					Scanner scoresFile = new Scanner(new File(binDir + "scores.txt"));
-					while(scoresFile.hasNextDouble()) {
-						scores.add(scoresFile.nextDouble());
-					}
-					scoresFile.close();
-				} catch (FileNotFoundException e) {
-					System.out.println("Could not read " + binDir + "scores.txt");
-					e.printStackTrace();
-					System.exit(1);
+				String binPrefix = archiveDir + "/" + binLabels.get(i) + "-";
+				Genotype<T> elite = (Genotype<T>) Serialization.load(binPrefix + "elite"); // Load genotype
+				//double binScore = Double.NEGATIVE_INFINITY; // The one bin score
+				if(elite != null) { // File actually exists
+					startingPopulation.add(elite);
 				}
-				// Package in a score
-				Score<T> score = new Score<T>(elite, new double[0], scores);
-				archive.archive.set(i, score); // Directly set the bin contents
 			}
+			Serialization.debug = true; // Restore stack traces
 		} else {
 			System.out.println("Fill up initial archive");
 			// Start from scratch
 			int startSize = Parameters.parameters.integerParameter("mu");
-			ArrayList<Genotype<T>> startingPopulation = PopulationUtil.initialPopulation(example, startSize);			
-			assert !(startingPopulation.get(0) instanceof BoundedRealValuedGenotype) || ((BoundedRealValuedGenotype) startingPopulation.get(0)).isBounded() : "Initial individual not bounded: "+startingPopulation.get(0);
-			Vector<Score<T>> evaluatedPopulation = new Vector<>(startingPopulation.size());
+			startingPopulation = PopulationUtil.initialPopulation(example, startSize);			
+			assert startingPopulation.size() == 0 || !(startingPopulation.get(0) instanceof BoundedRealValuedGenotype) || ((BoundedRealValuedGenotype) startingPopulation.get(0)).isBounded() : "Initial individual not bounded: "+startingPopulation.get(0);
+		}
+		
+		// Next code executes for fresh starts and resumes/loads
+		// Even for resume, re-evaluate the loaded genotypes
+		Vector<Score<T>> evaluatedPopulation = new Vector<>(startingPopulation.size());
+		
+		boolean backupNetIO = CommonConstants.netio;
+		CommonConstants.netio = false; // Some tasks require archive comparison to do this, but it does not exist yet.
+		Stream<Genotype<T>> evaluateStream = Parameters.parameters.booleanParameter("parallelMAPElitesInitialize") ? 
+												startingPopulation.parallelStream() :
+												startingPopulation.stream();
+		if(Parameters.parameters.booleanParameter("parallelMAPElitesInitialize"))
+			System.out.println("Evaluate archive in parallel");
+		// Evaluate initial population
+		evaluateStream.forEach( (g) -> {
+			Score<T> s = task.evaluate(g);
+			evaluatedPopulation.add(s);
+		});
+		CommonConstants.netio = backupNetIO;		
+		
+		if(Parameters.parameters.booleanParameter("dynamicAutoencoderIntervals")) {					
+			autoencoderLossRange = new MMNEATLog("autoencoderLossRange", false, false, false, true);
+		}
 
-			boolean backupNetIO = CommonConstants.netio;
-			CommonConstants.netio = false; // Some tasks require archive comparison to do this, but it does not exist yet.
-			// Evaluate initial population
-			startingPopulation.parallelStream().forEach( (g) -> {
-				Score<T> s = task.evaluate(g);
-				evaluatedPopulation.add(s);
+		// Special code if image auto-encoder is used
+		if(Parameters.parameters.booleanParameter("trainInitialAutoEncoder") && saveImageArchives && Parameters.parameters.booleanParameter("trainingAutoEncoder")) {
+			System.out.println("Train initial auto-encoder");
+			((PictureTargetTask) MMNEAT.task).saveAllArchiveImages("starting", AutoEncoderProcess.SIDE_LENGTH, AutoEncoderProcess.SIDE_LENGTH, evaluatedPopulation);
+			String experimentDir = FileUtilities.getSaveDirectory()+File.separator+"snapshots";
+			Parameters.parameters.setString("mostRecentAutoEncoder", experimentDir+File.separator+ "starting.pth");
+			String outputAutoEncoderFile = Parameters.parameters.stringParameter("mostRecentAutoEncoder");
+			String trainingDataDirectory = experimentDir+File.separator+"starting";
+
+			// This adds the population to the archive after training the auto-encoder
+			trainImageAutoEncoderAndSetLossBounds(outputAutoEncoderFile, trainingDataDirectory, evaluatedPopulation);
+			System.out.println("Initial occupancy: "+ this.archive.getNumberOfOccupiedBins());
+		} else {
+			MinecraftCoordinates ranges = new MinecraftCoordinates(Parameters.parameters.integerParameter("minecraftXRange"),Parameters.parameters.integerParameter("minecraftYRange"),Parameters.parameters.integerParameter("minecraftZRange"));
+			boolean minecraftInit = archive.getBinMapping() instanceof MinecraftMAPElitesBinLabels && Parameters.parameters.booleanParameter("minecraftContainsWholeMAPElitesArchive");
+			if(minecraftInit) { //then clear world
+				// Initializes the population size and ranges for clearing
+				int pop_size = Parameters.parameters.integerParameter("mu");
+				MinecraftClient.getMinecraftClient().clearSpaceForShapes(new MinecraftCoordinates(0,MinecraftClient.GROUND_LEVEL+1,0), ranges, pop_size, Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER));
+				// Place fences around all areas where a shape from the archive could be placed
+				System.out.println("Area cleared, placing fences...");
+				MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
+				int dim1D = 0;
+				for(int[] multiIndices : minecraftBinLabels) {
+					//System.out.println(Arrays.toString(multiIndices));
+					Pair<MinecraftCoordinates, MinecraftCoordinates> corners = MinecraftLonerShapeTask.configureStartPosition(ranges, multiIndices, dim1D++);
+					// Only place on ground
+					if(corners.t1.y() == MinecraftClient.GROUND_LEVEL+1) {
+						//System.out.println("YES GROUND");
+						MinecraftLonerShapeTask.placeFencesAroundArchive(ranges,corners.t2);
+					}
+				}
+
+				System.out.println("Fences placed");	
+				MinecraftLonerShapeTask.spawnShapesInWorldTrue();
+			}
+
+			// Add initial population to archive, if add is true
+			evaluatedPopulation.parallelStream().forEach( (s) -> {
+				boolean result = archive.add(s); // Fill the archive with random starting individuals, only when this flag is true
+
+				// Minecraft shapes have to be re-generated and added to the world
+				synchronized(archive) {
+					if(minecraftInit && result) {
+						//System.out.println("Put "+s.individual.getId()+":"+s.MAPElitesBehaviorMap());
+						int index1D = (int) s.MAPElitesBehaviorMap().get("dim1D");
+						double scoreOfCurrentElite = s.behaviorIndexScore();
+						MinecraftLonerShapeTask.clearAndSpawnShape(s.individual, s.MAPElitesBehaviorMap(), ranges, index1D, scoreOfCurrentElite);
+					}
+				}
 			});
-			CommonConstants.netio = backupNetIO;
-			
-			if(Parameters.parameters.booleanParameter("dynamicAutoencoderIntervals")) {					
-				autoencoderLossRange = new MMNEATLog("autoencoderLossRange", false, false, false, true);
-			}
-			
-			// Special code if image auto-encoder is used
-			if(Parameters.parameters.booleanParameter("trainInitialAutoEncoder") && saveImageArchives && Parameters.parameters.booleanParameter("trainingAutoEncoder")) {
-				System.out.println("Train initial auto-encoder");
-				((PictureTargetTask) MMNEAT.task).saveAllArchiveImages("starting", AutoEncoderProcess.SIDE_LENGTH, AutoEncoderProcess.SIDE_LENGTH, evaluatedPopulation);
-				String experimentDir = FileUtilities.getSaveDirectory()+File.separator+"snapshots";
-				Parameters.parameters.setString("mostRecentAutoEncoder", experimentDir+File.separator+ "starting.pth");
-				String outputAutoEncoderFile = Parameters.parameters.stringParameter("mostRecentAutoEncoder");
-				String trainingDataDirectory = experimentDir+File.separator+"starting";
-
-				// This adds the population to the archive after training the auto-encoder
-				trainImageAutoEncoderAndSetLossBounds(outputAutoEncoderFile, trainingDataDirectory, evaluatedPopulation);
-				System.out.println("Initial occupancy: "+ this.archive.getNumberOfOccupiedBins());
-			} else {
-				// Add initial population to archive
-				evaluatedPopulation.parallelStream().forEach( (s) -> {
-					archive.add(s); // Fill the archive with random starting individuals
-				});	
-			}
+			//long endTime = System.currentTimeMillis();
+			//System.out.println("TIME TAKEN:" + (endTime - startTime));
 		}
 	}
 
@@ -376,7 +421,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	protected void log() {
 		if (!archiveFileCreated) {
 			try {
-				setupArchiveVisualizer(archive.getBinMapping());
+				if(Parameters.parameters.booleanParameter("io")) setupArchiveVisualizer(archive.getBinMapping());
 			} catch (FileNotFoundException e) {
 				System.out.println("Could not create archive visualization file.");
 				e.printStackTrace();
@@ -405,11 +450,11 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				Vector<Score<T>> population = archive.archive;
 				for(Score<T> p : population) {
 					if(p == null || p.individual == null) eliteProper[i] = NUM_CODE_EMPTY; //if bin is empty
-					else if(((CPPNOrDirectToGANGenotype) p.individual).getFirstForm()) {
+					else if( (p.individual instanceof CPPNOrDirectToGANGenotype && ((CPPNOrDirectToGANGenotype) p.individual).getFirstForm()) || 
+							 (p.individual instanceof CPPNOrBlockVectorGenotype && ((CPPNOrBlockVectorGenotype) p.individual).getFirstForm()) ) {
 						numCPPN++;
 						eliteProper[i] = NUM_CODE_CPPN; //number for CPPN
 					} else { // Assume first form is false
-						assert !((CPPNOrDirectToGANGenotype) p.individual).getFirstForm();
 						numDirect++;
 						eliteProper[i] = NUM_CODE_DIRECT; //number for Direct
 					}
@@ -488,7 +533,22 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	@Override
 	public void newIndividual() {
 		int index = archive.randomOccupiedBinIndex();
-		Genotype<T> parent1 = archive.getElite(index).individual;
+		newIndividual(index);
+	}
+
+	/**
+	 * Generate a new individual (possibly two) that have a specific individual
+	 * as one of the parents. Individual is designated by its index in the 1D archive.
+	 * 
+	 * @param parentIndex
+	 */
+	@SuppressWarnings("rawtypes")
+	public void newIndividual(int parentIndex) {
+		assert archive.getElite(parentIndex) != null : parentIndex + " in " + archive;
+		assert archive.getArchive().stream().filter(s -> s != null).count() == archive.getNumberOfOccupiedBins() : archive.getNumberOfOccupiedBins()+" supposedly occupied, but "+
+				"Archive "+ Arrays.toString(archive.getArchive().stream().map(s -> s == null ? "X" : ((Score) s).behaviorIndexScore() ).toArray());
+		
+		Genotype<T> parent1 = archive.getElite(parentIndex).individual;
 		long parentId1 = parent1.getId(); // Parent Id comes from original genome
 		long parentId2 = NUM_CODE_EMPTY;
 		Genotype<T> child1 = parent1.copy(); // Copy with different Id (will be further modified below)
@@ -522,6 +582,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			EvolutionaryHistory.logLineageData(parentId1,parentId2,child1);
 		}
 		// Evaluate and add child to archive
+		//System.out.println("====================================================");
 		Score<T> s1 = task.evaluate(child1);
 		// Indicate whether elite was added
 		boolean child1WasElite = archive.add(s1);
@@ -625,7 +686,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			System.out.println("Loss ranges from "+minLoss+" to "+maxLoss);
 		}		
 		// Will bin differently because autoencoder has changed, as have expected loss bounds. Images get re-evaluated
-		this.archive = new Archive<T>(previousImages, this.archive.getBinLabelsClass(), this.archive.getArchiveDirectory(), CommonConstants.netio); 
+		this.archive = new Archive<T>(previousImages, this.archive.getBinMapping(), this.archive.getArchiveDirectory(), CommonConstants.netio); 
 	}
 	
 	/**

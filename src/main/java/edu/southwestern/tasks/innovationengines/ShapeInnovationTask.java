@@ -66,7 +66,7 @@ public class ShapeInnovationTask extends LonerTask<Pair<TWEANN, ArrayList<Double
 		Pair<TWEANN,ArrayList<Double>> pair = individual.getPhenotype();
 		Network cppn = pair.t1;
 		// Get the shape
-		List<Triangle> tris = ThreeDimensionalUtil.trianglesFromCPPN(cppn, ImageNetClassification.IMAGE_NET_INPUT_WIDTH, ImageNetClassification.IMAGE_NET_INPUT_HEIGHT, ThreeDimensionalObjectBreederTask.CUBE_SIDE_LENGTH, ThreeDimensionalObjectBreederTask.SHAPE_WIDTH, ThreeDimensionalObjectBreederTask.SHAPE_HEIGHT, ThreeDimensionalObjectBreederTask.SHAPE_DEPTH, null, ArrayUtil.doubleOnes(numCPPNInputs()));
+		List<Triangle> tris = ThreeDimensionalUtil.trianglesFromCPPN(cppn, ImageNetClassification.IMAGE_NET_INPUT_WIDTH, ImageNetClassification.IMAGE_NET_INPUT_HEIGHT, ThreeDimensionalObjectBreederTask.CUBE_SIDE_LENGTH, ThreeDimensionalObjectBreederTask.SHAPE_WIDTH, ThreeDimensionalObjectBreederTask.SHAPE_HEIGHT, ThreeDimensionalObjectBreederTask.SHAPE_DEPTH, null, ArrayUtil.doubleOnes(numCPPNInputs()), Parameters.parameters.booleanParameter("objectBreederDistanceInEachPlane"));
 		// Get image from multiple angles
 		Color evolvedColor = new Color(pair.t2.get(INDEX_RED).floatValue(),pair.t2.get(INDEX_GREEN).floatValue(),pair.t2.get(INDEX_BLUE).floatValue()); // Evolved background color
 		double pitch = pair.t2.get(INDEX_PITCH) * 2 * Math.PI; 
@@ -156,7 +156,7 @@ public class ShapeInnovationTask extends LonerTask<Pair<TWEANN, ArrayList<Double
 				Network cppn = pair.t1;
 				
 				// Get the shape
-				List<Triangle> tris = ThreeDimensionalUtil.trianglesFromCPPN(cppn, saveWidth, saveHeight, ThreeDimensionalObjectBreederTask.CUBE_SIDE_LENGTH, ThreeDimensionalObjectBreederTask.SHAPE_WIDTH, ThreeDimensionalObjectBreederTask.SHAPE_HEIGHT, ThreeDimensionalObjectBreederTask.SHAPE_DEPTH, null, ArrayUtil.doubleOnes(numCPPNInputs()));
+				List<Triangle> tris = ThreeDimensionalUtil.trianglesFromCPPN(cppn, saveWidth, saveHeight, ThreeDimensionalObjectBreederTask.CUBE_SIDE_LENGTH, ThreeDimensionalObjectBreederTask.SHAPE_WIDTH, ThreeDimensionalObjectBreederTask.SHAPE_HEIGHT, ThreeDimensionalObjectBreederTask.SHAPE_DEPTH, null, ArrayUtil.doubleOnes(numCPPNInputs()), Parameters.parameters.booleanParameter("objectBreederDistanceInEachPlane"));
 				// Render and rotate
 				Color evolvedColor = new Color(pair.t2.get(INDEX_RED).floatValue(),pair.t2.get(INDEX_GREEN).floatValue(),pair.t2.get(INDEX_BLUE).floatValue()); // Evolved background color
 				double pitch = pair.t2.get(INDEX_PITCH) * 2 * Math.PI; 

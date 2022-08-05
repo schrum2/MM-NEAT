@@ -4,8 +4,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Optional;
+import java.util.Set;
 import java.util.Vector;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.scores.Score;
@@ -22,10 +27,6 @@ public class Archive<T> {
 	private boolean saveElites;
 	private String archiveDir;
 
-	public BinLabels getBinLabelsClass() {
-		return mapping;
-	}
-	
 	public Archive(boolean saveElites, String archiveDirectoryName) {
 		this.saveElites = saveElites;
 		// Initialize mapping
@@ -37,6 +38,7 @@ public class Archive<T> {
 			System.exit(1);
 		}
 		int numBins = mapping.binLabels().size();
+		System.out.println("Archive contains "+numBins+" number of bins");
 		archive = new Vector<Score<T>>(numBins);
 		occupiedBins = 0;
 		// Archive directory
@@ -149,14 +151,16 @@ public class Archive<T> {
 			// When using the whole behavior vector, have to wastefully check every index
 			IntStream stream = IntStream.range(0, archive.size());
 			long newElites = stream.parallel().filter((i) -> {
-				Score<T> elite = archive.get(i);
-				return replaceIfBetter(candidate, i, elite);
+				synchronized(this) { // Don't want some other elite to be added after retrieving a null elite
+					Score<T> elite = archive.get(i);
+					return replaceIfBetter(candidate, i, elite);
+				}
 			}).count(); // Number of bins whose elite was replaced
 			//System.out.println(newElites + " elites were replaced");
 			// Whether any elites were replaced
 			return newElites > 0;
-		} else if(candidate.usesMAPElitesMapSpecification()) {
-			int oneD = this.getBinMapping().oneDimensionalIndex(candidate.MAPElitesBehaviorMap());
+		} else if(candidate.usesMAPElitesMapSpecification() && !getBinMapping().discard(candidate.MAPElitesBehaviorMap())) {
+			int oneD = getBinMapping().oneDimensionalIndex(candidate.MAPElitesBehaviorMap());
 			boolean result = false;
 			synchronized(this) { // Make sure elite at the index does not change while considering replacement
 				// Synchronizing on the whole archive seems unnecessary ... maybe just the index? How?
@@ -202,6 +206,40 @@ public class Archive<T> {
 		} else {
 			return false;
 		}
+	}
+	
+	/**
+	 * Return set of Scores that are tied for highest fitness
+	 * across the whole archive.
+	 * 
+	 * @return Set of champion Score instances containing genotypes
+	 */
+	public synchronized Set<Score<T>> getChampions() {
+		// Filter out null entries
+		Stream<Score<T>> nonNullStream = archive.parallelStream().filter(s -> s != null);
+		// Find one of the max scores (at least one should exist)
+		Optional<Score<T>> maxScore = nonNullStream.max(new Comparator<Score<T>>(){
+			@Override
+			public int compare(Score<T> o1, Score<T> o2) {
+				return (int) Math.signum(o1.behaviorIndexScore() - o2.behaviorIndexScore());
+			}
+		});
+		// Get the set of all max scores
+		return archive.parallelStream().filter(s -> s != null).filter(s -> s.behaviorIndexScore() == maxScore.get().behaviorIndexScore()).collect(Collectors.toSet());
+	}
+	
+	/**
+	 * Remove an elite from the archive
+	 * @param binIndex 1D index of elite in archive
+	 * @return Element that was removed
+	 */
+	public synchronized Score<T> removeElite(int binIndex) {
+		Score<T> current = archive.get(binIndex);
+		archive.set(binIndex, null);
+		if(current != null) {
+			occupiedBins--;
+		}
+		return current;
 	}
 
 	/**
@@ -253,6 +291,8 @@ public class Archive<T> {
 	 * @return elite individual score instance
 	 */
 	public Score<T> getElite(int binIndex) {
+		assert archive.size() != 0;
+		assert binIndex < archive.size() : binIndex + " of "+ archive.size()+":" +this.getBinMapping().binLabels();
 		return archive.get(binIndex);
 	}
 	

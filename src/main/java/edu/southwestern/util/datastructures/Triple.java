@@ -27,12 +27,14 @@ public class Triple<X, Y, Z> {
 
 	@Override
 	public boolean equals(Object other) {
+		boolean result = false;
 		if (other instanceof Triple) {
 			@SuppressWarnings("unchecked")
 			Triple<X,Y,Z> p = (Triple<X,Y,Z>) other;
-			return t1.equals(p.t1) && t2.equals(p.t2) && t3.equals(p.t3);
+			result = t1.equals(p.t1) && t2.equals(p.t2) && t3.equals(p.t3);
 		}
-		return false;
+		//System.out.println(result + ":" +this + " equals " + other);
+		return result;
 	}
 
 	@Override

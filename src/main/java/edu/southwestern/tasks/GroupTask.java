@@ -21,7 +21,6 @@ import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.file.Serialization;
 import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.random.RandomNumbers;
-import wox.serial.Easy;
 
 /**
  * Task involving multiple individuals taken from separate populations.

@@ -63,7 +63,7 @@ import edu.southwestern.util.search.Search;
  */
 public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> implements JsonLevelGenerationTask<T> {	
 
-	private static final int SEGMENT_WIDTH_IN_BLOCKS = 28; // GAN training window
+	public static final int SEGMENT_WIDTH_IN_BLOCKS = 28; // GAN training window
 	private static final int PIXEL_BLOCK_WIDTH = 16; // Is this right?
 
 	private Agent agent;
@@ -95,7 +95,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> implements Jso
 			System.exit(1);
 		}
 
-		// Fitness
+		// FitnessfitnessRequiresSimulation
 		numFitnessFunctions = 0;
 		fitnessRequiresSimulation = false; // Until proven otherwise
 		segmentFitness = false;
@@ -301,26 +301,30 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> implements Jso
 		double percentLevelPassed = info == null ? 0 : distancePassed / totalPassableDistance(info);
 		double time = info == null ? 0 : info.timeSpentOnLevel;
 		double jumps = info == null ? 0 : info.jumpActionsPerformed;
-		int numDistinctSegments;
+		int numDistinctSegments = -1; // If not used, value will be -1
+		
+		double[] otherScores = new double[] {distancePassed, percentLevelPassed, time, jumps};
+		
 		//put each segment into a HashSet to see if it's  distinct
 		HashSet<List<List<Integer>>> k = new HashSet<List<List<Integer>>>();
         List<List<List<Integer>>> levelWithParsedSegments = MarioLevelUtil.getSegmentsFromLevel(oneLevel, SEGMENT_WIDTH_IN_BLOCKS);
+        ArrayList<double[]> lastLevelSegmentStats = null;
+        double[] lastLevelCompleteStats = LevelParser.getWholeLevelStats(oneLevel);
         //int numSegments = 0;
-        for(List<List<Integer>> segment : levelWithParsedSegments) {
-        	k.add(segment);
-        	//numSegments++;
-        }
-//		int numSegments = levelWithParsedSegments.size();
-		numDistinctSegments = k.size();
+        if(levelWithParsedSegments != null) {
+        	// The concept of segments really only applies to GAN-generated levels, but not levels from MarioCPPNLevelTask
+        	for(List<List<Integer>> segment : levelWithParsedSegments) {
+        		k.add(segment);
+        		//numSegments++;
+        	}
+        	numDistinctSegments = k.size();
 
-		
-		
-		double[] otherScores = new double[] {distancePassed, percentLevelPassed, time, jumps};
-		// Adds Vanessa's Mario stats: Decoration Frequency, Leniency, Negative Space
-		ArrayList<double[]> lastLevelStats = LevelParser.getLevelStats(oneLevel, SEGMENT_WIDTH_IN_BLOCKS);
-		for(double[] stats:lastLevelStats){
-			otherScores = ArrayUtils.addAll(otherScores, stats);
-		}
+        	// Adds Vanessa's Mario stats: Decoration Frequency, Leniency, Negative Space
+        	lastLevelSegmentStats = Parameters.parameters.booleanParameter("marioGANUsesOriginalEncoding") ? OldLevelParser.getLevelStats(oneLevel, SEGMENT_WIDTH_IN_BLOCKS) : LevelParser.getLevelStats(oneLevel, SEGMENT_WIDTH_IN_BLOCKS);
+        	for(double[] stats:lastLevelSegmentStats){
+        		otherScores = ArrayUtils.addAll(otherScores, stats);
+        	}
+        }
 
 		ArrayList<Double> fitnesses = new ArrayList<>(numFitnessFunctions);
 		if(Parameters.parameters.booleanParameter("marioProgressPlusJumpsFitness")) {
@@ -386,35 +390,35 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> implements Jso
 
 		// Encourages an alternating pattern of Vanessa's objectives
 		if(Parameters.parameters.booleanParameter("marioLevelAlternatingLeniency")) {
-			fitnesses.add(alternatingStatScore(lastLevelStats, LENIENCY_STAT_INDEX));
+			fitnesses.add(alternatingStatScore(lastLevelSegmentStats, LENIENCY_STAT_INDEX));
 		}
 		if(Parameters.parameters.booleanParameter("marioLevelAlternatingNegativeSpace")) {
-			fitnesses.add(alternatingStatScore(lastLevelStats, NEGATIVE_SPACE_STAT_INDEX));
+			fitnesses.add(alternatingStatScore(lastLevelSegmentStats, NEGATIVE_SPACE_STAT_INDEX));
 		}
 		if(Parameters.parameters.booleanParameter("marioLevelAlternatingDecoration")) {
-			fitnesses.add(alternatingStatScore(lastLevelStats, DECORATION_FREQUENCY_STAT_INDEX));
+			fitnesses.add(alternatingStatScore(lastLevelSegmentStats, DECORATION_FREQUENCY_STAT_INDEX));
 		}
 
 		// Encourages a periodic pattern of Vanessa's objectives
 		if(Parameters.parameters.booleanParameter("marioLevelPeriodicLeniency")) {
-			fitnesses.add(periodicStatScore(lastLevelStats, LENIENCY_STAT_INDEX));
+			fitnesses.add(periodicStatScore(lastLevelSegmentStats, LENIENCY_STAT_INDEX));
 		}
 		if(Parameters.parameters.booleanParameter("marioLevelPeriodicNegativeSpace")) {
-			fitnesses.add(periodicStatScore(lastLevelStats, NEGATIVE_SPACE_STAT_INDEX));
+			fitnesses.add(periodicStatScore(lastLevelSegmentStats, NEGATIVE_SPACE_STAT_INDEX));
 		}
 		if(Parameters.parameters.booleanParameter("marioLevelPeriodicDecoration")) {
-			fitnesses.add(periodicStatScore(lastLevelStats, DECORATION_FREQUENCY_STAT_INDEX));
+			fitnesses.add(periodicStatScore(lastLevelSegmentStats, DECORATION_FREQUENCY_STAT_INDEX));
 		}
 
 		// Encourages a symmetric pattern of Vanessa's objectives
 		if(Parameters.parameters.booleanParameter("marioLevelSymmetricLeniency")) {
-			fitnesses.add(symmetricStatScore(lastLevelStats, LENIENCY_STAT_INDEX));
+			fitnesses.add(symmetricStatScore(lastLevelSegmentStats, LENIENCY_STAT_INDEX));
 		}
 		if(Parameters.parameters.booleanParameter("marioLevelSymmetricNegativeSpace")) {
-			fitnesses.add(symmetricStatScore(lastLevelStats, NEGATIVE_SPACE_STAT_INDEX));
+			fitnesses.add(symmetricStatScore(lastLevelSegmentStats, NEGATIVE_SPACE_STAT_INDEX));
 		}
 		if(Parameters.parameters.booleanParameter("marioLevelSymmetricDecoration")) {
-			fitnesses.add(symmetricStatScore(lastLevelStats, DECORATION_FREQUENCY_STAT_INDEX));
+			fitnesses.add(symmetricStatScore(lastLevelSegmentStats, DECORATION_FREQUENCY_STAT_INDEX));
 		}
 
 		double simpleAStarDistance = -1;
@@ -489,7 +493,8 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> implements Jso
 			behaviorMap.put("binScore", binScore); // Quality Score!
 			
 			// All possible behavior characterization information
-			behaviorMap.put("Level Stats",lastLevelStats);
+			behaviorMap.put("Level Stats",lastLevelSegmentStats);
+			behaviorMap.put("Complete Stats", lastLevelCompleteStats);
 			behaviorMap.put("Distinct Segments",numDistinctSegments);
 			// It would be slightly more efficient to use levelWithParsedSegments here, but then Mario Novelty
 			// calculation would require distinct code in comparison with Mega Man, which makes the code a mess.
@@ -532,6 +537,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> implements Jso
 			// If the bin is empty, or the candidate is better than the elite for that bin's score
 			if(elite == null || binScore > elite.behaviorIndexScore()) {
 				if(binScore > fitnessSaveThreshold) {
+					assert individual != null : "null individual";
 					String fileName = String.format("%7.5f", binScore) + "_" + individual.getId() + ".png";
 					if(individual instanceof CPPNOrDirectToGANGenotype) {
 						CPPNOrDirectToGANGenotype temp = (CPPNOrDirectToGANGenotype) individual;

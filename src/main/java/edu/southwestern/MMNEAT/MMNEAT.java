@@ -13,6 +13,7 @@ import edu.southwestern.evolution.EA;
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.ScoreHistory;
 import edu.southwestern.evolution.crossover.Crossover;
+import edu.southwestern.evolution.genotypes.CPPNOrBlockVectorGenotype;
 import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.CombinedGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
@@ -33,6 +34,7 @@ import edu.southwestern.evolution.metaheuristics.Metaheuristic;
 import edu.southwestern.evolution.metaheuristics.SubstrateLinkPenalty;
 import edu.southwestern.evolution.mulambda.MuLambda;
 import edu.southwestern.experiment.Experiment;
+import edu.southwestern.experiment.post.MinecraftBlockRenderExperiment;
 import edu.southwestern.log.EvalLog;
 import edu.southwestern.log.MMNEATLog;
 import edu.southwestern.log.PerformanceLog;
@@ -48,10 +50,13 @@ import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.tasks.MultiplePopulationTask;
 import edu.southwestern.tasks.Task;
-import edu.southwestern.tasks.extendedPicbreeder.PictureEvolutionTask;
+import edu.southwestern.tasks.evocraft.blocks.BlockSet;
+import edu.southwestern.tasks.evocraft.shapegeneration.ShapeGenerator;
 import edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.BinOriginalZeldaDungeons;
 import edu.southwestern.tasks.gvgai.zelda.study.HumanSubjectStudy2019Zelda;
 import edu.southwestern.tasks.mario.gan.GANProcess;
+import edu.southwestern.tasks.mario.level.BinOriginalMarioLevels;
 import edu.southwestern.tasks.motests.MultipleFunctionOptimization;
 import edu.southwestern.tasks.mspacman.facades.ExecutorFacade;
 import edu.southwestern.tasks.rlglue.tetris.HyperNEATTetrisTask;
@@ -110,13 +115,16 @@ public class MMNEAT {
 	@SuppressWarnings("rawtypes")
 	public static Archive pseudoArchive;
 	public static boolean usingDiversityBinningScheme = false;
+	public static BlockSet blockSet; // Possible blocks in Minecraft
+	@SuppressWarnings("rawtypes")
+	public static ShapeGenerator shapeGenerator; // Way shapes are generated in Minecraft
 	
 	public static MMNEAT mmneat;
 
 	@SuppressWarnings("rawtypes")
 	public static BinLabels getArchiveBinLabelsClass() {
 		if (pseudoArchive != null) {
-			return pseudoArchive.getBinLabelsClass();
+			return pseudoArchive.getBinMapping();
 		} else if (ea instanceof MAPElites) {
 			return ((MAPElites) ea).getBinLabelsClass();
 		}
@@ -203,6 +211,7 @@ public class MMNEAT {
 				genotype instanceof TWEANNPlusParametersGenotype ||
 				genotype instanceof CombinedGenotype || // Assume first member of pair is TWEANNGenotype
 				genotype instanceof CPPNOrDirectToGANGenotype || // Assume first form is TWEANNGenotype
+				genotype instanceof CPPNOrBlockVectorGenotype || // Assume first form is TWEANNGenotype
 				genotype instanceof HyperNEATCPPNforDL4JGenotype) { // Contains CPPN that is TWEANNGenotype
 			if (Parameters.parameters.booleanParameter("io")
 					&& Parameters.parameters.booleanParameter("logTWEANNData")) {
@@ -218,11 +227,13 @@ public class MMNEAT {
 					((TWEANNPlusParametersGenotype) genotype).getTWEANNGenotype().biggestInnovation() :
 						genotype instanceof CPPNOrDirectToGANGenotype ?
 								((TWEANNGenotype) ((CPPNOrDirectToGANGenotype) genotype).getCurrentGenotype()).biggestInnovation():
-									(genotype instanceof CombinedGenotype ? 
-											((TWEANNGenotype) ((CombinedGenotype) genotype).t1).biggestInnovation() :
-												(genotype instanceof HyperNEATCPPNforDL4JGenotype ?
-														((HyperNEATCPPNforDL4JGenotype) genotype).getCPPN().biggestInnovation()	:
-															((TWEANNGenotype) genotype).biggestInnovation()));
+									(genotype instanceof CPPNOrBlockVectorGenotype ? 
+											((TWEANNGenotype) ((CPPNOrBlockVectorGenotype) genotype).getCurrentGenotype()).biggestInnovation():
+												(genotype instanceof CombinedGenotype ? 
+														((TWEANNGenotype) ((CombinedGenotype) genotype).t1).biggestInnovation() :
+															(genotype instanceof HyperNEATCPPNforDL4JGenotype ?
+																	((HyperNEATCPPNforDL4JGenotype) genotype).getCPPN().biggestInnovation()	:
+																		((TWEANNGenotype) genotype).biggestInnovation())));
 					
 			if (biggestInnovation > EvolutionaryHistory.largestUnusedInnovationNumber) {
 					EvolutionaryHistory.setInnovation(biggestInnovation + 1);
@@ -320,7 +331,7 @@ public class MMNEAT {
 			actualFitnessFunctions.set(pop, num);
 		}
 		// For coevolution.
-		// Create enough objective arrays to accomadate each population
+		// Create enough objective arrays to accommodate each population
 		while(fitnessFunctions.size() <= pop) {
 			fitnessFunctions.add(new ArrayList<String>());
 		}
@@ -718,6 +729,29 @@ public class MMNEAT {
 				throw new IllegalArgumentException("zeldaType : " + type + " unrecognized. (original, generated, tutorial)");
 			}
 			HumanSubjectStudy2019Zelda.runTrial(t);
+		} else if(args[0].equals("minecraftBlocks")){
+			String[] reducedArgs = new String[args.length - 1];
+			System.arraycopy(args, 1, reducedArgs, 0, reducedArgs.length);
+			Parameters.initializeParameterCollections(reducedArgs);
+			MinecraftBlockRenderExperiment experiment = new MinecraftBlockRenderExperiment();
+			experiment.init();
+			experiment.run();
+		} else if(args[0].equals("binMario")){
+			try {
+				BinOriginalMarioLevels.main(new String[0]);
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.out.println("Error while running BinOriginalMarioLevels");
+				System.exit(1);
+			}
+		} else if(args[0].equals("binZelda")){
+			try {
+				BinOriginalZeldaDungeons.main(new String[0]);
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.out.println("Error while running BinOriginalZeldaDungeons");
+				System.exit(1);
+			}
 		} else {
 			evolutionaryRun(args);
 		}

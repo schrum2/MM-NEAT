@@ -2,7 +2,6 @@ package edu.southwestern.evolution.mapelites.generalmappings;
 
 import static org.junit.Assert.assertEquals;
 
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,8 +23,6 @@ import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.zelda.ZeldaGANDungeonTask;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Pair;
-import edu.southwestern.util.graphics.DrawingPanel;
-import edu.southwestern.util.graphics.GraphicsUtil;
 import edu.southwestern.util.search.AStarSearch;
 import edu.southwestern.util.search.Search;
 
@@ -95,7 +92,6 @@ public class LevelTraversalPathBinLabelsTest {
 		System.out.println("[TEST] CREATE DUNGEON");
 		Dungeon dungeon = ZeldaGANDungeonTask.getZeldaDungeonFromDirectArrayList(geno, 17, levelDimensions, levelDimensions);
 		
-		
 		System.out.println("[TEST] START SEARCH");
 		Search<GridAction,ZeldaState> search = new AStarSearch<>(ZeldaLevelUtil.manhattan);
 		ZeldaState startState = new ZeldaState(5, 5, 0, dungeon);
@@ -126,11 +122,13 @@ public class LevelTraversalPathBinLabelsTest {
 		}
 		
 		HashSet<ZeldaState> mostRecentVisited = ((AStarSearch<GridAction, ZeldaState>) search).getVisited();
-		
+						
 		System.out.println("[TEST] LABEL OUTPUT");
 		HashMap<String, Object> behaviorMap = new HashMap<String, Object>();
 		behaviorMap.put("Level Path", mostRecentVisited);
 		
+//		System.out.println(behaviorMap);
+//		
 //		// view dungeon graphically to confirm
 //		DungeonUtil.viewDungeon(dungeon, mostRecentVisited, solutionPath);
 //		//DrawingPanel childPanel = GraphicsUtil.drawImage(image, "output", image.getWidth(), image.getHeight());
@@ -147,14 +145,12 @@ public class LevelTraversalPathBinLabelsTest {
 	 * cases 
 	 */
 	private String bitStringFromBehaviorMap(HashMap<String, Object> behaviorMap) {
-		int index = binLabels.multiDimensionalIndices(behaviorMap)[0];
-		String bitStr = Integer.toBinaryString(index);
-		// pad out bitStr to the right size
-		while (bitStr.length() < 16) {
-			bitStr = "0" + bitStr;
-		}
+		String bitStr = binLabels.getBitStringLabel(behaviorMap);
+		// Hard coded for 4 by 4?
+		//assert LevelTraversalPathBinLabels.binStringConnected(bitStr, 4,4) : "Not connected: " + bitStr;
 		return bitStr;
 	}
+	
 	
 	@Test
 	public void testBinLabels() {
@@ -176,6 +172,7 @@ public class LevelTraversalPathBinLabelsTest {
 		HashMap<String, Object> behaviorMap1 = genotypeIntoBehaviorMap(geno);
 		String bitStr1 = bitStringFromBehaviorMap(behaviorMap1);
 		
+		// print out visual representation of dungeon (using the binary string)
 		System.out.println("dungeon layout:\n "+bitStr1.substring(0, 4));
 		System.out.println(" "+bitStr1.substring(4, 8));
 		System.out.println(" "+bitStr1.substring(8, 12));
@@ -222,5 +219,74 @@ public class LevelTraversalPathBinLabelsTest {
 							+ "0011");
 		
 	}
+
+	// This old version of the test assumed there was a bin label for every binary string,
+	// but that wastes a lot of space.
+//	@Test
+//	public void testBinLabels() {
+//		@SuppressWarnings("unused")
+//		// Make labels
+//		List<String> labels = binLabels.binLabels();
+//		// Determine genotype length
+//		int genoLength = (GANProcess.latentVectorLength()+ZeldaCPPNtoGANLevelBreederTask.numberOfNonLatentVariables())*16;
+//		System.out.println("[TEST] GENOME LENGTH: "+genoLength);
+//		
+//		
+//		
+//		// First test genotype
+//		ArrayList<Double> geno = new ArrayList<>(genoLength);
+//		for (int i = 0; i < genoLength; i++) {
+//			geno.add(((double)i)/genoLength);
+//		}
+//		// get map
+//		HashMap<String, Object> behaviorMap1 = genotypeIntoBehaviorMap(geno);
+//		String bitStr1 = bitStringFromBehaviorMap(behaviorMap1);
+//		
+//		System.out.println("dungeon layout:\n "+bitStr1.substring(0, 4));
+//		System.out.println(" "+bitStr1.substring(4, 8));
+//		System.out.println(" "+bitStr1.substring(8, 12));
+//		System.out.println(" "+bitStr1.substring(12, 16));
+//		
+//		// Get bit string from the behavior map, and make sure it found the right rooms
+//		assertEquals(bitStr1, "0110"
+//							+ "0010"
+//							+ "0011"
+//							+ "0001");
+//
+//		
+//		
+//		// Second test genotype
+//		geno = new ArrayList<>(genoLength); // Clear genotype
+//		for (int i = 0; i < genoLength; i++) {
+//			geno.add(((double)i)/2*genoLength);
+//		}
+//		// get map
+//		HashMap<String, Object> behaviorMap2 = genotypeIntoBehaviorMap(geno);
+//		String bitStr2 = bitStringFromBehaviorMap(behaviorMap2);
+//		
+//		// Get bit string from the behavior map, and make sure it found the right rooms
+//		assertEquals(bitStr2, "0111"
+//							+ "0011"
+//							+ "0011"
+//							+ "0001");
+//		
+//		
+//		
+//		// Second test genotype
+//		geno = new ArrayList<>(genoLength); // Clear genotype
+//		for (int i = 0; i < genoLength; i++) {
+//			geno.add(((double)i)/3*genoLength);
+//		}
+//		// get map
+//		HashMap<String, Object> behaviorMap3 = genotypeIntoBehaviorMap(geno);
+//		String bitStr3 = bitStringFromBehaviorMap(behaviorMap3);
+//		
+//		// Get bit string from the behavior map, and make sure it found the right rooms
+//		assertEquals(bitStr3, "0110"
+//							+ "0111"
+//							+ "0010"
+//							+ "0011");
+//		
+//	}
 
 }

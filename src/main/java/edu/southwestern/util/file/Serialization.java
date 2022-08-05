@@ -24,6 +24,8 @@ import wox.serial.Easy;
  * @author Jacob Schrum
  */
 public class Serialization {
+	// Prints stack trace on failures
+	public static boolean debug = true;
 	/**
 	 * Use Java's built-in approach to serialization to save to file any
 	 * class that implements Serializable. The provided filename should
@@ -46,7 +48,7 @@ public class Serialization {
 				objectOutputStream.flush();
 				objectOutputStream.close();
 			} catch (Exception e) {
-				e.printStackTrace();
+				if(debug) e.printStackTrace();
 			}
 		}
 	}
@@ -77,7 +79,7 @@ public class Serialization {
 			objectInputStream.close(); 
 			return result;
 		}catch(Exception e) {
-			e.printStackTrace();
+			if(debug) e.printStackTrace();
 			return null;
 		}
 	}

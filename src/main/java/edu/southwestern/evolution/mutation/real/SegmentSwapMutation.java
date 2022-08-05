@@ -1,10 +1,10 @@
 package edu.southwestern.evolution.mutation.real;
 
-
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.megaman.MegaManTrackSegmentType;
 import edu.southwestern.MMNEAT.MMNEAT;
@@ -23,41 +23,10 @@ import edu.southwestern.tasks.megaman.MegaManVGLCUtil;
 *
 * @author Maxx Batterton
 */
-public class SegmentSwapMutation extends RealMutation {
-	
-	protected final int segmentSize;
-	protected final int segmentAmount;
-	protected final int auxVariableStartLocation;
-	protected final int auxVariableEndLocation;
-	protected final boolean segmentSwapAuxiliaryVarialbes;
-
-	
-	protected ArrayList<Double> storedSegment;
+public class SegmentSwapMutation extends SegmentMutation {
 	
 	public SegmentSwapMutation() {
 		super("GANSegmentSwapMutationRate");
-		this.segmentSize = GANProcess.evolvedSegmentLength(); //Parameters.parameters.integerParameter(""); // Maxx: temporarily set to 448 for mario length testing
-		this.segmentSwapAuxiliaryVarialbes = Parameters.parameters.booleanParameter("segmentSwapAuxiliaryVarialbes");
-		switch(GANProcess.type) {
-		case MARIO:
-			this.segmentAmount = Parameters.parameters.integerParameter("marioGANLevelChunks");
-			this.auxVariableStartLocation = -1;
-			this.auxVariableEndLocation = -1;
-			break;
-		case ZELDA:
-			throw new UnsupportedOperationException("figure this out later");
-		case MEGA_MAN:
-			this.segmentAmount = Parameters.parameters.integerParameter("megaManGANLevelChunks");
-			this.auxVariableStartLocation = Parameters.parameters.integerParameter("megaManAuxVarsStart");
-			this.auxVariableEndLocation = Parameters.parameters.integerParameter("megaManAuxVarsEnd");
-			break;
-		case LODE_RUNNER:
-			throw new UnsupportedOperationException("Lode Runner levels only have a single segment, thus swap mutations make no sense");
-		default:
-			throw new UnsupportedOperationException("Pick a game");
-		}
-		//this.segmentAmount = Parameters.parameters.integerParameter("marioGANLevelChunks"); // temp, change to new param for usability in other games
-		this.storedSegment = new ArrayList<Double>(this.segmentSize);
 	}
 	
 	@Override
@@ -129,7 +98,7 @@ public class SegmentSwapMutation extends RealMutation {
 		}
 		
 		Genotype<ArrayList<Double>> realGeno = new BoundedRealValuedGenotype(geno);
-		MegaManTrackSegmentType segmentCount = new MegaManTrackSegmentType();
+		MegaManTrackSegmentType segmentTypeTracker = new MegaManTrackSegmentType();
 		// Passing this parameter inside the hash map instead of as a normal parameter is confusing, 
 		// but allows this class to conform to the JsonLevelGenerationTask easily.
 		
@@ -137,7 +106,7 @@ public class SegmentSwapMutation extends RealMutation {
 		
 		System.out.println("Before: ");
 		System.out.println(realGeno.getPhenotype());
-		List<List<Integer>> level = ((MegaManGANLevelTask) MMNEAT.task).getMegaManLevelListRepresentationFromGenotype(realGeno, segmentCount); //gets a level 
+		List<List<Integer>> level = ((MegaManGANLevelTask) MMNEAT.task).getMegaManLevelListRepresentationFromGenotype(realGeno, segmentTypeTracker); //gets a level 
 		MegaManVGLCUtil.printLevel(level);
 		
 //		BufferedImage image;
@@ -158,8 +127,8 @@ public class SegmentSwapMutation extends RealMutation {
 		SegmentSwapMutation mutation = new SegmentSwapMutation();
 		mutation.mutate(realGeno);
 		System.out.println(realGeno.getPhenotype());
-		MegaManTrackSegmentType segmentCount1 = new MegaManTrackSegmentType();
-		List<List<Integer>> level1 = ((MegaManGANLevelTask) MMNEAT.task).getMegaManLevelListRepresentationFromGenotype(realGeno, segmentCount1); //gets a level
+		MegaManTrackSegmentType segmentTypeTracker1 = new MegaManTrackSegmentType();
+		List<List<Integer>> level1 = ((MegaManGANLevelTask) MMNEAT.task).getMegaManLevelListRepresentationFromGenotype(realGeno, segmentTypeTracker1); //gets a level
 		MegaManVGLCUtil.printLevel(level1);
 		
 		System.out.println(level.size() + " " + level1.get(0).size());

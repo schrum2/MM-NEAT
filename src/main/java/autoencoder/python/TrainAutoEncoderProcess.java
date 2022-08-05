@@ -31,9 +31,9 @@ public class TrainAutoEncoderProcess extends Comm {
 	public TrainAutoEncoderProcess(String directoryName, String pthFileName) {
 		PythonUtil.setPythonProgram();
 		if(!Parameters.parameters.booleanParameter("convolutionalAutoencoder")) {
-			autoencoderPath = PYTHON_BASE_PATH + File.separator + "AutoEncoder" + File.separator + "autoencoderInputGenerator.py";
+			autoencoderPath = PYTHON_BASE_PATH + File.separator + "AutoEncoder" + File.separator; // + "autoencoderInputGenerator.py";
 		} else {
-			autoencoderPath = PYTHON_BASE_PATH + File.separator + "ColorAutoEncoder" + File.separator + "colorAutoencoderInputGenerator.py";
+			autoencoderPath = PYTHON_BASE_PATH + File.separator + "ColorAutoEncoder" + File.separator; // + "colorAutoencoderInputGenerator.py";
 		}
 		trainingImagesDirectory = directoryName;
 		this.pthFileName = pthFileName;
@@ -86,7 +86,7 @@ public class TrainAutoEncoderProcess extends Comm {
 		PythonUtil.checkPython();
 		// Run program with model architecture and weights specified as parameters
 		if(!Parameters.parameters.booleanParameter("convolutionalAutoencoder")) {
-			ProcessBuilder builder = new ProcessBuilder(PythonUtil.PYTHON_EXECUTABLE, PYTHON_BASE_PATH + File.separator + "MyAutoencoder.py", trainingImagesDirectory, pthFileName);
+			ProcessBuilder builder = new ProcessBuilder(PythonUtil.PYTHON_EXECUTABLE, autoencoderPath + "MyAutoencoder.py", trainingImagesDirectory, pthFileName);
 			builder.redirectError(Redirect.INHERIT); // Standard error will print to console
 			try {
 				System.out.println(builder.command());
@@ -95,7 +95,7 @@ public class TrainAutoEncoderProcess extends Comm {
 				e.printStackTrace();
 			}
 		} else {
-			ProcessBuilder builder = new ProcessBuilder(PythonUtil.PYTHON_EXECUTABLE, PYTHON_BASE_PATH +  File.separator + "ColorAutoEncoder" + File.separator + "ColorConvolutionalAutoencoderWithCUDA.py", trainingImagesDirectory, pthFileName);
+			ProcessBuilder builder = new ProcessBuilder(PythonUtil.PYTHON_EXECUTABLE, autoencoderPath + "ColorConvolutionalAutoencoderWithCUDA.py", trainingImagesDirectory, pthFileName);
 			builder.redirectError(Redirect.INHERIT); // Standard error will print to console
 			try {
 				System.out.println(builder.command());

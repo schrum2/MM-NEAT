@@ -615,6 +615,9 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 			Parameters.initializeParameterCollections(new String[] {});
 			//this function does not work yet, it is set to false to maintain the old enemy AI 
 			if(Parameters.parameters.booleanParameter("smartLodeRunnerEnemies")) {
+				
+				System.out.println("\"Smart\" Lode Runner AI does not properly work. Set smartLodeRunnerEnemies:false to disable this.");
+				
 				Pair<Integer, Integer> enemyPosition = new Pair<Integer, Integer>(e.x, e.y);
 				Pair<Integer, Integer> playerPosition = new Pair<Integer,Integer>(level.player1.x, level.player1.y);
 				//set variables to be max value, to make sure that it can be replaced with the lower value, or does not get selected as the lowest value

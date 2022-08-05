@@ -204,14 +204,14 @@ public class ThreeDimensionalUtil {
 	 * @param inputMultipliers determines whether inputs are turned on or off
 	 * @return List of vertexes denoting center points of all cubes being constructed
 	 */
-	public static Pair<List<Vertex>,List<Color>> getVertexesFromCPPN(Network cppn, int imageWidth, int imageHeight, int cubeSize, int shapeWidth, int shapeHeight, int shapeDepth, double[] inputMultipliers, Color color, double time) {
+	public static Pair<List<Vertex>,List<Color>> getVertexesFromCPPN(Network cppn, int imageWidth, int imageHeight, int cubeSize, int shapeWidth, int shapeHeight, int shapeDepth, double[] inputMultipliers, Color color, double time, boolean distanceInEachPlane) {
 		List<Vertex> centers = new ArrayList<>();
 		List<Color> colors = new ArrayList<>();
 		double halfCube = (cubeSize/2.0);
 		for(int x = 0; x < shapeWidth; x++) {
 			for(int y = 0; y < shapeHeight; y++) {
 				for(int z = 0; z < shapeDepth; z++) {
-					double[] inputs = get3DObjectCPPNInputs(x, y, z, shapeWidth, shapeHeight, shapeDepth, time);
+					double[] inputs = get3DObjectCPPNInputs(x, y, z, shapeWidth, shapeHeight, shapeDepth, time, distanceInEachPlane);
 					//determine whether inputs are turned on or off
 					for(int i = 0; i < inputMultipliers.length; i++) {
 						inputs[i] = inputs[i] * inputMultipliers[i];
@@ -253,13 +253,27 @@ public class ThreeDimensionalUtil {
 	 * @param depth depth of shape
 	 * @return inputs to CPPN (x, y, z coordinates of a Vertex and bias)
 	 */
-	public static double[] get3DObjectCPPNInputs(int x, int y, int z, int width, int height, int depth, double time) {
+	public static double[] get3DObjectCPPNInputs(int x, int y, int z, int width, int height, int depth, double time, boolean distanceInEachPlane) {
 		Vertex v = new Vertex(x, y, z);
 		Vertex newV = CartesianGeometricUtilities.centerAndScale(v, width, height, depth);
-		if(time == -1) {
-			return new double[]{newV.x, newV.y, newV.z, newV.distance(new Vertex(0, 0, 0)) * GraphicsUtil.SQRT2, GraphicsUtil.BIAS};
+		Vertex zero = new Vertex(0, 0, 0);
+		double distanceFromOrigin = newV.distance(zero) * GraphicsUtil.SQRT2;
+		if(distanceInEachPlane) {
+			Vertex newXY = CartesianGeometricUtilities.centerAndScale(new Vertex(x, y, 0), width, height, depth); // vertex centered and scaled for XY
+			Vertex newYZ = CartesianGeometricUtilities.centerAndScale(new Vertex(0, y, z), width, height, depth); // vertex centered and scaled for YZ
+			Vertex newXZ = CartesianGeometricUtilities.centerAndScale(new Vertex(x, 0, z), width, height, depth); // vertex centered and scaled for XZ
+			
+			double XY = newXY.distance(zero) * GraphicsUtil.SQRT2; // distance from XY and zero
+			double YZ = newYZ.distance(zero) * GraphicsUtil.SQRT2; // distance from YZ and zero
+			double XZ = newXZ.distance(zero) * GraphicsUtil.SQRT2; // distance from XZ and zero
+			
+			return new double[]{newV.x, newV.y, newV.z, distanceFromOrigin, XY, YZ, XZ, GraphicsUtil.BIAS};
 		} else {
-			return new double[]{newV.x, newV.y, newV.z, newV.distance(new Vertex(0, 0, 0)) * GraphicsUtil.SQRT2, GraphicsUtil.BIAS, time};
+			if(time == -1) {
+				return new double[]{newV.x, newV.y, newV.z, distanceFromOrigin, GraphicsUtil.BIAS};
+			} else {
+				return new double[]{newV.x, newV.y, newV.z, distanceFromOrigin, GraphicsUtil.BIAS, time};
+			}
 		}
 	}
 
@@ -379,8 +393,8 @@ public class ThreeDimensionalUtil {
 	 * @param inputMultipliers array determining whether to turn inputs on or off
 	 * @return
 	 */
-	public static BufferedImage[] rotationSequenceFromCPPN(Network cppn, int imageWidth, int imageHeight, int sideLength, int shapeWidth, int shapeHeight, int shapeDepth, Color color, int startTime, int endTime, double heading, double pitch, double[] inputMultipliers, boolean vertical) {
-		List<Triangle> tris = trianglesFromCPPN(cppn, imageWidth, imageHeight, sideLength, shapeWidth, shapeHeight, shapeDepth, color, inputMultipliers);
+	public static BufferedImage[] rotationSequenceFromCPPN(Network cppn, int imageWidth, int imageHeight, int sideLength, int shapeWidth, int shapeHeight, int shapeDepth, Color color, int startTime, int endTime, double heading, double pitch, double[] inputMultipliers, boolean vertical, boolean distanceInEachPlane) {
+		List<Triangle> tris = trianglesFromCPPN(cppn, imageWidth, imageHeight, sideLength, shapeWidth, shapeHeight, shapeDepth, color, inputMultipliers, distanceInEachPlane);
 		BufferedImage[] resultImages = imagesFromTriangles(tris, imageWidth, imageHeight, startTime, endTime, heading, pitch, color, vertical);
 		return resultImages;
 	}
@@ -399,21 +413,23 @@ public class ThreeDimensionalUtil {
 	 * @param inputMultipliers array determining whether to turn inputs on or off
 	 * @return
 	 */
-	public static List<Triangle> trianglesFromCPPN(Network cppn, int imageWidth, int imageHeight, int sideLength, int shapeWidth, int shapeHeight, int shapeDepth, Color color, double[] inputMultipliers) {
-		return trianglesFromCPPN(cppn, imageWidth, imageHeight, sideLength, shapeWidth, shapeHeight, shapeDepth, color, inputMultipliers, -1);
+	public static List<Triangle> trianglesFromCPPN(Network cppn, int imageWidth, int imageHeight, int sideLength, int shapeWidth, int shapeHeight, int shapeDepth, Color color, double[] inputMultipliers, boolean distanceInEachPlane) {
+		return trianglesFromCPPN(cppn, imageWidth, imageHeight, sideLength, shapeWidth, shapeHeight, shapeDepth, color, inputMultipliers, -1, distanceInEachPlane);
 	
 	}
 	
-	public static List<Triangle> trianglesFromCPPN(Network cppn, int imageWidth, int imageHeight, int sideLength, int shapeWidth, int shapeHeight, int shapeDepth, Color color, double[] inputMultipliers, double time) {
-		Pair<List<Vertex>, List<Color>> result = getVertexesFromCPPN(cppn, imageWidth, imageHeight, sideLength, shapeWidth, shapeHeight, shapeDepth, inputMultipliers, color, time);
+	public static List<Triangle> trianglesFromCPPN(Network cppn, int imageWidth, int imageHeight, int sideLength, int shapeWidth, int shapeHeight, int shapeDepth, Color color, double[] inputMultipliers, double time, boolean distanceInEachPlane) {
+		Pair<List<Vertex>, List<Color>> result = getVertexesFromCPPN(cppn, imageWidth, imageHeight, sideLength, shapeWidth, shapeHeight, shapeDepth, inputMultipliers, color, time, distanceInEachPlane);
 		List<Vertex> cubeVertexes = result.t1;
 		List<Color> colors = result.t2;
 		List<Triangle> tris = getShape(cubeVertexes, imageWidth, imageHeight, sideLength, inputMultipliers, colors);
+	
 		return tris;
+
 	}
 
-	public static BufferedImage currentImageFromCPPN(Network cppn, int imageWidth, int imageHeight, int sideLength, int shapeWidth, int shapeHeight, int shapeDepth, Color color, double heading, double pitch, double[] inputMultipliers) {
-		return currentImageFromCPPN(cppn, imageWidth, imageHeight, sideLength, shapeWidth, shapeHeight, shapeDepth, color, heading, pitch, inputMultipliers, -1); // -1 means time is not used
+	public static BufferedImage currentImageFromCPPN(Network cppn, int imageWidth, int imageHeight, int sideLength, int shapeWidth, int shapeHeight, int shapeDepth, Color color, double heading, double pitch, double[] inputMultipliers, boolean distanceInEachPlane) {
+		return currentImageFromCPPN(cppn, imageWidth, imageHeight, sideLength, shapeWidth, shapeHeight, shapeDepth, color, heading, pitch, inputMultipliers, -1, distanceInEachPlane); // -1 means time is not used
 	}
 	
 	/**
@@ -433,8 +449,8 @@ public class ThreeDimensionalUtil {
 	 * @param inputMultipliers indicates whether input checkboxes are turned on or off
 	 * @return
 	 */
-	public static BufferedImage currentImageFromCPPN(Network cppn, int imageWidth, int imageHeight, int sideLength, int shapeWidth, int shapeHeight, int shapeDepth, Color bgColor, double heading, double pitch, double[] inputMultipliers, double time) {
-		List<Triangle> tris = trianglesFromCPPN(cppn, imageWidth, imageHeight, sideLength, shapeWidth, shapeHeight, shapeDepth, null, inputMultipliers,time); //TODO: instead of null, allow for set color options like in the objectbreeder?
+	public static BufferedImage currentImageFromCPPN(Network cppn, int imageWidth, int imageHeight, int sideLength, int shapeWidth, int shapeHeight, int shapeDepth, Color bgColor, double heading, double pitch, double[] inputMultipliers, double time, boolean distanceInEachPlane) {
+		List<Triangle> tris = trianglesFromCPPN(cppn, imageWidth, imageHeight, sideLength, shapeWidth, shapeHeight, shapeDepth, null, inputMultipliers, time, distanceInEachPlane); //TODO: instead of null, allow for set color options like in the objectbreeder?
 		BufferedImage currentImage = imageFromTriangles(tris, imageWidth, imageHeight, heading, pitch, bgColor);
 		return currentImage;
 	}

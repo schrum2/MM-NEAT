@@ -10,7 +10,7 @@ import java.util.Random;
  */
 public class MLP implements FA<double[], double[]>, Evolvable {
 
-        private double[][] firstConnectionLayer;
+    private double[][] firstConnectionLayer;
     private double[][] secondConnectionLayer;
     private double[] hiddenNeurons;
     private double[] outputs;
@@ -25,6 +25,14 @@ public class MLP implements FA<double[], double[]>, Evolvable {
     public static final Random random = new Random();
     public double learningRate = 0.01;
 
+    /**
+     * This public constructor method uses three parameters to initialize 
+     * a MLP type neural network.  
+     * 
+     * @param numberOfInputs Integer representing the number of of inputs neurons.
+     * @param numberOfHidden Integer representing the number of hidden neurons.
+     * @param numberOfOutputs Integer representing the number of output neurons.
+     */
     public MLP(int numberOfInputs, int numberOfHidden, int numberOfOutputs) {
 
         firstConnectionLayer = new double[numberOfInputs][numberOfHidden];
@@ -37,6 +45,15 @@ public class MLP implements FA<double[], double[]>, Evolvable {
         initializeLayer(secondConnectionLayer);
     }
 
+    /**
+     * This public constructor method uses two 2-D arrays and two integer parameters
+     * to initialize a MLP type neural network.
+     * 
+     * @param firstConnectionLayer Double 2-D array used 
+     * @param secondConnectionLayer Double 2-D array used
+     * @param numberOfHidden Integer representing the number of hidden neurons
+     * @param numberOfOutputs Integer representing the number of output neurons
+     */
     public MLP(double[][] firstConnectionLayer, double[][] secondConnectionLayer, int numberOfHidden,
                int numberOfOutputs) {
         this.firstConnectionLayer = firstConnectionLayer;
@@ -46,6 +63,13 @@ public class MLP implements FA<double[], double[]>, Evolvable {
         outputs = new double[numberOfOutputs];
     }
 
+    /**
+     * This method takes a 2-D double array as a parameter that represents 
+     * a MLP layer. Each layer's neurons are filled with the value of a 
+     * pseudo-random, Gaussian distributed double value * the deviation + the mean.   
+     * 
+     * @param layer Double 2-D Array representing neural network layer.
+     */
     protected void initializeLayer(double[][] layer) {
         for (int i = 0; i < layer.length; i++) {
             for (int j = 0; j < layer[i].length; j++) {
@@ -54,10 +78,21 @@ public class MLP implements FA<double[], double[]>, Evolvable {
         }
     }
 
+    /**
+     * This method returns a new instance of a MLP.
+     * 
+     * @return A new instance of a MLP. 
+     */
     public MLP getNewInstance() {
         return new MLP(firstConnectionLayer.length, secondConnectionLayer.length, outputs.length);
     }
 
+    /**
+     * This method is a kick-off method for the copy method.
+     * A copy of a MLP is returned with an updated mutationMagnitude.
+     * 
+     * @return MLP that is a new MLP copy.
+     */
     public MLP copy() {
         MLP copy = new MLP(copy(firstConnectionLayer), copy(secondConnectionLayer),
                 hiddenNeurons.length, outputs.length);
@@ -65,6 +100,12 @@ public class MLP implements FA<double[], double[]>, Evolvable {
         return copy;
     }
 
+    /**
+     * This method returns copies of a MLP's layers.
+     * 
+     * @param original Double 2-D array representing the original MLP's layers
+     * @return Double 2-D array copy of the original layers sent.
+     */
     private double[][] copy(double[][] original) {
         double[][] copy = new double[original.length][original[0].length];
         for (int i = 0; i < original.length; i++) {
@@ -73,23 +114,47 @@ public class MLP implements FA<double[], double[]>, Evolvable {
         return copy;
     }
 
+    /**
+     * This kick-off method mutates a MLP by mutating the 
+     * first connection layer and second connection layer.
+     */
     public void mutate() {
         mutate(firstConnectionLayer);
         mutate(secondConnectionLayer);
     }
 
+    /**
+     * This method takes an array of neurons from a layer and
+     * randomly mutates each neuron.
+     * 
+     * @param array Double array with neurons to be mutated. 
+     */
     private void mutate(double[] array) {
         for (int i = 0; i < array.length; i++) {
             array[i] += random.nextGaussian() * mutationMagnitude;
         }
     }
 
+    /**
+     * This kick-off mutate method takes a 2D Double array as a parameter that represents
+     * a MLP layer. Every neuron in every layer is then mutated.
+     * 
+     * @param array 2D Double array that represents a collection of MLP layers.
+     */
     private void mutate(double[][] array) {
         for (double[] anArray : array) {
             mutate(anArray);
         }
     }
 
+    /**
+     * This method uses the form of searching using particle swarm optimization to find
+     * an optimal neuron value from three MLPs.
+     * 
+     * @param last MLP representing the last search.
+     * @param pBest MLP representing the most recent search.
+     * @param gBest MLP representing the global best search. 
+     */
     public void psoRecombine(MLP last, MLP pBest, MLP gBest) {
         // Those numbers are supposed to be constants. Ask Maurice Clerc.
         final double ki = 0.729844;
@@ -120,6 +185,11 @@ public class MLP implements FA<double[], double[]>, Evolvable {
 
     }
 
+    /**
+     * This method clears all of the neuron values in a layer.
+     * 
+     * @param array Double array representing neuron values.
+     */
     private void clear(double[] array) {
         for (int i = 0; i < array.length; i++) {
             array[i] = 0;
@@ -129,10 +199,22 @@ public class MLP implements FA<double[], double[]>, Evolvable {
     public void reset() {
     }
 
+    /**
+     * This method calls the propagate method on an array of doubles (neurons).
+     * 
+     * @return Double array of neurons filled from the propagate method.
+     */
     public double[] approximate(double[] doubles) {
         return propagate(doubles);
     }
 
+    /**
+     * This method sends the input neuron values across layers to the output layer,
+     * where the output neurons are then stored in a Double array that is returned. 
+     * 
+     * @param inputIn Double array with input neuron values.
+     * @return Double array with the output neuron values.
+     */
     public double[] propagate(double[] inputIn) {
         if (inputs != inputIn) {
             System.arraycopy(inputIn, 0, this.inputs, 0, inputIn.length);
@@ -148,6 +230,14 @@ public class MLP implements FA<double[], double[]>, Evolvable {
 
     }
 
+    /**
+     * This helper method clears the layer where the neurons are being sent, and then fills the toLayer
+     * with the value from the fromLayer at the position of respective neuron * the connection value.
+     * 
+     * @param fromLayer Double array representing initial beginning neurons.
+     * @param toLayer Double array representing the layer where the initial neurons will be sent.
+     * @param connections 2D Double array representing the resulting connections.
+     */
     private void propagateOneStep(double[] fromLayer, double[] toLayer, double[][] connections) {
         clear(toLayer);
         for (int from = 0; from < fromLayer.length; from++) {
@@ -158,6 +248,14 @@ public class MLP implements FA<double[], double[]>, Evolvable {
         }
     }
 
+    /**
+     * This method calculates the output error and hidden layer error, then 
+     * updates the weights of the first two layers. The combined sum of the first two layers 
+     * is returned.
+     * 
+     * @param targetOutputs Double array representing the target outputs of the layer.
+     * @return Double value representing the sum of errors in the first two layers.
+     */
     public double backPropagate(double[] targetOutputs) {
         // Calculate output error
         double[] outputError = new double[outputs.length];
@@ -232,12 +330,24 @@ public class MLP implements FA<double[], double[]>, Evolvable {
         return summedOutputError;
     }
 
-
+    /**
+     * This method returns the value of the sigmoid function when using the negative
+     * value of a neuron.
+     * 
+     * @param val Double value representing a neuron value.
+     * @return The value of the sigmoid function with the value of a neuron as the variable.
+     */
     @SuppressWarnings("unused")
 	private double sig(double val) {
         return 1.0d / (1.0d + Math.exp(-val));
     }
 
+    /**
+     * This method fills a layer with the hyperbolic tangent value of the 
+     * current neuron in the layer.
+     * 
+     * @param array Double array representing a layer of neurons.
+     */
     private void tanh(double[] array) {
         for (int i = 0; i < array.length; i++) {
             array[i] = Math.tanh(array[i]);
@@ -247,6 +357,14 @@ public class MLP implements FA<double[], double[]>, Evolvable {
         }
     }
 
+    /**
+     * This method takes a double parameter that is the error of 
+     * a neuron value * the error contribution. This value is squared
+     * then subtracted by 1 and then returned.
+     * 
+     * @param num Double value representing the output errors.
+     * @return double representing 1 - the output error^2.
+     */
     private double dtanh(double num) {
         //return 1;
         return (1 - (num * num));
@@ -255,6 +373,12 @@ public class MLP implements FA<double[], double[]>, Evolvable {
         //return (val*(1-val));
     }
 
+    /**
+     * This method goes through every neuron in the MLP and
+     * returns the sum of all neuron values. 
+     * 
+     * @return Double value of the sum of all neuron values.
+     */
     private double sum() {
         double sum = 0;
         for (double[] aFirstConnectionLayer : firstConnectionLayer) {
@@ -270,14 +394,30 @@ public class MLP implements FA<double[], double[]>, Evolvable {
         return sum;
     }
 
+    /**
+     * This helper method gets the mutationMagnitude. 
+     * 
+     * @return Double value mutationMagnitude.
+     */
     public double getMutationMagnitude() {
         return mutationMagnitude;
     }
 
+    /**
+     * This helper method sets the mutationMagnitude.
+     * 
+     * @param mutationMagnitude The mutation magnitude to be changed.
+     */
     public void setMutationMagnitude(double mutationMagnitude) {
         this.mutationMagnitude = mutationMagnitude;
     }
 
+    /**
+     * This helper method sets the initial mean and deviation values of an MLP.
+     * 
+     * @param mean Double value representing the mean value of an MLP.
+     * @param deviation Double value representing the deviation value of an MLP.
+     */
     public static void setInitParameters(double mean, double deviation) {
         System.out.println("PARAMETERS SET: " + mean + "  deviation: " + deviation);
 
@@ -285,6 +425,9 @@ public class MLP implements FA<double[], double[]>, Evolvable {
         MLP.deviation = deviation;
     }
 
+    /**
+     * This method prints out the contents of a layer in a readable manner.
+     */
     public void println() {
         System.out.print("\n\n----------------------------------------------------" +
                 "-----------------------------------\n");
@@ -308,22 +451,41 @@ public class MLP implements FA<double[], double[]>, Evolvable {
                 "-----------------------------------\n");
     }
 
+    /**
+     * This method prints out the mean connection weight.
+     */
     public String toString() {
         int numberOfConnections = (firstConnectionLayer.length * firstConnectionLayer[0].length) +
                 (secondConnectionLayer.length * secondConnectionLayer[0].length);
         return "Straight mlp, mean connection weight " + (sum() / numberOfConnections);
     }
 
+    /**
+     * This helper method sets the learning rate. 
+     * 
+     * @param learningRate Double value representing the learning rate.
+     */
     public void ssetLearningRate(double learningRate) {
         this.learningRate = learningRate;
     }
 
+    /**
+     * This method returns a copy of the output neurons.
+     * 
+     * @return Double array copy of output neurons. 
+     */
     public double[] getOutputs() {
         double[] outputsCopy = new double[outputs.length];
         System.arraycopy(outputs, 0, outputsCopy, 0, outputs.length);
         return outputsCopy;
     }
 
+    /**
+     * This method gets the weights of each neuron of an MLP and stores
+     * each weight value in a Double array that is then returned.
+     * 
+     * @return Double array with values of all the weights in the MLP.
+     */
     public double[] getWeightsArray() {
         double[] weights = new double[inputs.length * hiddenNeurons.length + hiddenNeurons.length * outputs.length];
 
@@ -343,6 +505,11 @@ public class MLP implements FA<double[], double[]>, Evolvable {
         return weights;
     }
 
+    /**
+     * This method sets the weights from a double array of a MLP's weights. 
+     * 
+     * @param weights Double array with values of all the weights in the MLP.
+     */
     public void setWeightsArray(double[] weights) {
         int k = 0;
 
@@ -359,16 +526,29 @@ public class MLP implements FA<double[], double[]>, Evolvable {
             }
         }
     }
-
+	/**
+	 * This helper method returns the number of input neurons from the input layer.
+	 * 
+	 * @return Integer value of the number of input neurons.
+	 */
     public int getNumberOfInputs() {
         return inputs.length;
     }
 
+    /**
+     * This helper method is a kick-off method for the randomise method.
+     */
     public void randomise() {
         randomise(firstConnectionLayer);
         randomise(secondConnectionLayer);
     }
 
+    /**
+     * This method goes through every neuron in both layers of an MLP
+     * and randomly changes the values of the neurons.
+     * 
+     * @param layer 2D Double array representing a layer of an MLP.
+     */
     protected void randomise(double[][] layer) {
         for (int i = 0; i < layer.length; i++) {
             for (int j = 0; j < layer[i].length; j++) {
@@ -377,10 +557,21 @@ public class MLP implements FA<double[], double[]>, Evolvable {
         }
     }
 
+    /**
+     * This method returns a weights array by calling the getWeightsArray() method.
+     * 
+     * @return Double array representing all the weight values in an MLP.
+     */
     public double[] getArray() {
         return getWeightsArray();
     }
 
+    /**
+     * This method calls the setWeightsArray on the array parameter
+     * passed. 
+     * 
+     * @param array Double array representing all the weight values in an MLP. 
+     */
     public void setArray(double[] array) {
         setWeightsArray(array);
     }

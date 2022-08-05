@@ -110,6 +110,7 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 	public void newIndividual() {
 		incrementEmitterCounter(); // increment emitter counter
 		Emitter thisEmitter = emitters[emitterCounter]; // pick the lowest one
+		thisEmitter.claimEmitter(); // Will block if emitter is on verge of updating distribution
 		// rawIndividual may not be in bounds of BoundedRealValuedGenotype
 		double[] rawIndividual = thisEmitter.sampleSingle(); // sample an individual from current emitter
 		// individual will be bounded in each variable index
@@ -131,15 +132,15 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 		
 		boolean replacedBool = archive.add(individualScore); // attempt to add individual to archive
 		
-		if (PRINT_DEBUG) {System.out.println("Emitter: \""+thisEmitter.emitterName+"\"\tSolutions: "+thisEmitter.solutionCount+"\t\tAmount of Parents: "+thisEmitter.additionCounter);}
+		if (PRINT_DEBUG) {System.out.println("Emitter: \""+thisEmitter.emitterName+"\"\tSolutions: "+thisEmitter.solutionCount+"\t\tAmount of Parents: "+thisEmitter.getAdditionCounter());}
 		fileUpdates(replacedBool); // log failure or success
 	}	
-
+	
 	/**
 	 * Switches to the next emitter until all are processed, then
 	 * loops back to the first emitter.
 	 */
-	private void incrementEmitterCounter() {
+	private synchronized void incrementEmitterCounter() {
 		emitterCounter = (emitterCounter + 1) % totalEmitters;
 	}
 	
@@ -149,7 +150,7 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 	 * @param mLog The log file to log into
 	 * @param validParents The number of valid parents to be logged
 	 */
-	public void updateEmitterLog(MMNEATLog mLog, int validParents) {
+	public synchronized void updateEmitterLog(MMNEATLog mLog, int validParents) {
 		mLog.log(iterations + "\t" + validParents);
 	}
 	

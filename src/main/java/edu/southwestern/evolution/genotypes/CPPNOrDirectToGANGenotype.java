@@ -3,6 +3,7 @@ package edu.southwestern.evolution.genotypes;
 import java.util.ArrayList;
 
 import edu.southwestern.evolution.mutation.tweann.ConvertMarioCPPN2GANtoDirect2GANMutation;
+import edu.southwestern.evolution.mutation.tweann.ConvertMegaManCPPN2GANtoDirect2GANMutation;
 import edu.southwestern.evolution.mutation.tweann.ConvertZeldaCPPN2GANtoDirect2GANMutation;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.tasks.mario.gan.GANProcess;
@@ -48,6 +49,8 @@ public class CPPNOrDirectToGANGenotype extends EitherOrGenotype<TWEANN,ArrayList
 			new ConvertZeldaCPPN2GANtoDirect2GANMutation().go(this, sb);
 		else if(GANProcess.type.equals(GAN_TYPE.MARIO))
 			new ConvertMarioCPPN2GANtoDirect2GANMutation().go(this, sb);
+		else if(GANProcess.type.equals(GAN_TYPE.MEGA_MAN))
+			new ConvertMegaManCPPN2GANtoDirect2GANMutation().go(this, sb);
 		else //if (GANProcess.type.equals(GAN_TYPE.LODE_RUNNER))
 			throw new UnsupportedOperationException(GANProcess.type.name() + " not supported yet");
 		// Now allow for slight changes
