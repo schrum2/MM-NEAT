@@ -2,6 +2,7 @@ package edu.southwestern.experiment.post;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.HashSet;
 import java.util.List;
 
 import edu.southwestern.experiment.Experiment;
@@ -23,6 +24,7 @@ import edu.southwestern.util.MiscUtil;
 public class MinecraftBlockRenderExperiment implements Experiment {
 	
 	private static String dir; 
+	private static HashSet<List<Block>> seen;
 	
 	@Override
 	public void init() {
@@ -33,6 +35,7 @@ public class MinecraftBlockRenderExperiment implements Experiment {
 	@Override
 	public void run() {
 		try {
+			seen = new HashSet<>();
 			File file = new File(dir);
 			if(file.isDirectory()) {
 				int count = 0;
@@ -67,6 +70,12 @@ public class MinecraftBlockRenderExperiment implements Experiment {
 		for(Block b: shiftedBlocks) {
 			System.out.println(b);
 		}
+		
+		if(seen.contains(shiftedBlocks)) {
+			System.out.println("Have already seen this shape!");
+			return; // Don't generate shapes we've already seen
+		} else 
+			seen.add(shiftedBlocks); // Remember for next time
 			
 		MinecraftClient.getMinecraftClient().spawnBlocks(shiftedBlocks); // spawn blocks in minecraft world
 	}
