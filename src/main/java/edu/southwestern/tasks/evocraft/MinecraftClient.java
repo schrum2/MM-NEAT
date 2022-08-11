@@ -8,6 +8,7 @@ import java.io.PrintStream;
 import java.lang.ProcessBuilder.Redirect;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.mario.gan.Comm;
@@ -530,6 +531,11 @@ public class MinecraftClient extends Comm {
 			return name + " at " + pos + " oriented " + (orientation == null ? "null" : orientation.name());
 		}
 		
+		@Override
+		public int hashCode() {
+			return Objects.hash(orientation, position, type);
+		}
+
 		public boolean equals(Object other) {
 			boolean result = false;
 			if(other instanceof Block) {
