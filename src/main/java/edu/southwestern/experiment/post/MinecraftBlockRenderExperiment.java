@@ -42,8 +42,14 @@ public class MinecraftBlockRenderExperiment implements Experiment {
 				String[] files = file.list();
 				for(String individual : files) {
 					System.out.println((count++) + " of " + files.length);
-					System.out.println(individual);
-					generateOneShapeFromFile(new File(dir + File.separator + individual));
+					//System.out.println(individual);
+					List<Block> shiftedBlocks = shiftBlocks(new File(dir + File.separator + individual));
+					seen.add(shiftedBlocks); // Won't add duplicates
+				}
+				count = 0;
+				for(List<Block> shiftedBlocks: seen) {
+					System.out.println((count++) + " of " + seen.size());
+					MinecraftClient.getMinecraftClient().spawnBlocks(shiftedBlocks);
 					System.out.println("Press enter to continue");
 					MiscUtil.waitForReadStringAndEnterKeyPress();
 				}
@@ -61,23 +67,21 @@ public class MinecraftBlockRenderExperiment implements Experiment {
 	 * @throws FileNotFoundException
 	 */
 	public void generateOneShapeFromFile(File blockTextFile) throws FileNotFoundException {
+		List<Block> shiftedBlocks = shiftBlocks(blockTextFile);
+		MinecraftClient.getMinecraftClient().spawnBlocks(shiftedBlocks); // spawn blocks in minecraft world
+	}
+
+	private List<Block> shiftBlocks(File blockTextFile) throws FileNotFoundException {
 		List<Block> blocks = MinecraftUtilClass.loadMAPElitesOutputFile(blockTextFile); // get block list from output file
 		MinecraftCoordinates corner = MinecraftUtilClass.minCoordinates(blocks); // Original corner (or close to it)
 		ChangeCenterOfMassFitness.clearAreaAroundSpecialCorner();
 		List<Block> shiftedBlocks = MinecraftUtilClass.shiftBlocksBetweenCorners(blocks, corner, ChangeCenterOfMassFitness.SPECIAL_CORNER);
 		
-		System.out.println("Spawning " + shiftedBlocks.size() + " blocks from " + dir);
-		for(Block b: shiftedBlocks) {
-			System.out.println(b);
-		}
-		
-		if(seen.contains(shiftedBlocks)) {
-			System.out.println("Have already seen this shape!");
-			return; // Don't generate shapes we've already seen
-		} else 
-			seen.add(shiftedBlocks); // Remember for next time
-			
-		MinecraftClient.getMinecraftClient().spawnBlocks(shiftedBlocks); // spawn blocks in minecraft world
+//		System.out.println("Spawning " + shiftedBlocks.size() + " blocks from " + dir);
+//		for(Block b: shiftedBlocks) {
+//			System.out.println(b);
+//		}
+		return shiftedBlocks;
 	}
 
 	@Override
