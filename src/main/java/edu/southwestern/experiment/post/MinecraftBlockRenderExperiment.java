@@ -86,6 +86,7 @@ public class MinecraftBlockRenderExperiment implements Experiment {
 	 * @throws FileNotFoundException
 	 */
 	public void generateOneShapeFromFile(File blockTextFile) throws FileNotFoundException {
+		ChangeCenterOfMassFitness.clearAreaAroundSpecialCorner();
 		List<Block> shiftedBlocks = shiftBlocks(blockTextFile);
 		MinecraftClient.getMinecraftClient().spawnBlocks(shiftedBlocks); // spawn blocks in minecraft world
 	}
@@ -93,7 +94,6 @@ public class MinecraftBlockRenderExperiment implements Experiment {
 	private List<Block> shiftBlocks(File blockTextFile) throws FileNotFoundException {
 		List<Block> blocks = MinecraftUtilClass.loadMAPElitesOutputFile(blockTextFile); // get block list from output file
 		MinecraftCoordinates corner = MinecraftUtilClass.minCoordinates(blocks); // Original corner (or close to it)
-		ChangeCenterOfMassFitness.clearAreaAroundSpecialCorner();
 		List<Block> shiftedBlocks = MinecraftUtilClass.shiftBlocksBetweenCorners(blocks, corner, ChangeCenterOfMassFitness.SPECIAL_CORNER);
 		
 //		System.out.println("Spawning " + shiftedBlocks.size() + " blocks from " + dir);
