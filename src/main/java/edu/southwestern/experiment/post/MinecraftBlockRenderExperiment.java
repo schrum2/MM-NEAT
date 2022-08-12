@@ -62,6 +62,7 @@ public class MinecraftBlockRenderExperiment implements Experiment {
 					do {
 						try {
 							System.out.println(count + " of " + seen.size());
+							ChangeCenterOfMassFitness.clearAreaAroundSpecialCorner();
 							MinecraftClient.getMinecraftClient().spawnBlocks(shiftedBlocks);
 							System.out.println("Press enter to continue");
 							MiscUtil.waitForReadStringAndEnterKeyPress();
@@ -74,6 +75,7 @@ public class MinecraftBlockRenderExperiment implements Experiment {
 				}
 			} else {
 				// Is a single text file
+				ChangeCenterOfMassFitness.clearAreaAroundSpecialCorner();
 				generateOneShapeFromFile(file);
 			}
 		} catch (FileNotFoundException e) {
@@ -86,7 +88,6 @@ public class MinecraftBlockRenderExperiment implements Experiment {
 	 * @throws FileNotFoundException
 	 */
 	public void generateOneShapeFromFile(File blockTextFile) throws FileNotFoundException {
-		ChangeCenterOfMassFitness.clearAreaAroundSpecialCorner();
 		List<Block> shiftedBlocks = shiftBlocks(blockTextFile);
 		MinecraftClient.getMinecraftClient().spawnBlocks(shiftedBlocks); // spawn blocks in minecraft world
 	}
