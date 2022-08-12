@@ -56,6 +56,12 @@ public class MinecraftBlockRenderExperiment implements Experiment {
 				}
 				count = 0;
 				Iterator<List<Block>> itr = seen.iterator();
+				for(int i = 0; i < Parameters.parameters.integerParameter("minecraftBlockLoadSkip") && itr.hasNext(); i++) {
+					itr.next(); // Just discard/skip
+					System.out.println("Discard "+count);
+					count++;
+				}
+				
 				while(itr.hasNext()) {
 					List<Block> shiftedBlocks = itr.next();
 					boolean tryAgain = false;
