@@ -3,6 +3,7 @@ package edu.southwestern.experiment.post;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 import edu.southwestern.experiment.Experiment;
@@ -41,17 +42,35 @@ public class MinecraftBlockRenderExperiment implements Experiment {
 				int count = 0;
 				String[] files = file.list();
 				for(String individual : files) {
-					System.out.println((count++) + " of " + files.length);
-					//System.out.println(individual);
-					List<Block> shiftedBlocks = shiftBlocks(new File(dir + File.separator + individual));
-					seen.add(shiftedBlocks); // Won't add duplicates
+					if(individual.endsWith(".txt")) {
+						System.out.println((count++) + " of " + files.length);
+						//System.out.println(individual);
+						try {
+							List<Block> shiftedBlocks = shiftBlocks(new File(dir + File.separator + individual));
+							seen.add(shiftedBlocks); // Won't add duplicates
+						} catch(Exception e) {
+							System.out.println("Error adding/reading "+individual);
+							e.printStackTrace();
+						}
+					}
 				}
 				count = 0;
-				for(List<Block> shiftedBlocks: seen) {
-					System.out.println((count++) + " of " + seen.size());
-					MinecraftClient.getMinecraftClient().spawnBlocks(shiftedBlocks);
-					System.out.println("Press enter to continue");
-					MiscUtil.waitForReadStringAndEnterKeyPress();
+				Iterator<List<Block>> itr = seen.iterator();
+				while(itr.hasNext()) {
+					List<Block> shiftedBlocks = itr.next();
+					boolean tryAgain = false;
+					do {
+						try {
+							System.out.println(count + " of " + seen.size());
+							MinecraftClient.getMinecraftClient().spawnBlocks(shiftedBlocks);
+							System.out.println("Press enter to continue");
+							MiscUtil.waitForReadStringAndEnterKeyPress();
+						}catch(Exception e) {
+							System.out.println("Error loading this: "+shiftedBlocks);
+							tryAgain = MiscUtil.yesTo("Try again?");
+						}
+					} while(tryAgain);
+					count++;
 				}
 			} else {
 				// Is a single text file
