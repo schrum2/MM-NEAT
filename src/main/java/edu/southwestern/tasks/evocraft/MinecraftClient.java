@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Objects;
 
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.mario.gan.Comm;
 import edu.southwestern.util.PythonUtil;
 import edu.southwestern.util.datastructures.Triple;
@@ -456,6 +457,61 @@ public class MinecraftClient extends Comm {
 			this(pos.x(), pos.y(), pos.z(), type, orientation);
 		}
 		
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			if(type != null && orientationMatters(type)) {
+				result = prime * result + ((orientation == null) ? 0 : orientation.hashCode());
+			}
+			result = prime * result + ((position == null) ? 0 : position.hashCode());
+			result = prime * result + ((type == null) ? 0 : type.hashCode());
+			return result;
+		}
+
+		/**
+		 * Identifies blocks where orientation affects placement in world,
+		 * but only works for machine block set.
+		 * 
+		 * @param type Block Type
+		 * @return if orientation changes its placement
+		 */
+		public boolean orientationMatters(BlockType type) {
+			switch(type) {
+			case PISTON:
+			case STICKY_PISTON:
+			case OBSERVER:
+				return true;
+			default:
+				return false;
+			}
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (!(obj instanceof Block)) {
+				return false;
+			}
+			Block other = (Block) obj;
+			if (orientation != other.orientation) {
+				return false;
+			}
+			if (position == null) {
+				if (other.position != null) {
+					return false;
+				}
+			} else if (!position.equals(other.position)) {
+				return false;
+			}
+			if (type != other.type) {
+				return false;
+			}
+			return true;
+		}
+
 		/**
 		 * New block at given coordinates with given type.
 		 * @param x x-coordinate
@@ -531,24 +587,7 @@ public class MinecraftClient extends Comm {
 			return name + " at " + pos + " oriented " + (orientation == null ? "null" : orientation.name());
 		}
 		
-		@Override
-		public int hashCode() {
-			return Objects.hash(orientation, position, type);
-		}
 
-		public boolean equals(Object other) {
-			boolean result = false;
-			if(other instanceof Block) {
-				Block otherBlock = (Block) other;
-				result = otherBlock.x() == this.x() && 
-						 otherBlock.y() == this.y() && 
-						 otherBlock.z() == this.z() &&
-						 otherBlock.type() == this.type() &&
-						 ((otherBlock.orientation == null && this.orientation == null) || 
-						  (otherBlock.orientation() == this.orientation()));
-			}
-			return result;
-		}
 	}
 
 	/**
