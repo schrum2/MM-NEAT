@@ -496,8 +496,10 @@ public class MinecraftClient extends Comm {
 				return false;
 			}
 			Block other = (Block) obj;
-			if (orientation != other.orientation) {
-				return false;
+			if(type != null && orientationMatters(type)) {
+				if (orientation != other.orientation) {
+					return false;
+				}
 			}
 			if (position == null) {
 				if (other.position != null) {
