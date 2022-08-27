@@ -84,6 +84,8 @@ public class MarioMAPElitesPercentDecorateCoverageAndLeniencyBinLabels extends B
 
 	@Override
 	public boolean discard(HashMap<String, Object> behaviorMap) {
+		if(!Parameters.parameters.booleanParameter("discardFromBinOutsideRestrictedRange")) return false;
+		
 		int[] multi = multiDimensionalIndices(behaviorMap);
 		// Allow for discarding of solutions outside of a restricted range set at the command line
 		boolean result =

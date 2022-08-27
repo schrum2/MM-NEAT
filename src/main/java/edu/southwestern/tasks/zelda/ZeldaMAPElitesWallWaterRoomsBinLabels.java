@@ -20,6 +20,8 @@ public class ZeldaMAPElitesWallWaterRoomsBinLabels extends BaseBinLabels {
 
 	@Override
 	public boolean discard(HashMap<String, Object> behaviorMap) {
+		if(!Parameters.parameters.booleanParameter("discardFromBinOutsideRestrictedRange")) return false;
+		
 		int[] multi = multiDimensionalIndices(behaviorMap);
 		
 		int wallTileIndex = multi[0];

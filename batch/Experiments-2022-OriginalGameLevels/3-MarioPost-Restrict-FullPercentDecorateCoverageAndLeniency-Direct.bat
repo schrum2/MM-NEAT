@@ -1,0 +1,2 @@
+cd ..
+java -jar MMNEAT.jar runNumber:%1 randomSeed:%1 parallelEvaluations:true threads:20 base:mariopdsl log:MarioPDSL-FullDirect2GAN saveTo:FullDirect2GAN trials:1 experiment:edu.southwestern.experiment.post.CompareMAPElitesBinningSchemeExperiment mapElitesBinLabels:edu.southwestern.tasks.mario.binningschemes.MarioMAPElitesPercentDecorateCoverageAndLeniencyBinLabels logLock:true io:false marioMinDecorationIndex:1 marioMaxDecorationIndex:5 marioMinLeniencyIndex:3 marioMaxLeniencyIndex:5 marioMinSpaceCoverageIndex:0 marioMaxSpaceCoverageIndex:8
