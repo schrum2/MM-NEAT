@@ -329,9 +329,19 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			Serialization.debug = true; // Restore stack traces
 		} else {
 			System.out.println("Fill up initial archive");
+			// Do not discard individuals outside restricted range during initialization, since we
+			// may end up with an empty archive in this case.
+			boolean originalSetting = Parameters.parameters.booleanParameter("discardFromBinOutsideRestrictedRange");
+			if(Parameters.parameters.booleanParameter("turnOffRestrictionsDuringInit")) {
+				Parameters.parameters.setBoolean("discardFromBinOutsideRestrictedRange", false);
+			}			
 			// Start from scratch
 			int startSize = Parameters.parameters.integerParameter("mu");
-			startingPopulation = PopulationUtil.initialPopulation(example, startSize);			
+			startingPopulation = PopulationUtil.initialPopulation(example, startSize);		
+			
+			if(Parameters.parameters.booleanParameter("turnOffRestrictionsDuringInit")) {
+				Parameters.parameters.setBoolean("discardFromBinOutsideRestrictedRange", originalSetting);
+			}
 			assert startingPopulation.size() == 0 || !(startingPopulation.get(0) instanceof BoundedRealValuedGenotype) || ((BoundedRealValuedGenotype) startingPopulation.get(0)).isBounded() : "Initial individual not bounded: "+startingPopulation.get(0);
 		}
 		

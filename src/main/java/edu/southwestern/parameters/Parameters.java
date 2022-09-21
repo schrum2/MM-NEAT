@@ -396,6 +396,7 @@ public class Parameters {
 		longOptions.add("shortTimeBetweenMinecraftReads", 1000L, "The amount of time that change center of mass fitness function waits before reading in the area again");
 
 		// Boolean parameters 
+		booleanOptions.add("turnOffRestrictionsDuringInit", true, "Whether MAP Elites should turn off restricted bin ranges during initialization.");
 		booleanOptions.add("discardFromBinOutsideRestrictedRange", false, "Whether MAP Elites should do range checks on bins to see if an elite should be discarded.");
 		booleanOptions.add("steadyStateArchetypeSaving", true, "Steady state evolution updates the NN archetype. Turn off to increase speed, but lose ability to resume from crash.");
 		booleanOptions.add("useWoxSerialization", true, "Use the deprecated Wox serialization. I hope to phase this out, but the setting is useful during transition");
