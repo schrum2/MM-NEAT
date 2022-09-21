@@ -4,10 +4,13 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsEnvironment;
+import java.awt.GraphicsDevice;
+//import java.awt.GraphicsEnvironment;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
@@ -48,8 +51,50 @@ public class GraphicsUtil {
 	 * @return
 	 */
 	public static GraphicsConfiguration getConfiguration() { 
-		return GraphicsEnvironment.getLocalGraphicsEnvironment(). 
-				getDefaultScreenDevice().getDefaultConfiguration(); 
+//		return GraphicsEnvironment.getLocalGraphicsEnvironment(). 
+//				getDefaultScreenDevice().getDefaultConfiguration(); 
+		
+		// The default screen device requires a windowing environment such as Windows or X11.
+		// This makes it impossible to run the code from a text terminal, even though the
+		// graphical capacility is not needed. We only need a simple GraphicsConfiguration
+		// in order to save PNG files of the Mario levels.
+		return new GraphicsConfiguration() {
+
+			@Override
+			public GraphicsDevice getDevice() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public ColorModel getColorModel() {
+				return ColorModel.getRGBdefault();
+			}
+
+			@Override
+			public ColorModel getColorModel(int transparency) {
+				return ColorModel.getRGBdefault();
+			}
+
+			@Override
+			public AffineTransform getDefaultTransform() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public AffineTransform getNormalizingTransform() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public Rectangle getBounds() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+		};
 	} 
 
 	/**
