@@ -310,6 +310,15 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		}
 		saveImageArchives = MMNEAT.task instanceof PictureTargetTask;
 		ArrayList<Genotype<T>> startingPopulation; // Will be new or from saved archive
+		
+		// Do not discard individuals outside restricted range during initialization, since we
+		// may end up with an empty archive in this case.
+		boolean originalSetting = Parameters.parameters.booleanParameter("discardFromBinOutsideRestrictedRange");
+		if(Parameters.parameters.booleanParameter("turnOffRestrictionsDuringInit")) {
+			System.out.println("Do not discard any elites during initialization");
+			Parameters.parameters.setBoolean("discardFromBinOutsideRestrictedRange", false);
+		}	
+		
 		if(iterations > 0) {
 			startingPopulation = new ArrayList<>();
 			//int numLabels = archive.getBinMapping().binLabels().size();
@@ -329,19 +338,11 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			Serialization.debug = true; // Restore stack traces
 		} else {
 			System.out.println("Fill up initial archive");
-			// Do not discard individuals outside restricted range during initialization, since we
-			// may end up with an empty archive in this case.
-			boolean originalSetting = Parameters.parameters.booleanParameter("discardFromBinOutsideRestrictedRange");
-			if(Parameters.parameters.booleanParameter("turnOffRestrictionsDuringInit")) {
-				Parameters.parameters.setBoolean("discardFromBinOutsideRestrictedRange", false);
-			}			
+		
 			// Start from scratch
 			int startSize = Parameters.parameters.integerParameter("mu");
 			startingPopulation = PopulationUtil.initialPopulation(example, startSize);		
-			
-			if(Parameters.parameters.booleanParameter("turnOffRestrictionsDuringInit")) {
-				Parameters.parameters.setBoolean("discardFromBinOutsideRestrictedRange", originalSetting);
-			}
+
 			assert startingPopulation.size() == 0 || !(startingPopulation.get(0) instanceof BoundedRealValuedGenotype) || ((BoundedRealValuedGenotype) startingPopulation.get(0)).isBounded() : "Initial individual not bounded: "+startingPopulation.get(0);
 		}
 		
@@ -361,7 +362,12 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			Score<T> s = task.evaluate(g);
 			evaluatedPopulation.add(s);
 		});
-		CommonConstants.netio = backupNetIO;		
+		CommonConstants.netio = backupNetIO;	
+		
+		if(Parameters.parameters.booleanParameter("turnOffRestrictionsDuringInit")) {
+			System.out.println("Return to discarding elites in restricted range");
+			Parameters.parameters.setBoolean("discardFromBinOutsideRestrictedRange", originalSetting);
+		}
 		
 		if(Parameters.parameters.booleanParameter("dynamicAutoencoderIntervals")) {					
 			autoencoderLossRange = new MMNEATLog("autoencoderLossRange", false, false, false, true);
