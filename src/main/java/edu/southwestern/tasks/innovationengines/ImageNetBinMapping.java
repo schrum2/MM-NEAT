@@ -50,4 +50,22 @@ public class ImageNetBinMapping<T extends Network> implements BinLabels {
 		return false;
 	}
 
+	@Override
+	public boolean isOutsideRestrictedRange(int[] multi) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public String lowerRestrictedBounds() {
+		// TODO Auto-generated method stub
+		return "";
+	}
+
+	@Override
+	public String upperRestrictedBounds() {
+		// TODO Auto-generated method stub
+		return "";
+	}
+
 }

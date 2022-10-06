@@ -8,6 +8,7 @@
 """
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.patches as patches
 import sys
 import math
 from matplotlib import colors, cm
@@ -106,9 +107,53 @@ while end > dimensions[0]:
 
 fig.suptitle(plot_title)
 
+xmin = float("inf")
+ymin = float("inf")
+zmin = float("inf")
+
+xmax = float("-inf")
+ymax = float("-inf")
+zmax = float("-inf")
+
+# The restricted range was specified at the command line.
+# Will draw the red box in a certain place, even if some
+# bins outside of it are occupied
+if len(sys.argv) > 12:
+    xmin = int(sys.argv[12])
+    ymin = int(sys.argv[13])
+    zmin = int(sys.argv[14])
+
+    xmax = int(sys.argv[15])
+    ymax = int(sys.argv[16])
+    zmax = int(sys.argv[17])
+else:
+    # Figure out where to place red outline
+    for x in range(0,len(archive_slice_arrays)):
+        for y in range(0,len(archive_slice_arrays[x])):
+            for z in range(0,len(archive_slice_arrays[x][y])):
+                if archive_slice_arrays[x][y][z] > float("-inf"):
+                    xmin = min(xmin,x)
+                    ymin = min(ymin,y)
+                    zmin = min(zmin,z)
+
+                    xmax = max(xmax,x)
+                    ymax = max(ymax,y)
+                    zmax = max(zmax,z)
+
+print(f"{xmin} {xmax}")
+print(f"{ymin} {ymax}")
+print(f"{zmin} {zmax}")
+
 counter = 0
 for ax, slice in zip(axs.flat, archive_slice_arrays):
     ax.imshow(slice, extent=[0, dimensions[2], dimensions[1], 0], norm=norm, cmap=cmap)
+    # Box occupied area if box contains data
+    if counter >= xmin and counter <= xmax:
+        # Create a Rectangle patch
+        rect = patches.Rectangle((zmin, ymin), zmax - zmin + 1, ymax - ymin + 1, linewidth=1, edgecolor='r', facecolor='none')
+        # Add the patch to the Axes
+        ax.add_patch(rect)
+    
     ax.set_ylim(bottom=0.0, top=dimensions[1])
     ax.set_xlim(left=0.0, right=dimensions[2])
     ax.set_xlabel(dimension_names[2]) # Add labels
@@ -116,8 +161,13 @@ for ax, slice in zip(axs.flat, archive_slice_arrays):
     ax.set_title(dimension_names[0]+": "+str(counter))
     counter+=1
 
-plt.savefig(dir+title+".png", dpi=1000) # Save file, DPI can be specified, determines resolution of output image
-plt.savefig(dir+title+".pdf", dpi=1000) # Save file, DPI can be specified, determines resolution of output image
+if len(sys.argv) > 18:
+    suffix = sys.argv[18]
+else:
+    suffix=""
+
+plt.savefig(dir+title+suffix+".png", dpi=1000) # Save file, DPI can be specified, determines resolution of output image
+plt.savefig(dir+title+suffix+".pdf", dpi=1000) # Save file, DPI can be specified, determines resolution of output image
 
 
 plt.show() # Show bins in window

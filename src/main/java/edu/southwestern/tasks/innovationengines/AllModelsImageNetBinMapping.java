@@ -71,4 +71,22 @@ public class AllModelsImageNetBinMapping<T extends Network> implements BinLabels
 	public boolean discard(HashMap<String, Object> behaviorMap) {
 		return false;
 	}
+
+	@Override
+	public boolean isOutsideRestrictedRange(int[] multi) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public String lowerRestrictedBounds() {
+		// TODO Auto-generated method stub
+		return "";
+	}
+
+	@Override
+	public String upperRestrictedBounds() {
+		// TODO Auto-generated method stub
+		return "";
+	}
 }

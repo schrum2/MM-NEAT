@@ -88,13 +88,7 @@ public class MarioMAPElitesPercentDecorateCoverageAndLeniencyBinLabels extends B
 		
 		int[] multi = multiDimensionalIndices(behaviorMap);
 		// Allow for discarding of solutions outside of a restricted range set at the command line
-		boolean result =
-			   multi[LevelParser.LEVEL_STATS_DECORATION_INDEX] < Parameters.parameters.integerParameter("marioMinDecorationIndex") ||
-			   multi[LevelParser.LEVEL_STATS_DECORATION_INDEX] > Parameters.parameters.integerParameter("marioMaxDecorationIndex") ||
-			   multi[LevelParser.LEVEL_STATS_LENIENCY_INDEX] < Parameters.parameters.integerParameter("marioMinLeniencyIndex") ||
-			   multi[LevelParser.LEVEL_STATS_LENIENCY_INDEX] > Parameters.parameters.integerParameter("marioMaxLeniencyIndex") ||
-			   multi[LevelParser.LEVEL_STATS_SPACE_COVERAGE_INDEX] < Parameters.parameters.integerParameter("marioMinSpaceCoverageIndex") ||
-			   multi[LevelParser.LEVEL_STATS_SPACE_COVERAGE_INDEX] > Parameters.parameters.integerParameter("marioMaxSpaceCoverageIndex");
+		boolean result = isOutsideRestrictedRange(multi);
 			   
 //		if(result) {
 //			System.out.println("Discarding "+Arrays.toString(multi)+" from "+Arrays.toString((double[]) behaviorMap.get("Complete Stats")));
@@ -105,6 +99,21 @@ public class MarioMAPElitesPercentDecorateCoverageAndLeniencyBinLabels extends B
 //			if(multi[LevelParser.LEVEL_STATS_SPACE_COVERAGE_INDEX] < Parameters.parameters.integerParameter("marioMinSpaceCoverageIndex")) System.out.println("Space low");
 //			if(multi[LevelParser.LEVEL_STATS_SPACE_COVERAGE_INDEX] > Parameters.parameters.integerParameter("marioMaxSpaceCoverageIndex")) System.out.println("Space high");
 //		}
+		return result;
+	}
+
+	/**
+	 * @param multi multi-dimensional index in archive
+	 * @return whether the index is outside of the restricted range for this particular binning scheme
+	 */
+	public boolean isOutsideRestrictedRange(int[] multi) {
+		boolean result =
+			   multi[LevelParser.LEVEL_STATS_DECORATION_INDEX] < Parameters.parameters.integerParameter("marioMinDecorationIndex") ||
+			   multi[LevelParser.LEVEL_STATS_DECORATION_INDEX] > Parameters.parameters.integerParameter("marioMaxDecorationIndex") ||
+			   multi[LevelParser.LEVEL_STATS_LENIENCY_INDEX] < Parameters.parameters.integerParameter("marioMinLeniencyIndex") ||
+			   multi[LevelParser.LEVEL_STATS_LENIENCY_INDEX] > Parameters.parameters.integerParameter("marioMaxLeniencyIndex") ||
+			   multi[LevelParser.LEVEL_STATS_SPACE_COVERAGE_INDEX] < Parameters.parameters.integerParameter("marioMinSpaceCoverageIndex") ||
+			   multi[LevelParser.LEVEL_STATS_SPACE_COVERAGE_INDEX] > Parameters.parameters.integerParameter("marioMaxSpaceCoverageIndex");
 		return result;
 	}
 }
