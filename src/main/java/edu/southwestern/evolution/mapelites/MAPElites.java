@@ -381,7 +381,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			Score<T> s = task.evaluate(g);
 			evaluatedPopulation.add(s);
 		});
-		CommonConstants.netio = backupNetIO;		
+		CommonConstants.netio = backupNetIO;	
 		
 		if(Parameters.parameters.booleanParameter("dynamicAutoencoderIntervals")) {					
 			autoencoderLossRange = new MMNEATLog("autoencoderLossRange", false, false, false, true);
