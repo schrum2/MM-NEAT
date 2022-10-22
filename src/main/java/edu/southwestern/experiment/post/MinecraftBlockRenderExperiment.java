@@ -3,7 +3,6 @@ package edu.southwestern.experiment.post;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 
 import edu.southwestern.experiment.Experiment;
@@ -17,7 +16,9 @@ import edu.southwestern.util.MiscUtil;
 
 /**
  * Load a single elite from MAP Elites output text file to spawn it
- * into the Minecraft world for observation.
+ * into the Minecraft world for observation. OR, if the provided file
+ * is actually a directory, then it is assumed to be full of text
+ * files describing Minecraft shapes, and all are loaded in sequence.
  * 
  * @author Alejandro Medina
  *
@@ -54,30 +55,30 @@ public class MinecraftBlockRenderExperiment implements Experiment {
 						}
 					}
 				}
-				count = 0;
-				Iterator<List<Block>> itr = seen.iterator();
-				for(int i = 0; i < Parameters.parameters.integerParameter("minecraftBlockLoadSkip") && itr.hasNext(); i++) {
-					itr.next(); // Just discard/skip
-					System.out.println("Discard "+count);
-					count++;
-				}
-				
-				while(itr.hasNext()) {
-					List<Block> shiftedBlocks = itr.next();
+				@SuppressWarnings("unchecked")
+				List<Block>[] seenList = (List<Block>[]) new List[seen.size()]; 
+				seenList = seen.toArray(seenList);
+				System.out.println("Discard "+Parameters.parameters.integerParameter("minecraftBlockLoadSkip"));
+				boolean clear = true;
+				for(int i = Parameters.parameters.integerParameter("minecraftBlockLoadSkip"); i < seenList.length; i++) {
+					List<Block> shiftedBlocks = seenList[i];
 					boolean tryAgain = false;
 					do {
 						try {
-							System.out.println(count + " of " + seen.size());
-							ChangeCenterOfMassFitness.clearAreaAroundSpecialCorner();
+							System.out.println(i + " of " + seenList.length);
+							if(clear) ChangeCenterOfMassFitness.clearAreaAroundSpecialCorner();
 							MinecraftClient.getMinecraftClient().spawnBlocks(shiftedBlocks);
-							System.out.println("Press enter to continue");
-							MiscUtil.waitForReadStringAndEnterKeyPress();
+							System.out.println("Press enter to continue, 'b' to go back, 'r' to repeat, 'k' proceed without clearing");
+							String input = MiscUtil.waitForReadStringAndEnterKeyPress();
+							if(input.equals("b")) i-=2;
+							else if(input.equals("r")) i--;
+							else if(input.equals("k")) clear=false;
+							else clear = true;
 						}catch(Exception e) {
 							System.out.println("Error loading this: "+shiftedBlocks);
 							tryAgain = MiscUtil.yesTo("Try again?");
 						}
 					} while(tryAgain);
-					count++;
 				}
 			} else {
 				// Is a single text file
