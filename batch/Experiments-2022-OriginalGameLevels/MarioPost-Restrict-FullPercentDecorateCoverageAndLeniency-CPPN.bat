@@ -1,3 +1,0 @@
-cd ..
-cd ..
-java -jar target/MM-NEAT-0.0.1-SNAPSHOT.jar runNumber:%1 randomSeed:%1 parallelEvaluations:true threads:20 base:mariopdsl log:MarioPDSL-FullCPPN2GAN saveTo:FullCPPN2GAN trials:1 experiment:edu.southwestern.experiment.post.CompareMAPElitesBinningSchemeExperiment mapElitesBinLabels:edu.southwestern.tasks.mario.binningschemes.MarioMAPElitesPercentDecorateCoverageAndLeniencyBinLabels logLock:true io:false marioMinDecorationIndex:1 marioMaxDecorationIndex:5 marioMinLeniencyIndex:3 marioMaxLeniencyIndex:5 marioMinSpaceCoverageIndex:0 marioMaxSpaceCoverageIndex:8

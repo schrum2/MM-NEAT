@@ -84,4 +84,30 @@ public class MiscUtil {
 		}
 		waitForReadStringAndEnterKeyPress();
 	}
+
+	public static boolean yesTo(String prompt) {
+		return yesTo(prompt,CONSOLE);
+	}
+	
+	/**
+	 * Utility function to ask user yes or no.
+	 * No modifications are necessary for this method.
+	 * It uses a forever loop -- but the loop stops when something is returned.
+	 * 
+	 * @param prompt text of the question prompt
+	 * @param console a Scanner of the console
+	 * @return true if y is entered, false if n is entered
+	 */
+	public static boolean yesTo(String prompt, Scanner console) {
+		for (;;) {
+			System.out.print(prompt + " (y/n)? ");
+			String response = console.next().trim().toLowerCase();
+			if (response.equals("y"))
+				return true;
+			else if (response.equals("n"))
+				return false;
+			else
+				System.out.println("Please answer y or n.");
+		}
+	}
 }

@@ -22,4 +22,28 @@ public abstract class BaseBinLabels implements BinLabels {
 		// irrelevant bins are not stored.
 		return false;
 	}
+	
+	@Override
+	public boolean isOutsideRestrictedRange(int[] multi) {
+		// By default, there is no restricted range
+		return false;
+	}
+	
+	/**
+	 * Assume no restricted bounds exist, but this can be overridden
+	 * @return String listing the restricted lower bounds in each dimension, separated by spaces
+	 */
+	@Override
+	public String lowerRestrictedBounds() {
+		return "";
+	}
+	
+	/**
+	 * Assume no restricted bounds exist, but this can be overridden
+	 * @return String listing the restricted upper bounds in each dimension, separated by spaces
+	 */
+	@Override
+	public String upperRestrictedBounds() {
+		return "";
+	}
 }

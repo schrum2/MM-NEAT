@@ -20,6 +20,19 @@ import edu.southwestern.util.sound.SoundToArray;
 public class ArrayUtil {
 
 	/**
+	 * Convert array of primitive doubles to array of object Floats
+	 * @param input double array
+	 * @return Float array
+	 */
+	public static Float[] doubleArrayToFloatArray(double[] input) {
+		Float[] result = new Float[input.length];
+		for(int i = 0; i < result.length; i++) {
+			result[i] = Float.valueOf((float) input[i]);
+		}
+		return result;
+	}
+	
+	/**
 	 * Remove all instances of toRemove from the String array.
 	 * There is probably a better way to do this with streams in the latest version of Java.
 	 * @param source String array

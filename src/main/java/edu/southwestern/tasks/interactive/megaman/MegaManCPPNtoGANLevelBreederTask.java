@@ -605,7 +605,7 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 	}
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		try {
-			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","useMultipleGANsMegaMan:false","showKLOptions:false","trials:1","mu:16", "base:megaManGAN",
+			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","useMultipleGANsMegaMan:false","showKLOptions:false","trials:1","mu:16", //"base:megaManGAN",
 					"maxGens:500","io:false","netio:false","GANInputSize:5","mating:true","fs:false","megaManGANLevelChunks:10",
 					"task:edu.southwestern.tasks.interactive.megaman.MegaManCPPNtoGANLevelBreederTask","cleanOldNetworks:false", 
 					"allowMultipleFunctions:true","ftype:0","watch:true","netChangeActivationRate:0.3","cleanFrequency:-1",

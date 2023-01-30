@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Vector;
 import java.util.stream.Stream;
 
@@ -41,7 +40,6 @@ import edu.southwestern.util.PythonUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.file.FileUtilities;
-import edu.southwestern.util.file.Serialization;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.stats.StatisticsUtilities;
 
@@ -198,7 +196,8 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			
 			ps.println("set title \"" + experimentPrefix + " Archive Filled Bins\"");
 			ps.println("set output \"" + fullFillName.substring(fullFillName.lastIndexOf('/')+1, fullFillName.lastIndexOf('.')) + ".pdf\"");
-			ps.println("plot \"" + name + ".txt\" u 1:2 w linespoints t \"Total\"" + (cppnDirLogging ? ", \\" : ""));
+			ps.println("plot \"" + name + ".txt\" u 1:2 w linespoints t \"Total\", \\");
+			ps.println("     \"" + name + ".txt\" u 1:6 w linespoints t \"Restricted\"" + (cppnDirLogging ? ", \\" : ""));
 			if(cppnDirLogging) { // Print CPPN and direct counts on same plot
 				ps.println("     \"" + name.replace("Fill", "cppnToDirect") + ".txt\" u 1:2 w linespoints t \"CPPNs\", \\");
 				ps.println("     \"" + name.replace("Fill", "cppnToDirect") + ".txt\" u 1:3 w linespoints t \"Vectors\"");
@@ -206,11 +205,13 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			
 			ps.println("set title \"" + experimentPrefix + " Archive QD Scores\"");
 			ps.println("set output \"" + fullQDName.substring(fullQDName.lastIndexOf('/')+1, fullQDName.lastIndexOf('.')) + ".pdf\"");
-			ps.println("plot \"" + name + ".txt\" u 1:3 w linespoints t \"QD Score\"");
+			ps.println("plot \"" + name + ".txt\" u 1:3 w linespoints t \"QD Score\", \\");
+			ps.println("     \"" + name + ".txt\" u 1:7 w linespoints t \"Restricted QD Score\"");
 			
 			ps.println("set title \"" + experimentPrefix + " Maximum individual fitness score");
 			ps.println("set output \"" + maxFitnessName.substring(maxFitnessName.lastIndexOf('/')+1, maxFitnessName.lastIndexOf('.')) + ".pdf\"");
-			ps.println("plot \"" + name + ".txt\" u 1:4 w linespoints t \"Maximum fitness Score\"");
+			ps.println("plot \"" + name + ".txt\" u 1:4 w linespoints t \"Maximum Fitness Score\", \\");
+			ps.println("     \"" + name + ".txt\" u 1:8 w linespoints t \"Restricted Maximum Fitness Score\"");
 			
 			if(Parameters.parameters.booleanParameter("dynamicAutoencoderIntervals")) {
 				ps.println("set title \"" + experimentPrefix + " Reconstruction Loss Range");
@@ -240,9 +241,11 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		String[] dimensionNames = bins.dimensions();
 		int[] dimensionSizes = bins.dimensionSizes();
 		String archiveBatchName = directory + "GenerateArchiveImage.bat";
+		String restrictedArchiveBatchName = directory + "GenerateRestrictedArchiveImage.bat";
 		String archiveAnimationBatchName = directory + "GenerateArchiveAnimation.bat";
 		
 		if (dimensionNames.length == 3 || dimensionNames.length == 2) {
+			PrintStream restricted = new PrintStream(new File(restrictedArchiveBatchName));
 			PrintStream ps = new PrintStream(new File(archiveBatchName));
 			if (dimensionNames.length == 3) { // add min/max batch params
 				ps.println("REM python 3DMAPElitesArchivePlotter.py <plot file to display> <first dimension name> <first dimension size> <second dimension name> <second dimension size> <third dimension name> <third dimension size> <row amount> <max value> <min value>\r\n"
@@ -251,18 +254,12 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				ps.println("REM python 2DMAPElitesArchivePlotter.py <plot file to display> <first dimension name> <first dimension size> <second dimension name> <second dimension size> <max value> <min value>\r\n"
 						+ "REM The min and max values are not required, and instead will be calculated automatically");
 			}
-			ps.println("cd ..");
-			ps.println("cd ..");
-			ps.print(PythonUtil.PYTHON_EXECUTABLE + " "+dimensionNames.length+"DMAPElitesArchivePlotter.py "+directory+fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt");
-			ps.print(" \""+prefix+"\"");
-			for (int i = 0; i < dimensionNames.length; i++) {
-				ps.print(" \""+dimensionNames[i]+"\" "+dimensionSizes[i]);
-			}
-			if (dimensionNames.length == 3) { // add min/max batch params
-				ps.print(" 2 %1 %2"); // add row param if 3
-			} else {
-				ps.print(" %1 %2");
-			}
+			// Print file that puts bounds around all archive points
+			writeScriptLauncher(directory, prefix, fullName, dimensionNames, dimensionSizes, ps, " %1 %2 %3 %4 %5 %6 %7 %8");
+			// Print file that puts bounds around restricted range
+			writeScriptLauncher(directory, prefix, fullName, dimensionNames, dimensionSizes, restricted, " max min "+bins.lowerRestrictedBounds()+" "+bins.upperRestrictedBounds()+" Restricted");
+			
+			restricted.close();
 			ps.close();
 			
 			ps = new PrintStream(new File(archiveAnimationBatchName));
@@ -288,6 +285,22 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			ps.close();
 		}
 	}
+
+	private void writeScriptLauncher(String directory, String prefix, String fullName, String[] dimensionNames,
+			int[] dimensionSizes, PrintStream ps, String finalLine) {
+		ps.println("cd ..");
+		ps.println("cd ..");
+		ps.print(PythonUtil.PYTHON_EXECUTABLE + " "+dimensionNames.length+"DMAPElitesArchivePlotter.py "+directory+fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt");
+		ps.print(" \""+prefix+"\"");
+		for (int i = 0; i < dimensionNames.length; i++) {
+			ps.print(" \""+dimensionNames[i]+"\" "+dimensionSizes[i]);
+		}
+		if (dimensionNames.length == 3) { // add min/max batch params
+			ps.print(" 2"); // add row param if 3
+		} 
+		// add min/max batch params and bounds for binning red box (designed for 3D. Excess parameters for 2D)
+		ps.print(finalLine);
+	}
 	
 	/**
 	 * Get the archive
@@ -310,28 +323,45 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		}
 		saveImageArchives = MMNEAT.task instanceof PictureTargetTask;
 		ArrayList<Genotype<T>> startingPopulation; // Will be new or from saved archive
+		
+		// Do not discard individuals outside restricted range during initialization, since we
+		// may end up with an empty archive in this case.
+		boolean originalSetting = Parameters.parameters.booleanParameter("discardFromBinOutsideRestrictedRange");
+		if(Parameters.parameters.booleanParameter("turnOffRestrictionsDuringInit")) {
+			System.out.println("Do not discard any elites during initialization");
+			Parameters.parameters.setBoolean("discardFromBinOutsideRestrictedRange", false);
+		}	
+		
 		if(iterations > 0) {
-			startingPopulation = new ArrayList<>();
-			//int numLabels = archive.getBinMapping().binLabels().size();
-			// Loading from saved archive
-			String archiveDir = archive.getArchiveDirectory();
-			List<String> binLabels = archive.getBinMapping().binLabels();
-			Serialization.debug = false; // Don't print stack trace for missing files
-			// Load each elite from xml file into archive
-			for(int i = 0; i < binLabels.size(); i++) {
-				String binPrefix = archiveDir + "/" + binLabels.get(i) + "-";
-				Genotype<T> elite = (Genotype<T>) Serialization.load(binPrefix + "elite"); // Load genotype
-				//double binScore = Double.NEGATIVE_INFINITY; // The one bin score
-				if(elite != null) { // File actually exists
-					startingPopulation.add(elite);
-				}
-			}
-			Serialization.debug = true; // Restore stack traces
+			
+			System.out.println("It is not safe to resume MAP-Elites runs that crash.");
+			System.out.println("Because logging is periodic, the state of the archive may not reflect the state of the logs.");
+			System.exit(1);
+			
+			startingPopulation = null;
+			
+//			startingPopulation = new ArrayList<>();
+//			//int numLabels = archive.getBinMapping().binLabels().size();
+//			// Loading from saved archive
+//			String archiveDir = archive.getArchiveDirectory();
+//			List<String> binLabels = archive.getBinMapping().binLabels();
+//			Serialization.debug = false; // Don't print stack trace for missing files
+//			// Load each elite from xml file into archive
+//			for(int i = 0; i < binLabels.size(); i++) {
+//				String binPrefix = archiveDir + "/" + binLabels.get(i) + "-";
+//				Genotype<T> elite = (Genotype<T>) Serialization.load(binPrefix + "elite"); // Load genotype
+//				//double binScore = Double.NEGATIVE_INFINITY; // The one bin score
+//				if(elite != null) { // File actually exists
+//					startingPopulation.add(elite);
+//				}
+//			}
+//			Serialization.debug = true; // Restore stack traces
 		} else {
-			System.out.println("Fill up initial archive");
+			System.out.println("Fill up initial archive");		
 			// Start from scratch
 			int startSize = Parameters.parameters.integerParameter("mu");
 			startingPopulation = PopulationUtil.initialPopulation(example, startSize);			
+			
 			assert startingPopulation.size() == 0 || !(startingPopulation.get(0) instanceof BoundedRealValuedGenotype) || ((BoundedRealValuedGenotype) startingPopulation.get(0)).isBounded() : "Initial individual not bounded: "+startingPopulation.get(0);
 		}
 		
@@ -351,7 +381,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			Score<T> s = task.evaluate(g);
 			evaluatedPopulation.add(s);
 		});
-		CommonConstants.netio = backupNetIO;		
+		CommonConstants.netio = backupNetIO;	
 		
 		if(Parameters.parameters.booleanParameter("dynamicAutoencoderIntervals")) {					
 			autoencoderLossRange = new MMNEATLog("autoencoderLossRange", false, false, false, true);
@@ -410,6 +440,12 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			});
 			//long endTime = System.currentTimeMillis();
 			//System.out.println("TIME TAKEN:" + (endTime - startTime));
+				
+		}
+			
+		if(Parameters.parameters.booleanParameter("turnOffRestrictionsDuringInit")) {
+			System.out.println("Return to discarding elites in restricted range");
+			Parameters.parameters.setBoolean("discardFromBinOutsideRestrictedRange", originalSetting);
 		}
 	}
 
@@ -443,7 +479,16 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			final int numFilledBins = elite.length - ArrayUtil.countOccurrences(Float.NEGATIVE_INFINITY, elite);
 			// Get the QD Score for this elite
 			final double qdScore = calculateQDScore(elite);
-			fillLog.log(pseudoGeneration + "\t" + numFilledBins + "\t" + qdScore + "\t" + maximumFitness + "\t" + iterationsWithoutEliteCounter);
+			
+			BinLabels labels = MMNEAT.getArchiveBinLabelsClass();
+			Stream<Score<T>> stream = archive.archive.parallelStream().filter(s -> s != null && !labels.isOutsideRestrictedRange(s.MAPElitesBinIndex()));
+			double[] restrictedScores = stream.mapToDouble(s -> s.behaviorIndexScore()).toArray();
+			final int restrictedFilled = restrictedScores.length;
+			final double restrictedQD = calculateQDScore(ArrayUtil.doubleArrayToFloatArray(restrictedScores));
+			final double restrictedMaxFitness = restrictedScores.length == 0 ? 0 : StatisticsUtilities.maximum(restrictedScores);
+			
+			fillLog.log(pseudoGeneration + "\t" + numFilledBins   + "\t" + qdScore    + "\t" + maximumFitness + "\t" + iterationsWithoutEliteCounter + 
+					                       "\t" + restrictedFilled+ "\t" +restrictedQD+ "\t" +restrictedMaxFitness);
 			if(cppnThenDirectLog!=null) {
 				Integer[] eliteProper = new Integer[elite.length];
 				int i = 0;
