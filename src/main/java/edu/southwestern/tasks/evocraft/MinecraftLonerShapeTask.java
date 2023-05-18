@@ -182,6 +182,11 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	}
 	
 	// Private class to keep track of interactive blocks
+	/**
+	 * 
+	 * @author lewisj
+	 *
+	 */
 	private static class ControlBlocks {
 
 		private MinecraftCoordinates diamondBlock;
@@ -250,7 +255,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	}
 	
 	
-	
+	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num, HashMap<String, Object> behaviorCharacteristics) {
 		//System.out.println("    Archive "+ Arrays.toString(MMNEAT.getArchive().getArchive().stream().map(s -> s == null ? "X" : ((Score) s).behaviorIndexScore() ).toArray()));
 		
@@ -313,6 +318,15 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		placeArchiveInWorld(individual, behaviorCharacteristics, ranges, false); // By default, do not force placement of new shape
 	}
 
+	/**
+	 * same as above but adds parameter forcePlacement
+	 * -Joanna
+	 * @param <T>
+	 * @param individual specified genome of shape
+	 * @param behaviorCharacteristics dictionary of values used for placing at the right index
+	 * @param ranges specified range of each shape
+	 * @param forcePlacement
+	 */
 	@SuppressWarnings("unchecked")
 	public static <T> void placeArchiveInWorld(Genotype<T> individual, HashMap<String, Object> behaviorCharacteristics, MinecraftCoordinates ranges, boolean forcePlacement) {
 		MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
@@ -630,6 +644,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		internalMinecraftShapeTask.finalCleanup();
 	}
 
+	
 	public static void main(String[] args) {
 		int seed = 14;
 		try {

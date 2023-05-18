@@ -70,7 +70,7 @@ public class MinecraftUtilClass {
 
 	/**
 	 * Size of space around each shape, which includes all the empty space between shapes
-	 * @return Save of space including empty space between shapes
+	 * @return Size of space including empty space between shapes
 	 */
 	public static MinecraftCoordinates reservedSpace() {
 		final int SPACE_BETWEEN = Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes");
