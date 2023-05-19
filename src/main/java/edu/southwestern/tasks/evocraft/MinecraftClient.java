@@ -162,7 +162,7 @@ public class MinecraftClient extends Comm {
 		COBBLESTONE_WALL,	// 42
 		COCOA,				// 43
 		COMMAND_BLOCK,		// 44
-		CONCRETE,
+		CONCRETE,			
 		CONCRETE_POWDER,
 		CRAFTING_TABLE,
 		CYAN_GLAZED_TERRACOTTA,
