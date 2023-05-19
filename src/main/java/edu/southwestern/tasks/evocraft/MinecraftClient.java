@@ -14,7 +14,8 @@ import edu.southwestern.tasks.mario.gan.Comm;
 import edu.southwestern.util.PythonUtil;
 import edu.southwestern.util.datastructures.Triple;
 /**
- * 
+ * MinecraftClient creates A client if one doesn't exist communicates with Python API as a Java interface 
+ * to place blocks in their proper positions while also formating the area properly
  * @author raffertyt
  *
  */
@@ -50,7 +51,7 @@ public class MinecraftClient extends Comm {
 		}
 	}
 	/**
-	 * Creates new client if one does not exist
+	 * Creates new client if one does not exist returns client if it already exists
 	 * @return client MinecraftClient();
 	 */
 	public static MinecraftClient getMinecraftClient() {
@@ -386,7 +387,7 @@ public class MinecraftClient extends Comm {
 			this(size,size,size);
 		}
 		/**
-		 * 
+		 * constructs a new coordinate with X, Y and Z values
 		 * @param x specific coordinate for x 
 		 * @param y specific coordinate for y
 		 * @param z specific coordinate for z
@@ -395,7 +396,7 @@ public class MinecraftClient extends Comm {
 			super(x, y, z);
 		}
 		/**
-		 * gets proper values from original
+		 * gets proper coordinates from original
 		 * @param original
 		 */
 		public MinecraftCoordinates(MinecraftCoordinates original) { // copy constructor
@@ -403,17 +404,17 @@ public class MinecraftClient extends Comm {
 		}
 		/**
 		 * 
-		 * @return t1 which is the proper value for x
+		 * @return t1 which is the proper coordinate for x
 		 */
 		public int x() { return t1; }
 		/**
 		 * 
-		 * @return t1 which is the proper value for y
+		 * @return t1 which is the proper coordinate for y
 		 */
 		public int y() { return t2; }
 		/**
 		 * 
-		 * @return t1 which is the proper value for z
+		 * @return t1 which is the proper coordinate for z
 		 */
 		public int z() { return t3; }
 		
@@ -689,7 +690,7 @@ public class MinecraftClient extends Comm {
 	}
 	
 	/**
-	 * Over loaded method, retreives list of singular block at a specified coordinate
+	 * Over loaded method, retrieves list of a singular block at a specified coordinate
 	 * 
 	 * @param pos Singular coordinate to read in from
 	 * @return List of Blocks at the singular coordinate
