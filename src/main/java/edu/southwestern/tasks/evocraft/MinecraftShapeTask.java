@@ -311,8 +311,8 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	}
 	/**
 	 * Uses the fitness score to determine if the machine is truly flying
-	 * @param fitnessScore
-	 * @return boolean
+	 * @param fitnessScore the fitness score of the machine being evaluated
+	 * @return boolean that returns true if the machine is actually flying 
 	 */
 	public boolean certainFlying(double fitnessScore) {
 		return certainFlying(fitnessFunctions, fitnessScore);
@@ -321,9 +321,9 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	/**
 	 * A shape with a fitness of this amount must be flying (assumes first/only fitness is change in center of mass)
 	 * 
-	 * @param fitnessFunctions
-	 * @param fitnessScores
-	 * @return boolean
+	 * @param fitnessFunctions list of fitnessFunctons
+	 * @param fitnessScores the list of fitness scores of each function in fitness function of the machine being evaluated
+	 * @return boolean true if the fitnessScore is greater than max fitness - flying penalty buffer
 	 */
 	public static boolean certainFlying(ArrayList<MinecraftFitnessFunction> fitnessFunctions, double fitnessScore) {
 		assert fitnessFunctions.get(0) instanceof ChangeCenterOfMassFitness;
