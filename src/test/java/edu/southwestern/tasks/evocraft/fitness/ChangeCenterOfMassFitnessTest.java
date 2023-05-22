@@ -209,7 +209,50 @@ public class ChangeCenterOfMassFitnessTest {
 		//MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 100);
 	}
 	
-	//untested
+	
+	// added minecraftRewardFastFlyingMachine parameter, created variables to control expected fitness and wiggle room
+	// created more space between shapes and moved the shape up to keep from going out of bounds
+	//passed
+	@Test
+	public void testFlyingRewardSpeed() throws InterruptedException {
+		ChangeCenterOfMassFitness.resetPreviousResults();
+
+		Parameters.initializeParameterCollections(new String[] {"minecraftRewardFastFlyingMachines:true", "minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:30","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L, "minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+		MinecraftCoordinates cornerBS2 = new MinecraftCoordinates(0,16,-5);
+		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 100);
+		
+		// List of flying machine blocks that should move
+		// Not really sure what the fitness would be after 10 seconds
+		ArrayList<Block> blockSet2 = new ArrayList<>();
+		// Bottom layer
+		blockSet2.add(new Block(1,11,1,BlockType.PISTON,Orientation.NORTH));
+		blockSet2.add(new Block(1,11,0,BlockType.SLIME,Orientation.NORTH));
+		blockSet2.add(new Block(1,11,-1,BlockType.STICKY_PISTON,Orientation.SOUTH));
+		blockSet2.add(new Block(1,11,-2,BlockType.PISTON,Orientation.NORTH));
+		blockSet2.add(new Block(1,11,-4,BlockType.SLIME,Orientation.NORTH));
+		// Top layer
+		blockSet2.add(new Block(1,12,0,BlockType.REDSTONE_BLOCK,Orientation.NORTH));
+		blockSet2.add(new Block(1,12,-4,BlockType.REDSTONE_BLOCK,Orientation.NORTH));
+		// Activate
+		blockSet2.add(new Block(1,12,-1,BlockType.QUARTZ_BLOCK,Orientation.NORTH));
+		
+		System.out.println("shortTimeBetweenMinecraftReads = " + Parameters.parameters.longParameter("shortTimeBetweenMinecraftReads"));
+		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet2);
+
+		
+		//System.out.println("Fitness for the blockSet 2: "+ ff.fitnessScore(cornerBS2));
+		
+		//changing settings that are being tested and minecraftRewardFastFlyingMachines
+		double wiggleRoom = 15.0;
+		double expected = 80.0;
+		assertEquals(expected, ff.fitnessScore(cornerBS2,blockSet2),wiggleRoom);
+		Triple<Vertex, Vertex, Double> beforeAndAfter = ChangeCenterOfMassFitness.getPreviouslyComputedResult(cornerBS2); // Prevent lock
+		assertEquals(expected, beforeAndAfter.t3, wiggleRoom);
+		
+		//MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 100);
+	}
+	
+	//passed
 	@Test
 	public void testFlyingWithoutMaxFitness() throws InterruptedException {
 		ChangeCenterOfMassFitness.resetPreviousResults();
