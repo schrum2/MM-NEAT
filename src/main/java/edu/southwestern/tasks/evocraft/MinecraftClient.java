@@ -13,7 +13,12 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.mario.gan.Comm;
 import edu.southwestern.util.PythonUtil;
 import edu.southwestern.util.datastructures.Triple;
-
+/**
+ * MinecraftClient creates A client if one doesn't exist communicates with Python API as a Java interface 
+ * to place blocks in their proper positions while also formating the area properly
+ * @author raffertyt
+ *
+ */
 public class MinecraftClient extends Comm {
 
 	public static final int MAX_Y_COORDINATE = 255;
@@ -32,7 +37,6 @@ public class MinecraftClient extends Comm {
 
 	public MinecraftClient() {
 		super();
-		// More?
 	}
 
 	@Override
@@ -46,7 +50,10 @@ public class MinecraftClient extends Comm {
 			printErrorMsg("MinecraftServerUtil:initBuffers:Null process!");
 		}
 	}
-
+	/**
+	 * Creates new client if one does not exist returns client if it already exists
+	 * @return client MinecraftClient();
+	 */
 	public static MinecraftClient getMinecraftClient() {
 		if(client == null) {
 			PythonUtil.setPythonProgram();
@@ -71,7 +78,9 @@ public class MinecraftClient extends Comm {
 			e.printStackTrace();
 		}
 	}
-
+	/**
+	 * Launches client script and checks to see if builder can build
+	 */
 	public void launchClientScript() {
 		PythonUtil.checkPython();
 		// Run script for communicating with Minecraft Server
@@ -84,7 +93,9 @@ public class MinecraftClient extends Comm {
 			e.printStackTrace();
 		}
 	}
-
+	/**
+	 * destroys Client process and sets it equal to null
+	 */
 	public static void terminateClientScriptProcess() {
 		if(client != null) {
 			client.process.destroy();
@@ -151,7 +162,7 @@ public class MinecraftClient extends Comm {
 		COBBLESTONE_WALL,	// 42
 		COCOA,				// 43
 		COMMAND_BLOCK,		// 44
-		CONCRETE,
+		CONCRETE,			
 		CONCRETE_POWDER,
 		CRAFTING_TABLE,
 		CYAN_GLAZED_TERRACOTTA,
@@ -368,20 +379,43 @@ public class MinecraftClient extends Comm {
 	 *
 	 */
 	public static class MinecraftCoordinates extends Triple<Integer,Integer,Integer> {
+		/**
+		 * sets Integers within this MinecraftCoordinates equal to size
+		 * @param size value of each coordinate (x, y, and z)
+		 */
 		public MinecraftCoordinates(int size) {
 			this(size,size,size);
 		}
-		
+		/**
+		 * constructs a new coordinate with X, Y and Z values
+		 * @param x specific coordinate for x 
+		 * @param y specific coordinate for y
+		 * @param z specific coordinate for z
+		 */
 		public MinecraftCoordinates(int x, int y, int z) {
 			super(x, y, z);
 		}
-		
+		/**
+		 * gets proper coordinates from original
+		 * @param original
+		 */
 		public MinecraftCoordinates(MinecraftCoordinates original) { // copy constructor
 			super(original.x(), original.y(), original.z());
 		}
-		
+		/**
+		 * 
+		 * @return t1 which is the proper coordinate for x
+		 */
 		public int x() { return t1; }
+		/**
+		 * 
+		 * @return t1 which is the proper coordinate for y
+		 */
 		public int y() { return t2; }
+		/**
+		 * 
+		 * @return t1 which is the proper coordinate for z
+		 */
 		public int z() { return t3; }
 		
 		/**
@@ -484,7 +518,9 @@ public class MinecraftClient extends Comm {
 				return false;
 			}
 		}
-
+		/**
+		 * uses values from orientationMatters compared with object to narrow down flying machines that are identical.
+		 */
 		@Override
 		public boolean equals(Object obj) {
 			if (this == obj) {
@@ -654,7 +690,7 @@ public class MinecraftClient extends Comm {
 	}
 	
 	/**
-	 * Over loaded method, retreives list of singular block at a specified coordinate
+	 * Over loaded method, retrieves list of a singular block at a specified coordinate
 	 * 
 	 * @param pos Singular coordinate to read in from
 	 * @return List of Blocks at the singular coordinate

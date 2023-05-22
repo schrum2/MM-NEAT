@@ -70,7 +70,7 @@ public class MinecraftUtilClass {
 
 	/**
 	 * Size of space around each shape, which includes all the empty space between shapes
-	 * @return Save of space including empty space between shapes
+	 * @return Size of space including empty space between shapes
 	 */
 	public static MinecraftCoordinates reservedSpace() {
 		final int SPACE_BETWEEN = Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes");
@@ -211,7 +211,7 @@ public class MinecraftUtilClass {
 	/**
 	 * Block orientations cannot be read from the world, so they are always null when read. 
 	 * To compare against such lists, it might be necessary to take a list with non-null
-	 * block orientations and set them to null. This means there is no certainty as you
+	 * block orientations and set them to null. This means there is no certainty as to
 	 * what the orientations are, but it gives some means of comparison.
 	 * 
 	 * @param originalBlocks Blocks from a generator, that still have orientations
@@ -275,6 +275,7 @@ public class MinecraftUtilClass {
 				System.out.println(line);
 				System.out.println(Arrays.toString(blockVals));
 				System.out.println(Arrays.toString(coordinates));
+				s.close(); // closes the scanner
 				throw e;
 			}
 		}
