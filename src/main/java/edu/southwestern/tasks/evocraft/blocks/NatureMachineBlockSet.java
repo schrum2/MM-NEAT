@@ -7,7 +7,7 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
  *
  */
 
-public class natureMachineBlockSet implements BlockSet {
+public class NatureMachineBlockSet implements BlockSet {
 
 	@Override
 	public BlockType[] getPossibleBlocks() {
