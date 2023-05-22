@@ -274,7 +274,6 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 				} else {
 					totalChangeDistance += lastCenterOfMass.distance(nextCenterOfMass);
 				}
-				//totalChangeDistance += lastCenterOfMass.distance(nextCenterOfMass);
 				if(CommonConstants.watch) System.out.println("Total is now: "+totalChangeDistance);
 				lastCenterOfMass = nextCenterOfMass;
 				previousBlocks = shortWaitTimeUpdate; // Remember the previous block list
