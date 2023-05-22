@@ -100,7 +100,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 
 						// t1 is the diamond blocks, t2 is the emerald, and t3 is the 1D index
 						for(ControlBlocks cb : currentElements) {
-							// Initial check, reads in blocks once and comapres from there
+							// Initial check, reads in blocks once and compares from there
 							ArrayList<Block> interactiveBlocks = MinecraftClient.getMinecraftClient().readCube(cb.getDiamond(),cb.getEmerald());
 							ArrayList<Block> obsidianBlock = MinecraftClient.getMinecraftClient().readCube(cb.getObsidian());
 							if(interactiveBlocks.get(0).type!=BlockType.DIAMOND_BLOCK || 
@@ -181,7 +181,19 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		}
 	}
 	
-	// Private class to keep track of interactive blocks
+	/**
+	 * Private class to keep track of interactive blocks
+	 * maintains coordinates of interactive block's for a single shape using oneD / oneDimIndex / index in 1D archive 
+	 * overrides equals for convenience
+	 * 
+	 * @commenter lewisj
+	 * 
+	 * diamond block: clears space and respawns shape
+	 * emerald block: removes shape from archive
+	 * obsidian block: creates new shapes based on the chosen shape
+	 * gold block: indicates the highest fitness shapes denoted as champions (not a control block)
+	 * 
+	 */
 	private static class ControlBlocks {
 
 		private MinecraftCoordinates diamondBlock;
@@ -189,7 +201,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		private MinecraftCoordinates obsidianBlock;
 		private int oneDimIndex;
 		
-		
+		// all control blocks information related to one shape based on oneD / index in 1D archive
 		private ControlBlocks(MinecraftCoordinates diamond,MinecraftCoordinates emerald,MinecraftCoordinates obsidian,int oneD) {
 			diamondBlock  = new MinecraftCoordinates(diamond);
 			emeraldBlock  = new MinecraftCoordinates(emerald);
@@ -250,7 +262,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	}
 	
 	
-	
+	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num, HashMap<String, Object> behaviorCharacteristics) {
 		//System.out.println("    Archive "+ Arrays.toString(MMNEAT.getArchive().getArchive().stream().map(s -> s == null ? "X" : ((Score) s).behaviorIndexScore() ).toArray()));
 		
@@ -313,6 +325,16 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		placeArchiveInWorld(individual, behaviorCharacteristics, ranges, false); // By default, do not force placement of new shape
 	}
 
+	/**
+	 * generates coordinates for new archived shapes and updates the highest fitness score and gold blocks if necessary
+	 * also forcibly clears and replaces a shape
+	 * -Joanna
+	 * @param <T>
+	 * @param individual specified genome of shape
+	 * @param behaviorCharacteristics dictionary of values used for placing at the right index
+	 * @param ranges specified range of each shape
+	 * @param forcePlacement forces placement on the shape by clearing and recreating shape
+	 */
 	@SuppressWarnings("unchecked")
 	public static <T> void placeArchiveInWorld(Genotype<T> individual, HashMap<String, Object> behaviorCharacteristics, MinecraftCoordinates ranges, boolean forcePlacement) {
 		MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
@@ -349,17 +371,17 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 						Pair<MinecraftCoordinates,Integer>[] currentElements = new Pair[championCoords.size()];
 						currentElements = championCoords.toArray(currentElements);
 						for(Pair<MinecraftCoordinates,Integer> pair : currentElements) {
-							champions.add(new Block(pair.t1,BlockType.GOLD_BLOCK, Orientation.WEST));
+							champions.add(new Block(pair.t1,BlockType.GOLD_BLOCK, Orientation.WEST));	//orientation west is arbitrary
 						}
 					}
 
-					// If the shape has a greater fitness, clears all gold blocks and blacks a new one
+					// If the shape has a greater fitness, clears all gold blocks and adds a new one
 					else if(scoreOfCurrentElite>highestFitness) {
 						// For loop replaces all gold blocks in overworld with air
 						Pair<MinecraftCoordinates,Integer>[] currentElements = new Pair[championCoords.size()];
 						currentElements = championCoords.toArray(currentElements);
 						for(Pair<MinecraftCoordinates,Integer> pair : currentElements) {
-							champions.add(new Block(pair.t1,BlockType.AIR, Orientation.WEST));
+							champions.add(new Block(pair.t1,BlockType.AIR, Orientation.WEST));	//orientation west is arbitrary
 						}
 						// Clears the global set and adds the new pair in
 						championCoords.clear();
@@ -368,9 +390,9 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 						// Spawns blocks then clears the list, as there are issues when there are two blocks spawned at the same place
 						MinecraftClient.getMinecraftClient().spawnBlocks(champions);
 						champions.clear();
-						champions.add(new Block(goldBlock,BlockType.GOLD_BLOCK, Orientation.WEST)); // Adds new gold block
+						champions.add(new Block(goldBlock,BlockType.GOLD_BLOCK, Orientation.WEST)); // Adds new gold block	//orientation west is arbitrary
 					}
-					MinecraftClient.getMinecraftClient().spawnBlocks(champions); // Spawns shapes in
+					MinecraftClient.getMinecraftClient().spawnBlocks(champions); // Spawns shapes in the game
 					//System.out.println("Current:"+scoreOfCurrentElite+"  Highest:"+highestFitness); // For debugging
 					if(spawnShapesInWorld) highestFitness = scoreOfCurrentElite; // increases the best fitness if needed
 				}
@@ -429,7 +451,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	 * 
 	 * @param <T>
 	 * @param genomeId ID of genome being written
-	 * @param dim1D location of genome in 1D archive
+	 * @param dim1D location of genome in 1D archive / index in 1D archive
 	 * @param scoreOfCurrentElite genome's score
 	 * @param blocks blocks of the shape generated by genome
 	 */
@@ -509,7 +531,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	}
 
 	/**
-	 * Clears the an area for a specified shape 
+	 * Clears the area for a specified shape 
 	 * 
 	 * @param ranges specified range of each shape
 	 * @param startPosition Starting indices of a specific shape
@@ -536,16 +558,16 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 
 		// Places all fences in the x direction
 		for(int i =0;i<=ranges.x()+1;i++) {
-			fences.add(new Block(fencePlacePosition.x()+i,fencePlacePosition.y(),fencePlacePosition.z(),BlockType.DARK_OAK_FENCE, Orientation.WEST));
-			fences.add(new Block(fencePlacePosition.x()+i,fencePlacePosition.y(),fencePlacePosition.z()+ranges.z()+1,BlockType.DARK_OAK_FENCE, Orientation.WEST));
+			fences.add(new Block(fencePlacePosition.x()+i,fencePlacePosition.y(),fencePlacePosition.z(),BlockType.DARK_OAK_FENCE, Orientation.WEST));	//orientation and block type arbitrary
+			fences.add(new Block(fencePlacePosition.x()+i,fencePlacePosition.y(),fencePlacePosition.z()+ranges.z()+1,BlockType.DARK_OAK_FENCE, Orientation.WEST));	//orientation and block type arbitrary
 
 		}
 		// Places all fences in the z direction
 		for(int i =0;i<=ranges.z();i++) {
-			fences.add(new Block(fencePlacePosition.x(),fencePlacePosition.y(),fencePlacePosition.z()+i,BlockType.DARK_OAK_FENCE, Orientation.WEST));
-			fences.add(new Block(fencePlacePosition.x()+ranges.x()+1,fencePlacePosition.y(),fencePlacePosition.z()+i,BlockType.DARK_OAK_FENCE, Orientation.WEST));
+			fences.add(new Block(fencePlacePosition.x(),fencePlacePosition.y(),fencePlacePosition.z()+i,BlockType.DARK_OAK_FENCE, Orientation.WEST));	//orientation and block type arbitrary
+			fences.add(new Block(fencePlacePosition.x()+ranges.x()+1,fencePlacePosition.y(),fencePlacePosition.z()+i,BlockType.DARK_OAK_FENCE, Orientation.WEST));	//orientation and block type arbitrary
 		}
-		MinecraftClient.getMinecraftClient().spawnBlocks(fences); // Spawns them in
+		MinecraftClient.getMinecraftClient().spawnBlocks(fences); // Spawns them in game
 	}
 	/**
 	 * Sets spawnShapesInWorld to true
@@ -630,6 +652,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		internalMinecraftShapeTask.finalCleanup();
 	}
 
+	
 	public static void main(String[] args) {
 		int seed = 14;
 		try {
