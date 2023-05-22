@@ -49,7 +49,10 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 	public static void clearAreaAroundSpecialCorner() {
 		clearAreaAroundCorner(SPECIAL_CORNER);
 	}
-	
+	/**
+	 * body of code for for clearAreaAroundSpecialCorner used above
+	 * @param corner
+	 */
 	public static void clearAreaAroundCorner(MinecraftCoordinates corner) {
 		MinecraftCoordinates lower = corner.sub(SPECIAL_CORNER_BUFFER);
 		MinecraftCoordinates upper = corner.add(MinecraftUtilClass.getRanges().add(SPECIAL_CORNER_BUFFER));
@@ -57,7 +60,11 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		List<Block> errorCheck = null;
 		assert areaAroundCornerEmpty(corner) : "Area not empty after clearing! "+errorCheck;
 	}
-	
+	/**
+	 * Checks if the area around a corner is empty
+	 * @param corner
+	 * @return boolean if space is empty or not
+	 */
 	public static boolean areaAroundCornerEmpty(MinecraftCoordinates corner) {
 		MinecraftCoordinates lower = corner.sub(SPECIAL_CORNER_BUFFER);
 		MinecraftCoordinates upper = corner.add(MinecraftUtilClass.getRanges().add(SPECIAL_CORNER_BUFFER));
@@ -68,7 +75,9 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 //		}
 		return errorCheck.isEmpty();
 	}
-	
+	/**
+	 * clears previous results
+	 */
 	public static void resetPreviousResults() {
 		PREVIOUSLY_COMPUTED_RESULTS.clear();
 	}
