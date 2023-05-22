@@ -212,6 +212,7 @@ public class ChangeCenterOfMassFitnessTest {
 	
 	// added minecraftRewardFastFlyingMachine parameter, created variables to control expected fitness and wiggle room
 	// created more space between shapes and moved the shape up to keep from going out of bounds
+	// created while testing rewarding flying machine speed functionality
 	//passed
 	@Test
 	public void testFlyingRewardSpeed() throws InterruptedException {
@@ -252,6 +253,9 @@ public class ChangeCenterOfMassFitnessTest {
 		//MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 100);
 	}
 	
+	// tests flying machine with changed space between shapes, expected fitness and wiggle room
+	// moved the y access for spawning the shape
+	//created while testing rewarding flying machine speed functionality
 	//passed
 	@Test
 	public void testFlyingWithoutMaxFitness() throws InterruptedException {
@@ -279,13 +283,7 @@ public class ChangeCenterOfMassFitnessTest {
 		System.out.println("shortTimeBetweenMinecraftReads = " + Parameters.parameters.longParameter("shortTimeBetweenMinecraftReads"));
 		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet2);
 
-		// Since it is moving out completely, and all the ranges are the same value (10)
-		// That means the max fitness is 10 + 6 / 2 = 8
-		// However, the movement speed of the flying machine depends on the speed of the independently
-		// executing Minecraft server, which is subject to variation. The main point is that the ship
-		// flies for a bit, but the exact amount is hard to pin down. Thus, we only assert that the amount
-		// is 6.0 or more
-		//System.out.println("Fitness for the blockSet 2: "+ ff.fitnessScore(cornerBS2));
+		
 		double wiggleRoom = 2.0;
 		double expected = 17.0;
 		assertEquals(expected, ff.fitnessScore(cornerBS2,blockSet2),wiggleRoom);
