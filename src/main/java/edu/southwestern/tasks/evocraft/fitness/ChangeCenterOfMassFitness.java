@@ -267,7 +267,14 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 				
 				stop = true;
 			} else {
-				totalChangeDistance += lastCenterOfMass.distance(nextCenterOfMass);
+				//if evaluating and rewarding fast flying machines
+				if(Parameters.parameters.booleanParameter("minecraftRewardFastFlyingMachines")) {
+					//calculates based on initial center of mass and the next center of mass to add to total change distance
+					totalChangeDistance += initialCenterOfMass.distance(nextCenterOfMass);
+				} else {
+					totalChangeDistance += lastCenterOfMass.distance(nextCenterOfMass);
+				}
+				//totalChangeDistance += lastCenterOfMass.distance(nextCenterOfMass);
 				if(CommonConstants.watch) System.out.println("Total is now: "+totalChangeDistance);
 				lastCenterOfMass = nextCenterOfMass;
 				previousBlocks = shortWaitTimeUpdate; // Remember the previous block list
