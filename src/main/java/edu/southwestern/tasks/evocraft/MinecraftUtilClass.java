@@ -25,6 +25,7 @@ import edu.southwestern.util.datastructures.ArrayUtil;
  */
 public class MinecraftUtilClass {
 
+	//empty space is all the space between shape evaluation areas
 	public static int emptySpaceOffsetX() {
 		return emptySpaceOffset(Parameters.parameters.integerParameter("minecraftXRange"));
 	}
@@ -190,6 +191,7 @@ public class MinecraftUtilClass {
 	/**
 	 * Use EvoCraft client code to call readCube and determine blocks that are
 	 * present in the world.
+	 * calculates range of evaluation area for secondary related function readBlocksFromClient
 	 * 
 	 * @param corner minimal coordinate of shape being checked
 	 * @return List of blocks occupying the space for the given shape
@@ -202,6 +204,18 @@ public class MinecraftUtilClass {
 		return readBlocksFromClient(corner, ranges);
 	}
 	
+	/**
+	 * Use EvoCraft client code to call readCube and determine blocks that are 
+	 * present in the world.
+	 * Called by readBlocksFromClient 
+	 * uses range previously calculated for evaluation area & uses client code to call readCube
+	 * 
+	 * -Joanna
+	 * 
+	 * @param corner minimal coordinates of shape being checked
+	 * @param ranges coordinates or passed for space to evaluate
+	 * @return list of blocks occupying the space for the given shape
+	 */
 	public static List<Block> readBlocksFromClient(MinecraftCoordinates corner, MinecraftCoordinates ranges) {
 		MinecraftClient client = MinecraftClient.getMinecraftClient();
 		List<Block> blocks = client.readCube(corner, corner.add(ranges));
