@@ -208,6 +208,49 @@ public class ChangeCenterOfMassFitnessTest {
 		
 		//MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 100);
 	}
+	
+	//untested
+	@Test
+	public void testFlyingWithoutMaxFitness() throws InterruptedException {
+		ChangeCenterOfMassFitness.resetPreviousResults();
+
+		Parameters.initializeParameterCollections(new String[] {"minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:30","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L, "minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+		MinecraftCoordinates cornerBS2 = new MinecraftCoordinates(0,16,-5);
+		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 100);
+		
+		// List of flying machine blocks that should move
+		// Not really sure what the fitness would be after 10 seconds
+		ArrayList<Block> blockSet2 = new ArrayList<>();
+		// Bottom layer
+		blockSet2.add(new Block(1,11,1,BlockType.PISTON,Orientation.NORTH));
+		blockSet2.add(new Block(1,11,0,BlockType.SLIME,Orientation.NORTH));
+		blockSet2.add(new Block(1,11,-1,BlockType.STICKY_PISTON,Orientation.SOUTH));
+		blockSet2.add(new Block(1,11,-2,BlockType.PISTON,Orientation.NORTH));
+		blockSet2.add(new Block(1,11,-4,BlockType.SLIME,Orientation.NORTH));
+		// Top layer
+		blockSet2.add(new Block(1,12,0,BlockType.REDSTONE_BLOCK,Orientation.NORTH));
+		blockSet2.add(new Block(1,12,-4,BlockType.REDSTONE_BLOCK,Orientation.NORTH));
+		// Activate
+		blockSet2.add(new Block(1,12,-1,BlockType.QUARTZ_BLOCK,Orientation.NORTH));
+		
+		System.out.println("shortTimeBetweenMinecraftReads = " + Parameters.parameters.longParameter("shortTimeBetweenMinecraftReads"));
+		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet2);
+
+		// Since it is moving out completely, and all the ranges are the same value (10)
+		// That means the max fitness is 10 + 6 / 2 = 8
+		// However, the movement speed of the flying machine depends on the speed of the independently
+		// executing Minecraft server, which is subject to variation. The main point is that the ship
+		// flies for a bit, but the exact amount is hard to pin down. Thus, we only assert that the amount
+		// is 6.0 or more
+		//System.out.println("Fitness for the blockSet 2: "+ ff.fitnessScore(cornerBS2));
+		double wiggleRoom = 2.0;
+		double expected = 17.0;
+		assertEquals(expected, ff.fitnessScore(cornerBS2,blockSet2),wiggleRoom);
+		Triple<Vertex, Vertex, Double> beforeAndAfter = ChangeCenterOfMassFitness.getPreviouslyComputedResult(cornerBS2); // Prevent lock
+		assertEquals(expected, beforeAndAfter.t3, wiggleRoom);
+		
+		//MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 100);
+	}
 
 		
 	// Passes
