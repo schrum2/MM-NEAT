@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import edu.southwestern.MMNEAT.MMNEAT;
-import edu.southwestern.evolution.GenerationalEA;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.NetworkGenotype;
 import edu.southwestern.networks.NetworkTask;
@@ -40,9 +39,18 @@ import edu.southwestern.util.datastructures.Triple;
 import edu.southwestern.util.datastructures.Vertex;
 import edu.southwestern.util.file.FileUtilities;
 
-
+/**
+ *  MinecraftShapeTask is a class environment that lets you evaluate a phenotypes fitness geared towards minecraft shapes 
+ * 
+ * @author raffertyt
+ *
+ * @param <T> is the type of phenotype
+ * 
+ */
 public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTask, BoundedTask {
-
+	
+	public static int VERTICAL_SAFETY_BUFFER = 20;
+	
 	// Visible within package
 	ArrayList<MinecraftFitnessFunction> fitnessFunctions;
 	private ArrayList<MinecraftCoordinates> corners;
@@ -50,6 +58,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	private int startingY;
 	private int startingZ;
 	
+	// Makes sure tiebreaking is run in the same way as before
 	@SuppressWarnings("unchecked")
 	public MinecraftShapeTask() {
 		// Cannot allow random tie breaking since some generated shapes would be different
@@ -91,7 +100,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		if(Parameters.parameters.booleanParameter("minecraftFakeTestFitness")) {
 			fitnessFunctions.add(new FakeTestFitness());
 		}
-				
+		// try catch for initialization error of NoSuchMethodException when creating block set	
 		try {
 			MMNEAT.blockSet = (BlockSet) ClassCreation.createObject("minecraftBlockSet");
 		} catch (NoSuchMethodException e1) {
@@ -101,7 +110,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		}
 		
 		MMNEAT.discreteCeilings = ArrayUtil.intSpecified(Parameters.parameters.integerParameter("minecraftAmountOfBlocksToEvolve"),MMNEAT.blockSet.getPossibleBlocks().length);
-
+		// try catch for initialization error of NoSuchMethodException when creating shapeGenerator
 		try {
 			MMNEAT.shapeGenerator = (ShapeGenerator<T>) ClassCreation.createObject("minecraftShapeGenerator");
 		} catch (NoSuchMethodException e) {
@@ -117,11 +126,20 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		startingY = Parameters.parameters.integerParameter("startY");
 		startingZ = Parameters.parameters.integerParameter("startZ");
 	}
-	
+	/**
+	 * get function for getting x coordinate of origin
+	 * @return int that represents coordinates 
+	 */
 	public int getStartingX() { return startingX; }
-	
+	/**
+	 * get function for getting Y coordinate of origin
+	 * @return int that represents coordinates
+	 */
 	public int getStartingY() { return startingY; }
-	
+	/**
+	 * get function for getting Z coordinate of origin
+	 * @return int that represents coordinates
+	 */
 	public int getStartingZ() { return startingZ; }
 		
 	/**
@@ -225,6 +243,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	 * @param fitnessFunctions List of fitness functions to evaluate the shape on
 	 * @return Score instance containing evaluation information
 	 */
+	
 	public static <T> Score<T> evaluateOneShape(Genotype<T> genome, MinecraftCoordinates corner, ArrayList<MinecraftFitnessFunction> fitnessFunctions) {
 		@SuppressWarnings("unchecked")
 		List<Block> blocks = MMNEAT.shapeGenerator.generateShape(genome, corner, MMNEAT.blockSet);
@@ -292,7 +311,11 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		}
 		return score;
 	}
-
+	/**
+	 * Uses the fitness score to determine if the machine is truly flying
+	 * @param fitnessScore the fitness score of the machine being evaluated
+	 * @return boolean that returns true if the machine is actually flying 
+	 */
 	public boolean certainFlying(double fitnessScore) {
 		return certainFlying(fitnessFunctions, fitnessScore);
 	}
@@ -300,9 +323,9 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	/**
 	 * A shape with a fitness of this amount must be flying (assumes first/only fitness is change in center of mass)
 	 * 
-	 * @param fitnessFunctions
-	 * @param fitnessScores
-	 * @return
+	 * @param fitnessFunctions list of fitnessFunctons
+	 * @param fitnessScores the list of fitness scores of each function in fitness function of the machine being evaluated
+	 * @return boolean true if the fitnessScore is greater than max fitness - flying penalty buffer
 	 */
 	public static boolean certainFlying(ArrayList<MinecraftFitnessFunction> fitnessFunctions, double fitnessScore) {
 		assert fitnessFunctions.get(0) instanceof ChangeCenterOfMassFitness;
@@ -313,11 +336,12 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	/**
 	 * Which orientation does the shape seem to be moving in?
 	 * 
-	 * @param deltaX
-	 * @param deltaY
-	 * @param deltaZ
-	 * @return
+	 * @param deltaX change in X axis
+	 * @param deltaY change in y axis
+	 * @param deltaZ change in z axis
+	 * @return orientation based on delta values
 	 */
+	
 	private static Orientation directionOfMaximumDisplacement(double deltaX, double deltaY, double deltaZ) {
 		if(Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > Math.abs(deltaZ)) {
 			return (deltaX > 0) ? Orientation.NORTH : Orientation.SOUTH;
@@ -335,6 +359,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	 * @param fitnessScores All calculated fitness scores
 	 * @return Single quality score
 	 */
+	
 	public static double qualityScore(double[] fitnessScores) {
 		return fitnessScores[0]; // TODO: CHANGE THIS? Other code depends on it now
 	}
@@ -370,7 +395,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		if(Parameters.parameters.booleanParameter("displayDiagonally")) {
 			for(int i = 0; i < size; i++) {
 				int yCoordinate = startingY+i*totalSpaceBetweenShapes;
-				while(yCoordinate + ranges.y() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes") >= MinecraftClient.MAX_Y_COORDINATE) {
+				while(yCoordinate + ranges.y() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+VERTICAL_SAFETY_BUFFER >= MinecraftClient.MAX_Y_COORDINATE) {
 					// Y values will spike up but reset when out of range (like sawtooth function)
 					yCoordinate = Math.max(startingY, yCoordinate - MinecraftClient.MAX_Y_COORDINATE);
 				}
@@ -388,7 +413,6 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		
 		return corners;
 	}
-
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		MMNEAT.main("runNumber:89 randomSeed:89 minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftDiversityBlockFitness:true minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.SimpleSolidBlockSet trials:1 mu:20 maxGens:3005 launchMinecraftServerFromJava:false io:true netio:true mating:true fs:false spaceBetweenMinecraftShapes:7 task:edu.southwestern.tasks.evocraft.MinecraftShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:minecraftaccumulate log:MinecraftAccumulate-ESVectorSimple saveTo:ESVectorSimple".split(" ")); 
 	}
