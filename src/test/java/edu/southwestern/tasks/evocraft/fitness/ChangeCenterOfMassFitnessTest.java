@@ -54,6 +54,7 @@ public class ChangeCenterOfMassFitnessTest {
 	// Passes
 	@Test
 	public void testStagnantStructureQuickly() {
+		Parameters.initializeParameterCollections(new String[] {"watch:true","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
 		ChangeCenterOfMassFitness.resetPreviousResults();
 		MinecraftCoordinates cornerBS1 = new MinecraftCoordinates(-26,7,-35);
 		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS1, ranges, 1, 100); // Larger buffer is important
@@ -297,7 +298,7 @@ public class ChangeCenterOfMassFitnessTest {
 	// Passes
 	@Test
 	public void testChangeInPositionWithRemainingBlocks() {
-		Parameters.initializeParameterCollections(new String[] {"netio:false"});
+		Parameters.initializeParameterCollections(new String[] {"netio:false", "watch:true","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
 		CommonConstants.netio = false;
 		boolean result = flyingMachineWithRemainingBlocks();
 		if(!result) {
@@ -417,6 +418,7 @@ public class ChangeCenterOfMassFitnessTest {
 	// Passes
 	@Test
 	public void testGetCenterOfMass() {
+		Parameters.initializeParameterCollections(new String[] {"netio:false", "watch:true","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
 		ChangeCenterOfMassFitness.resetPreviousResults();
 
 		// Small list of blocks

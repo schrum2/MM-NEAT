@@ -8,10 +8,22 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
 import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 
+/**
+ * evaluates the pistons of allowed orientations and calculate bins
+ * maxFitness indicates the bin for this shape
+ * fitnessScore returns the number of pistons of the allowed orientation being evaluated
+ * 
+ * @author comments lewisj
+ *
+ */
 public abstract class PistonCountFitness extends MinecraftFitnessFunction {
 
-	protected Orientation[] allowedOrientations;
+	private Orientation[] allowedOrientations;
 	
+	/**
+	 * it constructs an instance that only counts pistons of the passed orientations
+	 * @param allowedOrientations the orientations being evaluated for this instance
+	 */
 	public PistonCountFitness(Orientation[] allowedOrientations) {
 		this.allowedOrientations = allowedOrientations;
 	}
@@ -27,6 +39,13 @@ public abstract class PistonCountFitness extends MinecraftFitnessFunction {
 		return range.x() * range.y() * range.z();
 	}
 	
+	/**
+	 * counts the number of pistons in two directions given by the allowed orientations
+	 * 
+	 * @param blocks the list of blocks for the given shape
+	 * @param allowedOrientations the orientations being evaluated
+	 * @return the total number of pistons with the allowed orientations
+	 */
 	public static double pistonCount(List<Block> blocks, Orientation[] allowedOrientations) {
 		int total = 0;
 		List<Block> pistons = MinecraftUtilClass.getDesiredBlocks(blocks, new BlockType[] {BlockType.PISTON, BlockType.STICKY_PISTON});
