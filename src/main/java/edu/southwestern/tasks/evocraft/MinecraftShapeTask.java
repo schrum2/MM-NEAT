@@ -49,6 +49,8 @@ import edu.southwestern.util.file.FileUtilities;
  */
 public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTask, BoundedTask {
 	
+	public static int VERTICAL_SAFETY_BUFFER = 20;
+	
 	// Visible within package
 	ArrayList<MinecraftFitnessFunction> fitnessFunctions;
 	private ArrayList<MinecraftCoordinates> corners;
@@ -393,7 +395,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		if(Parameters.parameters.booleanParameter("displayDiagonally")) {
 			for(int i = 0; i < size; i++) {
 				int yCoordinate = startingY+i*totalSpaceBetweenShapes;
-				while(yCoordinate + ranges.y() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes") >= MinecraftClient.MAX_Y_COORDINATE) {
+				while(yCoordinate + ranges.y() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+VERTICAL_SAFETY_BUFFER >= MinecraftClient.MAX_Y_COORDINATE) {
 					// Y values will spike up but reset when out of range (like sawtooth function)
 					yCoordinate = Math.max(startingY, yCoordinate - MinecraftClient.MAX_Y_COORDINATE);
 				}
