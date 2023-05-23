@@ -392,7 +392,7 @@ public class Parameters {
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
-		longOptions.add("minecraftMandatoryWaitTime", 10000L, "The mandatory amount of time that the block movement fitness function should wait before reading in the corner again");
+		longOptions.add("minecraftMandatoryWaitTime", 10000L, "time in milliseconds for a full evaluation of a simulated Minecraft shape");
 		longOptions.add("shortTimeBetweenMinecraftReads", 1000L, "The amount of time that change center of mass fitness function waits before reading in the area again");
 
 		// Boolean parameters 
