@@ -30,29 +30,30 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 	
 	private static double[] upper = null;
 	private static double[] lower = null;
-	private static int numBlocks = 0;
+	private static int genotypeLength = 0;
 	private static int numOrientations = 0;
 	
 	/**
-	 * This creates the genotype length for the given shape and the basic upper and lower bounds of the genotype.
+	 * This basic constructor creates the genotype length for the given shape and the basic upper and lower bounds of the genotype.
+	 * It sets the number of orientations being considered.
 	 */
 	public VectorToVolumeGenerator() {
-		//range is the number of blocks
+		//range is the number of blocks that make up the shape
 		MinecraftCoordinates ranges = MinecraftUtilClass.getRanges();
 		
 		//characteristics (genes) represent block type, presence of block, and orientation
 		
-		int numbersPerBlock = 1; // 1 is the lowest number of characteristics corresponding to a block
-		if(Parameters.parameters.booleanParameter("minecraftEvolveOrientation")) numbersPerBlock++; // evolve orientation is true, number of corresponding characteristics (genes) per block should be increased by 1
-		if(Parameters.parameters.booleanParameter("vectorPresenceThresholdForEachBlock")) numbersPerBlock++; // presence is true, number of corresponding characteristics (genes) per block should be increased by 1 
+		int numberOfAttributesForBlocksInGenotype = 1; // 1 is the lowest number of characteristics corresponding to a block
+		if(Parameters.parameters.booleanParameter("minecraftEvolveOrientation")) numberOfAttributesForBlocksInGenotype++; // evolve orientation is true, number of corresponding characteristics (genes) per block should be increased by 1
+		if(Parameters.parameters.booleanParameter("vectorPresenceThresholdForEachBlock")) numberOfAttributesForBlocksInGenotype++; // presence is true, number of corresponding characteristics (genes) per block should be increased by 1 
 		
 		//derived from given parameters
 		//length of the genotype for the shape derived from the number of characteristics (genes) considered for blocks and the total volume in blocks used in the shape
-		numBlocks = numbersPerBlock * (ranges.x() * ranges.y() * ranges.z()); // one or more numbers per block depending on command line parameters
-		numOrientations = MinecraftUtilClass.getnumOrientationDirections();
+		genotypeLength = numberOfAttributesForBlocksInGenotype * (ranges.x() * ranges.y() * ranges.z()); // one or more numbers per block depending on command line parameters
+		numOrientations = MinecraftUtilClass.getnumOrientationDirections();	//orientations being considered for this instance
 		
-		upper = ArrayUtil.doubleSpecified(numBlocks, 1.0); // upper bounds
-		lower = ArrayUtil.doubleSpecified(numBlocks, 0.0); // lower bounds
+		upper = ArrayUtil.doubleSpecified(genotypeLength, 1.0); // upper bounds generic genotype
+		lower = ArrayUtil.doubleSpecified(genotypeLength, 0.0); // lower bounds generic genotype
 	}
 	
 	@Override
