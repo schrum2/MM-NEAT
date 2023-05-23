@@ -91,20 +91,21 @@ public class MinecraftBlockRenderExperiment implements Experiment {
 	}
 
 	/**
-	 * @param blockTextFile
+	 * generates a shape using blockTextFile
+	 * @param blockTextFile text file that holds a shape
 	 * @throws FileNotFoundException
 	 */
-	public void generateOneShapeFromFile(File blockTextFile) throws FileNotFoundException {
+	static public void generateOneShapeFromFile(File blockTextFile) throws FileNotFoundException {
 		List<Block> shiftedBlocks = shiftBlocks(blockTextFile);
 		MinecraftClient.getMinecraftClient().spawnBlocks(shiftedBlocks); // spawn blocks in minecraft world
 	}
 	/**
 	 * Shifts blocks to special corner 
-	 * @param blockTextFile
-	 * @return list of blocks
+	 * @param blockTextFile text file that holds a shape
+	 * @return list of the same blocks at the special corner
 	 * @throws FileNotFoundException
 	 */
-	private List<Block> shiftBlocks(File blockTextFile) throws FileNotFoundException {
+	static List<Block> shiftBlocks(File blockTextFile) throws FileNotFoundException {
 		List<Block> blocks = MinecraftUtilClass.loadMAPElitesOutputFile(blockTextFile); // get block list from output file
 		MinecraftCoordinates corner = MinecraftUtilClass.minCoordinates(blocks); // Original corner (or close to it)
 		List<Block> shiftedBlocks = MinecraftUtilClass.shiftBlocksBetweenCorners(blocks, corner, ChangeCenterOfMassFitness.SPECIAL_CORNER);

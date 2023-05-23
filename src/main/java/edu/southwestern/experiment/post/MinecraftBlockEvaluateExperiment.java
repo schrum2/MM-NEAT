@@ -55,7 +55,7 @@ public class MinecraftBlockEvaluateExperiment implements Experiment{
 						System.out.println((count++) + " of " + files.length);
 						//System.out.println(individual);
 						try {
-							List<Block> shiftedBlocks = shiftBlocks(new File(dir + File.separator + individual));
+							List<Block> shiftedBlocks = MinecraftBlockRenderExperiment.shiftBlocks(new File(dir + File.separator + individual));
 							seen.add(shiftedBlocks); // Won't add duplicates
 						} catch(Exception e) {
 							System.out.println("Error adding/reading "+individual);
@@ -88,39 +88,14 @@ public class MinecraftBlockEvaluateExperiment implements Experiment{
 			} else {
 				// Is a single text file
 				ChangeCenterOfMassFitness.clearAreaAroundSpecialCorner();
-				generateOneShapeFromFile(file);
+				MinecraftBlockRenderExperiment.generateOneShapeFromFile(file);
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
 
-	/**
-	 * @param blockTextFile
-	 * @throws FileNotFoundException
-	 */
-	public void generateOneShapeFromFile(File blockTextFile) throws FileNotFoundException {
-		List<Block> shiftedBlocks = shiftBlocks(blockTextFile);
-		MinecraftClient.getMinecraftClient().spawnBlocks(shiftedBlocks); // spawn blocks in minecraft world
-	}
-	/**
-	 * Shifts blocks to special corner 
-	 * @param blockTextFile
-	 * @return list of blocks
-	 * @throws FileNotFoundException
-	 */
-	private List<Block> shiftBlocks(File blockTextFile) throws FileNotFoundException {
-		List<Block> blocks = MinecraftUtilClass.loadMAPElitesOutputFile(blockTextFile); // get block list from output file
-		MinecraftCoordinates corner = MinecraftUtilClass.minCoordinates(blocks); // Original corner (or close to it)
-		List<Block> shiftedBlocks = MinecraftUtilClass.shiftBlocksBetweenCorners(blocks, corner, ChangeCenterOfMassFitness.SPECIAL_CORNER);
-		
-//		System.out.println("Spawning " + shiftedBlocks.size() + " blocks from " + dir);
-//		for(Block b: shiftedBlocks) {
-//			System.out.println(b);
-//		}
-		return shiftedBlocks;
-	}
-
+	
 	@Override
 	public boolean shouldStop() {
 		return false;
