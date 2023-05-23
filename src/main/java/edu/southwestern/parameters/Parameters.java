@@ -369,7 +369,7 @@ public class Parameters {
 		integerOptions.add("interactiveSleepTimer", 1000, "The ammount of time the interactive thread sleeps for");
 		integerOptions.add("extraSpaceBetweenMinecraftShapes", 50, "The extra space that will be in between the shapes being evaluated");
 		integerOptions.add("startX", 0, "The X coordinate the shapes are generated on");
-		integerOptions.add("startY", 5, "The Y coordinate the shapes are generated on");
+		integerOptions.add("startY", 30, "The Y coordinate the shapes are generated on");
 		integerOptions.add("startZ", 0, "The Z coordinate the shapes are generated on");
 		integerOptions.add("minecraftClearDimension", 200, "The coordinates to clear the space for the archive");
 		integerOptions.add("minecraftClearSleepTimer", 200, "How long the thread should sleep between sending a clear command to python");
