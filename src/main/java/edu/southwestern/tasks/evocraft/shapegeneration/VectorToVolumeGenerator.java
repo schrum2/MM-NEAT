@@ -62,32 +62,30 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 		MinecraftCoordinates ranges = MinecraftUtilClass.getRanges();
 		boolean evolveOrientation = Parameters.parameters.booleanParameter("minecraftEvolveOrientation");
 		boolean separatePresenceThreshold = Parameters.parameters.booleanParameter("vectorPresenceThresholdForEachBlock");
-		int numsPerBlock = 1;
-		if(separatePresenceThreshold) numsPerBlock++;
-		if(evolveOrientation) numsPerBlock++;
+		int numberOfAttributesPerBlock = 1;
+		if(separatePresenceThreshold) numberOfAttributesPerBlock++;
+		if(evolveOrientation) numberOfAttributesPerBlock++;
 
 		List<Block> blocks = new ArrayList<Block>();
 		ArrayList<Double> phenotype = genome.getPhenotype();	
 		Orientation blockOrientation = Orientation.NORTH; // all blocks will have orientation of north by default
-		int counter= 0; // used to count the number of blocks added
+		int blockHeadIndexCounter= 0; // used to count the number of blocks added, points to the beginning of the specific block attribute list in phenotype
 		int numBlockTypes = blockSet.getPossibleBlocks().length;
 		for(int xi = 0; xi < ranges.x(); xi++) {
 			for(int yi = 0; yi < ranges.y(); yi++) {
-				for(int zi = 0; zi < ranges.z(); zi++) {
+				for(int zi = 0; zi < ranges.z(); zi++) {		//loops through each block space to create a block
 					Block b = null;
 					
-					// there will either be two or three numbers corresponding to 1 block depending on if orientation is being evolved
+					// there will either be two or three numbers corresponding to one block's attributes/characteristics depending on if orientation is being evolved
 					if(separatePresenceThreshold) {
 						
-						assert phenotype.get(counter) >= ((BoundedTask) MMNEAT.task).getLowerBounds()[counter] : counter+":bounds="+((BoundedTask) MMNEAT.task).getLowerBounds()+":phenotype="+phenotype;
-						assert phenotype.get(counter) <= ((BoundedTask) MMNEAT.task).getUpperBounds()[counter] : counter+":bounds="+((BoundedTask) MMNEAT.task).getUpperBounds()+":phenotype="+phenotype;
-						assert phenotype.get(counter+1) >= ((BoundedTask) MMNEAT.task).getLowerBounds()[counter+1] : (counter+1)+":bounds="+((BoundedTask) MMNEAT.task).getLowerBounds()+":phenotype="+phenotype;
-						assert phenotype.get(counter+1) <= ((BoundedTask) MMNEAT.task).getUpperBounds()[counter+1] : (counter+1)+":bounds="+((BoundedTask) MMNEAT.task).getUpperBounds()+":phenotype="+phenotype;
-						assert phenotype.get(counter+2) >= ((BoundedTask) MMNEAT.task).getLowerBounds()[counter+2] : (counter+2)+":bounds="+((BoundedTask) MMNEAT.task).getLowerBounds()+":phenotype="+phenotype;
-						assert phenotype.get(counter+2) <= ((BoundedTask) MMNEAT.task).getUpperBounds()[counter+2] : (counter+2)+":bounds="+((BoundedTask) MMNEAT.task).getUpperBounds()+":phenotype="+phenotype;
+						final int PRESENCE_INDEX = blockHeadIndexCounter;
+						final int TYPE_INDEX = blockHeadIndexCounter+1;
 						
-						final int PRESENCE_INDEX = counter;
-						final int TYPE_INDEX = counter+1;
+						assert phenotype.get(PRESENCE_INDEX) >= ((BoundedTask) MMNEAT.task).getLowerBounds()[PRESENCE_INDEX] : PRESENCE_INDEX+":bounds="+((BoundedTask) MMNEAT.task).getLowerBounds()+":phenotype="+phenotype;
+						assert phenotype.get(PRESENCE_INDEX) <= ((BoundedTask) MMNEAT.task).getUpperBounds()[PRESENCE_INDEX] : PRESENCE_INDEX+":bounds="+((BoundedTask) MMNEAT.task).getUpperBounds()+":phenotype="+phenotype;
+						assert phenotype.get(TYPE_INDEX) >= ((BoundedTask) MMNEAT.task).getLowerBounds()[TYPE_INDEX] : (TYPE_INDEX)+":bounds="+((BoundedTask) MMNEAT.task).getLowerBounds()+":phenotype="+phenotype;
+						assert phenotype.get(TYPE_INDEX) <= ((BoundedTask) MMNEAT.task).getUpperBounds()[TYPE_INDEX] : (TYPE_INDEX)+":bounds="+((BoundedTask) MMNEAT.task).getUpperBounds()+":phenotype="+phenotype;
 						
 						if(phenotype.get(PRESENCE_INDEX) >= Parameters.parameters.doubleParameter("voxelExpressionThreshold")) {
 							assert phenotype.get(TYPE_INDEX) >= 0 : "index:"+TYPE_INDEX+":"+phenotype;
@@ -97,18 +95,22 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 							if(blockTypeIndex == numBlockTypes) blockTypeIndex--; // Rare case
 							
 							if(evolveOrientation) {
-								final int ORIENTATION_INDEX = counter+2;
+								final int ORIENTATION_INDEX = blockHeadIndexCounter+2;
+
+								assert phenotype.get(ORIENTATION_INDEX) >= ((BoundedTask) MMNEAT.task).getLowerBounds()[ORIENTATION_INDEX] : (ORIENTATION_INDEX)+":bounds="+((BoundedTask) MMNEAT.task).getLowerBounds()+":phenotype="+phenotype;
+								assert phenotype.get(ORIENTATION_INDEX) <= ((BoundedTask) MMNEAT.task).getUpperBounds()[ORIENTATION_INDEX] : (ORIENTATION_INDEX)+":bounds="+((BoundedTask) MMNEAT.task).getUpperBounds()+":phenotype="+phenotype;
+										
 								blockOrientation = determineOrientation(phenotype, ORIENTATION_INDEX);
 							}
 								
 							b = new Block(corner.add(new MinecraftCoordinates(xi,yi,zi)), blockSet.getPossibleBlocks()[blockTypeIndex], blockOrientation);
 						} // else do not place any block
 					} else { // there will either be one or two numbers per block depending on if orientation is being evolved
-						int blockTypeIndex = (int)(phenotype.get(counter)*(numBlockTypes+1)); // length+1 because there could be airblocks
+						int blockTypeIndex = (int)(phenotype.get(blockHeadIndexCounter)*(numBlockTypes+1)); // length+1 because there could be airblocks
 						if(blockTypeIndex != numBlockTypes) { // Corresponds to empty/AIR block
 							
 							if(evolveOrientation) {
-								final int ORIENTATION_INDEX = counter+1;
+								final int ORIENTATION_INDEX = blockHeadIndexCounter+1;
 								blockOrientation = determineOrientation(phenotype, ORIENTATION_INDEX);
 							}
 							
@@ -117,12 +119,12 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 					}
 					// Will be null if empty/AIR
 					if(b!=null) blocks.add(b);
-					counter+=numsPerBlock;
+					blockHeadIndexCounter+=numberOfAttributesPerBlock;	// increments to the next block head/start index in the phenotype
 				}
 			}
 		}
 		
-		assert counter == phenotype.size() : "Counter "+counter+" did not reach end of list: "+phenotype.size();
+		assert blockHeadIndexCounter == phenotype.size() : "Counter "+blockHeadIndexCounter+" did not reach end of list: "+phenotype.size();
 		
 		return blocks;	
 	}
