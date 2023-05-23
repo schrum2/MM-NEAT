@@ -43,12 +43,12 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 		
 		//characteristics (genes) represent block type, presence of block, and orientation
 		
-		int numberOfAttributesForBlocksInGenotype = 1; // 1 is the lowest number of characteristics corresponding to a block
+		int numberOfAttributesForBlocksInGenotype = 1; // 1 is the lowest number of characteristics/attributes/genes corresponding to a block
 		if(Parameters.parameters.booleanParameter("minecraftEvolveOrientation")) numberOfAttributesForBlocksInGenotype++; // evolve orientation is true, number of corresponding characteristics (genes) per block should be increased by 1
 		if(Parameters.parameters.booleanParameter("vectorPresenceThresholdForEachBlock")) numberOfAttributesForBlocksInGenotype++; // presence is true, number of corresponding characteristics (genes) per block should be increased by 1 
 		
 		//derived from given parameters
-		//length of the genotype for the shape derived from the number of characteristics (genes) considered for blocks and the total volume in blocks used in the shape
+		//length of the genotype for the shape derived from the number of characteristics (genes) considered for blocks and the total volume in blocks used in the shape (numberOfAttributes * numberOfBlocksX * numberOfBlocksY * numberOfBlocksZ)
 		genotypeLength = numberOfAttributesForBlocksInGenotype * (ranges.x() * ranges.y() * ranges.z()); // one or more numbers per block depending on command line parameters
 		numOrientations = MinecraftUtilClass.getnumOrientationDirections();	//orientations being considered for this instance
 		

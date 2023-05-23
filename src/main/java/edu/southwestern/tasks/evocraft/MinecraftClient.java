@@ -107,15 +107,17 @@ public class MinecraftClient extends Comm {
 
 	// Block orientation. Compare with src\main\python\EvoCraft\minecraft_pb2.py
 	public enum Orientation {
-		NORTH,
-		WEST,
-		SOUTH,
-		EAST,
-		UP,
-		DOWN
+		NORTH,	//0
+		WEST,	//1
+		SOUTH,	//2
+		EAST,	//3
+		UP,		//4
+		DOWN	//5
 	}
 
-	// Block type. Compare with src\main\python\EvoCraft\minecraft_pb2.py
+	// Block type. Compare with src\main\python\EvoCraft\minecraft_pb2.py to find index of block
+	// MM-NEAT\src\main\python\EvoCraft>python ServerSendReceive.py
+	// spawnBlocks x y z type# orientation#
 	public enum BlockType {
 		ACACIA_DOOR, 		// 0
 		ACACIA_FENCE,		// 1
