@@ -46,8 +46,8 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 
 		// Shifts over the corner to the new range with the large space in between shapes
 		corner = corner.sub(MinecraftUtilClass.emptySpaceOffsets());
-		if(corner.y() - ChangeCenterOfMassFitness.SPECIAL_CORNER_BUFFER <= MinecraftClient.GROUND_LEVEL) { // Push up if close to ground
-			MinecraftCoordinates shiftPoint = new MinecraftCoordinates(0,ChangeCenterOfMassFitness.SPECIAL_CORNER_BUFFER,0);
+		if(corner.y() - MinecraftClient.SPECIAL_CORNER_BUFFER <= MinecraftClient.GROUND_LEVEL) { // Push up if close to ground
+			MinecraftCoordinates shiftPoint = new MinecraftCoordinates(0,MinecraftClient.SPECIAL_CORNER_BUFFER,0);
 			MinecraftCoordinates oldCorner = corner;
 			corner = corner.add(shiftPoint); // move sufficiently above the ground
 			originalBlocks = MinecraftUtilClass.shiftBlocksBetweenCorners(originalBlocks, oldCorner, corner);
@@ -65,8 +65,8 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 	/////////////// calling clearAreaAroundCorner in changeCenterOfMassFitness, should be refactored into clear area util class ////////////////////////
 		//minecraft client has clear space function too, maybe check it out
 		do {
-			ChangeCenterOfMassFitness.clearAreaAroundCorner(corner);
-			empty = ChangeCenterOfMassFitness.areaAroundCornerEmpty(corner);
+			MinecraftClient.clearAreaAroundCorner(corner);
+			empty = MinecraftClient.areaAroundCornerEmpty(corner);
 			if(!empty) System.out.println("Cleared "+(++clearAttempt)+" times: empty?: "+empty);
 		} while(!empty);
 

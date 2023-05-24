@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
+import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
+import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.mario.gan.Comm;
 import edu.southwestern.util.PythonUtil;
 import edu.southwestern.util.datastructures.Triple;
@@ -34,6 +37,11 @@ public class MinecraftClient extends Comm {
 	public static final String PYTHON_BASE_PATH = "." + File.separator + "src" + File.separator + "main" + File.separator + "python" + File.separator + "EvoCraft" + File.separator;
 	// Python script to interact with a Minecraft server on the localhost
 	public static final String CLIENT_PATH = PYTHON_BASE_PATH + "ServerSendReceive.py";
+	
+	//RELATED TO MOVED CLEAR FUNCTIONS FROM getCenterOfMassBeforeAndAfter in ChangeCenterOfMass
+	// Nowhere near where anything else is being evaluated
+	public static final MinecraftCoordinates SPECIAL_CORNER = new MinecraftCoordinates(-500, 100, 500);
+	public static final int SPECIAL_CORNER_BUFFER = 20;
 
 	public MinecraftClient() {
 		super();
@@ -651,6 +659,39 @@ public class MinecraftClient extends Comm {
 				System.exit(1);
 			}
 		}
+	}
+	
+	/**
+	 * Make sure the special area for double-checking flying shapes is really clear
+	 */
+	public static void clearAreaAroundSpecialCorner() {
+		clearAreaAroundCorner(SPECIAL_CORNER);
+	}
+	/**
+	 * body of code for for clearAreaAroundSpecialCorner used above
+	 * @param corner
+	 */
+	public static void clearAreaAroundCorner(MinecraftCoordinates corner) {
+		MinecraftCoordinates lower = corner.sub(SPECIAL_CORNER_BUFFER);
+		MinecraftCoordinates upper = corner.add(MinecraftUtilClass.getRanges().add(SPECIAL_CORNER_BUFFER));
+		MinecraftClient.getMinecraftClient().clearCube(lower, upper, BlockType.AIR);
+		List<Block> errorCheck = null;
+		assert areaAroundCornerEmpty(corner) : "Area not empty after clearing! "+errorCheck;
+	}
+	/**
+	 * Checks if the area around a corner is empty
+	 * @param corner
+	 * @return boolean if space is empty or not
+	 */
+	public static boolean areaAroundCornerEmpty(MinecraftCoordinates corner) {
+		MinecraftCoordinates lower = corner.sub(SPECIAL_CORNER_BUFFER);
+		MinecraftCoordinates upper = corner.add(MinecraftUtilClass.getRanges().add(SPECIAL_CORNER_BUFFER));
+		List<Block> errorCheck = MinecraftUtilClass.filterOutBlock(MinecraftClient.getMinecraftClient().readCube(lower, upper), BlockType.AIR);
+//		if(!errorCheck.isEmpty()) {
+//			System.out.println("NOT EMPTY at corner "+corner+"\n"+errorCheck);
+//			MiscUtil.waitForReadStringAndEnterKeyPress();
+//		}
+		return errorCheck.isEmpty();
 	}
 	
 	/**

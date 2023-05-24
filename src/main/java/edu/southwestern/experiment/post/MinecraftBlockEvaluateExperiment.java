@@ -10,6 +10,7 @@ import java.util.List;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.experiment.Experiment;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.evocraft.MinecraftClient;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftShapeTask;
 import edu.southwestern.tasks.evocraft.fitness.ChangeCenterOfMassFitness;
@@ -73,7 +74,7 @@ public class MinecraftBlockEvaluateExperiment implements Experiment{
 					boolean tryAgain = false;
 					do {
 						System.out.println("Evaluate shape");
-						double[] fitnessScores = MinecraftShapeTask.calculateFitnessScores(ChangeCenterOfMassFitness.SPECIAL_CORNER, fitnessFunctions, shiftedBlocks);
+						double[] fitnessScores = MinecraftShapeTask.calculateFitnessScores(MinecraftClient.SPECIAL_CORNER, fitnessFunctions, shiftedBlocks);
 						ChangeCenterOfMassFitness.resetPreviousResults();
 
 						for(int j = 0; j < fitnessFunctions.size(); j++) {
@@ -90,7 +91,7 @@ public class MinecraftBlockEvaluateExperiment implements Experiment{
 				}
 			} else {
 				// Is a single text file
-				ChangeCenterOfMassFitness.clearAreaAroundSpecialCorner();
+				MinecraftClient.clearAreaAroundSpecialCorner();
 				MinecraftBlockRenderExperiment.generateOneShapeFromFile(file);
 			}
 		} catch (FileNotFoundException e) {
