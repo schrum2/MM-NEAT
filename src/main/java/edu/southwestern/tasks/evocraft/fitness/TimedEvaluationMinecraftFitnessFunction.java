@@ -16,8 +16,9 @@ import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 /**
  * An abstract class to handle timed evaluation fitness functions that can be extended to other functions
  * currently contains code for clearing blocks, spawning blocks, creating a history list of readings with time stamps, and returning a call to calculateFinalFitnessScore
- * uses:
+ * uses/creates:
  * history - a list of time stamps with an associated list of blocks read at that time
+ * methods: fitnessScore, calculateFinalScore
  * @author lewisj
  *
  */
@@ -62,6 +63,7 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 		boolean empty = false;
 		int clearAttempt = 0;
 	/////////////// calling clearAreaAroundCorner in changeCenterOfMassFitness, should be refactored into clear area util class ////////////////////////
+		//minecraft client has clear space function too, maybe check it out
 		do {
 			ChangeCenterOfMassFitness.clearAreaAroundCorner(corner);
 			empty = ChangeCenterOfMassFitness.areaAroundCornerEmpty(corner);
