@@ -850,6 +850,7 @@ public class Parameters {
 		booleanOptions.add("minecraftSkipInitialClear", false, "Option to skip the initial clear of the world and immediatly start spawning shapes");
 		booleanOptions.add("minecraftRewardFastFlyingMachines", false, "rewards for fast flying machines in minecraft and penalizes for slow ones");
 		booleanOptions.add("minecraftWaterLavaSecondaryCreationFitness", false, "uses water and lava block set to reward for the creation of secondary blocks");
+		booleanOptions.add("minecraftMaximizeVolumeFitness", false, "rewards shapes that spread out over larger areas");
 		
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
