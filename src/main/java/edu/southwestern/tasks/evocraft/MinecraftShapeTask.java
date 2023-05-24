@@ -71,7 +71,41 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		// Launches the client script before the parallel code to assure that only one client script exists
 		MinecraftClient.getMinecraftClient();
 		
-		fitnessFunctions = new ArrayList<MinecraftFitnessFunction>();
+		fitnessFunctions = defineFitnessFromParameters();
+		
+		// try catch for initialization error of NoSuchMethodException when creating block set	
+		try {
+			MMNEAT.blockSet = (BlockSet) ClassCreation.createObject("minecraftBlockSet");
+		} catch (NoSuchMethodException e1) {
+			System.out.println("Could not instantiate block set for Minecraft");
+			e1.printStackTrace();
+			System.exit(1);
+		}
+		
+		MMNEAT.discreteCeilings = ArrayUtil.intSpecified(Parameters.parameters.integerParameter("minecraftAmountOfBlocksToEvolve"),MMNEAT.blockSet.getPossibleBlocks().length);
+		// try catch for initialization error of NoSuchMethodException when creating shapeGenerator
+		try {
+			MMNEAT.shapeGenerator = (ShapeGenerator<T>) ClassCreation.createObject("minecraftShapeGenerator");
+		} catch (NoSuchMethodException e) {
+			System.out.println("Could not instantiate shape generator for Minecraft");
+			e.printStackTrace();
+			System.exit(1);
+		}
+		for(MinecraftFitnessFunction ff : fitnessFunctions) {
+			MMNEAT.registerFitnessFunction(ff.getClass().getSimpleName());
+		}		
+		
+		startingX = Parameters.parameters.integerParameter("startX");
+		startingY = Parameters.parameters.integerParameter("startY");
+		startingZ = Parameters.parameters.integerParameter("startZ");
+	}
+	
+	/**
+	 * Creates an ArrayList filled with minecraft specific fitness functions
+	 * @return fitness which is an array list filled with fitness functions
+	 */
+	public ArrayList<MinecraftFitnessFunction> defineFitnessFromParameters() {
+		ArrayList<MinecraftFitnessFunction> fitness = new ArrayList<MinecraftFitnessFunction>();
 
 		if(Parameters.parameters.booleanParameter("minecraftTypeCountFitness")) {
 			fitnessFunctions.add(new TypeCountFitness());
@@ -100,32 +134,9 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		if(Parameters.parameters.booleanParameter("minecraftFakeTestFitness")) {
 			fitnessFunctions.add(new FakeTestFitness());
 		}
-		// try catch for initialization error of NoSuchMethodException when creating block set	
-		try {
-			MMNEAT.blockSet = (BlockSet) ClassCreation.createObject("minecraftBlockSet");
-		} catch (NoSuchMethodException e1) {
-			System.out.println("Could not instantiate block set for Minecraft");
-			e1.printStackTrace();
-			System.exit(1);
-		}
-		
-		MMNEAT.discreteCeilings = ArrayUtil.intSpecified(Parameters.parameters.integerParameter("minecraftAmountOfBlocksToEvolve"),MMNEAT.blockSet.getPossibleBlocks().length);
-		// try catch for initialization error of NoSuchMethodException when creating shapeGenerator
-		try {
-			MMNEAT.shapeGenerator = (ShapeGenerator<T>) ClassCreation.createObject("minecraftShapeGenerator");
-		} catch (NoSuchMethodException e) {
-			System.out.println("Could not instantiate shape generator for Minecraft");
-			e.printStackTrace();
-			System.exit(1);
-		}
-		for(MinecraftFitnessFunction ff : fitnessFunctions) {
-			MMNEAT.registerFitnessFunction(ff.getClass().getSimpleName());
-		}		
-		
-		startingX = Parameters.parameters.integerParameter("startX");
-		startingY = Parameters.parameters.integerParameter("startY");
-		startingZ = Parameters.parameters.integerParameter("startZ");
+		return fitness;
 	}
+	
 	/**
 	 * get function for getting x coordinate of origin
 	 * @return int that represents coordinates 
