@@ -15,6 +15,9 @@ import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 
 /**
  * An abstract class to handle timed evaluation fitness functions that can be extended to other functions
+ * currently contains code for clearing blocks, spawning blocks, creating a history list of readings with time stamps, and returning a call to calculateFinalFitnessScore
+ * uses:
+ * history - a list of time stamps with an associated list of blocks read at that time
  * @author lewisj
  *
  */
@@ -22,6 +25,12 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 
 	//TODO: all public things in changeCenterOfMass being called should be made into util class
 
+	/**
+	 * currently clears blocks around a corner
+	 * creates a history: a list of time stamps with an associated list of blocks read at that time
+	 * reads until MinecraftMandatoryWaitTime is reached
+	 * returns a call to calculateFinalFitnessScore using history, corner, originalBlocks
+	 */
 	public double fitnessScore(MinecraftCoordinates corner, List<Block> originalBlocks) {
 		
 	///////////// clear section - should be reworked and made into utils class ////////////////////////////////////////////////////////////////////
@@ -60,6 +69,7 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 		} while(!empty);
 
 	////////	creating history 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//history is a list of time stamps with an associated list of blocks read at that time
 		ArrayList<Pair<Long,List<Block>>> history = new ArrayList<>();
 
 		//this compares the original blocks with the 
@@ -74,26 +84,26 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 
 
 		boolean stop = false;
-		List<Block> shortWaitTimeUpdate = null;
+		List<Block> newShapeReadingBlockList = null;
 
 		System.out.println(originalBlocks);
 	//////// Spawn the blocks!	////////////////////////////////////////////////////////////////////////////////////////////////
 		MinecraftClient.getMinecraftClient().spawnBlocks(originalBlocks);
 
-		long shortWaitTime = Parameters.parameters.longParameter("shortTimeBetweenMinecraftReads");
+		long timeBetweenRead = Parameters.parameters.longParameter("shortTimeBetweenMinecraftReads");
 		long startTime = System.currentTimeMillis();
 	////////// Wait time and log new reading //////////////////////////////////////////////////////////////////
 		while(!stop) {
 			try {
-				Thread.sleep(shortWaitTime);
+				Thread.sleep(timeBetweenRead);
 			} catch (InterruptedException e) {
 				System.out.print("Thread was interrupted");
 				e.printStackTrace();
 				System.exit(1);
 			}
-			shortWaitTimeUpdate = MinecraftUtilClass.filterOutBlock(MinecraftClient.getMinecraftClient().readCube(corner,end),BlockType.AIR);
-			history.add(new Pair<Long,List<Block>>(System.currentTimeMillis() - startTime,shortWaitTimeUpdate));
-			if(CommonConstants.watch) System.out.println("Block update: "+shortWaitTimeUpdate);
+			newShapeReadingBlockList = MinecraftUtilClass.filterOutBlock(MinecraftClient.getMinecraftClient().readCube(corner,end),BlockType.AIR);
+			history.add(new Pair<Long,List<Block>>(System.currentTimeMillis() - startTime,newShapeReadingBlockList));
+			if(CommonConstants.watch) System.out.println("Block update: "+newShapeReadingBlockList);
 
 
 			if(System.currentTimeMillis() - startTime > Parameters.parameters.longParameter("minecraftMandatoryWaitTime")) {
@@ -111,7 +121,7 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 	/**
 	 * based on history of readings taken of shape, compute final numeric fitness score
 	 * @author Joanna Blatt Lewis
-	 * @param history the history of block readings during timed evaluation period
+	 * @param history the history of block readings during timed evaluation period, contains list of time stamps with associated block list
 	 * @param corner the corner that the shape uses
 	 * @param originalBlocks the original list of blocks for the shape
 	 * @return final fitness score based on other classes evaluation readings
