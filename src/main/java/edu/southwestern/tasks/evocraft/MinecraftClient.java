@@ -654,6 +654,41 @@ public class MinecraftClient extends Comm {
 	}
 	
 	/**
+	 * clears cubes by replacing all cubes with log and then replacing with air
+	 * log chosen arbitrarily
+	 * this forcefully replaces all blocks that might be misinterpreted as air into log and then replaces them with air
+	 * uses fillCube to fill the space
+	 * 
+	 * @param min Minimal coordinates in each dimension (each min coordinate must be <= max coordinate)
+	 * @param max Maximal coordinates in each dimension
+	 */
+	public synchronized void clearCube(MinecraftCoordinates min, MinecraftCoordinates max, BlockType type) {
+		fillCube(min, max, BlockType.LOG);
+		fillCube(min, max, type);
+	}
+	
+	/**
+	 * Fill all space in the specified range with the provided type. The
+	 * rectangular prism defined in the world spawns from the
+	 * (xmin,ymin,zmin) coordinates to the (xmax,ymax,zmax) coordinates.
+	 * 
+	 * first fills with log to clear out any blocks incorrectly registered as air, then replaces with the desired type
+	 * uses fillCube to fill the space
+	 * 
+	 * @param xmin Minimal x coordinate. xmin <= xmax
+	 * @param ymin Minimal y coordinate. ymin <= ymax
+	 * @param zmin Minimal z coordinate. zmin <= zmax
+	 * @param xmax Maximal x coordinate
+	 * @param ymax Maximal y coordinate
+	 * @param zmax Maximal z coordinate
+	 * @param type Type to fill the space with
+	 */
+	public synchronized void clearCube(int xmin, int ymin, int zmin, int xmax, int ymax, int zmax, BlockType type) {
+		fillCube(xmin, ymin, zmin, xmax, ymax, zmax, BlockType.LOG);
+		fillCube(xmin, ymin, zmin, xmax, ymax, zmax, type);
+	}
+	
+	/**
 	 * Fill all space in the specified range with the provided type. The
 	 * rectangular prism defined in the world spawns from the min coordinates to the max coordinates.
 	 * 
@@ -784,7 +819,7 @@ public class MinecraftClient extends Comm {
 		// If cleared space isn't very large, just clear that space
 		int clearSize = (end.x()-groundStart.x())*(end.y()-groundStart.y())*(end.z()-groundStart.z());
 		if( clearSize<=MAX_CLEAR_WITHOUT_LOOP) {
-			fillCube(groundStart, end, BlockType.AIR); // Calls clear cube, which checks coordinates
+			clearCube(groundStart, end, BlockType.AIR); // Calls clear cube, which checks coordinates
 		}else {
 			int counter=50000000; // Don't need gradual clear messages for small clear sizes
 			// Otherwise, clears out large block sections one at a time to ensure the server isn't overloaded
@@ -797,7 +832,7 @@ public class MinecraftClient extends Comm {
 					for(int y=GROUND_LEVEL;y<=end.y();y+=fillSize) {
 						//System.out.println("clearing "+counter);
 						counter++;
-						fillCube(x,y,z,x+fillSize,y+fillSize,z+fillSize, BlockType.AIR);
+						clearCube(x,y,z,x+fillSize,y+fillSize,z+fillSize, BlockType.AIR);
 						//System.out.println(x+fillSize+" "+(y+fillSize)+" "+(z+fillSize));
 						if((x+fillSize)*(y+fillSize)*(z+fillSize)>counter) {
 							System.out.println("Blocks cleared = "+((x+fillSize)*(y+fillSize)*(z+fillSize)));
