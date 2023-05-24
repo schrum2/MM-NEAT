@@ -18,30 +18,42 @@ import edu.southwestern.util.datastructures.ArrayUtil;
 /**
  * This shape generator uses vectors to translate double values from an ArrayList into 
  * corresponding Minecraft block types. Depending on the command line parameters, there can 
- * be either one, two, or three numbers that correspond to a single block. 
+ * be either one, two, or three numbers representing characteristics that a being considered that correspond to a single block. 
+ * 
+ * Creates a shape from a genotype
  * 
  * @author Alejandro Medina
+ * Edited by Joanna Blatt Lewis
  *
  */
 public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>>, BoundedVectorGenerator {
 	
 	private static double[] upper = null;
 	private static double[] lower = null;
-	private static int numBlocks = 0;
+	private static int genotypeLength = 0;
 	private static int numOrientations = 0;
 	
+	/**
+	 * This basic constructor creates the genotype length for the given shape and the basic upper and lower bounds of the genotype.
+	 * It sets the number of orientations being considered.
+	 */
 	public VectorToVolumeGenerator() {
+		//range is the number of blocks that make up the shape
 		MinecraftCoordinates ranges = MinecraftUtilClass.getRanges();
 		
-		int numbersPerBlock = 1; // 1 is the lowest number of numbers corresponding to a block
-		if(Parameters.parameters.booleanParameter("minecraftEvolveOrientation")) numbersPerBlock++; // evolve orientation is true, number of corresponding numbers per block should be increased by 1
-		if(Parameters.parameters.booleanParameter("vectorPresenceThresholdForEachBlock")) numbersPerBlock++; // presence is true, number of corresponding numbers per block should be increased by 1 
+		//characteristics (genes) represent block type, presence of block, and orientation
 		
-		numBlocks = numbersPerBlock * (ranges.x() * ranges.y() * ranges.z()); // one or more numbers per block depending on command line parameters
-		numOrientations = MinecraftUtilClass.getnumOrientationDirections();
+		int numberOfAttributesForBlocksInGenotype = 1; // 1 is the lowest number of characteristics/attributes/genes corresponding to a block
+		if(Parameters.parameters.booleanParameter("minecraftEvolveOrientation")) numberOfAttributesForBlocksInGenotype++; // evolve orientation is true, number of corresponding characteristics (genes) per block should be increased by 1
+		if(Parameters.parameters.booleanParameter("vectorPresenceThresholdForEachBlock")) numberOfAttributesForBlocksInGenotype++; // presence is true, number of corresponding characteristics (genes) per block should be increased by 1 
 		
-		upper = ArrayUtil.doubleSpecified(numBlocks, 1.0); // upper bounds
-		lower = ArrayUtil.doubleSpecified(numBlocks, 0.0); // lower bounds
+		//derived from given parameters
+		//length of the genotype for the shape derived from the number of characteristics (genes) considered for blocks and the total volume in blocks used in the shape (numberOfAttributes * numberOfBlocksX * numberOfBlocksY * numberOfBlocksZ)
+		genotypeLength = numberOfAttributesForBlocksInGenotype * (ranges.x() * ranges.y() * ranges.z()); // one or more numbers per block depending on command line parameters
+		numOrientations = MinecraftUtilClass.getnumOrientationDirections();	//orientations being considered for this instance
+		
+		upper = ArrayUtil.doubleSpecified(genotypeLength, 1.0); // upper bounds generic genotype
+		lower = ArrayUtil.doubleSpecified(genotypeLength, 0.0); // lower bounds generic genotype
 	}
 	
 	@Override
@@ -115,6 +127,12 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 		return blocks;	
 	}
 
+	/**
+	 * 
+	 * @param phenotype
+	 * @param ORIENTATION_INDEX
+	 * @return
+	 */
 	private Orientation determineOrientation(ArrayList<Double> phenotype, final int ORIENTATION_INDEX) {
 		Orientation blockOrientation;
 		int orientationTypeIndex = (int) (phenotype.get(ORIENTATION_INDEX) * numOrientations);

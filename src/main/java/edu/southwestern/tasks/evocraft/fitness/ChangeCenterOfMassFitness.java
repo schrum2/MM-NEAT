@@ -49,7 +49,10 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 	public static void clearAreaAroundSpecialCorner() {
 		clearAreaAroundCorner(SPECIAL_CORNER);
 	}
-	
+	/**
+	 * body of code for for clearAreaAroundSpecialCorner used above
+	 * @param corner
+	 */
 	public static void clearAreaAroundCorner(MinecraftCoordinates corner) {
 		MinecraftCoordinates lower = corner.sub(SPECIAL_CORNER_BUFFER);
 		MinecraftCoordinates upper = corner.add(MinecraftUtilClass.getRanges().add(SPECIAL_CORNER_BUFFER));
@@ -57,7 +60,11 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		List<Block> errorCheck = null;
 		assert areaAroundCornerEmpty(corner) : "Area not empty after clearing! "+errorCheck;
 	}
-	
+	/**
+	 * Checks if the area around a corner is empty
+	 * @param corner
+	 * @return boolean if space is empty or not
+	 */
 	public static boolean areaAroundCornerEmpty(MinecraftCoordinates corner) {
 		MinecraftCoordinates lower = corner.sub(SPECIAL_CORNER_BUFFER);
 		MinecraftCoordinates upper = corner.add(MinecraftUtilClass.getRanges().add(SPECIAL_CORNER_BUFFER));
@@ -68,7 +75,9 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 //		}
 		return errorCheck.isEmpty();
 	}
-	
+	/**
+	 * clears previous results
+	 */
 	public static void resetPreviousResults() {
 		PREVIOUSLY_COMPUTED_RESULTS.clear();
 	}
@@ -193,6 +202,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		boolean stop = false;
 		List<Block> shortWaitTimeUpdate = null;
 		
+		System.out.println(originalBlocks);
 		// Spawn the blocks!
 		MinecraftClient.getMinecraftClient().spawnBlocks(originalBlocks);
 		
@@ -274,7 +284,6 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 				} else {
 					totalChangeDistance += lastCenterOfMass.distance(nextCenterOfMass);
 				}
-				//totalChangeDistance += lastCenterOfMass.distance(nextCenterOfMass);
 				if(CommonConstants.watch) System.out.println("Total is now: "+totalChangeDistance);
 				lastCenterOfMass = nextCenterOfMass;
 				previousBlocks = shortWaitTimeUpdate; // Remember the previous block list
@@ -304,10 +313,11 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 	}
 
 	/**
-	 * @param history
-	 * @param initialCenterOfMass
-	 * @param lastCenterOfMass
-	 * @return
+	 * method that makes sure you are taking the farthestCenterOfMass from history
+	 * @param history record of the shape
+	 * @param initialCenterOfMass initial center of mass
+	 * @param lastCenterOfMass center of mass at the last point
+	 * @return center of ,ass that was the farthest away from the initial
 	 */
 	public Vertex getFarthestCenterOfMass(ArrayList<List<Block>> history, Vertex initialCenterOfMass,
 			Vertex lastCenterOfMass) {
@@ -323,7 +333,14 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		}
 		return farthestCenterOfMass;
 	}
-
+	/**
+	 * method that recognizes and punishes flying machines with leftover blocks
+	 * @param initialBlockCount block count at origin
+	 * @param initialCenterOfMass initial center of mass
+	 * @param lastCenterOfMass center of mass at the last point
+	 * @param shortWaitTimeUpdate what the blocks look like after a short update
+	 * @return fitness after punishment for remaining blocks
+	 */
 	private Triple<Vertex, Vertex, Double> checkCreditForDepartedBlocks(int initialBlockCount, Vertex initialCenterOfMass, Vertex lastCenterOfMass, List<Block> shortWaitTimeUpdate) {
 		int remainingBlockCount = shortWaitTimeUpdate.size(); // Could be larger than initial due to extensions
 		int departedBlockCount = initialBlockCount - remainingBlockCount; // Could be negative due to extensions
@@ -372,7 +389,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main("runNumber:98 randomSeed:98 minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftChangeCenterOfMassFitness:true minecraftNorthSouthOnly:false minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet trials:1 mu:100 maxGens:60000 minecraftContainsWholeMAPElitesArchive:true forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:true mating:true fs:false ea:edu.southwestern.evolution.mapelites.MAPElites experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:minecraftaccumulate log:MinecraftAccumulate-TESTING saveTo:TESTING mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5".split(" ")); 
+			MMNEAT.main("runNumber:90 randomSeed:98 minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftRewardFastFlyingMachines:true minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftChangeCenterOfMassFitness:true minecraftNorthSouthOnly:false minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet trials:1 mu:100 maxGens:60000 minecraftContainsWholeMAPElitesArchive:true forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:true mating:true fs:false ea:edu.southwestern.evolution.mapelites.MAPElites experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:minecraftaccumulate log:MinecraftAccumulate-TESTING saveTo:TESTING mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5".split(" ")); 
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}

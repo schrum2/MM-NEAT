@@ -364,12 +364,12 @@ public class Parameters {
 		integerOptions.add("minecraftDesiredBlockType", MinecraftClient.BlockType.REDSTONE_BLOCK.ordinal(), "Type desired by TypeCountFitness");
 		integerOptions.add("minecraftDesiredBlockCount", 0, "Count desired by TypeTargetFitness");
 		integerOptions.add("minecraftMaxSnakeLength", 100, "Maximum length that a generated snake can be");
-		integerOptions.add("spaceBetweenMinecraftShapes", 5, "The space in blocks that are in between each of the generated minecraft structures");
+		integerOptions.add("spaceBetweenMinecraftShapes", 15, "The space in blocks that are in between each of the generated minecraft structures");
 		integerOptions.add("minecraftAmountOfBlocksToEvolve", 5, "The ammount of possible blocks that can be evolved by CPPN");
 		integerOptions.add("interactiveSleepTimer", 1000, "The ammount of time the interactive thread sleeps for");
 		integerOptions.add("extraSpaceBetweenMinecraftShapes", 50, "The extra space that will be in between the shapes being evaluated");
 		integerOptions.add("startX", 0, "The X coordinate the shapes are generated on");
-		integerOptions.add("startY", 5, "The Y coordinate the shapes are generated on");
+		integerOptions.add("startY", 30, "The Y coordinate the shapes are generated on");
 		integerOptions.add("startZ", 0, "The Z coordinate the shapes are generated on");
 		integerOptions.add("minecraftClearDimension", 200, "The coordinates to clear the space for the archive");
 		integerOptions.add("minecraftClearSleepTimer", 200, "How long the thread should sleep between sending a clear command to python");
@@ -392,7 +392,7 @@ public class Parameters {
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
-		longOptions.add("minecraftMandatoryWaitTime", 10000L, "The mandatory amount of time that the block movement fitness function should wait before reading in the corner again");
+		longOptions.add("minecraftMandatoryWaitTime", 10000L, "time in milliseconds for a full evaluation of a simulated Minecraft shape");
 		longOptions.add("shortTimeBetweenMinecraftReads", 1000L, "The amount of time that change center of mass fitness function waits before reading in the area again");
 
 		// Boolean parameters 

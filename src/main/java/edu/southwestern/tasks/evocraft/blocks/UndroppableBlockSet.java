@@ -1,7 +1,11 @@
 package edu.southwestern.tasks.evocraft.blocks;
 
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
-
+/**
+ * set of blocks meant to not drop anything after breaking
+ * @author raffertyt
+ *
+ */
 public class UndroppableBlockSet implements BlockSet{
 
 	@Override
