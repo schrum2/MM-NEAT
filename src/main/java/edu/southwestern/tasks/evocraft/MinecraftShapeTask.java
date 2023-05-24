@@ -104,35 +104,35 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	 * Creates an ArrayList filled with minecraft specific fitness functions
 	 * @return fitness which is an array list filled with fitness functions
 	 */
-	public ArrayList<MinecraftFitnessFunction> defineFitnessFromParameters() {
+	public static ArrayList<MinecraftFitnessFunction> defineFitnessFromParameters() {
 		ArrayList<MinecraftFitnessFunction> fitness = new ArrayList<MinecraftFitnessFunction>();
 
 		if(Parameters.parameters.booleanParameter("minecraftTypeCountFitness")) {
-			fitnessFunctions.add(new TypeCountFitness());
+			fitness.add(new TypeCountFitness());
 		}
 		
 		if(Parameters.parameters.booleanParameter("minecraftTypeTargetFitness")) {
-			fitnessFunctions.add(new TypeTargetFitness());
+			fitness.add(new TypeTargetFitness());
 		}
 		
 		if(Parameters.parameters.booleanParameter("minecraftOccupiedCountFitness")) {
-			fitnessFunctions.add(new OccupiedCountFitness());
+			fitness.add(new OccupiedCountFitness());
 		}
 		
 		if(Parameters.parameters.booleanParameter("minecraftDiversityBlockFitness")) {
-			fitnessFunctions.add(new DiversityBlockFitness());
+			fitness.add(new DiversityBlockFitness());
 		}
 		
 		if(Parameters.parameters.booleanParameter("minecraftChangeCenterOfMassFitness")) {
-			fitnessFunctions.add(new ChangeCenterOfMassFitness());
+			fitness.add(new ChangeCenterOfMassFitness());
 		}
 		
 		if(Parameters.parameters.booleanParameter("NegativeSpaceCountFitness")) {
-			fitnessFunctions.add(new NegativeSpaceCountFitness());
+			fitness.add(new NegativeSpaceCountFitness());
 		}
 		
 		if(Parameters.parameters.booleanParameter("minecraftFakeTestFitness")) {
-			fitnessFunctions.add(new FakeTestFitness());
+			fitness.add(new FakeTestFitness());
 		}
 		return fitness;
 	}
