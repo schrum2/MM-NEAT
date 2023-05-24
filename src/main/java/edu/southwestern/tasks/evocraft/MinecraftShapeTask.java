@@ -71,35 +71,8 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		// Launches the client script before the parallel code to assure that only one client script exists
 		MinecraftClient.getMinecraftClient();
 		
-		fitnessFunctions = new ArrayList<MinecraftFitnessFunction>();
-
-		if(Parameters.parameters.booleanParameter("minecraftTypeCountFitness")) {
-			fitnessFunctions.add(new TypeCountFitness());
-		}
+		fitnessFunctions = defineFitnessFromParameters();
 		
-		if(Parameters.parameters.booleanParameter("minecraftTypeTargetFitness")) {
-			fitnessFunctions.add(new TypeTargetFitness());
-		}
-		
-		if(Parameters.parameters.booleanParameter("minecraftOccupiedCountFitness")) {
-			fitnessFunctions.add(new OccupiedCountFitness());
-		}
-		
-		if(Parameters.parameters.booleanParameter("minecraftDiversityBlockFitness")) {
-			fitnessFunctions.add(new DiversityBlockFitness());
-		}
-		
-		if(Parameters.parameters.booleanParameter("minecraftChangeCenterOfMassFitness")) {
-			fitnessFunctions.add(new ChangeCenterOfMassFitness());
-		}
-		
-		if(Parameters.parameters.booleanParameter("NegativeSpaceCountFitness")) {
-			fitnessFunctions.add(new NegativeSpaceCountFitness());
-		}
-		
-		if(Parameters.parameters.booleanParameter("minecraftFakeTestFitness")) {
-			fitnessFunctions.add(new FakeTestFitness());
-		}
 		// try catch for initialization error of NoSuchMethodException when creating block set	
 		try {
 			MMNEAT.blockSet = (BlockSet) ClassCreation.createObject("minecraftBlockSet");
@@ -126,6 +99,44 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		startingY = Parameters.parameters.integerParameter("startY");
 		startingZ = Parameters.parameters.integerParameter("startZ");
 	}
+	
+	/**
+	 * Creates an ArrayList filled with minecraft specific fitness functions
+	 * @return fitness which is an array list filled with fitness functions
+	 */
+	public static ArrayList<MinecraftFitnessFunction> defineFitnessFromParameters() {
+		ArrayList<MinecraftFitnessFunction> fitness = new ArrayList<MinecraftFitnessFunction>();
+
+		if(Parameters.parameters.booleanParameter("minecraftTypeCountFitness")) {
+			fitness.add(new TypeCountFitness());
+		}
+		
+		if(Parameters.parameters.booleanParameter("minecraftTypeTargetFitness")) {
+			fitness.add(new TypeTargetFitness());
+		}
+		
+		if(Parameters.parameters.booleanParameter("minecraftOccupiedCountFitness")) {
+			fitness.add(new OccupiedCountFitness());
+		}
+		
+		if(Parameters.parameters.booleanParameter("minecraftDiversityBlockFitness")) {
+			fitness.add(new DiversityBlockFitness());
+		}
+		
+		if(Parameters.parameters.booleanParameter("minecraftChangeCenterOfMassFitness")) {
+			fitness.add(new ChangeCenterOfMassFitness());
+		}
+		
+		if(Parameters.parameters.booleanParameter("NegativeSpaceCountFitness")) {
+			fitness.add(new NegativeSpaceCountFitness());
+		}
+		
+		if(Parameters.parameters.booleanParameter("minecraftFakeTestFitness")) {
+			fitness.add(new FakeTestFitness());
+		}
+		return fitness;
+	}
+	
 	/**
 	 * get function for getting x coordinate of origin
 	 * @return int that represents coordinates 

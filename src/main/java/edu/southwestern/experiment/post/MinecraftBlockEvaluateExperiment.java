@@ -3,16 +3,15 @@ package edu.southwestern.experiment.post;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.experiment.Experiment;
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.tasks.evocraft.MinecraftClient;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
-import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
-import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
+import edu.southwestern.tasks.evocraft.MinecraftShapeTask;
 import edu.southwestern.tasks.evocraft.fitness.ChangeCenterOfMassFitness;
 import edu.southwestern.tasks.evocraft.fitness.MinecraftFitnessFunction;
 import edu.southwestern.util.MiscUtil;
@@ -31,7 +30,7 @@ import edu.southwestern.util.MiscUtil;
 public class MinecraftBlockEvaluateExperiment implements Experiment{
 
 	
-	private static MinecraftFitnessFunction fitnessFunction = new ChangeCenterOfMassFitness();
+	private static ArrayList<MinecraftFitnessFunction> fitnessFunctions;
 	private static String dir; 
 	private static HashSet<List<Block>> seen;
 	
@@ -39,6 +38,7 @@ public class MinecraftBlockEvaluateExperiment implements Experiment{
 	@Override
 	public void init() {
 		dir = Parameters.parameters.stringParameter("minecraftBlockListTextFile");
+		fitnessFunctions = MinecraftShapeTask.defineFitnessFromParameters();
 		System.out.println("Load: "+ dir);
 	}
 
@@ -73,10 +73,13 @@ public class MinecraftBlockEvaluateExperiment implements Experiment{
 					boolean tryAgain = false;
 					do {
 						System.out.println("Evaluate shape");
-						double fitness = fitnessFunction.fitnessScore(ChangeCenterOfMassFitness.SPECIAL_CORNER, shiftedBlocks);
+						double[] fitnessScores = MinecraftShapeTask.calculateFitnessScores(ChangeCenterOfMassFitness.SPECIAL_CORNER, fitnessFunctions, shiftedBlocks);
 						ChangeCenterOfMassFitness.resetPreviousResults();
-						System.out.println("Fitness was: " + fitness);
-						
+
+						for(int j = 0; j < fitnessFunctions.size(); j++) {
+							System.out.print(fitnessFunctions.get(j).getClass().getSimpleName() + ": ");
+							System.out.println(fitnessScores[j]);
+						}
 						
 						System.out.println("Press enter to continue, 'b' to go back, 'r' to repeat");
 						String input = MiscUtil.waitForReadStringAndEnterKeyPress();
@@ -103,7 +106,7 @@ public class MinecraftBlockEvaluateExperiment implements Experiment{
 	//used for testing purposes 
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[] {"minecraftEvaluate","minecraftBlockListTextFile:BROKEN","netio:false","spaceBetweenMinecraftShapes:10"});
+			MMNEAT.main(new String[] {"minecraftEvaluate","minecraftBlockListTextFile:BROKEN","netio:false","spaceBetweenMinecraftShapes:10","minecraftChangeCenterOfMassFitness:true", "NegativeSpaceCountFitness:true","minecraftTypeTargetFitness:true"});
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

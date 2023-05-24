@@ -41,7 +41,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 	private static final HashMap<MinecraftCoordinates, Triple<Vertex, Vertex, Double>> PREVIOUSLY_COMPUTED_RESULTS = new HashMap<>();
 	// Nowhere near where anything else is being evaluated
 	public static final MinecraftCoordinates SPECIAL_CORNER = new MinecraftCoordinates(-500, 100, 500);
-	private static final int SPECIAL_CORNER_BUFFER = 20;
+	public static final int SPECIAL_CORNER_BUFFER = 20;
 	
 	/**
 	 * Make sure the special area for double-checking flying shapes is really clear
