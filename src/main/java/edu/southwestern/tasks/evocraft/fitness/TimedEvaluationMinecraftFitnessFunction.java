@@ -3,6 +3,8 @@ package edu.southwestern.tasks.evocraft.fitness;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.nd4j.nativeblas.Nd4jCpu.static_bidirectional_rnn;
+
 import com.clearspring.analytics.util.Pair;
 
 import edu.southwestern.parameters.CommonConstants;
@@ -59,16 +61,7 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 		if(CommonConstants.watch) System.out.println("Original Blocks: "+originalBlocks);
 		if(CommonConstants.watch) System.out.println("Evaluate at corner: "+corner);
 
-		// Must be clear before starting
-		boolean empty = false;
-		int clearAttempt = 0;
-	/////////////// calling clearAreaAroundCorner in changeCenterOfMassFitness, should be refactored into clear area util class ////////////////////////
-		//minecraft client has clear space function too, maybe check it out
-		do {
-			MinecraftClient.clearAreaAroundCorner(corner);
-			empty = MinecraftClient.areaAroundCornerEmpty(corner);
-			if(!empty) System.out.println("Cleared "+(++clearAttempt)+" times: empty?: "+empty);
-		} while(!empty);
+		MinecraftClient.clearAndVerify(corner);
 
 	////////	creating history 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//history is a list of time stamps with an associated list of blocks read at that time

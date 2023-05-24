@@ -662,31 +662,46 @@ public class MinecraftClient extends Comm {
 	}
 	
 	/**
+	 * Clears an area and verifies that it is clear
+	 * called if you need to make sure it is clear
+	 * @param corner corner that the shape is occupying
+	 */
+	public static void clearAndVerify(MinecraftCoordinates corner) {
+		boolean empty = false;
+		int clearAttempt = 0;
+		do {
+			clearAreaAroundCorner(corner);
+			empty = areaAroundCornerEmpty(corner);
+			if(!empty) System.out.println("Cleared "+(++clearAttempt)+" times: empty?: "+empty);
+		} while(!empty);
+	}
+	
+	/**
 	 * Make sure the special area for double-checking flying shapes is really clear
 	 */
 	public static void clearAreaAroundSpecialCorner() {
 		clearAreaAroundCorner(SPECIAL_CORNER);
 	}
 	/**
-	 * body of code for for clearAreaAroundSpecialCorner used above
+	 * body of code for clearAreaAroundSpecialCorner used above
 	 * @param corner
 	 */
 	public static void clearAreaAroundCorner(MinecraftCoordinates corner) {
 		MinecraftCoordinates lower = corner.sub(SPECIAL_CORNER_BUFFER);
 		MinecraftCoordinates upper = corner.add(MinecraftUtilClass.getRanges().add(SPECIAL_CORNER_BUFFER));
-		MinecraftClient.getMinecraftClient().clearCube(lower, upper, BlockType.AIR);
+		getMinecraftClient().clearCube(lower, upper, BlockType.AIR);
 		List<Block> errorCheck = null;
 		assert areaAroundCornerEmpty(corner) : "Area not empty after clearing! "+errorCheck;
 	}
 	/**
 	 * Checks if the area around a corner is empty
-	 * @param corner
+	 * @param corner the corner coordinates being checked
 	 * @return boolean if space is empty or not
 	 */
 	public static boolean areaAroundCornerEmpty(MinecraftCoordinates corner) {
 		MinecraftCoordinates lower = corner.sub(SPECIAL_CORNER_BUFFER);
 		MinecraftCoordinates upper = corner.add(MinecraftUtilClass.getRanges().add(SPECIAL_CORNER_BUFFER));
-		List<Block> errorCheck = MinecraftUtilClass.filterOutBlock(MinecraftClient.getMinecraftClient().readCube(lower, upper), BlockType.AIR);
+		List<Block> errorCheck = MinecraftUtilClass.filterOutBlock(getMinecraftClient().readCube(lower, upper), BlockType.AIR);
 //		if(!errorCheck.isEmpty()) {
 //			System.out.println("NOT EMPTY at corner "+corner+"\n"+errorCheck);
 //			MiscUtil.waitForReadStringAndEnterKeyPress();
