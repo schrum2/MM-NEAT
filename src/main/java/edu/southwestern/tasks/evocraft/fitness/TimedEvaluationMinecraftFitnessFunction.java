@@ -70,6 +70,7 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 
 	////////	creating history 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//history is a list of time stamps with an associated list of blocks read at that time
+		//time stamps calculated as the current time - time that the shape is spawned (startTime)
 		ArrayList<Pair<Long,List<Block>>> history = new ArrayList<>();
 
 		//this compares the original blocks with the 
