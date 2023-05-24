@@ -404,15 +404,16 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		
 		// If placing diagonally, decrease the x and z coordinates. Increase the Y
 		if(Parameters.parameters.booleanParameter("displayDiagonally")) {
+			int yCoordinate = startingY;
 			for(int i = 0; i < size; i++) {
-				int yCoordinate = startingY+i*totalSpaceBetweenShapes;
 				while(yCoordinate + ranges.y() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+VERTICAL_SAFETY_BUFFER >= MinecraftClient.MAX_Y_COORDINATE) {
 					// Y values will spike up but reset when out of range (like sawtooth function)
 					yCoordinate = Math.max(startingY, yCoordinate - MinecraftClient.MAX_Y_COORDINATE);
 				}
 				MinecraftCoordinates corner = new MinecraftCoordinates(startingX - i*totalSpaceBetweenShapes,yCoordinate, startingZ - i*totalSpaceBetweenShapes);
-				//System.out.println(corner);
+				System.out.println("Evaluation Corner: "+ corner);
 				corners.add(corner);
+				yCoordinate += totalSpaceBetweenShapes;
 			}
 		// Otherwise, generate in line
 		}else {
