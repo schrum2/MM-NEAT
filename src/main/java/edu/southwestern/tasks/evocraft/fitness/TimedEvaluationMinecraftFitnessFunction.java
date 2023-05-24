@@ -3,6 +3,8 @@ package edu.southwestern.tasks.evocraft.fitness;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.clearspring.analytics.util.Pair;
+
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient;
@@ -11,19 +13,18 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 
+/**
+ * An abstract class to handle timed evaluation fitness functions that can be extended to other functions
+ * @author lewisj
+ *
+ */
 public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftFitnessFunction{
-	//constructor
-	//start with clearing
-
-
-	//fitnessScore clear space around the designated corner
-	//next spawn shape
-	//wait for amount of time
 
 	//TODO: all public things in changeCenterOfMass being called should be made into util class
 
 	public double fitnessScore(MinecraftCoordinates corner, List<Block> originalBlocks) {
-		//clear space (module out?)
+		
+	///////////// clear section - should be reworked and made into utils class ////////////////////////////////////////////////////////////////////
 
 		// Ranges before the change of space in between
 		int xrange = Parameters.parameters.integerParameter("minecraftXRange");
@@ -51,17 +52,20 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 		// Must be clear before starting
 		boolean empty = false;
 		int clearAttempt = 0;
+	/////////////// calling clearAreaAroundCorner in changeCenterOfMassFitness, should be refactored into clear area util class ////////////////////////
 		do {
 			ChangeCenterOfMassFitness.clearAreaAroundCorner(corner);
 			empty = ChangeCenterOfMassFitness.areaAroundCornerEmpty(corner);
 			if(!empty) System.out.println("Cleared "+(++clearAttempt)+" times: empty?: "+empty);
 		} while(!empty);
 
-		ArrayList<List<Block>> history = new ArrayList<>();
+	////////	creating history 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		ArrayList<Pair<Long,List<Block>>> history = new ArrayList<>();
 
+		//this compares the original blocks with the 
 		List<Block> previousBlocks = MinecraftUtilClass.wipeOrientations(originalBlocks);
-		history.add(originalBlocks);
-		history.add(previousBlocks);
+		history.add(new Pair<Long,List<Block>>(-1L,originalBlocks));
+		history.add(new Pair<Long,List<Block>>(0L,previousBlocks));
 
 		if(originalBlocks.isEmpty()) {
 			if(CommonConstants.watch) System.out.println("Empty shape: Immediate failure");
@@ -73,12 +77,12 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 		List<Block> shortWaitTimeUpdate = null;
 
 		System.out.println(originalBlocks);
-		// Spawn the blocks!
+	//////// Spawn the blocks!	////////////////////////////////////////////////////////////////////////////////////////////////
 		MinecraftClient.getMinecraftClient().spawnBlocks(originalBlocks);
 
 		long shortWaitTime = Parameters.parameters.longParameter("shortTimeBetweenMinecraftReads");
 		long startTime = System.currentTimeMillis();
-		// Wait for the machine to move some (if at all)
+	////////// Wait time and log new reading //////////////////////////////////////////////////////////////////
 		while(!stop) {
 			try {
 				Thread.sleep(shortWaitTime);
@@ -88,7 +92,7 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 				System.exit(1);
 			}
 			shortWaitTimeUpdate = MinecraftUtilClass.filterOutBlock(MinecraftClient.getMinecraftClient().readCube(corner,end),BlockType.AIR);
-			history.add(shortWaitTimeUpdate);
+			history.add(new Pair<Long,List<Block>>(System.currentTimeMillis() - startTime,shortWaitTimeUpdate));
 			if(CommonConstants.watch) System.out.println("Block update: "+shortWaitTimeUpdate);
 
 
@@ -99,26 +103,19 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 
 		}
 
-		//spawn shape (module out?)
-
-		//wait
-
 		//return result of a method call to calculateFinalScore
 		return calculateFinalScore(history, corner, originalBlocks);
-
-		//
 	}
 
-	//return result of a method call to calculateFinalScore
-	
+
 	/**
 	 * based on history of readings taken of shape, compute final numeric fitness score
 	 * @author Joanna Blatt Lewis
-	 * @param history
-	 * @param corner
-	 * @param originalBlocks
-	 * @return
+	 * @param history the history of block readings during timed evaluation period
+	 * @param corner the corner that the shape uses
+	 * @param originalBlocks the original list of blocks for the shape
+	 * @return final fitness score based on other classes evaluation readings
 	 */
-	public abstract double calculateFinalScore (ArrayList<List<Block>> history, MinecraftCoordinates corner, List<Block> originalBlocks);
+	public abstract double calculateFinalScore (ArrayList<Pair<Long,List<Block>>> history, MinecraftCoordinates corner, List<Block> originalBlocks);
 
 }
