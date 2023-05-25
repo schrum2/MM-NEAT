@@ -31,6 +31,8 @@ import edu.southwestern.tasks.evocraft.fitness.NegativeSpaceCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.OccupiedCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.TypeCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.TypeTargetFitness;
+import edu.southwestern.tasks.evocraft.fitness.WaterLavaSecondaryCreationFitness;
+import edu.southwestern.tasks.evocraft.fitness.MaximizeVolumeFitness;
 import edu.southwestern.tasks.evocraft.shapegeneration.BoundedVectorGenerator;
 import edu.southwestern.tasks.evocraft.shapegeneration.ShapeGenerator;
 import edu.southwestern.util.ClassCreation;
@@ -133,6 +135,13 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		
 		if(Parameters.parameters.booleanParameter("minecraftFakeTestFitness")) {
 			fitness.add(new FakeTestFitness());
+		}
+		
+		if(Parameters.parameters.booleanParameter("minecraftWaterLavaSecondaryCreationFitness")) {
+			fitness.add(new WaterLavaSecondaryCreationFitness());
+		}
+		if(Parameters.parameters.booleanParameter("minecraftMaximizeVolumeFitness")) {
+			fitness.add(new MaximizeVolumeFitness());
 		}
 		return fitness;
 	}
