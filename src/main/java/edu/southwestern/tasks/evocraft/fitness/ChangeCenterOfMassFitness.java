@@ -159,6 +159,10 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 
 		// Shifts over the corner to the new range with the large space in between shapes
 		corner = corner.sub(MinecraftUtilClass.emptySpaceOffsets());
+		
+		// schrum2: I think this code is responsible for the weird error of shapes near the ground being stacked vertically.
+		//          When the startY is made large enough, this is not an issue, but makin gthe user set that correctly
+		//          is a hassle.
 		if(corner.y() - SPECIAL_CORNER_BUFFER <= MinecraftClient.GROUND_LEVEL) { // Push up if close to ground
 			MinecraftCoordinates shiftPoint = new MinecraftCoordinates(0,SPECIAL_CORNER_BUFFER,0);
 			MinecraftCoordinates oldCorner = corner;
