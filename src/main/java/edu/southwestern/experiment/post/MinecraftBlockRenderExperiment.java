@@ -66,7 +66,7 @@ public class MinecraftBlockRenderExperiment implements Experiment {
 					do {
 						try {
 							System.out.println(i + " of " + seenList.length);
-							if(clear) ChangeCenterOfMassFitness.clearAreaAroundSpecialCorner();
+							if(clear) MinecraftClient.clearAreaAroundSpecialCorner();
 							MinecraftClient.getMinecraftClient().spawnBlocks(shiftedBlocks);
 							System.out.println("Press enter to continue, 'b' to go back, 'r' to repeat, 'k' proceed without clearing");
 							String input = MiscUtil.waitForReadStringAndEnterKeyPress();
@@ -82,7 +82,7 @@ public class MinecraftBlockRenderExperiment implements Experiment {
 				}
 			} else {
 				// Is a single text file
-				ChangeCenterOfMassFitness.clearAreaAroundSpecialCorner();
+				MinecraftClient.clearAreaAroundSpecialCorner();
 				generateOneShapeFromFile(file);
 			}
 		} catch (FileNotFoundException e) {
@@ -108,7 +108,7 @@ public class MinecraftBlockRenderExperiment implements Experiment {
 	static List<Block> shiftBlocks(File blockTextFile) throws FileNotFoundException {
 		List<Block> blocks = MinecraftUtilClass.loadMAPElitesOutputFile(blockTextFile); // get block list from output file
 		MinecraftCoordinates corner = MinecraftUtilClass.minCoordinates(blocks); // Original corner (or close to it)
-		List<Block> shiftedBlocks = MinecraftUtilClass.shiftBlocksBetweenCorners(blocks, corner, ChangeCenterOfMassFitness.SPECIAL_CORNER);
+		List<Block> shiftedBlocks = MinecraftUtilClass.shiftBlocksBetweenCorners(blocks, corner, MinecraftClient.SPECIAL_CORNER);
 		
 //		System.out.println("Spawning " + shiftedBlocks.size() + " blocks from " + dir);
 //		for(Block b: shiftedBlocks) {
