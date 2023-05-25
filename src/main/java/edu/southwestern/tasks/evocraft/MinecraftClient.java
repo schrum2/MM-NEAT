@@ -40,7 +40,7 @@ public class MinecraftClient extends Comm {
 	
 	//RELATED TO MOVED CLEAR FUNCTIONS FROM getCenterOfMassBeforeAndAfter in ChangeCenterOfMass
 	// Nowhere near where anything else is being evaluated
-	public static final MinecraftCoordinates SPECIAL_CORNER = new MinecraftCoordinates(-500, 100, 500);
+	public static final MinecraftCoordinates POST_EVALUATION_CORNER = new MinecraftCoordinates(-500, 100, 500);
 	public static final int SPECIAL_CORNER_BUFFER = 20;
 
 	public MinecraftClient() {
@@ -680,7 +680,7 @@ public class MinecraftClient extends Comm {
 	 * Make sure the special area for double-checking flying shapes is really clear
 	 */
 	public static void clearAreaAroundSpecialCorner() {
-		clearAreaAroundCorner(SPECIAL_CORNER);
+		clearAreaAroundCorner(POST_EVALUATION_CORNER);
 	}
 	/**
 	 * body of code for clearAreaAroundSpecialCorner used above

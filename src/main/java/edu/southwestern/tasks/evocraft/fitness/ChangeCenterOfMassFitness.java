@@ -257,11 +257,11 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 					if(attempt < ATTEMPTS_BEFORE_CONVINCED_OF_FLYING) {
 						System.out.println("Check flying machine again");
 						// Only one shape can be evaluated in this place at a time
-						synchronized(MinecraftClient.SPECIAL_CORNER) {
+						synchronized(MinecraftClient.POST_EVALUATION_CORNER) {
 							MinecraftClient.clearAreaAroundSpecialCorner();
-							List<Block> shiftedBlocks = MinecraftUtilClass.shiftBlocksBetweenCorners(originalBlocks, corner, MinecraftClient.SPECIAL_CORNER);
+							List<Block> shiftedBlocks = MinecraftUtilClass.shiftBlocksBetweenCorners(originalBlocks, corner, MinecraftClient.POST_EVALUATION_CORNER);
 							MinecraftClient.getMinecraftClient().spawnBlocks(shiftedBlocks);
-							result = getCenterOfMassBeforeAndAfter(MinecraftClient.SPECIAL_CORNER, shiftedBlocks, attempt);
+							result = getCenterOfMassBeforeAndAfter(MinecraftClient.POST_EVALUATION_CORNER, shiftedBlocks, attempt);
 						}
 					} else {
 						System.out.println("Machine succeeded "+ATTEMPTS_BEFORE_CONVINCED_OF_FLYING+" times!");

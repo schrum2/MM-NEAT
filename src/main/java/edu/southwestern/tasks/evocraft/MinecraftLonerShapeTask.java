@@ -633,7 +633,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					double fitness = score.behaviorIndexScore();
 					if(this.internalMinecraftShapeTask.certainFlying(fitness)) {
 						@SuppressWarnings("unchecked")
-						List<Block> blocks = MMNEAT.shapeGenerator.generateShape(score.individual, ChangeCenterOfMassFitness.SPECIAL_CORNER, MMNEAT.blockSet);
+						List<Block> blocks = MMNEAT.shapeGenerator.generateShape(score.individual, MinecraftClient.POST_EVALUATION_CORNER, MMNEAT.blockSet);
 						String label = minecraftBinLabels.binLabels().get(i);
 						MinecraftLonerShapeTask.writeBlockListFile(blocks, flyingDir + File.separator + label+"ID"+score.individual.getId(), "FITNESS"+fitness+".txt");			
 					}
