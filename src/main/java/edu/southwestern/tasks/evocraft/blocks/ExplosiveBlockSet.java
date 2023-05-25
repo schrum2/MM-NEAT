@@ -7,7 +7,7 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
  * @author Travis Rafferty
  *
  */
-public class TNTMachineBlockSet implements BlockSet {
+public class ExplosiveBlockSet implements BlockSet {
 
 	@Override
 	public BlockType[] getPossibleBlocks() {
