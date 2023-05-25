@@ -2,6 +2,7 @@ package edu.southwestern.tasks.evocraft;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
@@ -9,6 +10,9 @@ import java.lang.ProcessBuilder.Redirect;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.nd4j.nativeblas.Nd4jCpu.boolean_and;
+
+import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
@@ -670,7 +674,7 @@ public class MinecraftClient extends Comm {
 		boolean empty = false;
 		int clearAttempt = 0;
 		do {
-			clearAreaAroundCorner(corner);
+			clearAreaAroundCorner(corner, true);
 			empty = areaAroundCornerEmpty(corner);
 			if(!empty) System.out.println("Cleared "+(++clearAttempt)+" times: empty?: "+empty);
 		} while(!empty);
@@ -680,16 +684,16 @@ public class MinecraftClient extends Comm {
 	 * Make sure the special area for double-checking flying shapes is really clear
 	 */
 	public static void clearAreaAroundSpecialCorner() {
-		clearAreaAroundCorner(POST_EVALUATION_CORNER);
+		clearAreaAroundCorner(POST_EVALUATION_CORNER, false);
 	}
 	/**
 	 * body of code for clearAreaAroundSpecialCorner used above
 	 * @param corner
 	 */
-	public static void clearAreaAroundCorner(MinecraftCoordinates corner) {
+	public static void clearAreaAroundCorner(MinecraftCoordinates corner, boolean clearWithGlass) {
 		MinecraftCoordinates lower = corner.sub(SPECIAL_CORNER_BUFFER);
 		MinecraftCoordinates upper = corner.add(MinecraftUtilClass.getRanges().add(SPECIAL_CORNER_BUFFER));
-		getMinecraftClient().clearCube(lower, upper, BlockType.AIR);
+		getMinecraftClient().clearCube(lower, upper, clearWithGlass);
 		List<Block> errorCheck = null;
 		assert areaAroundCornerEmpty(corner) : "Area not empty after clearing! "+errorCheck;
 	}
@@ -714,13 +718,23 @@ public class MinecraftClient extends Comm {
 	 * log chosen arbitrarily
 	 * this forcefully replaces all blocks that might be misinterpreted as air into log and then replaces them with air
 	 * uses fillCube to fill the space
+	 * this forces a call where glass is not used and is the default all used
 	 * 
 	 * @param min Minimal coordinates in each dimension (each min coordinate must be <= max coordinate)
 	 * @param max Maximal coordinates in each dimension
 	 */
-	public synchronized void clearCube(MinecraftCoordinates min, MinecraftCoordinates max, BlockType type) {
-		//fillCube(min, max, BlockType.LOG);
-		fillCube(min, max, type);
+	public void clearCube(MinecraftCoordinates min, MinecraftCoordinates max) {
+		clearCube(min, max, false);
+	}
+	
+	
+	public synchronized void clearCube(MinecraftCoordinates min, MinecraftCoordinates max, boolean clearWithGlass) {
+		//clears with glass before air if parameter is set, this makes sure all blocks get set
+		//glass should only be cleared from clear and verify
+		if (clearWithGlass && Parameters.parameters.booleanParameter("minecraftClearWithGlass")) {
+			fillCube(min, max, BlockType.GLASS);
+		}
+		fillCube(min, max, BlockType.AIR);
 	}
 	
 	/**
@@ -739,9 +753,12 @@ public class MinecraftClient extends Comm {
 	 * @param zmax Maximal z coordinate
 	 * @param type Type to fill the space with
 	 */
-	public synchronized void clearCube(int xmin, int ymin, int zmin, int xmax, int ymax, int zmax, BlockType type) {
-		//fillCube(xmin, ymin, zmin, xmax, ymax, zmax, BlockType.LOG);
-		fillCube(xmin, ymin, zmin, xmax, ymax, zmax, type);
+	public synchronized void clearCube(int xmin, int ymin, int zmin, int xmax, int ymax, int zmax) {
+		//clears with glass before air if parameter is set, this makes sure all blocks get cleared
+		if (Parameters.parameters.booleanParameter("minecraftClearWithGlass")) {
+			fillCube(xmin, ymin, zmin, xmax, ymax, zmax, BlockType.GLASS);
+		}	
+		fillCube(xmin, ymin, zmin, xmax, ymax, zmax, BlockType.AIR);
 	}
 	
 	/**
@@ -875,7 +892,7 @@ public class MinecraftClient extends Comm {
 		// If cleared space isn't very large, just clear that space
 		int clearSize = (end.x()-groundStart.x())*(end.y()-groundStart.y())*(end.z()-groundStart.z());
 		if( clearSize<=MAX_CLEAR_WITHOUT_LOOP) {
-			clearCube(groundStart, end, BlockType.AIR); // Calls clear cube, which checks coordinates
+			clearCube(groundStart, end); // Calls clear cube, which checks coordinates
 		}else {
 			int counter=50000000; // Don't need gradual clear messages for small clear sizes
 			// Otherwise, clears out large block sections one at a time to ensure the server isn't overloaded
@@ -888,7 +905,7 @@ public class MinecraftClient extends Comm {
 					for(int y=GROUND_LEVEL;y<=end.y();y+=fillSize) {
 						//System.out.println("clearing "+counter);
 						counter++;
-						clearCube(x,y,z,x+fillSize,y+fillSize,z+fillSize, BlockType.AIR);
+						clearCube(x,y,z,x+fillSize,y+fillSize,z+fillSize);
 						//System.out.println(x+fillSize+" "+(y+fillSize)+" "+(z+fillSize));
 						if((x+fillSize)*(y+fillSize)*(z+fillSize)>counter) {
 							System.out.println("Blocks cleared = "+((x+fillSize)*(y+fillSize)*(z+fillSize)));
@@ -966,6 +983,13 @@ public class MinecraftClient extends Comm {
 			System.out.println("and z-coordinates between -29999983 and 29999983, all inclusive.");
 			System.out.println("Therefore, cannot generate in this range: ("+xmin+", "+ymin+", "+zmin+"), ("+xmax+", "+ymax+", "+zmax+")");
 			throw new IllegalArgumentException("This version of Minecraft only allows blocks to be generated with y-coordinates between 0 and 255 inclusive.\nTherefore, cannot generate in this range: "+xmin+", "+ymin+", "+zmin+", "+xmax+", "+ymax+", "+zmax);
+		}
+	}
+	public static void main(String[] args) {
+		try {
+			MMNEAT.main("runNumber:4 randomSeed:200 minecraftClearWithGlass:true minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftChangeCenterOfMassFitness:true minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet trials:1 mu:100 maxGens:200 minecraftContainsWholeMAPElitesArchive:false forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:false mating:true fs:false ea:edu.southwestern.evolution.mapelites.MAPElites experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:minecraftaccumulate log:MinecraftAccumulate-MEObserverVectorPistonOrientation saveTo:MEObserverVectorPistonOrientation mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5".split(" ")); 
+		} catch (FileNotFoundException | NoSuchMethodException e) {
+			e.printStackTrace();
 		}
 	}
 }

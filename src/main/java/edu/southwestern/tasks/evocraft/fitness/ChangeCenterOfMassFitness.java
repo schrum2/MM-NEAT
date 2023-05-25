@@ -39,44 +39,8 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 	// but scaled down to 10% of that.
 	private static final double REMAINING_BLOCK_PUNISHMENT_SCALE = 0.1;
 	private static final HashMap<MinecraftCoordinates, Triple<Vertex, Vertex, Double>> PREVIOUSLY_COMPUTED_RESULTS = new HashMap<>();
-	/*
-	 * // Nowhere near where anything else is being evaluated public static final
-	 * MinecraftCoordinates SPECIAL_CORNER = new MinecraftCoordinates(-500, 100,
-	 * 500); public static final int SPECIAL_CORNER_BUFFER = 20;
-	 */
+
 	
-//	/**
-//	 * Make sure the special area for double-checking flying shapes is really clear
-//	 */
-//	public static void clearAreaAroundSpecialCorner() {
-//		clearAreaAroundCorner(SPECIAL_CORNER);
-//	}
-//	/**
-//	 * body of code for for clearAreaAroundSpecialCorner used above
-//	 * @param corner
-//	 */
-//	public static void clearAreaAroundCorner(MinecraftCoordinates corner) {
-//		MinecraftCoordinates lower = corner.sub(SPECIAL_CORNER_BUFFER);
-//		MinecraftCoordinates upper = corner.add(MinecraftUtilClass.getRanges().add(SPECIAL_CORNER_BUFFER));
-//		MinecraftClient.getMinecraftClient().clearCube(lower, upper, BlockType.AIR);
-//		List<Block> errorCheck = null;
-//		assert areaAroundCornerEmpty(corner) : "Area not empty after clearing! "+errorCheck;
-//	}
-//	/**
-//	 * Checks if the area around a corner is empty
-//	 * @param corner
-//	 * @return boolean if space is empty or not
-//	 */
-//	public static boolean areaAroundCornerEmpty(MinecraftCoordinates corner) {
-//		MinecraftCoordinates lower = corner.sub(SPECIAL_CORNER_BUFFER);
-//		MinecraftCoordinates upper = corner.add(MinecraftUtilClass.getRanges().add(SPECIAL_CORNER_BUFFER));
-//		List<Block> errorCheck = MinecraftUtilClass.filterOutBlock(MinecraftClient.getMinecraftClient().readCube(lower, upper), BlockType.AIR);
-////		if(!errorCheck.isEmpty()) {
-////			System.out.println("NOT EMPTY at corner "+corner+"\n"+errorCheck);
-////			MiscUtil.waitForReadStringAndEnterKeyPress();
-////		}
-//		return errorCheck.isEmpty();
-//	}
 	/**
 	 * clears previous results
 	 */
@@ -179,7 +143,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		boolean empty = false;
 		int clearAttempt = 0;
 		do {
-			MinecraftClient.clearAreaAroundCorner(corner);
+			MinecraftClient.clearAreaAroundCorner(corner, true);
 			empty = MinecraftClient.areaAroundCornerEmpty(corner);
 			if(!empty) System.out.println("Cleared "+(++clearAttempt)+" times: empty?: "+empty);
 		} while(!empty);
