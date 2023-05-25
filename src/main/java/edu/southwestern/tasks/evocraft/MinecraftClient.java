@@ -42,10 +42,11 @@ public class MinecraftClient extends Comm {
 	// Python script to interact with a Minecraft server on the localhost
 	public static final String CLIENT_PATH = PYTHON_BASE_PATH + "ServerSendReceive.py";
 	
-	//RELATED TO MOVED CLEAR FUNCTIONS FROM getCenterOfMassBeforeAndAfter in ChangeCenterOfMass
-	// Nowhere near where anything else is being evaluated
+
+	//a corner that is no where near any other used area meant to evaluate shapes after a completed evolution experiment
 	public static final MinecraftCoordinates POST_EVALUATION_CORNER = new MinecraftCoordinates(-500, 100, 500);
-	public static final int SPECIAL_CORNER_BUFFER = 20;
+	//An extra amount of empty space that should surround shapes whose evaluation depends on movement.
+	public static final int EMPTY_SPACE_SAFETY_BUFFER = 20;
 
 	public MinecraftClient() {
 		super();
@@ -668,6 +669,7 @@ public class MinecraftClient extends Comm {
 	/**
 	 * Clears an area and verifies that it is clear
 	 * called if you need to make sure it is clear
+	 * makes use of clearWithGlass if the minecraftClearWithGlass parameter is set to true
 	 * @param corner corner that the shape is occupying
 	 */
 	public static void clearAndVerify(MinecraftCoordinates corner) {
@@ -691,8 +693,8 @@ public class MinecraftClient extends Comm {
 	 * @param corner
 	 */
 	public static void clearAreaAroundCorner(MinecraftCoordinates corner, boolean clearWithGlass) {
-		MinecraftCoordinates lower = corner.sub(SPECIAL_CORNER_BUFFER);
-		MinecraftCoordinates upper = corner.add(MinecraftUtilClass.getRanges().add(SPECIAL_CORNER_BUFFER));
+		MinecraftCoordinates lower = corner.sub(EMPTY_SPACE_SAFETY_BUFFER);
+		MinecraftCoordinates upper = corner.add(MinecraftUtilClass.getRanges().add(EMPTY_SPACE_SAFETY_BUFFER));
 		getMinecraftClient().clearCube(lower, upper, clearWithGlass);
 		List<Block> errorCheck = null;
 		assert areaAroundCornerEmpty(corner) : "Area not empty after clearing! "+errorCheck;
@@ -703,8 +705,8 @@ public class MinecraftClient extends Comm {
 	 * @return boolean if space is empty or not
 	 */
 	public static boolean areaAroundCornerEmpty(MinecraftCoordinates corner) {
-		MinecraftCoordinates lower = corner.sub(SPECIAL_CORNER_BUFFER);
-		MinecraftCoordinates upper = corner.add(MinecraftUtilClass.getRanges().add(SPECIAL_CORNER_BUFFER));
+		MinecraftCoordinates lower = corner.sub(EMPTY_SPACE_SAFETY_BUFFER);
+		MinecraftCoordinates upper = corner.add(MinecraftUtilClass.getRanges().add(EMPTY_SPACE_SAFETY_BUFFER));
 		List<Block> errorCheck = MinecraftUtilClass.filterOutBlock(getMinecraftClient().readCube(lower, upper), BlockType.AIR);
 //		if(!errorCheck.isEmpty()) {
 //			System.out.println("NOT EMPTY at corner "+corner+"\n"+errorCheck);
