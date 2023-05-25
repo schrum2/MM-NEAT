@@ -206,7 +206,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		boolean stop = false;
 		List<Block> shortWaitTimeUpdate = null;
 		
-		System.out.println(originalBlocks);
+		if(CommonConstants.watch) System.out.println(originalBlocks);
 		// Spawn the blocks!
 		MinecraftClient.getMinecraftClient().spawnBlocks(originalBlocks);
 		
