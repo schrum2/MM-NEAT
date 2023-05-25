@@ -719,7 +719,7 @@ public class MinecraftClient extends Comm {
 	 * @param max Maximal coordinates in each dimension
 	 */
 	public synchronized void clearCube(MinecraftCoordinates min, MinecraftCoordinates max, BlockType type) {
-		fillCube(min, max, BlockType.LOG);
+		//fillCube(min, max, BlockType.LOG);
 		fillCube(min, max, type);
 	}
 	
@@ -740,7 +740,7 @@ public class MinecraftClient extends Comm {
 	 * @param type Type to fill the space with
 	 */
 	public synchronized void clearCube(int xmin, int ymin, int zmin, int xmax, int ymax, int zmax, BlockType type) {
-		fillCube(xmin, ymin, zmin, xmax, ymax, zmax, BlockType.LOG);
+		//fillCube(xmin, ymin, zmin, xmax, ymax, zmax, BlockType.LOG);
 		fillCube(xmin, ymin, zmin, xmax, ymax, zmax, type);
 	}
 	
