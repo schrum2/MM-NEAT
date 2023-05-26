@@ -52,7 +52,7 @@ public class WaterLavaSecondaryCreationFitnessTest {
 	//passed
 	@Test
 	public void testNoInteractionDifferentOrientations() {	
-		Parameters.initializeParameterCollections(new String[] {"watch:true","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.WaterAndLavaBlockSet"});
+		Parameters.initializeParameterCollections(new String[] {"minecraftClearWithGlass:false","watch:true","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.WaterAndLavaBlockSet"});
 		
 		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,7,-35);
 		MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 100); // Larger buffer is important
@@ -68,7 +68,7 @@ public class WaterLavaSecondaryCreationFitnessTest {
 	//passed
 	@Test
 	public void testNoInteractionOrientationNorthForBoth() {
-		Parameters.initializeParameterCollections(new String[] {"watch:true","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.WaterAndLavaBlockSet"});
+		Parameters.initializeParameterCollections(new String[] {"minecraftClearWithGlass:false","watch:true","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.WaterAndLavaBlockSet"});
 		
 		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,7,-35);
 		MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 100); // Larger buffer is important
@@ -84,7 +84,7 @@ public class WaterLavaSecondaryCreationFitnessTest {
 	//this test makes one block of obsidian - fitness of 1
 	@Test
 	public void testInteractionSameOrientationOfNorth() {
-		Parameters.initializeParameterCollections(new String[] {"watch:true","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.WaterAndLavaBlockSet"});
+		Parameters.initializeParameterCollections(new String[] {"minecraftClearWithGlass:false","watch:true","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.WaterAndLavaBlockSet"});
 		
 		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,7,-35);
 		MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 100); // Larger buffer is important
@@ -100,7 +100,7 @@ public class WaterLavaSecondaryCreationFitnessTest {
 	//testing for creation of two blocks of obsidian - fitness of 2
 	@Test
 	public void testInteractionThreeBlocksSameOrientationOfNorth() {
-		Parameters.initializeParameterCollections(new String[] {"watch:true","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.WaterAndLavaBlockSet"});
+		Parameters.initializeParameterCollections(new String[] {"minecraftClearWithGlass:false","watch:true","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.WaterAndLavaBlockSet"});
 		
 		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,7,-35);
 		MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 100); // Larger buffer is important
@@ -123,8 +123,8 @@ public class WaterLavaSecondaryCreationFitnessTest {
 		MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 100); // Larger buffer is important
 
 		ArrayList<Block> testBlockSet = new ArrayList<>();
-		testBlockSet.add(new Block(-25,27,-35,BlockType.FLOWING_WATER, Orientation.NORTH));
-		testBlockSet.add(new Block(-22,27,-35,BlockType.FLOWING_LAVA, Orientation.NORTH));
+		testBlockSet.add(new Block(-25,7,-35,BlockType.FLOWING_WATER, Orientation.NORTH));
+		testBlockSet.add(new Block(-22,7,-35,BlockType.FLOWING_LAVA, Orientation.NORTH));
 
 		assertEquals(1.0, testInstance.fitnessScore(testCorner,testBlockSet),0.0);
 	}
