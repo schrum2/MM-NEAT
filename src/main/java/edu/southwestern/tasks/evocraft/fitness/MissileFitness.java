@@ -12,7 +12,8 @@ import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 import edu.southwestern.util.datastructures.Pair;
 
 /**
- * TODO
+ * Creates a target based on integer parameters. This target eventually 
+ * gets examined for missing blocks that indicates they were blown up.
  * 
  * @author raffertyt
  *
@@ -25,9 +26,9 @@ public class MissileFitness extends TimedEvaluationMinecraftFitnessFunction {
 	//constructor to create the accepted block type list
 
 	public MissileFitness() {
-		int xOffset = Parameters.parameters.integerParameter("minecraftTargetDistancefromShapeY");
+		int xOffset = Parameters.parameters.integerParameter("minecraftTargetDistancefromShapeX");
 		int yOffset = Parameters.parameters.integerParameter("minecraftTargetDistancefromShapeY");
-		int zOffset = Parameters.parameters.integerParameter("minecraftTargetDistancefromShapeY");
+		int zOffset = Parameters.parameters.integerParameter("minecraftTargetDistancefromShapeZ");
 		targetCornerOffset = new MinecraftCoordinates(xOffset, yOffset, zOffset);
 
 		targetBlockType = BlockType.values()[Parameters.parameters.integerParameter("minecraftMissleTargetBlockType")];
@@ -48,29 +49,11 @@ public class MissileFitness extends TimedEvaluationMinecraftFitnessFunction {
 	}
 
 	@Override
-	public double fitnessScore(MinecraftCoordinates corner, List<Block> originalBlocks) {
-
-		//		// TODO: Create target structure here
-		//		List<Block> targetBlockList = new ArrayList<>();
-		//		MinecraftCoordinates ranges = MinecraftUtilClass.getRanges();
-		//		for(int i = 0; i < ranges.x(); i++) {
-		//			for(int j = 0; j < ranges.x(); j++) {
-		//				for(int k = 0; k < ranges.x(); k++) {
-		//					MinecraftCoordinates loopCoordinates = new MinecraftCoordinates(i, j, k); 
-		//					MinecraftCoordinates nextBlockCoordinates = new MinecraftCoordinates(targetCornerOffset.add(loopCoordinates));
-		//					targetBlockList.add(new Block(nextBlockCoordinates.x(), nextBlockCoordinates.y(), nextBlockCoordinates.z(), BlockType.SLIME, Orientation.WEST));
-		//				}
-		//			}
-		//		}
-		//		MinecraftClient.getMinecraftClient().spawnBlocks(targetBlockList);
-
-
+	public void preSpawnSetup(MinecraftCoordinates corner) {
 		// Create structure to be blown up
+		//changing the last add to a sub might fix the slight target offset from it intended position
 		MinecraftClient.getMinecraftClient().fillCube(corner.add(targetCornerOffset), corner.add(targetCornerOffset).add(MinecraftUtilClass.getRanges()), targetBlockType);
-		// Evaluate as normal
-		return super.fitnessScore(corner, originalBlocks);
 	}
-
 
 	@Override
 	public double calculateFinalScore(ArrayList<Pair<Long, List<Block>>> history, MinecraftCoordinates corner,

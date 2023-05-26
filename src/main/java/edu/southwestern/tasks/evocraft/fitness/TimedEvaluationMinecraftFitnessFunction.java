@@ -94,8 +94,11 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 		boolean stop = false;
 		List<Block> newShapeReadingBlockList = null;
 
-		System.out.println(originalBlocks);
+		if(CommonConstants.watch) System.out.println("Evaluate Blocks: " + originalBlocks);
 	//////// Spawn the blocks!	////////////////////////////////////////////////////////////////////////////////////////////////
+		
+		preSpawnSetup(corner);
+		
 		MinecraftClient.getMinecraftClient().spawnBlocks(originalBlocks);
 
 		long timeBetweenRead = Parameters.parameters.longParameter("shortTimeBetweenMinecraftReads");
@@ -126,6 +129,14 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 
 		//return result of a method call to calculateFinalScore
 		return calculateFinalScore(history, corner, originalBlocks);
+	}
+
+	/**
+	 * Any code that has to run right before the shape is spawned for evaluation
+	 * @param corner Corner of shape to evaluate in the world
+	 */
+	public void preSpawnSetup(MinecraftCoordinates corner) {
+		// Do nothing by default
 	}
 
 	/**
