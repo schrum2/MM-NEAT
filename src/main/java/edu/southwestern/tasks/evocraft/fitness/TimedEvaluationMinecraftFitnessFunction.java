@@ -38,6 +38,12 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 	 */
 	@Override
 	public double fitnessScore(MinecraftCoordinates corner, List<Block> originalBlocks) {
+
+		// Should this be true for all fitness functions?
+		if(originalBlocks.isEmpty()) {
+			if(CommonConstants.watch) System.out.println("Empty shape: Immediate failure");
+			return minFitness();
+		}		
 		
 	///////////// clear section - should be reworked and made into utils class ////////////////////////////////////////////////////////////////////
 
@@ -51,6 +57,10 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 
 		// Shifts over the corner to the new range with the large space in between shapes
 		corner = corner.sub(MinecraftUtilClass.emptySpaceOffsets());
+		// schrum2: I think this code is responsible for the weird error of shapes near the ground being stacked vertically.
+		//          When the startY is made large enough, this is not an issue, but makin gthe user set that correctly
+		//          is a hassle.		
+		
 		//finds the corner of the evaluation space - corner now means evaluation space
 		//if statement checks if the evaluation space plus the space that would be cleared is below the ground level
 		if(corner.y() - MinecraftClient.EMPTY_SPACE_SAFETY_BUFFER <= MinecraftClient.GROUND_LEVEL) { // Push up if close to ground
@@ -80,12 +90,6 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 		List<Block> previousBlocks = MinecraftUtilClass.wipeOrientations(originalBlocks);
 		history.add(new Pair<Long,List<Block>>(-1L,originalBlocks));
 		history.add(new Pair<Long,List<Block>>(0L,previousBlocks));
-
-		if(originalBlocks.isEmpty()) {
-			if(CommonConstants.watch) System.out.println("Empty shape: Immediate failure");
-			return minFitness();
-		}
-
 
 		boolean stop = false;
 		List<Block> newShapeReadingBlockList = null;
