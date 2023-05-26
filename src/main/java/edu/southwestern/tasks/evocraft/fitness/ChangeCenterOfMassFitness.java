@@ -12,7 +12,6 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
-import edu.southwestern.util.datastructures.Triple;
 import edu.southwestern.util.datastructures.Vertex;
 /**
  * Calculates the changes in the center of mass of
@@ -191,16 +190,15 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		if(result != null) return result;
 		
 		// Machine did not fly away
-		Triple<Vertex,Vertex,Double> centerOfMassBeforeAndAfter = new Triple<>(initialCenterOfMass, lastCenterOfMass, totalChangeDistance);
+		double fitness = totalChangeDistance;
 		
-		double changeInPosition = centerOfMassBeforeAndAfter.t2.distance(centerOfMassBeforeAndAfter.t1);
+		double changeInPosition = lastCenterOfMass.distance(initialCenterOfMass);
 		assert !Double.isNaN(changeInPosition) : "Before: " + originalBlocks;
 
 		if(!Parameters.parameters.booleanParameter("minecraftAccumulateChangeInCenterOfMass")) {
-			centerOfMassBeforeAndAfter.t3 = changeInPosition;		
+			fitness = changeInPosition;		
 		}
-		if(CommonConstants.watch) System.out.println("Final result "+centerOfMassBeforeAndAfter);
-		return centerOfMassBeforeAndAfter.t3;
+		return fitness;
 	}
 
 	/**
