@@ -175,11 +175,12 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 						}
 						MinecraftLonerShapeTask.writeBlockListFile(originalBlocks, flyingDir + File.separator + "Attempt"+attempt, "FITNESS_"+result.t3+".txt");
 					}
-					System.out.println("Flying machine from attempt "+attempt);
-					for(int i = 0; i < history.size(); i++) {
-						System.out.println(i + "." + history.get(i));
+					if(CommonConstants.watch) {
+						System.out.println("Flying machine from attempt "+attempt);
+						for(int i = 0; i < history.size(); i++) {
+							System.out.println(i + "." + history.get(i));
+						}
 					}
-
 					return result.t3;
 				}
 				
