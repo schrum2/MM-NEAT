@@ -3,8 +3,6 @@ package edu.southwestern.tasks.evocraft.fitness;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.nd4j.nativeblas.Nd4jCpu.check_numerics;
-
 import com.clearspring.analytics.util.Pair;
 
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
