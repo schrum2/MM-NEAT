@@ -20,6 +20,7 @@ import edu.southwestern.networks.ActivationFunctions;
 import edu.southwestern.networks.dl4j.VGG19Wrapper;
 import edu.southwestern.networks.hyperneat.CenteredSubstrateMapping;
 import edu.southwestern.tasks.evocraft.MinecraftClient;
+import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.blocks.MachineBlockSet;
 import edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGenerator;
 import edu.southwestern.tasks.gvgai.player.GVGAIOneStepNNPlayer;
@@ -391,7 +392,7 @@ public class Parameters {
 		integerOptions.add("minecraftTargetDistancefromShapeY", -10, "The distance from shape origin to target on the Y");
 		integerOptions.add("minecraftTargetDistancefromShapeX", 0, "The distance from shape origin to target on the X");
 		integerOptions.add("minecraftTargetDistancefromShapeZ", 0, "The distance from shape origin to target on the Z");
-		integerOptions.add("minecraftMissleTargetBlockType", 202, "Block that is used in the target");
+		integerOptions.add("minecraftMissleTargetBlockType", BlockType.SLIME.ordinal(), "Block that is used in the target");
 		
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
@@ -857,6 +858,8 @@ public class Parameters {
 		booleanOptions.add("minecraftMaximizeVolumeFitness", false, "rewards shapes that spread out over larger areas");
 		booleanOptions.add("minecraftMissileFitness", false, "rewards a shape for blowing up a target");
 		booleanOptions.add("minecraftClearWithGlass", true, "determines if glass is used to clear a space before air");
+
+		
 	
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
@@ -1058,6 +1061,8 @@ public class Parameters {
 		classOptions.add("zeldaLevelLoader", SimpleLoader.class, "Loader to use when the dungeon is picking levels");
 		classOptions.add("minecraftShapeGenerator", ThreeDimensionalVolumeGenerator.class, "Defines the manner in which shapes are generated from genomes in Minecraft");
 		classOptions.add("minecraftBlockSet", MachineBlockSet.class, "Sets block set to be machine block set");
+		
+		
 	}
 
 	/**
