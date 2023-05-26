@@ -86,6 +86,8 @@ public class WaterLavaSecondaryCreationFitnessTest {
 		assertEquals(0.0, testInstance.fitnessScore(testCorner,testBlockSet),0.0);
 	}
 
+	//passed
+	//this test makes one block of obsidian - fitness of 1
 	@Test
 	public void testInteractionSameOrientationOfNorth() {
 		Parameters.initializeParameterCollections(new String[] {"watch:true","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.WaterAndLavaBlockSet"});
@@ -100,8 +102,46 @@ public class WaterLavaSecondaryCreationFitnessTest {
 		
 		MinecraftClient.getMinecraftClient().spawnBlocks(testBlockSet);
 	
-		assertEquals(0.5, testInstance.fitnessScore(testCorner,testBlockSet),0.5);
+		assertEquals(1.0, testInstance.fitnessScore(testCorner,testBlockSet),0.0);
 	}
-	//have a case where they are not touching with a fitness of zero
-	//have one where they interact
+	
+	//passed
+	//testing for creation of two blocks of obsidian - fitness of 2
+	@Test
+	public void testInteractionThreeBlocksSameOrientationOfNorth() {
+		Parameters.initializeParameterCollections(new String[] {"watch:true","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.WaterAndLavaBlockSet"});
+		
+		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,7,-35);
+		MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 100); // Larger buffer is important
+
+		ArrayList<Block> testBlockSet = new ArrayList<>();
+		testBlockSet.add(new Block(-25,7,-35,BlockType.FLOWING_WATER, Orientation.NORTH));
+		testBlockSet.add(new Block(-24,7,-35,BlockType.FLOWING_LAVA, Orientation.NORTH));
+		testBlockSet.add(new Block(-26,7,-35,BlockType.FLOWING_LAVA, Orientation.NORTH));
+
+		MinecraftClient.getMinecraftClient().spawnBlocks(testBlockSet);
+	
+		assertEquals(2.0, testInstance.fitnessScore(testCorner,testBlockSet),0.0);
+	}
+	
+	//creates 1 - fitness 1
+	@Test
+	public void testInteractionTwoBlocksSameOrientationOfNorthCobblestoneCreation() {
+		Parameters.initializeParameterCollections(new String[] {"watch:true","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.WaterAndLavaBlockSet"});
+		
+		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,7,-35);
+		MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 100); // Larger buffer is important
+
+		ArrayList<Block> testBlockSet = new ArrayList<>();
+		testBlockSet.add(new Block(-25,7,-35,BlockType.FLOWING_WATER, Orientation.NORTH));
+		testBlockSet.add(new Block(-22,7,-35,BlockType.FLOWING_LAVA, Orientation.NORTH));
+		//testBlockSet.add(new Block(-26,7,-35,BlockType.FLOWING_LAVA, Orientation.NORTH));
+
+		MinecraftClient.getMinecraftClient().spawnBlocks(testBlockSet);
+	
+		assertEquals(1.0, testInstance.fitnessScore(testCorner,testBlockSet),0.0);
+	}
+
+	
+	//finish up and redo all unit tests
 }
