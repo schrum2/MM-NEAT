@@ -27,6 +27,7 @@ import edu.southwestern.tasks.evocraft.fitness.ChangeCenterOfMassFitness;
 import edu.southwestern.tasks.evocraft.fitness.DiversityBlockFitness;
 import edu.southwestern.tasks.evocraft.fitness.FakeTestFitness;
 import edu.southwestern.tasks.evocraft.fitness.MinecraftFitnessFunction;
+import edu.southwestern.tasks.evocraft.fitness.MissileFitness;
 import edu.southwestern.tasks.evocraft.fitness.NegativeSpaceCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.OccupiedCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.TypeCountFitness;
@@ -142,6 +143,9 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		}
 		if(Parameters.parameters.booleanParameter("minecraftMaximizeVolumeFitness")) {
 			fitness.add(new MaximizeVolumeFitness());
+		}
+		if(Parameters.parameters.booleanParameter("minecraftMissileFitness")) {
+			fitness.add(new MissileFitness());
 		}
 		return fitness;
 	}
