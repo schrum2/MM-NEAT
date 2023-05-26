@@ -3,7 +3,6 @@ package edu.southwestern.tasks.evocraft.fitness;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
@@ -32,33 +31,11 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 	public static final double FLYING_PENALTY_BUFFER = 5;
 	// At least this many blocks must depart to count as flying
 	private static final int SUFFICIENT_DEPARTED_BLOCKS = 6;
-	// The machine must clearly fly on this many separate evaluations before being awarded such fitness
-	private static final int ATTEMPTS_BEFORE_CONVINCED_OF_FLYING = 1; //2;
 	
 	// Flying machines that leave blocks behind get a small fitness penalty proportional to the number of remaining blocks,
 	// but scaled down to 10% of that.
 	private static final double REMAINING_BLOCK_PUNISHMENT_SCALE = 0.1;
-	private static final HashMap<MinecraftCoordinates, Triple<Vertex, Vertex, Double>> PREVIOUSLY_COMPUTED_RESULTS = new HashMap<>();
-
-	
-	/**
-	 * clears previous results
-	 */
-	public static void resetPreviousResults() {
-		PREVIOUSLY_COMPUTED_RESULTS.clear();
-	}
-	
-	/**
-	 * Retrieve and remove a previously computed result
-	 * @param corner Corner where the shape was evaluated
-	 * @return Results for shape that was spawned at that corner
-	 */
-	public static Triple<Vertex, Vertex, Double> getPreviouslyComputedResult(MinecraftCoordinates corner) {
-		synchronized(PREVIOUSLY_COMPUTED_RESULTS) {
-			return PREVIOUSLY_COMPUTED_RESULTS.remove(corner);
-		}
-	}
-
+		
 	@Override
 	public double maxFitness() {
 		// Probably overshoots a bit
@@ -79,40 +56,21 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 
 	@Override
 	public double fitnessScore(MinecraftCoordinates corner, List<Block> originalBlocks) {
-
-		Triple<Vertex, Vertex, Double> centerOfMassBeforeAndAfter = getCenterOfMassBeforeAndAfter(corner, originalBlocks, 0);
-		// Do not erase previously computed result. Wait until other thread consumes it
-		while(PREVIOUSLY_COMPUTED_RESULTS.containsKey(corner)) {
-			try {
-				Thread.sleep(10); // Should this sleep longer?
-			} catch (InterruptedException e) {
-				System.out.println("Interrupted!");
-				e.printStackTrace();
-			}
-		}
-		// Save results computed at the given corner
-		synchronized(PREVIOUSLY_COMPUTED_RESULTS) {
-			PREVIOUSLY_COMPUTED_RESULTS.put(corner, centerOfMassBeforeAndAfter);
-		}
-		
-//		if(centerOfMassBeforeAndAfter.t3 == 454.5) {
-//			System.out.println(centerOfMassBeforeAndAfter);
-//			System.out.println("corner: " + corner);
-//			throw new IllegalArgumentException();
-//		}
-		return centerOfMassBeforeAndAfter.t3;
+		return getCenterOfMassBeforeAndAfter(corner, originalBlocks, 0);
 	}
 
 	/**
 	 * Calculates the initial and final center of mass after
 	 * a certain amount of time has passed
+	 * 
+	 * TODO: Change this name
+	 * 
 	 * @param corner Coordinate of the corner of the shape
 	 * @param originalBlocks Blocks from ShapeGenerator, not from Minecraft
 	 * @param How many attempts have been made so far 
-	 * @return A triple with the initial center of mass, final center of mass, and total
-	 * 			change in distance
+	 * @return total change in distance
 	 */
-	private Triple<Vertex, Vertex, Double> getCenterOfMassBeforeAndAfter(MinecraftCoordinates corner, List<Block> originalBlocks, int attempt) {
+	private double getCenterOfMassBeforeAndAfter(MinecraftCoordinates corner, List<Block> originalBlocks, int attempt) {
 		attempt++; // For the current attempt
 		
 		// Ranges before the change of space in between
@@ -162,7 +120,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		int initialBlockCount = originalBlocks.size();
 		if(originalBlocks.isEmpty()) {
 			if(CommonConstants.watch) System.out.println("Empty shape: Immediate failure");
-			return new Triple<>(new Vertex(0,0,0), new Vertex(0,0,0), minFitness());
+			return minFitness();
 		}
 
 		// Initial center of mass is where it starts
@@ -193,7 +151,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 			if(CommonConstants.watch) System.out.println("Block update: "+shortWaitTimeUpdate);
 			if(shortWaitTimeUpdate.isEmpty()) { // If list is empty now (but was not before) then shape has flown completely away
 				if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": Shape empty now: max fitness! Last center of mass = "+lastCenterOfMass);
-				return new Triple<>(initialCenterOfMass, lastCenterOfMass, maxFitness());
+				return maxFitness();
 			}
 			Vertex nextCenterOfMass = getCenterOfMass(shortWaitTimeUpdate);
 			if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": Next COM: "+nextCenterOfMass);
@@ -221,29 +179,8 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 					for(int i = 0; i < history.size(); i++) {
 						System.out.println(i + "." + history.get(i));
 					}
-					// Repeat until certain
-					if(attempt < ATTEMPTS_BEFORE_CONVINCED_OF_FLYING) {
-						System.out.println("Check flying machine again");
-						// Only one shape can be evaluated in this place at a time
-						synchronized(MinecraftClient.POST_EVALUATION_CORNER) {
-							MinecraftClient.clearAreaAroundSpecialCorner();
-							List<Block> shiftedBlocks = MinecraftUtilClass.shiftBlocksBetweenCorners(originalBlocks, corner, MinecraftClient.POST_EVALUATION_CORNER);
-							MinecraftClient.getMinecraftClient().spawnBlocks(shiftedBlocks);
-							result = getCenterOfMassBeforeAndAfter(MinecraftClient.POST_EVALUATION_CORNER, shiftedBlocks, attempt);
-						}
-					} else {
-						System.out.println("Machine succeeded "+ATTEMPTS_BEFORE_CONVINCED_OF_FLYING+" times!");
-					}
-					
-//					for(int i = 0; i < history.size(); i++) {
-//						System.out.println(i + "." + history.get(i));
-//					}
-//					System.out.println("\noriginalBlocks                     = "+originalBlocks+
-//							"\ninitialCenterOfMass = "+initialCenterOfMass+"\nnextCenterOfMass = "+nextCenterOfMass+
-//							"\ncorner = "+corner+
-//							"\nbig area around is "+MinecraftUtilClass.filterOutBlock(MinecraftClient.getMinecraftClient().readCube(corner.sub(new MinecraftCoordinates(5,5,5)),end.add(new MinecraftCoordinates(5,5,5))),BlockType.AIR) );
-//						System.exit(1);
-					return result;
+
+					return result.t3;
 				}
 				
 				stop = true;
@@ -268,7 +205,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		// It is possible that blocks flew away, but some remaining component kept oscillating until the end. This is still a flying machine though.
 		Vertex farthestCenterOfMass = getFarthestCenterOfMass(history, initialCenterOfMass, lastCenterOfMass);
 		Triple<Vertex, Vertex, Double> result = checkCreditForDepartedBlocks(initialBlockCount, initialCenterOfMass, farthestCenterOfMass, shortWaitTimeUpdate);
-		if(result != null) return result;
+		if(result != null) return result.t3;
 		
 		// Machine did not fly away
 		Triple<Vertex,Vertex,Double> centerOfMassBeforeAndAfter = new Triple<>(initialCenterOfMass, lastCenterOfMass, totalChangeDistance);
@@ -280,7 +217,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 			centerOfMassBeforeAndAfter.t3 = changeInPosition;		
 		}
 		if(CommonConstants.watch) System.out.println("Final result "+centerOfMassBeforeAndAfter);
-		return centerOfMassBeforeAndAfter;
+		return centerOfMassBeforeAndAfter.t3;
 	}
 
 	/**
