@@ -18,6 +18,7 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
 import edu.southwestern.tasks.evocraft.MinecraftServer;
+import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 import edu.southwestern.util.datastructures.Vertex;
 
 public class ChangeCenterOfMassFitnessTest {
@@ -362,7 +363,7 @@ public class ChangeCenterOfMassFitnessTest {
 		blockSet1.add(new Block(-4,7,-35,BlockType.PISTON, Orientation.EAST));
 		
 		
-		assertEquals(new Vertex(-4.5,7.0,-35.0), ChangeCenterOfMassFitness.getCenterOfMass(blockSet1));
+		assertEquals(new Vertex(-4.5,7.0,-35.0), MinecraftUtilClass.getCenterOfMass(blockSet1));
 		
 		
 		// List of flying machine blocks
@@ -379,7 +380,7 @@ public class ChangeCenterOfMassFitnessTest {
 		// Activate
 		blockSet2.add(new Block(1,6,-1,BlockType.QUARTZ_BLOCK,Orientation.NORTH));
 		
-		assertEquals(new Vertex(1.0,5.375,-1.375), ChangeCenterOfMassFitness.getCenterOfMass(blockSet2));
+		assertEquals(new Vertex(1.0,5.375,-1.375), MinecraftUtilClass.getCenterOfMass(blockSet2));
 	}
 
 	@Test

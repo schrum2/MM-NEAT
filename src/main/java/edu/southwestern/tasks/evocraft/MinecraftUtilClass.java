@@ -14,6 +14,7 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
 import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.datastructures.Vertex;
 
 /**
  * Some commonly used methods for dealing with the Minecraft world
@@ -338,4 +339,33 @@ public class MinecraftUtilClass {
 		}
 		return result;
 	}
+	
+	/**
+	 * Calculate center of mass for a list of blocks in a shape by averaging the 
+	 * x, y, and z coordinates across all non-AIR blocks in the shape.
+	 * 
+	 * @param blocks List of blocks in a shape
+	 * @return Center of mass of the shape (assumes all blocks have uniform mass)
+	 */
+	public static Vertex getCenterOfMass(List<Block> blocks) {
+		double x = 0;
+		double y = 0;
+		double z = 0;
+
+		List<Block> filteredBlocks = MinecraftUtilClass.filterOutBlock(blocks,BlockType.AIR);
+
+		for(Block b : filteredBlocks) {
+			x += b.x();
+			y += b.y();
+			z += b.z();
+		}
+
+		double avgX = x/filteredBlocks.size();
+		double avgY = y/filteredBlocks.size();
+		double avgZ = z/filteredBlocks.size();
+
+		Vertex centerOfMass = new Vertex(avgX,avgY,avgZ);
+
+		return centerOfMass;
+	}	
 }
