@@ -19,6 +19,7 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
 import edu.southwestern.util.datastructures.Triple;
 import edu.southwestern.util.datastructures.Vertex;
+import java_cup.internal_error;
 
 public class WaterLavaSecondaryCreationFitnessTest {
 	
@@ -124,22 +125,63 @@ public class WaterLavaSecondaryCreationFitnessTest {
 		assertEquals(2.0, testInstance.fitnessScore(testCorner,testBlockSet),0.0);
 	}
 	
-	//creates 1 - fitness 1
+	//creates 1 cobblestone - fitness 1
 	@Test
 	public void testInteractionTwoBlocksSameOrientationOfNorthCobblestoneCreation() {
-		Parameters.initializeParameterCollections(new String[] {"watch:true","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.WaterAndLavaBlockSet"});
+		Parameters.initializeParameterCollections(new String[] {"minecraftClearWithGlass:false","watch:true","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.WaterAndLavaBlockSet"});
 		
 		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,7,-35);
 		MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 100); // Larger buffer is important
 
 		ArrayList<Block> testBlockSet = new ArrayList<>();
-		testBlockSet.add(new Block(-25,7,-35,BlockType.FLOWING_WATER, Orientation.NORTH));
-		testBlockSet.add(new Block(-22,7,-35,BlockType.FLOWING_LAVA, Orientation.NORTH));
+		testBlockSet.add(new Block(-25,27,-35,BlockType.FLOWING_WATER, Orientation.NORTH));
+		testBlockSet.add(new Block(-22,27,-35,BlockType.FLOWING_LAVA, Orientation.NORTH));
 		//testBlockSet.add(new Block(-26,7,-35,BlockType.FLOWING_LAVA, Orientation.NORTH));
 
 		MinecraftClient.getMinecraftClient().spawnBlocks(testBlockSet);
 	
 		assertEquals(1.0, testInstance.fitnessScore(testCorner,testBlockSet),0.0);
+	}
+	
+	//uses a quartz block base to create a platform for lava and water to mix
+	@Test
+	public void testInteractionQuartzBaseSameOrientationOfNorthCobblestoneCreation() {
+		Parameters.initializeParameterCollections(new String[] {"minecraftClearWithGlass:false","watch:true","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.WaterAndLavaBlockSet"});
+		
+		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,27,-35);
+		MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 100); // Larger buffer is important
+
+		ArrayList<Block> testBlockSet = new ArrayList<>();
+		testBlockSet.add(new Block(-25,27,-35,BlockType.FLOWING_WATER, Orientation.NORTH));
+		testBlockSet.add(new Block(-21,27,-35,BlockType.FLOWING_LAVA, Orientation.NORTH));
+		
+		//setting the base coordinates of the quartz platform
+		int xMinCoordinate = -27;
+		int xMaxCoordinate = -17;
+		int zMinCoordinate = -38;
+		int zMaxCoordinate = -32;
+		int yBaseCoodinate = 25;
+
+		//creates the base platform
+		for(int xIndex = xMinCoordinate; xIndex <= xMaxCoordinate; xIndex++) {
+			for(int zIndex = zMinCoordinate; zIndex <= zMaxCoordinate; zIndex++) {
+				testBlockSet.add(new Block(xIndex,yBaseCoodinate,zIndex,BlockType.QUARTZ_BLOCK, Orientation.NORTH));
+			}
+		}
+		//creates the edges of the platform
+		for(int xIndex = xMinCoordinate; xIndex <= xMaxCoordinate; xIndex++) {
+			testBlockSet.add(new Block(xIndex,yBaseCoodinate+1,zMinCoordinate,BlockType.QUARTZ_BLOCK, Orientation.NORTH));
+			testBlockSet.add(new Block(xIndex,yBaseCoodinate+1,zMaxCoordinate,BlockType.QUARTZ_BLOCK, Orientation.NORTH));
+		}
+		for(int zIndex = zMinCoordinate+1; zIndex < zMaxCoordinate; zIndex++) {
+			testBlockSet.add(new Block(xMinCoordinate,yBaseCoodinate+1,zIndex,BlockType.QUARTZ_BLOCK, Orientation.NORTH));
+			testBlockSet.add(new Block(xMaxCoordinate,yBaseCoodinate+1,zIndex,BlockType.QUARTZ_BLOCK, Orientation.NORTH));
+		}
+		
+		MinecraftClient.getMinecraftClient().spawnBlocks(testBlockSet);
+	
+		//fillCube does not work because of the fitnessScore call
+		assertEquals(14.0, testInstance.fitnessScore(testCorner,testBlockSet),0.0);
 	}
 
 	
