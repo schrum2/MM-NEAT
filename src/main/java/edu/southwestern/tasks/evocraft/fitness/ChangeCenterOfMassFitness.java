@@ -120,7 +120,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		}
 
 		// Initial center of mass is where it starts
-		Vertex initialCenterOfMass = getCenterOfMass(originalBlocks);
+		Vertex initialCenterOfMass = MinecraftUtilClass.getCenterOfMass(originalBlocks);
 		Vertex lastCenterOfMass = new Vertex(initialCenterOfMass); // Copy constructor (not a copy of reference)
 		if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": Initial center of mass: " + initialCenterOfMass);
 		
@@ -149,7 +149,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 				if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": Shape empty now: max fitness! Last center of mass = "+lastCenterOfMass);
 				return maxFitness();
 			}
-			Vertex nextCenterOfMass = getCenterOfMass(shortWaitTimeUpdate);
+			Vertex nextCenterOfMass = MinecraftUtilClass.getCenterOfMass(shortWaitTimeUpdate);
 			if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": Next COM: "+nextCenterOfMass);
 			//System.out.println("Does last equals next? " + lastCenterOfMass + " and " + nextCenterOfMass);
 			
@@ -213,7 +213,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		Vertex farthestCenterOfMass = lastCenterOfMass; // Assume last location was farthest
 		double farthestDistance = lastCenterOfMass.distance(initialCenterOfMass);
 		for(List<Block> blocks : history) {
-			Vertex v = getCenterOfMass(blocks);
+			Vertex v = MinecraftUtilClass.getCenterOfMass(blocks);
 			double distance = v.distance(initialCenterOfMass);
 			if(distance > farthestDistance) {
 				farthestDistance = distance;
@@ -244,34 +244,6 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		return result;
 	}
 
-	/**
-	 * Calculate center of mass for a list of blocks in a shape by averaging the 
-	 * x, y, and z coordinates across all non-AIR blocks in the shape.
-	 * 
-	 * @param blocks List of blocks in a shape
-	 * @return Center of mass of the shape (assumes all blocks have uniform mass)
-	 */
-	public static Vertex getCenterOfMass(List<Block> blocks) {
-		double x = 0;
-		double y = 0;
-		double z = 0;
-
-		List<Block> filteredBlocks = MinecraftUtilClass.filterOutBlock(blocks,BlockType.AIR);
-
-		for(Block b : filteredBlocks) {
-			x += b.x();
-			y += b.y();
-			z += b.z();
-		}
-
-		double avgX = x/filteredBlocks.size();
-		double avgY = y/filteredBlocks.size();
-		double avgZ = z/filteredBlocks.size();
-
-		Vertex centerOfMass = new Vertex(avgX,avgY,avgZ);
-
-		return centerOfMass;
-	}
 
 	@Override
 	public double minFitness() {
