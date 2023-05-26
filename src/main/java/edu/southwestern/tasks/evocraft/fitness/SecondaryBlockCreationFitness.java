@@ -40,9 +40,9 @@ public abstract class SecondaryBlockCreationFitness extends TimedEvaluationMinec
 	@Override
 	public double calculateFinalScore (ArrayList<Pair<Long,List<Block>>> history, MinecraftCoordinates corner, List<Block> originalBlocks) {
 		
-		//initialized to the last 
+		//initialized to the last recoded shape in history
 		List<Block> finalBlocksList = history.get(history.size()-1).right;
-		//check that list against originalBlocks to get a list of only the desired blocks
+		//check that block list against accepted block types list to get a list of only the desired blocks
 		finalBlocksList = MinecraftUtilClass.getDesiredBlocks(finalBlocksList, acceptedBlockTypes);
 		
 		//the number of blocks of the desired type(s) equals the length of the list of blocks
