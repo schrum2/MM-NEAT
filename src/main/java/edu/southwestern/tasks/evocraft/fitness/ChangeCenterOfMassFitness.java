@@ -139,7 +139,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		if(CommonConstants.watch) System.out.println("Evaluate at corner: "+corner);
 		
 		// Must be clear before starting
-		//TODO: maybe move this to minecraftClient
+		//TODO: maybe move this to minecraftClient, was made in clear and verify
 		boolean empty = false;
 		int clearAttempt = 0;
 		do {

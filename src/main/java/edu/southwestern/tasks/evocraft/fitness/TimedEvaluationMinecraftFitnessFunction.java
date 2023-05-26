@@ -33,7 +33,13 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 	 * creates a history: a list of time stamps with an associated list of blocks read at that time
 	 * reads until MinecraftMandatoryWaitTime is reached
 	 * returns a call to calculateFinalFitnessScore using history, corner, originalBlocks
+	 * 
+	 * initial corner is the bottom corner of the shape
+	 * sub empty offset to find bottom  0-5 = -5 for lower corner of evaluation shape
+	 * adds end? to get the far up corner to calculate volume
+	 * @param corner the corner of the shape
 	 */
+	@Override
 	public double fitnessScore(MinecraftCoordinates corner, List<Block> originalBlocks) {
 		
 	///////////// clear section - should be reworked and made into utils class ////////////////////////////////////////////////////////////////////
@@ -48,19 +54,24 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 
 		// Shifts over the corner to the new range with the large space in between shapes
 		corner = corner.sub(MinecraftUtilClass.emptySpaceOffsets());
+		//finds the corner of the evaluation space - corner now means evaluation space
+		//if statement checks if the evaluation space plus the space that would be cleared is below the ground level
 		if(corner.y() - MinecraftClient.EMPTY_SPACE_SAFETY_BUFFER <= MinecraftClient.GROUND_LEVEL) { // Push up if close to ground
 			MinecraftCoordinates shiftPoint = new MinecraftCoordinates(0,MinecraftClient.EMPTY_SPACE_SAFETY_BUFFER,0);
 			MinecraftCoordinates oldCorner = corner;
 			corner = corner.add(shiftPoint); // move sufficiently above the ground
 			originalBlocks = MinecraftUtilClass.shiftBlocksBetweenCorners(originalBlocks, oldCorner, corner);
 		}
+		//this is the max coordinates of the evaluation space (I think) for calculation the total evaluation area 
 		MinecraftCoordinates end = corner.add(MinecraftUtilClass.reservedSpace());
 
+		//min corner y <= end (max corner y)
 		assert corner.x() <= end.x() && corner.y() <= end.y() && corner.z() <= end.z(): "corner should be less than end in each coordinate: corner = "+corner+ ", max = "+end; 
 
 		if(CommonConstants.watch) System.out.println("Original Blocks: "+originalBlocks);
 		if(CommonConstants.watch) System.out.println("Evaluate at corner: "+corner);
 
+		//clear and verify evaluation space
 		MinecraftClient.clearAndVerify(corner);
 
 	////////	creating history 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
