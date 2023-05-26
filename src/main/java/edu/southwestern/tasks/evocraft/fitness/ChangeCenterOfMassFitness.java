@@ -1,6 +1,5 @@
 package edu.southwestern.tasks.evocraft.fitness;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,11 +11,9 @@ import edu.southwestern.tasks.evocraft.MinecraftClient;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
-import edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask;
 import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 import edu.southwestern.util.datastructures.Triple;
 import edu.southwestern.util.datastructures.Vertex;
-import edu.southwestern.util.file.FileUtilities;
 /**
  * Calculates the changes in the center of mass of
  * a given structure. If the structure is a flying machine
@@ -164,9 +161,9 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 				if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": No movement.");
 				// Compute farthest center of mass from history
 				Vertex farthestCenterOfMass = getFarthestCenterOfMass(history, initialCenterOfMass, lastCenterOfMass);
-				Triple<Vertex, Vertex, Double> result = checkCreditForDepartedBlocks(initialBlockCount, initialCenterOfMass, farthestCenterOfMass, shortWaitTimeUpdate);
+				Double result = checkCreditForDepartedBlocks(initialBlockCount, initialCenterOfMass, farthestCenterOfMass, shortWaitTimeUpdate);
 				if(result != null) {
-					return result.t3;
+					return result;
 				}
 				
 				stop = true;
@@ -190,8 +187,8 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		
 		// It is possible that blocks flew away, but some remaining component kept oscillating until the end. This is still a flying machine though.
 		Vertex farthestCenterOfMass = getFarthestCenterOfMass(history, initialCenterOfMass, lastCenterOfMass);
-		Triple<Vertex, Vertex, Double> result = checkCreditForDepartedBlocks(initialBlockCount, initialCenterOfMass, farthestCenterOfMass, shortWaitTimeUpdate);
-		if(result != null) return result.t3;
+		Double result = checkCreditForDepartedBlocks(initialBlockCount, initialCenterOfMass, farthestCenterOfMass, shortWaitTimeUpdate);
+		if(result != null) return result;
 		
 		// Machine did not fly away
 		Triple<Vertex,Vertex,Double> centerOfMassBeforeAndAfter = new Triple<>(initialCenterOfMass, lastCenterOfMass, totalChangeDistance);
@@ -233,27 +230,29 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 	 * @param initialCenterOfMass initial center of mass
 	 * @param lastCenterOfMass center of mass at the last point
 	 * @param shortWaitTimeUpdate what the blocks look like after a short update
-	 * @return fitness after punishment for remaining blocks
+	 * @return fitness after punishment for remaining blocks, or null if shape is deemed to not have flown away
 	 */
-	private Triple<Vertex, Vertex, Double> checkCreditForDepartedBlocks(int initialBlockCount, Vertex initialCenterOfMass, Vertex lastCenterOfMass, List<Block> shortWaitTimeUpdate) {
+	private Double checkCreditForDepartedBlocks(int initialBlockCount, Vertex initialCenterOfMass, Vertex lastCenterOfMass, List<Block> shortWaitTimeUpdate) {
 		int remainingBlockCount = shortWaitTimeUpdate.size(); // Could be larger than initial due to extensions
 		int departedBlockCount = initialBlockCount - remainingBlockCount; // Could be negative due to extensions
-		Triple<Vertex, Vertex, Double> result = null;
+		Double result = null;
 		// It should be hard to archive credit for flying, so make sure that the number of departed blocks is sufficiently high
 		if(departedBlockCount > SUFFICIENT_DEPARTED_BLOCKS) {
 			if(CommonConstants.watch) System.out.println("Enough have departed. departedBlockCount is "+departedBlockCount+ " from initialBlockCount of "+initialBlockCount);					
-
-//			System.out.println( "remainingBlockCount = "+remainingBlockCount+"\ninitialBlockCount = "+initialBlockCount+"\ndepartedBlockCount = "+departedBlockCount+
-//					"\nshortWaitTimeUpdate                = "+shortWaitTimeUpdate );
-			
-			
 			// Ship flew so far away that we award max fitness, but penalize remaining blocks
 			System.out.println(remainingBlockCount +" remaining blocks: max = " + maxFitness());
-			result = new Triple<>(initialCenterOfMass, lastCenterOfMass, maxFitness() - remainingBlockCount*REMAINING_BLOCK_PUNISHMENT_SCALE);
+			result = maxFitness() - remainingBlockCount*REMAINING_BLOCK_PUNISHMENT_SCALE;
 		}
 		return result;
 	}
 
+	/**
+	 * Calculate center of mass for a list of blocks in a shape by averaging the 
+	 * x, y, and z coordinates across all non-AIR blocks in the shape.
+	 * 
+	 * @param blocks List of blocks in a shape
+	 * @return Center of mass of the shape (assumes all blocks have uniform mass)
+	 */
 	public static Vertex getCenterOfMass(List<Block> blocks) {
 		double x = 0;
 		double y = 0;
