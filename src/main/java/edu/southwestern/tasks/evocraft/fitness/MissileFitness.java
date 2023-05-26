@@ -22,7 +22,7 @@ import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 public class MissileFitness extends TimedEvaluationMinecraftFitnessFunction {
 
 	private MinecraftCoordinates targetCornerOffset;
-	private BlockType targetBlockType;
+	public BlockType targetBlockType;
 	public MissileFitness() {
 		int xOffset = Parameters.parameters.integerParameter("minecraftTargetDistancefromShapeY");
 		int yOffset = Parameters.parameters.integerParameter("minecraftTargetDistancefromShapeY");
@@ -72,10 +72,9 @@ public class MissileFitness extends TimedEvaluationMinecraftFitnessFunction {
 		
 		
 		List<Block> leftOverBlocksFromTarget = MinecraftClient.getMinecraftClient().readCube(corner.add(targetCornerOffset), corner.add(targetCornerOffset).add(MinecraftUtilClass.getRanges()));
-		BlockType[] targetBlockArray;
+		//new BlockType[] targetBlockArray;
 		
-		
-		MinecraftUtilClass.getDesiredBlocks(leftOverBlocksFromTarget, BlockType.targetBlockType]);
+	//	MinecraftUtilClass.getDesiredBlocks(leftOverBlocksFromTarget, targetBlockArray);
 		return 0;
 	}
 
