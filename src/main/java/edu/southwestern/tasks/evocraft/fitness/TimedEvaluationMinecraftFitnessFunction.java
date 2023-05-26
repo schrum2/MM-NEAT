@@ -3,6 +3,8 @@ package edu.southwestern.tasks.evocraft.fitness;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.nd4j.nativeblas.Nd4jCpu.static_bidirectional_rnn;
+
 import com.clearspring.analytics.util.Pair;
 
 import edu.southwestern.parameters.CommonConstants;
@@ -46,8 +48,8 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 
 		// Shifts over the corner to the new range with the large space in between shapes
 		corner = corner.sub(MinecraftUtilClass.emptySpaceOffsets());
-		if(corner.y() - ChangeCenterOfMassFitness.SPECIAL_CORNER_BUFFER <= MinecraftClient.GROUND_LEVEL) { // Push up if close to ground
-			MinecraftCoordinates shiftPoint = new MinecraftCoordinates(0,ChangeCenterOfMassFitness.SPECIAL_CORNER_BUFFER,0);
+		if(corner.y() - MinecraftClient.EMPTY_SPACE_SAFETY_BUFFER <= MinecraftClient.GROUND_LEVEL) { // Push up if close to ground
+			MinecraftCoordinates shiftPoint = new MinecraftCoordinates(0,MinecraftClient.EMPTY_SPACE_SAFETY_BUFFER,0);
 			MinecraftCoordinates oldCorner = corner;
 			corner = corner.add(shiftPoint); // move sufficiently above the ground
 			originalBlocks = MinecraftUtilClass.shiftBlocksBetweenCorners(originalBlocks, oldCorner, corner);
@@ -59,16 +61,7 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 		if(CommonConstants.watch) System.out.println("Original Blocks: "+originalBlocks);
 		if(CommonConstants.watch) System.out.println("Evaluate at corner: "+corner);
 
-		// Must be clear before starting
-		boolean empty = false;
-		int clearAttempt = 0;
-	/////////////// calling clearAreaAroundCorner in changeCenterOfMassFitness, should be refactored into clear area util class ////////////////////////
-		//minecraft client has clear space function too, maybe check it out
-		do {
-			ChangeCenterOfMassFitness.clearAreaAroundCorner(corner);
-			empty = ChangeCenterOfMassFitness.areaAroundCornerEmpty(corner);
-			if(!empty) System.out.println("Cleared "+(++clearAttempt)+" times: empty?: "+empty);
-		} while(!empty);
+		MinecraftClient.clearAndVerify(corner);
 
 	////////	creating history 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//history is a list of time stamps with an associated list of blocks read at that time

@@ -39,42 +39,8 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 	// but scaled down to 10% of that.
 	private static final double REMAINING_BLOCK_PUNISHMENT_SCALE = 0.1;
 	private static final HashMap<MinecraftCoordinates, Triple<Vertex, Vertex, Double>> PREVIOUSLY_COMPUTED_RESULTS = new HashMap<>();
-	// Nowhere near where anything else is being evaluated
-	public static final MinecraftCoordinates SPECIAL_CORNER = new MinecraftCoordinates(-500, 100, 500);
-	public static final int SPECIAL_CORNER_BUFFER = 20;
+
 	
-	/**
-	 * Make sure the special area for double-checking flying shapes is really clear
-	 */
-	public static void clearAreaAroundSpecialCorner() {
-		clearAreaAroundCorner(SPECIAL_CORNER);
-	}
-	/**
-	 * body of code for for clearAreaAroundSpecialCorner used above
-	 * @param corner
-	 */
-	public static void clearAreaAroundCorner(MinecraftCoordinates corner) {
-		MinecraftCoordinates lower = corner.sub(SPECIAL_CORNER_BUFFER);
-		MinecraftCoordinates upper = corner.add(MinecraftUtilClass.getRanges().add(SPECIAL_CORNER_BUFFER));
-		MinecraftClient.getMinecraftClient().fillCube(lower, upper, BlockType.AIR);
-		List<Block> errorCheck = null;
-		assert areaAroundCornerEmpty(corner) : "Area not empty after clearing! "+errorCheck;
-	}
-	/**
-	 * Checks if the area around a corner is empty
-	 * @param corner
-	 * @return boolean if space is empty or not
-	 */
-	public static boolean areaAroundCornerEmpty(MinecraftCoordinates corner) {
-		MinecraftCoordinates lower = corner.sub(SPECIAL_CORNER_BUFFER);
-		MinecraftCoordinates upper = corner.add(MinecraftUtilClass.getRanges().add(SPECIAL_CORNER_BUFFER));
-		List<Block> errorCheck = MinecraftUtilClass.filterOutBlock(MinecraftClient.getMinecraftClient().readCube(lower, upper), BlockType.AIR);
-//		if(!errorCheck.isEmpty()) {
-//			System.out.println("NOT EMPTY at corner "+corner+"\n"+errorCheck);
-//			MiscUtil.waitForReadStringAndEnterKeyPress();
-//		}
-		return errorCheck.isEmpty();
-	}
 	/**
 	 * clears previous results
 	 */
@@ -163,8 +129,8 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		// schrum2: I think this code is responsible for the weird error of shapes near the ground being stacked vertically.
 		//          When the startY is made large enough, this is not an issue, but makin gthe user set that correctly
 		//          is a hassle.
-		if(corner.y() - SPECIAL_CORNER_BUFFER <= MinecraftClient.GROUND_LEVEL) { // Push up if close to ground
-			MinecraftCoordinates shiftPoint = new MinecraftCoordinates(0,SPECIAL_CORNER_BUFFER,0);
+		if(corner.y() - MinecraftClient.EMPTY_SPACE_SAFETY_BUFFER <= MinecraftClient.GROUND_LEVEL) { // Push up if close to ground
+			MinecraftCoordinates shiftPoint = new MinecraftCoordinates(0,MinecraftClient.EMPTY_SPACE_SAFETY_BUFFER,0);
 			MinecraftCoordinates oldCorner = corner;
 			corner = corner.add(shiftPoint); // move sufficiently above the ground
 			originalBlocks = MinecraftUtilClass.shiftBlocksBetweenCorners(originalBlocks, oldCorner, corner);
@@ -177,11 +143,12 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		if(CommonConstants.watch) System.out.println("Evaluate at corner: "+corner);
 		
 		// Must be clear before starting
+		//TODO: maybe move this to minecraftClient
 		boolean empty = false;
 		int clearAttempt = 0;
 		do {
-			clearAreaAroundCorner(corner);
-			empty = areaAroundCornerEmpty(corner);
+			MinecraftClient.clearAreaAroundCorner(corner, true);
+			empty = MinecraftClient.areaAroundCornerEmpty(corner);
 			if(!empty) System.out.println("Cleared "+(++clearAttempt)+" times: empty?: "+empty);
 		} while(!empty);
 
@@ -258,11 +225,11 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 					if(attempt < ATTEMPTS_BEFORE_CONVINCED_OF_FLYING) {
 						System.out.println("Check flying machine again");
 						// Only one shape can be evaluated in this place at a time
-						synchronized(SPECIAL_CORNER) {
-							clearAreaAroundSpecialCorner();
-							List<Block> shiftedBlocks = MinecraftUtilClass.shiftBlocksBetweenCorners(originalBlocks, corner, SPECIAL_CORNER);
+						synchronized(MinecraftClient.POST_EVALUATION_CORNER) {
+							MinecraftClient.clearAreaAroundSpecialCorner();
+							List<Block> shiftedBlocks = MinecraftUtilClass.shiftBlocksBetweenCorners(originalBlocks, corner, MinecraftClient.POST_EVALUATION_CORNER);
 							MinecraftClient.getMinecraftClient().spawnBlocks(shiftedBlocks);
-							result = getCenterOfMassBeforeAndAfter(SPECIAL_CORNER, shiftedBlocks, attempt);
+							result = getCenterOfMassBeforeAndAfter(MinecraftClient.POST_EVALUATION_CORNER, shiftedBlocks, attempt);
 						}
 					} else {
 						System.out.println("Machine succeeded "+ATTEMPTS_BEFORE_CONVINCED_OF_FLYING+" times!");

@@ -857,7 +857,8 @@ public class Parameters {
 		booleanOptions.add("minecraftWaterLavaSecondaryCreationFitness", false, "uses water and lava block set to reward for the creation of secondary blocks");
 		booleanOptions.add("minecraftMaximizeVolumeFitness", false, "rewards shapes that spread out over larger areas");
 		booleanOptions.add("minecraftMissileFitness", false, "rewards a shape for blowing up a target");
-		
+		booleanOptions.add("minecraftClearWithGlass", true, "determines if glass is used to clear a space before air");
+	
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
 		doubleOptions.add("backpropLearningRate", 0.1, "Rate backprop learning for neural networks");
