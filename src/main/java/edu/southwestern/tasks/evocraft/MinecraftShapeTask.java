@@ -19,13 +19,13 @@ import edu.southwestern.tasks.BoundedTask;
 import edu.southwestern.tasks.SinglePopulationTask;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
-import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
 import edu.southwestern.tasks.evocraft.blocks.BlockSet;
 import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBinLabels;
 import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBlockCountBinLabels;
 import edu.southwestern.tasks.evocraft.fitness.ChangeCenterOfMassFitness;
 import edu.southwestern.tasks.evocraft.fitness.DiversityBlockFitness;
 import edu.southwestern.tasks.evocraft.fitness.FakeTestFitness;
+import edu.southwestern.tasks.evocraft.fitness.MaximizeVolumeFitness;
 import edu.southwestern.tasks.evocraft.fitness.MinecraftFitnessFunction;
 import edu.southwestern.tasks.evocraft.fitness.MissileFitness;
 import edu.southwestern.tasks.evocraft.fitness.NegativeSpaceCountFitness;
@@ -33,13 +33,10 @@ import edu.southwestern.tasks.evocraft.fitness.OccupiedCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.TypeCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.TypeTargetFitness;
 import edu.southwestern.tasks.evocraft.fitness.WaterLavaSecondaryCreationFitness;
-import edu.southwestern.tasks.evocraft.fitness.MaximizeVolumeFitness;
 import edu.southwestern.tasks.evocraft.shapegeneration.BoundedVectorGenerator;
 import edu.southwestern.tasks.evocraft.shapegeneration.ShapeGenerator;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.ArrayUtil;
-import edu.southwestern.util.datastructures.Triple;
-import edu.southwestern.util.datastructures.Vertex;
 import edu.southwestern.util.file.FileUtilities;
 
 /**
@@ -278,16 +275,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		
 		MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
 		double[] fitnessScores = calculateFitnessScores(corner,fitnessFunctions,blocks);
-		// It is possible this is not even being used (null result), but the call is needed to prevent deadlock otherwise
-		Triple<Vertex, Vertex, Double> centerOfMassBeforeAndAfter = ChangeCenterOfMassFitness.getPreviouslyComputedResult(corner);
-		double deltaX = 0;
-		double deltaY = 0;
-		double deltaZ = 0;
-		if(centerOfMassBeforeAndAfter != null) {
-			deltaX = centerOfMassBeforeAndAfter.t2.x - centerOfMassBeforeAndAfter.t1.x;
-			deltaY = centerOfMassBeforeAndAfter.t2.y - centerOfMassBeforeAndAfter.t1.y;
-			deltaZ = centerOfMassBeforeAndAfter.t2.z - centerOfMassBeforeAndAfter.t1.z;
-		}
+
 		Score<T> score = new Score<T>(genome, fitnessScores);
 		if(MMNEAT.usingDiversityBinningScheme) {
 			//System.out.println("evaluate "+genome.getId() + " at " + corner + ": scores = "+ Arrays.toString(fitnessScores));
@@ -298,13 +286,6 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			double[] propertyScores = calculateFitnessScores(corner,minecraftBinLabels.properties(),blocks);
 			// Map contains all required properties now
 			HashMap<String,Object> behaviorMap = minecraftBinLabels.behaviorMapFromScores(propertyScores);
-			
-			// For the directional binning scheme
-			if(centerOfMassBeforeAndAfter != null) {
-				behaviorMap.put("x-movement", deltaX);
-				behaviorMap.put("y-movement", deltaY);
-				behaviorMap.put("z-movement", deltaZ);
-			}
 			
 			double binScore = qualityScore(fitnessScores); 
 			behaviorMap.put("binScore", binScore); // Quality Score!				
@@ -355,25 +336,6 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		assert fitnessFunctions.get(0) instanceof ChangeCenterOfMassFitness;
 		assert Parameters.parameters.booleanParameter("minecraftChangeCenterOfMassFitness");
 		return fitnessScore > fitnessFunctions.get(0).maxFitness() - ChangeCenterOfMassFitness.FLYING_PENALTY_BUFFER;
-	}
-
-	/**
-	 * Which orientation does the shape seem to be moving in?
-	 * 
-	 * @param deltaX change in X axis
-	 * @param deltaY change in y axis
-	 * @param deltaZ change in z axis
-	 * @return orientation based on delta values
-	 */
-	
-	private static Orientation directionOfMaximumDisplacement(double deltaX, double deltaY, double deltaZ) {
-		if(Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > Math.abs(deltaZ)) {
-			return (deltaX > 0) ? Orientation.NORTH : Orientation.SOUTH;
-		} else if(Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > Math.abs(deltaZ)) {
-			return (deltaY > 0) ? Orientation.UP : Orientation.DOWN;
-		} else {
-			return (deltaZ > 0) ? Orientation.EAST : Orientation.WEST;
-		}
 	}
 
 	/**
