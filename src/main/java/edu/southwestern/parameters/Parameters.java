@@ -20,6 +20,7 @@ import edu.southwestern.networks.ActivationFunctions;
 import edu.southwestern.networks.dl4j.VGG19Wrapper;
 import edu.southwestern.networks.hyperneat.CenteredSubstrateMapping;
 import edu.southwestern.tasks.evocraft.MinecraftClient;
+import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.blocks.MachineBlockSet;
 import edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGenerator;
 import edu.southwestern.tasks.gvgai.player.GVGAIOneStepNNPlayer;
@@ -388,6 +389,10 @@ public class Parameters {
 		integerOptions.add("zeldaMaxReachableRooms", 1000000, "Highest interval index for MAP Elites dimension associated with Zelda Dungeon Reachable Rooms");
 		integerOptions.add("minecraftPistonLabelSize", 6, "Dictates amount of bin labels made for MinecraftMAPElitesNorthSouthPistonCountBinLabels");
 		integerOptions.add("minecraftBlockLoadSkip", 0, "How many shapes to skip when doing a post-watch block loading experiment.");
+		integerOptions.add("minecraftTargetDistancefromShapeY", -10, "The distance from shape origin to target on the Y");
+		integerOptions.add("minecraftTargetDistancefromShapeX", 0, "The distance from shape origin to target on the X");
+		integerOptions.add("minecraftTargetDistancefromShapeZ", 0, "The distance from shape origin to target on the Z");
+		integerOptions.add("minecraftMissleTargetBlockType", 202, "Block that is used in the target");
 		
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
@@ -851,6 +856,7 @@ public class Parameters {
 		booleanOptions.add("minecraftRewardFastFlyingMachines", false, "rewards for fast flying machines in minecraft and penalizes for slow ones");
 		booleanOptions.add("minecraftWaterLavaSecondaryCreationFitness", false, "uses water and lava block set to reward for the creation of secondary blocks");
 		booleanOptions.add("minecraftMaximizeVolumeFitness", false, "rewards shapes that spread out over larger areas");
+		booleanOptions.add("minecraftMissileFitness", false, "rewards a shape for blowing up a target");
 		
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
