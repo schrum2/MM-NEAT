@@ -665,7 +665,7 @@ public class MinecraftClient extends Comm {
 	 * Clears an area and verifies that it is clear
 	 * called if you need to make sure it is clear
 	 * makes use of clearWithGlass if the minecraftClearWithGlass parameter is set to true
-	 * @param corner corner that the shape is occupying
+	 * @param corner corner that the shape is occupying (currently the corner of the evaluation space
 	 */
 	public static void clearAndVerify(MinecraftCoordinates corner) {
 		boolean empty = false;
@@ -685,9 +685,11 @@ public class MinecraftClient extends Comm {
 	}
 	/**
 	 * body of code for clearAreaAroundSpecialCorner used above
-	 * @param corner
+	 * @param corner of the evaluation area
+	 * @param clearWithGlass - if passed true (only from clearAndVerify) clears with glass first
 	 */
 	public static void clearAreaAroundCorner(MinecraftCoordinates corner, boolean clearWithGlass) {
+		//lower is the min coordinates of the clear space based on the 
 		MinecraftCoordinates lower = corner.sub(EMPTY_SPACE_SAFETY_BUFFER);
 		MinecraftCoordinates upper = corner.add(MinecraftUtilClass.getRanges().add(EMPTY_SPACE_SAFETY_BUFFER));
 		getMinecraftClient().clearCube(lower, upper, clearWithGlass);
@@ -885,6 +887,7 @@ public class MinecraftClient extends Comm {
 		//System.out.println("Starts:"+groundStart);
 		MinecraftCoordinates end = new MinecraftCoordinates(start.x() + numShapes*(ranges.x() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")) + buffer, start.y() + ranges.y() + buffer, start.z() + (int)(ranges.z()*Math.sqrt(numShapes)) + buffer);
 		//System.out.println("ENDS:"+end);
+		
 		
 		// If cleared space isn't very large, just clear that space
 		int clearSize = (end.x()-groundStart.x())*(end.y()-groundStart.y())*(end.z()-groundStart.z());
