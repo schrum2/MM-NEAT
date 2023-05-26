@@ -23,8 +23,6 @@ import edu.southwestern.util.datastructures.Pair;
  */
 public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftFitnessFunction{
 
-	//TODO: all public things in changeCenterOfMass being called should be made into util class
-
 	/**
 	 * currently clears blocks around a corner
 	 * creates a history: a list of time stamps with an associated list of blocks read at that time
@@ -109,6 +107,7 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 				e.printStackTrace();
 				System.exit(1);
 			}
+			// Read the blocks in the evaluation area and remove air blocks
 			newShapeReadingBlockList = MinecraftUtilClass.filterOutBlock(MinecraftClient.getMinecraftClient().readCube(corner,end),BlockType.AIR);
 			history.add(new Pair<Long,List<Block>>(System.currentTimeMillis() - startTime,newShapeReadingBlockList));
 			if(CommonConstants.watch) System.out.println("Block update: "+newShapeReadingBlockList);
@@ -117,6 +116,7 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 			Double earlyResult = earlyEvaluationTerminationResult(corner, originalBlocks, history, newShapeReadingBlockList);
 			if(earlyResult != null) return earlyResult;
 			
+			// If enough time has elapsed since the start, then end the evaluation
 			if(System.currentTimeMillis() - startTime > Parameters.parameters.longParameter("minecraftMandatoryWaitTime")) {
 				System.out.println("Time elapsed: minecraftMandatoryWaitTime = "+ Parameters.parameters.longParameter("minecraftMandatoryWaitTime"));
 				stop = true;
