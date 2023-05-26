@@ -888,6 +888,7 @@ public class MinecraftClient extends Comm {
 		MinecraftCoordinates end = new MinecraftCoordinates(start.x() + numShapes*(ranges.x() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")) + buffer, start.y() + ranges.y() + buffer, start.z() + (int)(ranges.z()*Math.sqrt(numShapes)) + buffer);
 		//System.out.println("ENDS:"+end);
 		
+		
 		// If cleared space isn't very large, just clear that space
 		int clearSize = (end.x()-groundStart.x())*(end.y()-groundStart.y())*(end.z()-groundStart.z());
 		if( clearSize<=MAX_CLEAR_WITHOUT_LOOP) {
