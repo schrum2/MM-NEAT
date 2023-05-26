@@ -3,13 +3,12 @@ package edu.southwestern.tasks.evocraft.fitness;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.nd4j.nativeblas.Nd4jCpu.check_numerics;
-
 import com.clearspring.analytics.util.Pair;
 
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
+import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 
 /**
@@ -40,10 +39,14 @@ public abstract class SecondaryBlockCreationFitness extends TimedEvaluationMinec
 	@Override
 	public double calculateFinalScore (ArrayList<Pair<Long,List<Block>>> history, MinecraftCoordinates corner, List<Block> originalBlocks) {
 		
-		//initialized to the last 
+		//initialized to the last recoded shape in history
 		List<Block> finalBlocksList = history.get(history.size()-1).right;
-		//check that list against originalBlocks to get a list of only the desired blocks
+		//check that block list against accepted block types list to get a list of only the desired blocks
 		finalBlocksList = MinecraftUtilClass.getDesiredBlocks(finalBlocksList, acceptedBlockTypes);
+		
+		//create watch print statement for finalBlocksList
+		if(CommonConstants.watch) System.out.println("Filtered Blocks List: "+finalBlocksList);
+
 		
 		//the number of blocks of the desired type(s) equals the length of the list of blocks
 		return finalBlocksList.size();

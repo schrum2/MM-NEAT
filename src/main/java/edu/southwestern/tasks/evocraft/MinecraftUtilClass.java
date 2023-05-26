@@ -132,6 +132,29 @@ public class MinecraftUtilClass {
 		}
 		return result;
 	}
+	/**
+	 * For two points, get one point that has the maximum coordinate across all listed points
+	 * @param c1 point 
+	 * @param c2 other point
+	 * @return maximum point
+	 */
+	public static MinecraftCoordinates maxCoordinates(MinecraftCoordinates c1, MinecraftCoordinates c2) {
+		return new MinecraftCoordinates(Math.max(c1.x(), c2.x()), Math.max(c1.y(), c2.y()), Math.max(c1.z(), c2.z()));
+	}
+	
+	/**
+	 * Across a list of blocks, find the maximum coordinate across all of their positions
+	 * @param blocks List of blocks
+	 * @return Corner that they were generated at
+	 */
+	public static MinecraftCoordinates maxCoordinates(List<Block> blocks) {
+		MinecraftCoordinates result = blocks.get(0).position;
+		for(int i = 1; i < blocks.size(); i++) {
+			result = maxCoordinates(result, blocks.get(i).position);
+		}
+		return result;
+	}
+	
 	
 	/**
 	 * Remove all blocks of a given type from a list of blocks
