@@ -166,21 +166,6 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 				Vertex farthestCenterOfMass = getFarthestCenterOfMass(history, initialCenterOfMass, lastCenterOfMass);
 				Triple<Vertex, Vertex, Double> result = checkCreditForDepartedBlocks(initialBlockCount, initialCenterOfMass, farthestCenterOfMass, shortWaitTimeUpdate);
 				if(result != null) {
-					if(CommonConstants.netio) {
-						String flyingDir = FileUtilities.getSaveDirectory() + "/possibleFlyingMachines";
-						File dir = new File(flyingDir);
-						// Create dir
-						if (!dir.exists()) {
-							dir.mkdir();
-						}
-						MinecraftLonerShapeTask.writeBlockListFile(originalBlocks, flyingDir + File.separator + "Attempt"+attempt, "FITNESS_"+result.t3+".txt");
-					}
-					if(CommonConstants.watch) {
-						System.out.println("Flying machine from attempt "+attempt);
-						for(int i = 0; i < history.size(); i++) {
-							System.out.println(i + "." + history.get(i));
-						}
-					}
 					return result.t3;
 				}
 				
