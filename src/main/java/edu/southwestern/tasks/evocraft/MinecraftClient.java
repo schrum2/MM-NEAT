@@ -788,7 +788,7 @@ public class MinecraftClient extends Comm {
 	public synchronized void fillCube(int xmin, int ymin, int zmin, int xmax, int ymax, int zmax, BlockType type) {
 		checkBlockBounds(xmin, ymin, zmin, xmax, ymax, zmax);
 		String message = "fillCube "+xmin+" "+ymin+" "+zmin+" "+xmax+" "+ymax+" "+zmax+" "+type.ordinal()+" ";
-		
+		//System.out.println(message);
 		try {
 			commSend(message);
 		} catch (IOException e) {
