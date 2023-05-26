@@ -13,7 +13,6 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftShapeTask;
-import edu.southwestern.tasks.evocraft.fitness.ChangeCenterOfMassFitness;
 import edu.southwestern.tasks.evocraft.fitness.MinecraftFitnessFunction;
 import edu.southwestern.util.MiscUtil;
 
@@ -75,7 +74,6 @@ public class MinecraftBlockEvaluateExperiment implements Experiment{
 					do {
 						System.out.println("Evaluate shape");
 						double[] fitnessScores = MinecraftShapeTask.calculateFitnessScores(MinecraftClient.POST_EVALUATION_CORNER, fitnessFunctions, shiftedBlocks);
-						ChangeCenterOfMassFitness.resetPreviousResults();
 
 						for(int j = 0; j < fitnessFunctions.size(); j++) {
 							System.out.print(fitnessFunctions.get(j).getClass().getSimpleName() + ": ");
