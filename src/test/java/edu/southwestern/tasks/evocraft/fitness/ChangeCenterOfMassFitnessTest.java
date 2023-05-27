@@ -45,10 +45,10 @@ public class ChangeCenterOfMassFitnessTest {
 	
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		MinecraftServerTestTracker.numberOfUnitTestsThatMakeAServer--;
+		MinecraftServerTestTracker.decrementServerTestCount();
 		
 		// Only terminate the server if no other tests will need it
-		if(MinecraftServerTestTracker.numberOfUnitTestsThatMakeAServer == 0) {
+		if(MinecraftServerTestTracker.checkServerTestCount() == 0) {
 			long waitTime = Parameters.parameters.longParameter("minecraftMandatoryWaitTime");
 			Thread.sleep(waitTime);
 			

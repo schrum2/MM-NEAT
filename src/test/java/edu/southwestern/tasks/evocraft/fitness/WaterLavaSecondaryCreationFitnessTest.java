@@ -42,10 +42,10 @@ public class WaterLavaSecondaryCreationFitnessTest {
 	
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		MinecraftServerTestTracker.numberOfUnitTestsThatMakeAServer--;
+		MinecraftServerTestTracker.decrementServerTestCount();
 		
 		// Only terminate the server if no other tests will need it
-		if(MinecraftServerTestTracker.numberOfUnitTestsThatMakeAServer == 0) {
+		if(MinecraftServerTestTracker.checkServerTestCount() == 0) {
 			long waitTime = Parameters.parameters.longParameter("minecraftMandatoryWaitTime");
 			Thread.sleep(waitTime);
 			
@@ -62,7 +62,7 @@ public class WaterLavaSecondaryCreationFitnessTest {
 		Parameters.initializeParameterCollections(new String[] {"watch:true","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.WaterAndLavaBlockSet"});
 		
 		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,7,-35);
-		MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 100); // Larger buffer is important
+		MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 50); // Larger buffer is important, but too large and it crashes!
 
 		ArrayList<Block> testBlockSet = new ArrayList<>();
 		testBlockSet.add(new Block(-25,7,-35,BlockType.FLOWING_WATER, Orientation.WEST));
@@ -79,7 +79,7 @@ public class WaterLavaSecondaryCreationFitnessTest {
 		Parameters.initializeParameterCollections(new String[] {"watch:true","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.WaterAndLavaBlockSet"});
 		
 		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,7,-35);
-		MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 100); // Larger buffer is important
+		MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 50); // Larger buffer is important, but too large and it crashes!
 
 		ArrayList<Block> testBlockSet = new ArrayList<>();
 		testBlockSet.add(new Block(-25,7,-35,BlockType.FLOWING_WATER, Orientation.NORTH));
@@ -95,10 +95,10 @@ public class WaterLavaSecondaryCreationFitnessTest {
 	//this test makes one block of obsidian - fitness of 1
 	@Test
 	public void testInteractionSameOrientationOfNorth() {
-		Parameters.initializeParameterCollections(new String[] {"watch:true","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.WaterAndLavaBlockSet"});
+		Parameters.initializeParameterCollections(new String[] {"watch:true","minecraftXRange:4","minecraftYRange:4","minecraftZRange:4","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.WaterAndLavaBlockSet"});
 		
 		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,7,-35);
-		MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 100); // Larger buffer is important
+		MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 50); // Larger buffer is important, but too large and it crashes!
 
 		ArrayList<Block> testBlockSet = new ArrayList<>();
 		testBlockSet.add(new Block(-25,7,-35,BlockType.FLOWING_WATER, Orientation.NORTH));
@@ -117,7 +117,7 @@ public class WaterLavaSecondaryCreationFitnessTest {
 		Parameters.initializeParameterCollections(new String[] {"watch:true","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.WaterAndLavaBlockSet"});
 		
 		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,7,-35);
-		MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 100); // Larger buffer is important
+		MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 50); // Larger buffer is important, but too large and it crashes!
 
 		ArrayList<Block> testBlockSet = new ArrayList<>();
 		testBlockSet.add(new Block(-25,7,-35,BlockType.FLOWING_WATER, Orientation.NORTH));
@@ -153,7 +153,7 @@ public class WaterLavaSecondaryCreationFitnessTest {
 		Parameters.initializeParameterCollections(new String[] {"minecraftClearWithGlass:false","watch:true","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.WaterAndLavaBlockSet"});
 		
 		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,27,-35);
-		MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 100); // Larger buffer is important
+		MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 50); // Larger buffer is important, but too large and it crashes!
 
 		ArrayList<Block> testBlockSet = new ArrayList<>();
 		testBlockSet.add(new Block(-25,27,-35,BlockType.FLOWING_WATER, Orientation.NORTH));
