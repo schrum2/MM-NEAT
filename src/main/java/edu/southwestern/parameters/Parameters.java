@@ -1012,6 +1012,7 @@ public class Parameters {
 		stringOptions.add("latestIterationSaved", "iterationX", "The last iteration of PictureTargetTask to be saved.");
 		
 		stringOptions.add("minecraftBlockListTextFile", "", "The file name of a MAPElite shape from that archive that is going to be spawned.");
+		stringOptions.add("minecraftBlockListTextFileSecond", "", "the file name of a second MAPElite shape from that archive that is going to be spawned.");
 		
 		// Class options
 		classOptions.add("zeldaGrammarRules", ZeldaHumanSubjectStudy2019GraphGrammar.class, "Determines what ruleset we're using");

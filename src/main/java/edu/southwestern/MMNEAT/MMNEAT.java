@@ -744,6 +744,13 @@ public class MMNEAT {
 			MinecraftBlockEvaluateExperiment experiment = new MinecraftBlockEvaluateExperiment();
 			experiment.init();
 			experiment.run();
+		} else if(args[0].equals("minecraftRaceFlyingMachines")){
+			String[] reducedArgs = new String[args.length - 1];
+			System.arraycopy(args, 1, reducedArgs, 0, reducedArgs.length);
+			Parameters.initializeParameterCollections(reducedArgs);
+			MinecraftBlockEvaluateExperiment experiment = new MinecraftBlockEvaluateExperiment();
+			experiment.init();
+			experiment.run();
 		} else if(args[0].equals("binMario")){
 			try {
 				BinOriginalMarioLevels.main(new String[0]);

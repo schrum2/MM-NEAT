@@ -31,7 +31,7 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 	private static double[] upper = null;
 	private static double[] lower = null;
 	private static int genotypeLength = 0;
-	private static int numOrientations = 0;
+	private static int numOrientations = 0; // the number of orientations directions being considered for this instance (restricted or not)
 	
 	/**
 	 * This basic constructor creates the genotype length for the given shape and the basic upper and lower bounds of the genotype.
@@ -94,6 +94,7 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 
 							if(blockTypeIndex == numBlockTypes) blockTypeIndex--; // Rare case
 							
+							//figure out the orientation for the new block
 							if(evolveOrientation) {
 								final int ORIENTATION_INDEX = blockHeadIndexCounter+2;
 
@@ -130,10 +131,10 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 	}
 
 	/**
-	 * 
+	 * Determines the orientation of the 
 	 * @param phenotype
 	 * @param ORIENTATION_INDEX
-	 * @return
+	 * @return the 
 	 */
 	private Orientation determineOrientation(ArrayList<Double> phenotype, final int ORIENTATION_INDEX) {
 		Orientation blockOrientation;
