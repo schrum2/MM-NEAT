@@ -56,10 +56,10 @@ public class MissileFitness extends TimedEvaluationMinecraftFitnessFunction {
 	}
 
 	@Override
-	public double calculateFinalScore(ArrayList<Pair<Long, List<Block>>> history, MinecraftCoordinates corner,
+	public double calculateFinalScore(ArrayList<Pair<Long, List<Block>>> history, MinecraftCoordinates shapeCorner,
 			List<Block> originalBlocks) {
 
-		List<Block> leftOverBlocksFromTarget = MinecraftClient.getMinecraftClient().readCube(corner.add(targetCornerOffset), corner.add(targetCornerOffset).add(MinecraftUtilClass.getRanges()));
+		List<Block> leftOverBlocksFromTarget = MinecraftClient.getMinecraftClient().readCube(shapeCorner.add(targetCornerOffset), shapeCorner.add(targetCornerOffset).add(MinecraftUtilClass.getRanges()));
 		List<Block> leftOverOfTargetBlocks = MinecraftUtilClass.getDesiredBlocks(leftOverBlocksFromTarget, acceptedBlownUpBlocks);
 		return -leftOverOfTargetBlocks.size();
 	}
