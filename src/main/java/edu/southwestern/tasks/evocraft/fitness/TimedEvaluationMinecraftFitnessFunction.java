@@ -37,7 +37,7 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 	 * @param corner the corner of the shape
 	 */
 	@Override
-	public double fitnessScore(MinecraftCoordinates corner, List<Block> originalBlocks) {
+	public double fitnessScore(MinecraftCoordinates shapeCorner, List<Block> originalBlocks) {
 
 		// Should this be true for all fitness functions?
 		if(originalBlocks.isEmpty()) {
@@ -56,30 +56,30 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 		assert zrange > 0 : "zrange must be positive: " + zrange;
 
 		// Shifts over the corner to the new range with the large space in between shapes
-		corner = corner.sub(MinecraftUtilClass.emptySpaceOffsets());
+		MinecraftCoordinates evaluationCorner = shapeCorner.sub(MinecraftUtilClass.emptySpaceOffsets());
 		// schrum2: I think this code is responsible for the weird error of shapes near the ground being stacked vertically.
 		//          When the startY is made large enough, this is not an issue, but makin gthe user set that correctly
 		//          is a hassle.		
 		
 		//finds the corner of the evaluation space - corner now means evaluation space
 		//if statement checks if the evaluation space plus the space that would be cleared is below the ground level
-		if(corner.y() - MinecraftClient.EMPTY_SPACE_SAFETY_BUFFER <= MinecraftClient.GROUND_LEVEL) { // Push up if close to ground
+		if(evaluationCorner.y() - MinecraftClient.EMPTY_SPACE_SAFETY_BUFFER <= MinecraftClient.GROUND_LEVEL) { // Push up if close to ground
 			MinecraftCoordinates shiftPoint = new MinecraftCoordinates(0,MinecraftClient.EMPTY_SPACE_SAFETY_BUFFER,0);
-			MinecraftCoordinates oldCorner = corner;
-			corner = corner.add(shiftPoint); // move sufficiently above the ground
-			originalBlocks = MinecraftUtilClass.shiftBlocksBetweenCorners(originalBlocks, oldCorner, corner);
+			MinecraftCoordinates oldCorner = evaluationCorner;
+			evaluationCorner = evaluationCorner.add(shiftPoint); // move sufficiently above the ground
+			originalBlocks = MinecraftUtilClass.shiftBlocksBetweenCorners(originalBlocks, oldCorner, evaluationCorner);
 		}
 		//this is the max coordinates of the evaluation space (I think) for calculation the total evaluation area 
-		MinecraftCoordinates end = corner.add(MinecraftUtilClass.reservedSpace());
+		MinecraftCoordinates endEvaluationCorner = evaluationCorner.add(MinecraftUtilClass.reservedSpace());
 
 		//min corner y <= end (max corner y)
-		assert corner.x() <= end.x() && corner.y() <= end.y() && corner.z() <= end.z(): "corner should be less than end in each coordinate: corner = "+corner+ ", max = "+end; 
+		assert evaluationCorner.x() <= endEvaluationCorner.x() && evaluationCorner.y() <= endEvaluationCorner.y() && evaluationCorner.z() <= endEvaluationCorner.z(): "corner should be less than end in each coordinate: corner = "+evaluationCorner+ ", max = "+endEvaluationCorner; 
 
 		if(CommonConstants.watch) System.out.println("Original Blocks: "+originalBlocks);
-		if(CommonConstants.watch) System.out.println("Evaluate at corner: "+corner);
+		if(CommonConstants.watch) System.out.println("Evaluate at corner: "+evaluationCorner);
 
 		//clear and verify evaluation space
-		MinecraftClient.clearAndVerify(corner);
+		MinecraftClient.clearAndVerify(evaluationCorner);
 
 	////////	creating history 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//history is a list of time stamps with an associated list of blocks read at that time
@@ -97,7 +97,7 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 		if(CommonConstants.watch) System.out.println("Evaluate Blocks: " + originalBlocks);
 	//////// Spawn the blocks!	////////////////////////////////////////////////////////////////////////////////////////////////
 		
-		preSpawnSetup(corner);
+		preSpawnSetup(shapeCorner);
 		
 		MinecraftClient.getMinecraftClient().spawnBlocks(originalBlocks);
 
@@ -112,12 +112,12 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 				e.printStackTrace();
 				System.exit(1);
 			}
-			newShapeReadingBlockList = MinecraftUtilClass.filterOutBlock(MinecraftClient.getMinecraftClient().readCube(corner,end),BlockType.AIR);
+			newShapeReadingBlockList = MinecraftUtilClass.filterOutBlock(MinecraftClient.getMinecraftClient().readCube(evaluationCorner,endEvaluationCorner),BlockType.AIR);
 			history.add(new Pair<Long,List<Block>>(System.currentTimeMillis() - startTime,newShapeReadingBlockList));
 			if(CommonConstants.watch) System.out.println("Block update: "+newShapeReadingBlockList);
 
 			// A non-null result should be returned, and end evaluation early. Otherwise, keep evaluating.
-			Double earlyResult = earlyEvaluationTerminationResult(corner, originalBlocks, history, newShapeReadingBlockList);
+			Double earlyResult = earlyEvaluationTerminationResult(shapeCorner, originalBlocks, history, newShapeReadingBlockList);
 			if(earlyResult != null) return earlyResult;
 			
 			if(System.currentTimeMillis() - startTime > Parameters.parameters.longParameter("minecraftMandatoryWaitTime")) {
@@ -128,7 +128,7 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 		}
 
 		//return result of a method call to calculateFinalScore
-		return calculateFinalScore(history, corner, originalBlocks);
+		return calculateFinalScore(history, shapeCorner, originalBlocks);
 	}
 
 	/**
