@@ -59,6 +59,7 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 		return fitnessResultForFlyingMachine(originalBlocks, history, newShapeBlockList);
 	}
 
+	// TODO: Add JavaDoc
 	private Double fitnessResultForFlyingMachine(List<Block> originalBlocks, ArrayList<Pair<Long, List<Block>>> history,
 			List<Block> newShapeBlockList) {
 		// Shape was not empty before, but it is now, so it must have flown away. Award max fitness

@@ -389,10 +389,11 @@ public class Parameters {
 		integerOptions.add("zeldaMaxReachableRooms", 1000000, "Highest interval index for MAP Elites dimension associated with Zelda Dungeon Reachable Rooms");
 		integerOptions.add("minecraftPistonLabelSize", 6, "Dictates amount of bin labels made for MinecraftMAPElitesNorthSouthPistonCountBinLabels");
 		integerOptions.add("minecraftBlockLoadSkip", 0, "How many shapes to skip when doing a post-watch block loading experiment.");
-		integerOptions.add("minecraftTargetDistancefromShapeY", -10, "The distance from shape origin to target on the Y");
+		integerOptions.add("minecraftTargetDistancefromShapeY", 0, "The distance from shape origin to target on the Y");
 		integerOptions.add("minecraftTargetDistancefromShapeX", 0, "The distance from shape origin to target on the X");
 		integerOptions.add("minecraftTargetDistancefromShapeZ", 0, "The distance from shape origin to target on the Z");
 		integerOptions.add("minecraftMissleTargetBlockType", BlockType.SLIME.ordinal(), "Block that is used in the target");
+		integerOptions.add("minecraftPostCornerAdjustY", 0, "This is an int whose value will be added to the y-coordinate of the POST_EVALUATION_CORNER to adjust the special shape");
 		
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
