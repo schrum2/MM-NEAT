@@ -84,7 +84,7 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 		//time stamps calculated as the current time - time that the shape is spawned (startTime)
 		ArrayList<Pair<Long,List<Block>>> history = new ArrayList<>();
 
-		//this compares the original blocks with the 
+		//this compares the original blocks with the previous blocks 
 		List<Block> previousBlocks = MinecraftUtilClass.wipeOrientations(originalBlocks);
 		history.add(new Pair<Long,List<Block>>(-1L,originalBlocks));
 		history.add(new Pair<Long,List<Block>>(0L,previousBlocks));
