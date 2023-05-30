@@ -39,7 +39,7 @@ public class MinecraftClient extends Comm {
 	
 
 	//a corner that is no where near any other used area meant to evaluate shapes after a completed evolution experiment
-	public static final MinecraftCoordinates POST_EVALUATION_CORNER = new MinecraftCoordinates(-500, 100, 500);
+	public static final MinecraftCoordinates POST_EVALUATION_CORNER = new MinecraftCoordinates(-500, 100 + Parameters.parameters.integerParameter("minecraftPostCornerAdjustY"), 500);
 	//An extra amount of empty space that should surround shapes whose evaluation depends on movement.
 	public static final int EMPTY_SPACE_SAFETY_BUFFER = 20;
 
