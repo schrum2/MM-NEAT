@@ -30,8 +30,10 @@ public class ChangeCenterOfMassFitnessTest {
 	public static void setUpBeforeClass() throws Exception {
 		CommonConstants.netio = false;
 		Parameters.initializeParameterCollections(new String[] {"watch:true","minecraftClearWithGlass:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
-		MinecraftServer.launchServer();
-		MinecraftClient.getMinecraftClient();
+		if(!MinecraftServer.serverIsRunner()) {
+			MinecraftServer.launchServer();
+			MinecraftClient.getMinecraftClient();
+		}
 		CommonConstants.watch = true; // Displays debugging info
 	}
 
@@ -43,11 +45,16 @@ public class ChangeCenterOfMassFitnessTest {
 	
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		long waitTime = Parameters.parameters.longParameter("minecraftMandatoryWaitTime");
-		Thread.sleep(waitTime);
+		MinecraftServerTestTracker.decrementServerTestCount();
 		
-		MinecraftClient.terminateClientScriptProcess();
-		MinecraftServer.terminateServer();
+		// Only terminate the server if no other tests will need it
+		if(MinecraftServerTestTracker.checkServerTestCount() == 0) {
+			long waitTime = Parameters.parameters.longParameter("minecraftMandatoryWaitTime");
+			Thread.sleep(waitTime);
+			
+			MinecraftClient.terminateClientScriptProcess();
+			MinecraftServer.terminateServer();
+		}
 		CommonConstants.watch = false; // Displays debugging info
 	}
 
