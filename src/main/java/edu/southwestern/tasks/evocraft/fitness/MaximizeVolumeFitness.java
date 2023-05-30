@@ -3,11 +3,10 @@ package edu.southwestern.tasks.evocraft.fitness;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.clearspring.analytics.util.Pair;
-
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
+import edu.southwestern.util.datastructures.Pair;
 
 /**
  * fitness function that rewards shapes based on their total volume. Keeps track of max and min coordinates to calculate volume.
@@ -26,7 +25,7 @@ public class MaximizeVolumeFitness extends TimedEvaluationMinecraftFitnessFuncti
 		MinecraftCoordinates minResultCoordinates = new MinecraftCoordinates(0, 0, 0);
 		List<Block> currentShapeBlockList;
 		for (int i = 0; i < history.size(); i++) {
-			currentShapeBlockList = history.get(i).right;
+			currentShapeBlockList = history.get(i).t2;
 			minResultCoordinates = MinecraftUtilClass.minCoordinates(currentShapeBlockList);
 			maxResultCoordinates = MinecraftUtilClass.maxCoordinates(currentShapeBlockList);
 		}

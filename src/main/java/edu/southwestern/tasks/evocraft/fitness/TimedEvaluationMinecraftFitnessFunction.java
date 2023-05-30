@@ -3,8 +3,6 @@ package edu.southwestern.tasks.evocraft.fitness;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.clearspring.analytics.util.Pair;
-
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient;
@@ -12,6 +10,7 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
+import edu.southwestern.util.datastructures.Pair;
 
 /**
  * An abstract class to handle timed evaluation fitness functions that can be extended to other functions
@@ -23,8 +22,6 @@ import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
  *
  */
 public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftFitnessFunction{
-
-	//TODO: all public things in changeCenterOfMass being called should be made into util class
 
 	/**
 	 * currently clears blocks around a corner
@@ -39,6 +36,12 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 	 */
 	@Override
 	public double fitnessScore(MinecraftCoordinates corner, List<Block> originalBlocks) {
+
+		// Should this be true for all fitness functions?
+		if(originalBlocks.isEmpty()) {
+			if(CommonConstants.watch) System.out.println("Empty shape: Immediate failure");
+			return minFitness();
+		}		
 		
 	///////////// clear section - should be reworked and made into utils class ////////////////////////////////////////////////////////////////////
 
@@ -52,6 +55,10 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 
 		// Shifts over the corner to the new range with the large space in between shapes
 		corner = corner.sub(MinecraftUtilClass.emptySpaceOffsets());
+		// schrum2: I think this code is responsible for the weird error of shapes near the ground being stacked vertically.
+		//          When the startY is made large enough, this is not an issue, but makin gthe user set that correctly
+		//          is a hassle.		
+		
 		//finds the corner of the evaluation space - corner now means evaluation space
 		//if statement checks if the evaluation space plus the space that would be cleared is below the ground level
 		if(corner.y() - MinecraftClient.EMPTY_SPACE_SAFETY_BUFFER <= MinecraftClient.GROUND_LEVEL) { // Push up if close to ground
@@ -77,16 +84,10 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 		//time stamps calculated as the current time - time that the shape is spawned (startTime)
 		ArrayList<Pair<Long,List<Block>>> history = new ArrayList<>();
 
-		//this compares the original blocks with the 
+		//this compares the original blocks with the previous blocks 
 		List<Block> previousBlocks = MinecraftUtilClass.wipeOrientations(originalBlocks);
 		history.add(new Pair<Long,List<Block>>(-1L,originalBlocks));
 		history.add(new Pair<Long,List<Block>>(0L,previousBlocks));
-
-		if(originalBlocks.isEmpty()) {
-			if(CommonConstants.watch) System.out.println("Empty shape: Immediate failure");
-			return minFitness();
-		}
-
 
 		boolean stop = false;
 		List<Block> newShapeReadingBlockList = null;
@@ -106,11 +107,16 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 				e.printStackTrace();
 				System.exit(1);
 			}
+			// Read the blocks in the evaluation area and remove air blocks
 			newShapeReadingBlockList = MinecraftUtilClass.filterOutBlock(MinecraftClient.getMinecraftClient().readCube(corner,end),BlockType.AIR);
 			history.add(new Pair<Long,List<Block>>(System.currentTimeMillis() - startTime,newShapeReadingBlockList));
 			if(CommonConstants.watch) System.out.println("Block update: "+newShapeReadingBlockList);
 
-
+			// A non-null result should be returned, and end evaluation early. Otherwise, keep evaluating.
+			Double earlyResult = earlyEvaluationTerminationResult(corner, originalBlocks, history, newShapeReadingBlockList);
+			if(earlyResult != null) return earlyResult;
+			
+			// If enough time has elapsed since the start, then end the evaluation
 			if(System.currentTimeMillis() - startTime > Parameters.parameters.longParameter("minecraftMandatoryWaitTime")) {
 				System.out.println("Time elapsed: minecraftMandatoryWaitTime = "+ Parameters.parameters.longParameter("minecraftMandatoryWaitTime"));
 				stop = true;
@@ -122,6 +128,23 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 		return calculateFinalScore(history, corner, originalBlocks);
 	}
 
+	/**
+	 * If there are situations where evaluation should end early, this method detects them and computes
+	 * the resulting fitness. However, the default assumption is that evaluation will not end early, which
+	 * is what the return result of null represents. This method needs to be overridden in descendants
+	 * in order to detect early termination and determine the result.
+	 * 
+	 * @param corner Minimal coordinate where a block from the shape can be placed
+	 * @param originalBlocks the shape being evaluated, before simulation (also first in history, here for convenience)
+	 * @param history history of block readings from the world throughout simulation 
+	 *        (index 0 is same as originalBlocks, final index same as newShapeReadingBlockList)
+	 * @param newShapeBlockList the latest block shape reading (also last in history, here for convenience)
+	 * @return null if evaluation should not end early, or a Double fitness value otherwise
+	 */
+	public Double earlyEvaluationTerminationResult(MinecraftCoordinates corner, List<Block> originalBlocks,
+			ArrayList<Pair<Long, List<Block>>> history, List<Block> newShapeBlockList) {
+		return null;
+	}
 
 	/**
 	 * based on history of readings taken of shape, compute final numeric fitness score

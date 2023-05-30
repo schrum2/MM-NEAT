@@ -678,13 +678,13 @@ public class MinecraftClient extends Comm {
 	}
 	
 	/**
-	 * Make sure the special area for double-checking flying shapes is really clear
+	 * Normal case of not using the clear with glass option, only clears with air
 	 */
 	public static void clearAreaAroundSpecialCorner() {
 		clearAreaAroundCorner(POST_EVALUATION_CORNER, false);
 	}
 	/**
-	 * body of code for clearAreaAroundSpecialCorner used above
+	 * Make sure the special area for double-checking flying shapes is really clear
 	 * @param corner of the evaluation area
 	 * @param clearWithGlass - if passed true (only from clearAndVerify) clears with glass first
 	 */
@@ -788,7 +788,7 @@ public class MinecraftClient extends Comm {
 	public synchronized void fillCube(int xmin, int ymin, int zmin, int xmax, int ymax, int zmax, BlockType type) {
 		checkBlockBounds(xmin, ymin, zmin, xmax, ymax, zmax);
 		String message = "fillCube "+xmin+" "+ymin+" "+zmin+" "+xmax+" "+ymax+" "+zmax+" "+type.ordinal()+" ";
-		
+		//System.out.println(message);
 		try {
 			commSend(message);
 		} catch (IOException e) {
