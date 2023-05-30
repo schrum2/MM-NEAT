@@ -138,11 +138,11 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 	 * @param originalBlocks the shape being evaluated, before simulation (also first in history, here for convenience)
 	 * @param history history of block readings from the world throughout simulation 
 	 *        (index 0 is same as originalBlocks, final index same as newShapeReadingBlockList)
-	 * @param newShapeReadingBlockList the latest block shape reading (also last in history, here for convenience)
+	 * @param newShapeBlockList the latest block shape reading (also last in history, here for convenience)
 	 * @return null if evaluation should not end early, or a Double fitness value otherwise
 	 */
 	public Double earlyEvaluationTerminationResult(MinecraftCoordinates corner, List<Block> originalBlocks,
-			ArrayList<Pair<Long, List<Block>>> history, List<Block> newShapeReadingBlockList) {
+			ArrayList<Pair<Long, List<Block>>> history, List<Block> newShapeBlockList) {
 		return null;
 	}
 
