@@ -51,10 +51,18 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 
 	@Override
 	public Double earlyEvaluationTerminationResult(MinecraftCoordinates corner, List<Block> originalBlocks,
-			ArrayList<Pair<Long, List<Block>>> history, List<Block> newShapeReadingBlockList) {
+			ArrayList<Pair<Long, List<Block>>> history, List<Block> newShapeBlockList) {
 
+		//if using fast fitness return null
+		if(Parameters.parameters.booleanParameter("minecraftRewardFastFlyingMachines")) return null;
+		
+		return fitnessResultForFlyingMachine(originalBlocks, history, newShapeBlockList);
+	}
+
+	private Double fitnessResultForFlyingMachine(List<Block> originalBlocks, ArrayList<Pair<Long, List<Block>>> history,
+			List<Block> newShapeBlockList) {
 		// Shape was not empty before, but it is now, so it must have flown away. Award max fitness
-		if(newShapeReadingBlockList.isEmpty()) { // If list is empty now (but was not before) then shape has flown completely away
+		if(newShapeBlockList.isEmpty()) { // If list is empty now (but was not before) then shape has flown completely away
 			if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": Shape empty now: max fitness!");
 			return maxFitness();
 		}
@@ -62,15 +70,15 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 		List<Block> previousBlocks = history.get(history.size() - 2).t2;
 		Vertex initialCenterOfMass = MinecraftUtilClass.getCenterOfMass(originalBlocks);
 		Vertex lastCenterOfMass = MinecraftUtilClass.getCenterOfMass(previousBlocks);
-		Vertex nextCenterOfMass = MinecraftUtilClass.getCenterOfMass(newShapeReadingBlockList);
+		Vertex nextCenterOfMass = MinecraftUtilClass.getCenterOfMass(newShapeBlockList);
 		// Only consider the shape to not be moving if the center of mass is the same AND the entire block list is the same
-		if(Parameters.parameters.booleanParameter("minecraftEndEvalNoMovement") && lastCenterOfMass.equals(nextCenterOfMass) && previousBlocks.equals(newShapeReadingBlockList)) {
+		if(Parameters.parameters.booleanParameter("minecraftEndEvalNoMovement") && lastCenterOfMass.equals(nextCenterOfMass) && previousBlocks.equals(newShapeBlockList)) {
 			// This means that it hasn't moved, so move on to the next.
 			// BUT What if it moves back and forth and returned to its original position?
 			if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": No movement.");
 			// Compute farthest center of mass from history
 			Vertex farthestCenterOfMass = getFarthestCenterOfMass(history, initialCenterOfMass, lastCenterOfMass);
-			Double result = checkCreditForDepartedBlocks(originalBlocks.size(), initialCenterOfMass, farthestCenterOfMass, newShapeReadingBlockList);
+			Double result = checkCreditForDepartedBlocks(originalBlocks.size(), initialCenterOfMass, farthestCenterOfMass, newShapeBlockList);
 			if(result != null) {
 				return result;
 			}
@@ -88,8 +96,11 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 			Vertex nextCenterOfMass = MinecraftUtilClass.getCenterOfMass(history.get(i).t2);
 			//if evaluating and rewarding fast flying machines
 			if(Parameters.parameters.booleanParameter("minecraftRewardFastFlyingMachines")) {
-				//calculates based on initial center of mass and the next center of mass to add to total change distance
-				totalChangeDistance += initialCenterOfMass.distance(nextCenterOfMass);
+				//if the fitnessResult is not null, use it for calculating totalChangeDistance
+				Double fitnessResult = fitnessResultForFlyingMachine(originalBlocks, history, history.get(i).t2);
+				if(fitnessResult != null) { totalChangeDistance += fitnessResult; 
+				//else calculate based on initial center of mass and the next center of mass to add to total change distance
+				} else { totalChangeDistance += initialCenterOfMass.distance(nextCenterOfMass); }
 			} else {
 				totalChangeDistance += lastCenterOfMass.distance(nextCenterOfMass);
 			}
@@ -137,11 +148,11 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 	 * @param initialBlockCount block count at origin
 	 * @param initialCenterOfMass initial center of mass
 	 * @param lastCenterOfMass center of mass at the last point
-	 * @param shortWaitTimeUpdate what the blocks look like after a short update
+	 * @param newShapeBlockList a list of blocks after a recent update
 	 * @return fitness after punishment for remaining blocks, or null if shape is deemed to not have flown away
 	 */
-	private Double checkCreditForDepartedBlocks(int initialBlockCount, Vertex initialCenterOfMass, Vertex lastCenterOfMass, List<Block> shortWaitTimeUpdate) {
-		int remainingBlockCount = shortWaitTimeUpdate.size(); // Could be larger than initial due to extensions
+	private Double checkCreditForDepartedBlocks(int initialBlockCount, Vertex initialCenterOfMass, Vertex lastCenterOfMass, List<Block> newShapeBlockList) {
+		int remainingBlockCount = newShapeBlockList.size(); // Could be larger than initial due to extensions
 		int departedBlockCount = initialBlockCount - remainingBlockCount; // Could be negative due to extensions
 		Double result = null;
 		// It should be hard to archive credit for flying, so make sure that the number of departed blocks is sufficiently high

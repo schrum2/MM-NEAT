@@ -678,13 +678,13 @@ public class MinecraftClient extends Comm {
 	}
 	
 	/**
-	 * Make sure the special area for double-checking flying shapes is really clear
+	 * Normal case of not using the clear with glass option, only clears with air
 	 */
 	public static void clearAreaAroundSpecialCorner() {
 		clearAreaAroundCorner(POST_EVALUATION_CORNER, false);
 	}
 	/**
-	 * body of code for clearAreaAroundSpecialCorner used above
+	 * Make sure the special area for double-checking flying shapes is really clear
 	 * @param corner of the evaluation area
 	 * @param clearWithGlass - if passed true (only from clearAndVerify) clears with glass first
 	 */
