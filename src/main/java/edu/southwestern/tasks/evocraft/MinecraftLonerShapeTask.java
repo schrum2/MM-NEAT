@@ -30,7 +30,6 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
 import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBinLabels;
-import edu.southwestern.tasks.evocraft.fitness.ChangeCenterOfMassFitness;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.file.FileUtilities;
 /**
