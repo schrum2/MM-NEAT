@@ -235,6 +235,8 @@ public class MinecraftUtilClass {
 	 * Called by readBlocksFromClient 
 	 * uses range previously calculated for evaluation area & uses client code to call readCube
 	 * 
+	 * TODO: shouldn't this be moved to MinecraftClients?
+	 * 
 	 * -Joanna
 	 * 
 	 * @param corner minimal coordinates of shape being checked
@@ -257,11 +259,11 @@ public class MinecraftUtilClass {
 	 * @return block list with only null orientations, but otherwise the same
 	 */
 	public static List<Block> wipeOrientations(List<Block> originalBlocks) {
-		ArrayList<Block> result = new ArrayList<>(originalBlocks.size());
+		ArrayList<Block> blockListWithoutOrientation = new ArrayList<>(originalBlocks.size());
 		for(Block b : originalBlocks) {
-			result.add(new Block(b.x(), b.y(), b.z(),b.type()));
+			blockListWithoutOrientation.add(new Block(b.x(), b.y(), b.z(),b.type()));
 		}
-		return result;
+		return blockListWithoutOrientation;
 	}
 	
 	/**
