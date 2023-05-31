@@ -99,15 +99,15 @@ public class MinecraftBlockRenderExperiment implements Experiment {
 		MinecraftClient.getMinecraftClient().spawnBlocks(shiftedBlocks); // spawn blocks in minecraft world
 	}
 	/**
-	 * Shifts blocks to special corner 
+	 * Shifts blocks to POST_EVALUATION_CORNER 
 	 * @param blockTextFile text file that holds a shape
-	 * @return list of the same blocks at the special corner
+	 * @return list of the same blocks at the POST_EVALUATION_CORNER
 	 * @throws FileNotFoundException
 	 */
 	static List<Block> shiftBlocks(File blockTextFile) throws FileNotFoundException {
 		List<Block> blocks = MinecraftUtilClass.loadMAPElitesOutputFile(blockTextFile); // get block list from output file
-		MinecraftCoordinates corner = MinecraftUtilClass.minCoordinates(blocks); // Original corner (or close to it)
-		List<Block> shiftedBlocks = MinecraftUtilClass.shiftBlocksBetweenCorners(blocks, corner, MinecraftClient.POST_EVALUATION_CORNER);
+		MinecraftCoordinates shapeCorner = MinecraftUtilClass.minCoordinates(blocks); // Original corner (or close to it) -shape corner
+		List<Block> shiftedBlocks = MinecraftUtilClass.shiftBlocksBetweenCorners(blocks, shapeCorner, MinecraftClient.POST_EVALUATION_CORNER);
 		
 //		System.out.println("Spawning " + shiftedBlocks.size() + " blocks from " + dir);
 //		for(Block b: shiftedBlocks) {

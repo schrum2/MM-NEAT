@@ -34,6 +34,7 @@ import edu.southwestern.evolution.metaheuristics.Metaheuristic;
 import edu.southwestern.evolution.metaheuristics.SubstrateLinkPenalty;
 import edu.southwestern.evolution.mulambda.MuLambda;
 import edu.southwestern.experiment.Experiment;
+import edu.southwestern.experiment.post.MinecraftBlockCompareExperiment;
 import edu.southwestern.experiment.post.MinecraftBlockEvaluateExperiment;
 import edu.southwestern.experiment.post.MinecraftBlockRenderExperiment;
 import edu.southwestern.log.EvalLog;
@@ -748,7 +749,7 @@ public class MMNEAT {
 			String[] reducedArgs = new String[args.length - 1];
 			System.arraycopy(args, 1, reducedArgs, 0, reducedArgs.length);
 			Parameters.initializeParameterCollections(reducedArgs);
-			MinecraftBlockEvaluateExperiment experiment = new MinecraftBlockEvaluateExperiment();
+			MinecraftBlockCompareExperiment experiment = new MinecraftBlockCompareExperiment();
 			experiment.init();
 			experiment.run();
 		} else if(args[0].equals("binMario")){
