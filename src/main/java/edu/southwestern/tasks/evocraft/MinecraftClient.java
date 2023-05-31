@@ -662,41 +662,46 @@ public class MinecraftClient extends Comm {
 	}
 	
 	/**
+	 * TODO: usually passed evaluation corner, but passes to 
 	 * Clears an area and verifies that it is clear
 	 * called if you need to make sure it is clear
 	 * makes use of clearWithGlass if the minecraftClearWithGlass parameter is set to true
-	 * @param corner corner that the shape is occupying (currently the corner of the evaluation space
+	 * @param shapeCornerCoordinates corner that the shape is occupying 
 	 */
-	public static void clearAndVerify(MinecraftCoordinates corner) {
+	public static void clearAndVerify(MinecraftCoordinates shapeCornerCoordinates) {
 		boolean empty = false;
 		int clearAttempt = 0;
 		do {
-			clearAreaAroundCorner(corner, true);
-			empty = areaAroundCornerEmpty(corner);
+			clearAreaAroundCorner(shapeCornerCoordinates, true);
+			empty = areaAroundCornerEmpty(shapeCornerCoordinates);
 			if(!empty) System.out.println("Cleared "+(++clearAttempt)+" times: empty?: "+empty);
 		} while(!empty);
 	}
 	
 	/**
+	 * TODO: need to change to shape corner of post evaluation corner or modify clearAreaAroundCorner
 	 * Normal case of not using the clear with glass option, only clears with air
 	 */
-	public static void clearAreaAroundSpecialCorner() {
+	public static void clearAreaAroundPostEvaluationCorner() {
 		clearAreaAroundCorner(POST_EVALUATION_CORNER, false);
 	}
+	
 	/**
+	 * TODO: this takes a shape corner but frequently is passed an evaluation corner
 	 * Make sure the special area for double-checking flying shapes is really clear
-	 * @param corner of the evaluation area
+	 * @param shapeCorner of the evaluation area
 	 * @param clearWithGlass - if passed true (only from clearAndVerify) clears with glass first
 	 */
-	public static void clearAreaAroundCorner(MinecraftCoordinates corner, boolean clearWithGlass) {
+	public static void clearAreaAroundCorner(MinecraftCoordinates shapeCorner, boolean clearWithGlass) {
 		//lower is the min coordinates of the clear space based on the 
-		MinecraftCoordinates lower = corner.sub(EMPTY_SPACE_SAFETY_BUFFER);
-		MinecraftCoordinates upper = corner.add(MinecraftUtilClass.getRanges().add(EMPTY_SPACE_SAFETY_BUFFER));
+		MinecraftCoordinates lower = shapeCorner.sub(EMPTY_SPACE_SAFETY_BUFFER);
+		MinecraftCoordinates upper = shapeCorner.add(MinecraftUtilClass.getRanges().add(EMPTY_SPACE_SAFETY_BUFFER));
 		getMinecraftClient().clearCube(lower, upper, clearWithGlass);
 		List<Block> errorCheck = null;
-		assert areaAroundCornerEmpty(corner) : "Area not empty after clearing! "+errorCheck;
+		assert areaAroundCornerEmpty(shapeCorner) : "Area not empty after clearing! "+errorCheck;
 	}
 	/**
+	 * TODO: takes in a shape corner and changes to evaluation corner, ie input: smallCorner, output: largeCorner
 	 * Checks if the area around a corner is empty
 	 * @param corner the corner coordinates being checked
 	 * @return boolean if space is empty or not
@@ -713,6 +718,7 @@ public class MinecraftClient extends Comm {
 	}
 	
 	/**
+	 * TODO: clears cube no glass
 	 * clears cubes by replacing all cubes with log and then replacing with air
 	 * log chosen arbitrarily
 	 * this forcefully replaces all blocks that might be misinterpreted as air into log and then replaces them with air
@@ -726,7 +732,12 @@ public class MinecraftClient extends Comm {
 		clearCube(min, max, false);
 	}
 	
-	
+	/**
+	 * TODO: min max of area being cleared
+	 * @param min
+	 * @param max
+	 * @param clearWithGlass
+	 */
 	public synchronized void clearCube(MinecraftCoordinates min, MinecraftCoordinates max, boolean clearWithGlass) {
 		//clears with glass before air if parameter is set, this makes sure all blocks get set
 		//glass should only be cleared from clear and verify
@@ -860,6 +871,7 @@ public class MinecraftClient extends Comm {
 	}
 	
 	/**
+	 * TODO: this is an auto call, passes true, auto sets y to stopAtGround -ground level?
 	 * Clear a large enough space in the world for a population of shapes.
 	 * 
 	 * @param start Start coordinates where shapes are generated

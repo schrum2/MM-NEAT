@@ -56,15 +56,17 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 		// Shifts over the corner to the new range with the large space in between shapes
 		MinecraftCoordinates evaluationCorner = shapeCorner.sub(MinecraftUtilClass.emptySpaceOffsets());
 		// schrum2: I think this code is responsible for the weird error of shapes near the ground being stacked vertically.
-		//          When the startY is made large enough, this is not an issue, but makin gthe user set that correctly
+		//          When the startY is made large enough, this is not an issue, but making the user set that correctly
 		//          is a hassle.		
 		
 		//finds the corner of the evaluation space - corner now means evaluation space
 		//if statement checks if the evaluation space plus the space that would be cleared is below the ground level
 		if(evaluationCorner.y() - MinecraftClient.EMPTY_SPACE_SAFETY_BUFFER <= MinecraftClient.GROUND_LEVEL) { // Push up if close to ground
+			System.out.println("Pushed up from " + evaluationCorner);
 			MinecraftCoordinates shiftPoint = new MinecraftCoordinates(0,MinecraftClient.EMPTY_SPACE_SAFETY_BUFFER,0);
 			MinecraftCoordinates oldCorner = evaluationCorner;
 			evaluationCorner = evaluationCorner.add(shiftPoint); // move sufficiently above the ground
+			shapeCorner = shapeCorner.add(shiftPoint);			//shifts the shape corner as well
 			originalBlocks = MinecraftUtilClass.shiftBlocksBetweenCorners(originalBlocks, oldCorner, evaluationCorner);
 		}
 		//this is the max coordinates of the evaluation space (I think) for calculation the total evaluation area 
@@ -77,7 +79,7 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 		if(CommonConstants.watch) System.out.println("Evaluate at corner: "+evaluationCorner);
 
 		//clear and verify evaluation space
-		MinecraftClient.clearAndVerify(evaluationCorner); // <- TODO: This should be shapeCorner, but that breaks several unit tests!
+		MinecraftClient.clearAndVerify(shapeCorner); // <- TODO: This should be shapeCorner, but that breaks several unit tests!
 
 	////////	creating history 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//history is a list of time stamps with an associated list of blocks read at that time
@@ -167,4 +169,11 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 	 */
 	public abstract double calculateFinalScore (ArrayList<Pair<Long,List<Block>>> history, MinecraftCoordinates corner, List<Block> originalBlocks);
 
+	/**
+	 * Based on the evaluation time and the time between reads, how many readings will be taken?
+	 * @return Number of readings taken of the evaluated shape
+	 */
+	protected long minNumberOfShapeReadings() {
+		return Parameters.parameters.longParameter("minecraftMandatoryWaitTime")/Parameters.parameters.longParameter("shortTimeBetweenMinecraftReads");
+	}
 }

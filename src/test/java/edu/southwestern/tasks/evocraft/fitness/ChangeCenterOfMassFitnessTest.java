@@ -232,7 +232,7 @@ public class ChangeCenterOfMassFitnessTest {
 	@Test
 	public void testFlyingWithoutMaxFitness() throws InterruptedException {
 		Parameters.initializeParameterCollections(new String[] {"minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:30","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L, "minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
-		MinecraftCoordinates cornerBS2 = new MinecraftCoordinates(0,16,-5);
+		MinecraftCoordinates cornerBS2 = new MinecraftCoordinates(0,16,-5);	// what is this the corner of? - shape corner
 		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 100);
 		
 		// List of flying machine blocks that should move
@@ -273,11 +273,15 @@ public class ChangeCenterOfMassFitnessTest {
 		assertTrue(result); // Should be able to succeed in one of two attempts
 	}
 
+	/**
+	 * TODO: i want to be able to have comments show about a variable, need to make this JavaDoc 
+	 * @return
+	 */
 	public boolean flyingMachineWithRemainingBlocks() {
 		Parameters.initializeParameterCollections(new String[] {"minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:false","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
 		CommonConstants.netio = false;
 		MinecraftCoordinates cornerBS2 = new MinecraftCoordinates(0,11,-5);
-		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 100);
+		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 100); //start coordinates, range, number of shapes, buffer distance between shapes
 		
 		// List of flying machine blocks that should move
 		// Not really sure what the fitness would be after 10 seconds

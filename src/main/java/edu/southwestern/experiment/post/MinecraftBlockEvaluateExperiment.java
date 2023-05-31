@@ -89,7 +89,7 @@ public class MinecraftBlockEvaluateExperiment implements Experiment{
 				}
 			} else {
 				// Is a single text file
-				MinecraftClient.clearAreaAroundSpecialCorner();
+				MinecraftClient.clearAreaAroundPostEvaluationCorner();
 				MinecraftBlockRenderExperiment.generateOneShapeFromFile(file);
 			}
 		} catch (FileNotFoundException e) {
