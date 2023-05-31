@@ -46,6 +46,7 @@ public class MinecraftBlockCompareExperiment implements Experiment {
 	
 	/**
 	 * takes two text files and generates shapes next to each other in minecraft
+	 * teleport to -506 100 520 to see shapes 
 	 * @param shapeOneTextFile the text file containing the blocks of the first shape
 	 * @param shapeTwoTextFile the text file containing the blocks of the second shape
 	 * @throws FileNotFoundException
@@ -55,8 +56,6 @@ public class MinecraftBlockCompareExperiment implements Experiment {
 
 		// create augmented corner for the second shape (currently modifies x coordinate by the spaceBetweenMinecraftShapes parameter
 		MinecraftCoordinates shapeTwoAugmentedEvaluationCorner = new MinecraftCoordinates(MinecraftClient.POST_EVALUATION_CORNER); // augmented Evaluation Corner
-
-		// teleport to -506 100 520 to see shapes 
 		shapeTwoAugmentedEvaluationCorner.t1 = MinecraftClient.POST_EVALUATION_CORNER.t1 - Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes");
 		//System.out.println("created evaluation corners. Augmented:"+ shapeTwoAugmentedEvaluationCorner + "original:"+ MinecraftClient.POST_EVALUATION_CORNER);
 		
@@ -66,7 +65,7 @@ public class MinecraftBlockCompareExperiment implements Experiment {
 		//TODO: shapeWithShiftedCoordinatesBlockList = shiftBlocks(shapeTwoTextFile, shapeTwoAugmentedEvaluationCorner);	// creates a list with the shifted blocks, shifted based on POST_EVALUATION_CORNER
 		List<Block> shiftedShapeTwoBlocks = shiftBlocks(shapeTwoTextFile, shapeTwoAugmentedEvaluationCorner);	// creates a list with the shifted blocks, shifted based on POST_EVALUATION_CORNER		
 		finalShapesBlockList.addAll(shiftedShapeTwoBlocks);			// adds second shape block list to final shapes block list
-		//finalShapesBlockList.addAll(shapeTwoAugmentedCorner);
+		//finalShapesBlockList.addAll(shapeTwoAugmentedEvaluationCorner);
 		//System.out.println("added shape 2 to final shape list");
 //		System.out.println("Spawning " + finalShapesBlockList.size());
 //		for(Block b: finalShapesBlockList) {
@@ -94,10 +93,11 @@ public class MinecraftBlockCompareExperiment implements Experiment {
 
 		List<Block> shiftedBlockList = MinecraftUtilClass.shiftBlocksBetweenCorners(shapeOriginalBlockList, shapeOriginalShapeCorner, newEvaluationCorner); //create list of blocks with shifted coordinates
 		
-		System.out.println("Spawning " + shiftedBlockList.size());
-		for(Block b: shiftedBlockList) {
-			System.out.println(b);
-		}
+//		System.out.println("Spawning " + shiftedBlockList.size());
+//		for(Block b: shiftedBlockList) {
+//			System.out.println(b);
+//		}
+		
 		return shiftedBlockList;
 	}
 
