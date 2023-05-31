@@ -62,9 +62,11 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 		//finds the corner of the evaluation space - corner now means evaluation space
 		//if statement checks if the evaluation space plus the space that would be cleared is below the ground level
 		if(evaluationCorner.y() - MinecraftClient.EMPTY_SPACE_SAFETY_BUFFER <= MinecraftClient.GROUND_LEVEL) { // Push up if close to ground
+			System.out.println("Pushed up from " + evaluationCorner);
 			MinecraftCoordinates shiftPoint = new MinecraftCoordinates(0,MinecraftClient.EMPTY_SPACE_SAFETY_BUFFER,0);
 			MinecraftCoordinates oldCorner = evaluationCorner;
 			evaluationCorner = evaluationCorner.add(shiftPoint); // move sufficiently above the ground
+			shapeCorner = shapeCorner.add(shiftPoint);
 			originalBlocks = MinecraftUtilClass.shiftBlocksBetweenCorners(originalBlocks, oldCorner, evaluationCorner);
 		}
 		//this is the max coordinates of the evaluation space (I think) for calculation the total evaluation area 
@@ -77,7 +79,7 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 		if(CommonConstants.watch) System.out.println("Evaluate at corner: "+evaluationCorner);
 
 		//clear and verify evaluation space
-		MinecraftClient.clearAndVerify(evaluationCorner); // <- TODO: This should be shapeCorner, but that breaks several unit tests!
+		MinecraftClient.clearAndVerify(shapeCorner); // <- TODO: This should be shapeCorner, but that breaks several unit tests!
 
 	////////	creating history 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//history is a list of time stamps with an associated list of blocks read at that time

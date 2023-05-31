@@ -34,7 +34,7 @@ public class MinecraftBlockCompareExperiment implements Experiment {
 			
 			//System.out.println("Clear space for both shapes");
 			// set up special corner & generate shapes
-			MinecraftClient.clearAreaAroundSpecialCorner(); // TODO: May need to call twice around each specific corner
+			MinecraftClient.clearAreaAroundPostEvaluationCorner(); // TODO: May need to call twice around each specific corner
 			generateMultipleShapesFromFiles(shapeOneTextFile, shapeTwoTextFile);
 			
 			
@@ -56,22 +56,15 @@ public class MinecraftBlockCompareExperiment implements Experiment {
 		// create augmented corner for the second shape (currently modifies x coordinate by the spaceBetweenMinecraftShapes parameter
 		MinecraftCoordinates shapeTwoAugmentedEvaluationCorner = new MinecraftCoordinates(MinecraftClient.POST_EVALUATION_CORNER); // augmented Evaluation Corner
 
-		//TODO: find out why this happens
 		// teleport to -506 100 520 to see shapes 
 		shapeTwoAugmentedEvaluationCorner.t1 = MinecraftClient.POST_EVALUATION_CORNER.t1 - Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes");
-		System.out.println("created evaluation corners. Augmented:"+ shapeTwoAugmentedEvaluationCorner + "original:"+ MinecraftClient.POST_EVALUATION_CORNER);
+		//System.out.println("created evaluation corners. Augmented:"+ shapeTwoAugmentedEvaluationCorner + "original:"+ MinecraftClient.POST_EVALUATION_CORNER);
 		
 		// creates the final shape list by shifting passed file lists and combining into final list
-		System.out.println("shape 1 shifting");
-
 		List<Block> shapeWithShiftedCoordinatesBlockList = shiftBlocks(shapeOneTextFile, MinecraftClient.POST_EVALUATION_CORNER); // sets first shape to POST_EVALUATION_CORNER
 		List<Block> finalShapesBlockList = shapeWithShiftedCoordinatesBlockList;	// adds shifted blocks list to final shapes block list
-		//shapeWithShiftedCoordinatesBlockList = shiftBlocks(shapeTwoTextFile, shapeTwoAugmentedEvaluationCorner);	// creates a list with the shifted blocks, shifted based on POST_EVALUATION_CORNER
-		System.out.println("shape 2 shifting");
-		List<Block> shiftedShapeTwoBlocks = shiftBlocks(shapeTwoTextFile, shapeTwoAugmentedEvaluationCorner);	// creates a list with the shifted blocks, shifted based on POST_EVALUATION_CORNER
-
-		//System.out.println("shifted shape 2");
-		
+		//TODO: shapeWithShiftedCoordinatesBlockList = shiftBlocks(shapeTwoTextFile, shapeTwoAugmentedEvaluationCorner);	// creates a list with the shifted blocks, shifted based on POST_EVALUATION_CORNER
+		List<Block> shiftedShapeTwoBlocks = shiftBlocks(shapeTwoTextFile, shapeTwoAugmentedEvaluationCorner);	// creates a list with the shifted blocks, shifted based on POST_EVALUATION_CORNER		
 		finalShapesBlockList.addAll(shiftedShapeTwoBlocks);			// adds second shape block list to final shapes block list
 		//finalShapesBlockList.addAll(shapeTwoAugmentedCorner);
 		//System.out.println("added shape 2 to final shape list");
@@ -80,7 +73,6 @@ public class MinecraftBlockCompareExperiment implements Experiment {
 //			System.out.println(b);
 //		}
 		MinecraftClient.getMinecraftClient().spawnBlocks(finalShapesBlockList); // spawns the final shapes in minecraft at the POST_EVALUATION_CORNER
-		System.out.println("spawned");
 
 	}
 

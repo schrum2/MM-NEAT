@@ -65,7 +65,7 @@ public class MinecraftBlockRenderExperiment implements Experiment {
 					do {
 						try {
 							System.out.println(i + " of " + seenList.length);
-							if(clear) MinecraftClient.clearAreaAroundSpecialCorner();
+							if(clear) MinecraftClient.clearAreaAroundPostEvaluationCorner();
 							MinecraftClient.getMinecraftClient().spawnBlocks(shiftedBlocks);
 							System.out.println("Press enter to continue, 'b' to go back, 'r' to repeat, 'k' proceed without clearing");
 							String input = MiscUtil.waitForReadStringAndEnterKeyPress();
@@ -81,7 +81,7 @@ public class MinecraftBlockRenderExperiment implements Experiment {
 				}
 			} else {
 				// Is a single text file
-				MinecraftClient.clearAreaAroundSpecialCorner();
+				MinecraftClient.clearAreaAroundPostEvaluationCorner();
 				generateOneShapeFromFile(file);
 			}
 		} catch (FileNotFoundException e) {
