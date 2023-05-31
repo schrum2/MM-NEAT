@@ -3,6 +3,7 @@ package edu.southwestern.tasks.evocraft;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
@@ -368,4 +369,29 @@ public class MinecraftUtilClass {
 
 		return centerOfMass;
 	}	
+	
+	/**
+	 * Get all the blocks that are in Shape 1 but not in Shape 2.
+	 * Blocks are only considered the same if they match in terms of position,
+	 * type, and orientation.
+	 * 
+	 * @param shape1 A list of blocks representing a shape
+	 * @param shape2 A list of blocks representing a shape
+	 * @return A list of blocks from shape 1, but excluding shared/common blocks with shape 2
+	 */
+	public static List<Block> shapeListDifference(List<Block> shape1, List<Block> shape2) {
+		HashSet<Block> shape1Blocks = new HashSet<>();
+		for(Block b : shape1) shape1Blocks.add(b); // Get all blocks from Shape 1
+		for(Block b : shape2) {
+			// Remove all blocks from Shape 2 from the set of Shape 1 blocks.
+			// If block is not present, then attempt simply returns false and does nothing.
+			shape1Blocks.remove(b);
+		}
+		// Put remaining blocks back in a List
+		ArrayList<Block> result = new ArrayList<>(shape1Blocks.size());
+		for(Block b : shape1Blocks) {
+			result.add(b);
+		}
+		return result;
+	}
 }

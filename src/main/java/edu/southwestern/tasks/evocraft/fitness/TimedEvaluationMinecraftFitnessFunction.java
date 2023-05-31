@@ -167,4 +167,11 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 	 */
 	public abstract double calculateFinalScore (ArrayList<Pair<Long,List<Block>>> history, MinecraftCoordinates corner, List<Block> originalBlocks);
 
+	/**
+	 * Based on the evaluation time and the time between reads, how many readings will be taken?
+	 * @return Number of readings taken of the evaluated shape
+	 */
+	protected long minNumberOfShapeReadings() {
+		return Parameters.parameters.longParameter("minecraftMandatoryWaitTime")/Parameters.parameters.longParameter("shortTimeBetweenMinecraftReads");
+	}
 }
