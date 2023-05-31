@@ -56,7 +56,7 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 		// Shifts over the corner to the new range with the large space in between shapes
 		MinecraftCoordinates evaluationCorner = shapeCorner.sub(MinecraftUtilClass.emptySpaceOffsets());
 		// schrum2: I think this code is responsible for the weird error of shapes near the ground being stacked vertically.
-		//          When the startY is made large enough, this is not an issue, but makin gthe user set that correctly
+		//          When the startY is made large enough, this is not an issue, but making the user set that correctly
 		//          is a hassle.		
 		
 		//finds the corner of the evaluation space - corner now means evaluation space
