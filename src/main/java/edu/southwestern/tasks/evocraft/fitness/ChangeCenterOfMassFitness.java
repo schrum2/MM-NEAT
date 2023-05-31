@@ -34,7 +34,7 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 	@Override
 	public double maxFitness() {
 		// Probably overshoots a bit
-		if(Parameters.parameters.booleanParameter("minecraftAccumulateChangeInCenterOfMass")) return ((Parameters.parameters.longParameter("minecraftMandatoryWaitTime")/Parameters.parameters.longParameter("shortTimeBetweenMinecraftReads")) + 1) * overestimatedDistanceToEdge();
+		if(Parameters.parameters.booleanParameter("minecraftAccumulateChangeInCenterOfMass")) return (minNumberOfShapeReadings() + 1) * overestimatedDistanceToEdge();
 		else return overestimatedDistanceToEdge();
 	}
 	
@@ -53,13 +53,23 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 	public Double earlyEvaluationTerminationResult(MinecraftCoordinates corner, List<Block> originalBlocks,
 			ArrayList<Pair<Long, List<Block>>> history, List<Block> newShapeBlockList) {
 
-		//if using fast fitness return null
+		//if using fast fitness return null, prevents early termination
 		if(Parameters.parameters.booleanParameter("minecraftRewardFastFlyingMachines")) return null;
 		
 		return fitnessResultForFlyingMachine(originalBlocks, history, newShapeBlockList);
 	}
 
 	// TODO: Add JavaDoc
+	/**
+	 * calculates the fitness for flying machines
+	 * Uses the change in center of mass and block lists to determine if the shape has flown away. 
+	 * If it has it awards max fitness with penalties for leftover blocks
+	 * Otherwise it returns null
+	 * @param originalBlocks the list of original blocks
+	 * @param history a list of time stamps paired with a list of the blocks present at that time
+	 * @param newShapeBlockList the most recently recorded list of blocks in the evaluation area (last entry in history)
+	 * @return fitness after checking for departed blocks or null if shape has not flown away
+	 */
 	private Double fitnessResultForFlyingMachine(List<Block> originalBlocks, ArrayList<Pair<Long, List<Block>>> history,
 			List<Block> newShapeBlockList) {
 		// Shape was not empty before, but it is now, so it must have flown away. Award max fitness
@@ -68,7 +78,7 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 			return maxFitness();
 		}
 		
-		List<Block> previousBlocks = history.get(history.size() - 2).t2;
+		List<Block> previousBlocks = history.get(history.size() - 2).t2; // the block list for the second to last 
 		Vertex initialCenterOfMass = MinecraftUtilClass.getCenterOfMass(originalBlocks);
 		Vertex lastCenterOfMass = MinecraftUtilClass.getCenterOfMass(previousBlocks);
 		Vertex nextCenterOfMass = MinecraftUtilClass.getCenterOfMass(newShapeBlockList);

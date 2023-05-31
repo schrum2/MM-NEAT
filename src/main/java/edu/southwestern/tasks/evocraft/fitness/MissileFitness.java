@@ -22,7 +22,7 @@ public class MissileFitness extends TimedEvaluationMinecraftFitnessFunction {
 
 	private MinecraftCoordinates targetCornerOffset;
 	private BlockType targetBlockType;
-	private BlockType[] acceptedBlownUpBlocks;
+	private BlockType[] acceptedBlownUpBlockTypes;
 	//constructor to create the accepted block type list
 
 	public MissileFitness() {
@@ -32,7 +32,7 @@ public class MissileFitness extends TimedEvaluationMinecraftFitnessFunction {
 		targetCornerOffset = new MinecraftCoordinates(xOffset, yOffset, zOffset);
 
 		targetBlockType = BlockType.values()[Parameters.parameters.integerParameter("minecraftMissleTargetBlockType")];
-		acceptedBlownUpBlocks = new BlockType[] {targetBlockType};
+		acceptedBlownUpBlockTypes = new BlockType[] {targetBlockType};
 	}
 	
 	@Override
@@ -49,10 +49,10 @@ public class MissileFitness extends TimedEvaluationMinecraftFitnessFunction {
 	}
 
 	@Override
-	public void preSpawnSetup(MinecraftCoordinates corner) {
+	public void preSpawnSetup(MinecraftCoordinates shapeCorner) {
 		// Create structure to be blown up
 		//changing the last add to a sub might fix the slight target offset from it intended position
-		MinecraftClient.getMinecraftClient().fillCube(corner.add(targetCornerOffset), corner.add(targetCornerOffset).add(MinecraftUtilClass.getRanges()), targetBlockType);
+		MinecraftClient.getMinecraftClient().fillCube(shapeCorner.add(targetCornerOffset), shapeCorner.add(targetCornerOffset).add(MinecraftUtilClass.getRanges()), targetBlockType);
 	}
 
 	@Override
@@ -60,7 +60,7 @@ public class MissileFitness extends TimedEvaluationMinecraftFitnessFunction {
 			List<Block> originalBlocks) {
 
 		List<Block> leftOverBlocksFromTarget = MinecraftClient.getMinecraftClient().readCube(shapeCorner.add(targetCornerOffset), shapeCorner.add(targetCornerOffset).add(MinecraftUtilClass.getRanges()));
-		List<Block> leftOverOfTargetBlocks = MinecraftUtilClass.getDesiredBlocks(leftOverBlocksFromTarget, acceptedBlownUpBlocks);
+		List<Block> leftOverOfTargetBlocks = MinecraftUtilClass.getDesiredBlocks(leftOverBlocksFromTarget, acceptedBlownUpBlockTypes);
 		return -leftOverOfTargetBlocks.size();
 	}
 
