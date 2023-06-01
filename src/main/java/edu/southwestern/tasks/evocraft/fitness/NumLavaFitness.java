@@ -2,7 +2,7 @@ package edu.southwestern.tasks.evocraft.fitness;
 
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 /**
- * extends TypeCountFitness with redstone
+ * extends TypeCountFitness with lava
  * @author raffertyt
  *
  */
