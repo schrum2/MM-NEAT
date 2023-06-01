@@ -1,6 +1,7 @@
 package edu.southwestern.tasks.evocraft.fitness;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import edu.southwestern.parameters.CommonConstants;
@@ -10,6 +11,7 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
+import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
 
 /**
@@ -23,24 +25,30 @@ import edu.southwestern.util.datastructures.Pair;
  */
 public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftFitnessFunction{
 
-	/**
-	 * currently clears blocks around a corner
-	 * creates a history: a list of time stamps with an associated list of blocks read at that time
-	 * reads until MinecraftMandatoryWaitTime is reached
-	 * returns a call to calculateFinalFitnessScore using history, corner, originalBlocks
-	 * 
-	 * initial corner is the bottom corner of the shape
-	 * sub empty offset to find bottom  0-5 = -5 for lower corner of evaluation shape
-	 * adds end? to get the far up corner to calculate volume
-	 * @param corner the corner of the shape
-	 */
 	@Override
 	public double fitnessScore(MinecraftCoordinates shapeCorner, List<Block> originalBlocks) {
-
+		// For a scenario using just one fitness function, put this function in a list by itself and use the multiple evaluation method on the list of one
+		ArrayList<TimedEvaluationMinecraftFitnessFunction> fitnessFunctions = new ArrayList<>(1);
+		fitnessFunctions.add(this);
+		double[] scores = multipleFitnessScores(fitnessFunctions, shapeCorner, originalBlocks);
+		return scores[0]; // Only score from list of one fitness function
+	}
+	
+	/**
+	 * Collects scores for multiple TimedEvaluationMinecraftFitnessFunctions, but only spawns and evaluates the shape once.
+	 * Evaluation can end early if all fitness functions agree to end early. Otherwise, early termination scores are stored
+	 * for those that wanted to stop until the end, when all remaining fitness scores are calculated in the normal fashion.
+	 * 
+	 * @param fitnessFunctions List of TimedEvaluationMinecraftFitnessFunction type fitness functions
+	 * @param shapeCorner Minimal corner where shape it spawned
+	 * @param originalBlocks Original block configuration of shape before simulation
+	 * @return array where each index if a fitness score for the corresponding fitness function
+	 */
+	public static double[] multipleFitnessScores(List<TimedEvaluationMinecraftFitnessFunction> fitnessFunctions, MinecraftCoordinates shapeCorner, List<Block> originalBlocks) {		
 		// Should this be true for all fitness functions?
 		if(originalBlocks.isEmpty()) {
 			if(CommonConstants.watch) System.out.println("Empty shape: Immediate failure");
-			return minFitness();
+			return fitnessFunctions.parallelStream().mapToDouble(ff -> ff.minFitness()).toArray();
 		}		
 		
 	///////////// clear section - should be reworked and made into utils class ////////////////////////////////////////////////////////////////////
@@ -79,7 +87,7 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 		if(CommonConstants.watch) System.out.println("Evaluate at corner: "+evaluationCorner);
 
 		//clear and verify evaluation space
-		MinecraftClient.clearAndVerify(shapeCorner); // <- TODO: This should be shapeCorner, but that breaks several unit tests!
+		MinecraftClient.clearAndVerify(shapeCorner);
 
 	////////	creating history 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//history is a list of time stamps with an associated list of blocks read at that time
@@ -97,12 +105,20 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 		if(CommonConstants.watch) System.out.println("Evaluate Blocks: " + originalBlocks);
 	//////// Spawn the blocks!	////////////////////////////////////////////////////////////////////////////////////////////////
 		
-		preSpawnSetup(shapeCorner);
+		for(TimedEvaluationMinecraftFitnessFunction ff : fitnessFunctions) {
+			// Each fitness function can prepare the space as needed. Not many fitness functions
+			// use this. Need to pay attention to maintaining compatibility as more are added.
+			ff.preSpawnSetup(shapeCorner);
+		}
 		
 		MinecraftClient.getMinecraftClient().spawnBlocks(originalBlocks);
 
 		long timeBetweenRead = Parameters.parameters.longParameter("shortTimeBetweenMinecraftReads");
 		long startTime = System.currentTimeMillis();
+
+		// Stores results from early termination conditions
+		Double[] earlyResults = new Double[fitnessFunctions.size()]; // all null
+
 	////////// Wait time and log new reading //////////////////////////////////////////////////////////////////
 		while(!stop) {
 			try {
@@ -117,9 +133,20 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 			history.add(new Pair<Long,List<Block>>(System.currentTimeMillis() - startTime,newShapeReadingBlockList));
 			if(CommonConstants.watch) System.out.println("Block update: "+newShapeReadingBlockList);
 
-			// A non-null result should be returned, and end evaluation early. Otherwise, keep evaluating.
-			Double earlyResult = earlyEvaluationTerminationResult(shapeCorner, originalBlocks, history, newShapeReadingBlockList);
-			if(earlyResult != null) return earlyResult;
+			int index = 0;
+			boolean allNonNull = true; // Assume early termination will happen
+			for(TimedEvaluationMinecraftFitnessFunction ff : fitnessFunctions) {
+				// See if this fitness function wants to end early
+				if(earlyResults[index] == null) // Only check if it didn't already end early
+					earlyResults[index] = ff.earlyEvaluationTerminationResult(shapeCorner, originalBlocks, history, newShapeReadingBlockList);
+				// If it still does not want to end early
+				if(earlyResults[index] == null)
+					allNonNull = false; // Then evaluation must continue
+				
+				index++;
+			}
+			// Every fitness function wants to terminate early
+			if(allNonNull) return ArrayUtil.doubleArrayFromList(Arrays.asList(earlyResults));
 			
 			// If enough time has elapsed since the start, then end the evaluation
 			if(System.currentTimeMillis() - startTime > Parameters.parameters.longParameter("minecraftMandatoryWaitTime")) {
@@ -129,8 +156,16 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 
 		}
 
-		//return result of a method call to calculateFinalScore
-		return calculateFinalScore(history, shapeCorner, originalBlocks);
+		// Do not modify contents of any parameters.
+		double[] finalResults = new double[fitnessFunctions.size()];
+		for(int i = 0; i < finalResults.length; i++) {
+			if(earlyResults[i] != null) { // If this function wanted to end early, then give the early result
+				finalResults[i] = earlyResults[i];
+			} else { // otherwise, compute the normal final result
+				finalResults[i] = fitnessFunctions.get(i).calculateFinalScore(history, shapeCorner, originalBlocks);
+			}
+		}
+		return finalResults;
 	}
 
 	/**

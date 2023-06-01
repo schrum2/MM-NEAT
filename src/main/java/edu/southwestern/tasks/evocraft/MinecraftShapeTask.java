@@ -22,6 +22,7 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.blocks.BlockSet;
 import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBinLabels;
 import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBlockCountBinLabels;
+import edu.southwestern.tasks.evocraft.fitness.ChangeBlocksFitness;
 import edu.southwestern.tasks.evocraft.fitness.ChangeCenterOfMassFitness;
 import edu.southwestern.tasks.evocraft.fitness.DiversityBlockFitness;
 import edu.southwestern.tasks.evocraft.fitness.FakeTestFitness;
@@ -30,6 +31,7 @@ import edu.southwestern.tasks.evocraft.fitness.MinecraftFitnessFunction;
 import edu.southwestern.tasks.evocraft.fitness.MissileFitness;
 import edu.southwestern.tasks.evocraft.fitness.NegativeSpaceCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.OccupiedCountFitness;
+import edu.southwestern.tasks.evocraft.fitness.TimedEvaluationMinecraftFitnessFunction;
 import edu.southwestern.tasks.evocraft.fitness.TypeCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.TypeTargetFitness;
 import edu.southwestern.tasks.evocraft.fitness.WaterLavaSecondaryCreationFitness;
@@ -57,6 +59,9 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	private int startingX;
 	private int startingY;
 	private int startingZ;
+
+	// It's kind of bad for this to be static, but there should only every be one task running at a time, so it should be ok
+	private static int numTimedFitnessFunctions;
 	
 	// Makes sure tiebreaking is run in the same way as before
 	@SuppressWarnings("unchecked")
@@ -72,6 +77,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		MinecraftClient.getMinecraftClient();
 		
 		fitnessFunctions = defineFitnessFromParameters();
+		numTimedFitnessFunctions = numTimedEvaluationMinecraftFitnessFunctions(fitnessFunctions);
 		
 		// try catch for initialization error of NoSuchMethodException when creating block set	
 		try {
@@ -100,6 +106,22 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		startingZ = Parameters.parameters.integerParameter("startZ");
 	}
 	
+	/**
+	 * Number of fitness functions that require simulation in the game for a certain amount of time.
+	 * 
+	 * @param fitnessFunctions list of fitness functions being used
+	 * @return number that extend TimedEvaluationMinecraftFitnessFunction
+	 */
+	private int numTimedEvaluationMinecraftFitnessFunctions(ArrayList<MinecraftFitnessFunction> fitnessFunctions) {
+		int total = 0;
+		for(MinecraftFitnessFunction mff : fitnessFunctions) {
+			if(mff instanceof TimedEvaluationMinecraftFitnessFunction) {
+				total++;
+			}
+		}
+		return total;
+	}
+
 	/**
 	 * Creates an ArrayList filled with minecraft specific fitness functions
 	 * @return fitness which is an array list filled with fitness functions
@@ -143,6 +165,9 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		}
 		if(Parameters.parameters.booleanParameter("minecraftMissileFitness")) {
 			fitness.add(new MissileFitness());
+		}
+		if(Parameters.parameters.booleanParameter("minecraftChangeBlocksFitness")) {
+			fitness.add(new ChangeBlocksFitness());
 		}
 		return fitness;
 	}
@@ -283,7 +308,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
 			// It is important to note that the original blocks from the CPPN are used here rather than the blocks
 			// read from the world. So, any properties collected will be before movement due to machine parts.
-			double[] propertyScores = calculateFitnessScores(corner,minecraftBinLabels.properties(),blocks);
+			double[] propertyScores = calculateFitnessScores(corner,minecraftBinLabels.properties(), blocks);
 			// Map contains all required properties now
 			HashMap<String,Object> behaviorMap = minecraftBinLabels.behaviorMapFromScores(propertyScores);
 			
@@ -352,14 +377,20 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 
 	/**
 	 * Calculate all fitness scores for a shape at a given corner
-	 * 
+	 *  
 	 * @param corner Minimal corner from which shape is generated
+	 * @param fitnessFunctions Fitness functions to calculate
+	 * @param numTimedFitnessFunctions Number that requrie timed evaluation
 	 * @param originalBlocks blocks from generator, before rendering
 	 * @return double array of all fitness values in order
 	 */
 	public static double[] calculateFitnessScores(MinecraftCoordinates corner, List<MinecraftFitnessFunction> fitnessFunctions, List<Block> originalBlocks) {
-		// Parallelize fitness calculation
-		return fitnessFunctions.parallelStream().mapToDouble(ff -> ff.fitnessScore(corner,originalBlocks)).toArray();
+		if(numTimedFitnessFunctions > 1) {
+			throw new UnsupportedOperationException("Can currently only have one fitness function that extends TimedEvaluationMinecraftFitnessFunction");
+		} else {
+			// Parallelize fitness calculation
+			return fitnessFunctions.parallelStream().mapToDouble(ff -> ff.fitnessScore(corner,originalBlocks)).toArray();
+		}
 	}
 
 	/**
