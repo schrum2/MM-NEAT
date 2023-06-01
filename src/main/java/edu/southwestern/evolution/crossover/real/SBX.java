@@ -3,6 +3,9 @@ package edu.southwestern.evolution.crossover.real;
 import edu.southwestern.evolution.crossover.ArrayCrossover;
 import edu.southwestern.tasks.BoundedTask;
 import edu.southwestern.util.random.RandomNumbers;
+
+import java.io.FileNotFoundException;
+
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.util.datastructures.Pair;
 
@@ -84,5 +87,14 @@ public class SBX extends ArrayCrossover<Double> {
 					0.5 * ((y1 + y2) + betaq * (y2 - y1)));
 		}
 		return new Pair<Double, Double>(par1, par2);
+	}
+	
+	public static void main(String[] args) {
+		try {
+			MMNEAT.main("runNumber:100 randomSeed:100 minecraftXRange:3 crossover:edu.southwestern.evolution.crossover.real.SBX minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftChangeCenterOfMassFitness:true minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet trials:1 mu:100 maxGens:60000 minecraftContainsWholeMAPElitesArchive:false forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:false mating:true fs:false ea:edu.southwestern.evolution.mapelites.MAPElites experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:minecraftaccumulate log:MinecraftAccumulate-MEObserverVectorPistonOrientation saveTo:MEObserverVectorPistonOrientation mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5".split(" "));
+		} catch (FileNotFoundException | NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
