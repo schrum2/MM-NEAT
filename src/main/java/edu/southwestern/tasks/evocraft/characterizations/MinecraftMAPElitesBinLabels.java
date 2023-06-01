@@ -25,16 +25,22 @@ public abstract class MinecraftMAPElitesBinLabels extends BaseBinLabels implemen
 		// if populating the world with the archive, clear it all here
 		// call List<String> binLabels() and dimensionSizes()
 		
-		// Putting clearing here because bin labels and other aspects need to be initialized first in the constructor before clearing can occur
-		List<String> binSize = binLabels();
 		// Gets ranges for all coordinates
 		MinecraftCoordinates ranges = new MinecraftCoordinates(Parameters.parameters.integerParameter("minecraftXRange"),Parameters.parameters.integerParameter("minecraftYRange"),Parameters.parameters.integerParameter("minecraftZRange"));
 		// Clears the area
 		if(!Parameters.parameters.booleanParameter("minecraftSkipInitialClear")) {
-			MinecraftClient.getMinecraftClient().clearSpaceForShapes(new MinecraftCoordinates(0,MinecraftClient.GROUND_LEVEL+1,0), ranges, binSize.size(), Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER));	
+			MinecraftClient.getMinecraftClient().clearSpaceForShapes(new MinecraftCoordinates(0,MinecraftClient.GROUND_LEVEL+1,0), ranges, numberOfBins(), Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER));	
 		}else {
 			System.out.println("Initial clear skipped, clearing smaller area for shapes that were generated, then placing fences");
 		}
+	}
+	
+	/**
+	 * Number of bins in the archive defaults to the length of binLabels
+	 * @return Number of bins in archive
+	 */
+	public int numberOfBins() {
+		return binLabels().size();
 	}
 	
 	/**

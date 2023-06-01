@@ -6,10 +6,10 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
  * @author raffertyt
  *
  */
-public class NumRedstoneFitness extends TypeCountFitness{
+public class NumWaterFitness extends TypeCountFitness{
 
-	public NumRedstoneFitness() {
-		super(BlockType.REDSTONE_BLOCK.ordinal());
+	public NumWaterFitness() {
+		super(BlockType.FLOWING_WATER.ordinal());
 	}
 	
 }
