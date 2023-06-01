@@ -50,8 +50,6 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 			if(CommonConstants.watch) System.out.println("Empty shape: Immediate failure");
 			return fitnessFunctions.parallelStream().mapToDouble(ff -> ff.minFitness()).toArray();
 		}		
-		
-	///////////// clear section - should be reworked and made into utils class ////////////////////////////////////////////////////////////////////
 
 		// Ranges before the change of space in between
 		int xrange = Parameters.parameters.integerParameter("minecraftXRange");
@@ -67,7 +65,6 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 		//          When the startY is made large enough, this is not an issue, but making the user set that correctly
 		//          is a hassle.		
 		
-		//finds the corner of the evaluation space - corner now means evaluation space
 		//if statement checks if the evaluation space plus the space that would be cleared is below the ground level
 		if(evaluationCorner.y() - MinecraftClient.EMPTY_SPACE_SAFETY_BUFFER <= MinecraftClient.GROUND_LEVEL) { // Push up if close to ground
 			System.out.println("Pushed up from " + evaluationCorner);

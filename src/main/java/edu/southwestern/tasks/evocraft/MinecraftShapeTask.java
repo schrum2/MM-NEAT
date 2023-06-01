@@ -40,6 +40,8 @@ import edu.southwestern.tasks.evocraft.shapegeneration.ShapeGenerator;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.file.FileUtilities;
+import java_cup.internal_error;
+import weka.filters.unsupervised.attribute.Remove;
 
 /**
  *  MinecraftShapeTask is a class environment that lets you evaluate a phenotypes fitness geared towards minecraft shapes 
@@ -50,9 +52,9 @@ import edu.southwestern.util.file.FileUtilities;
  * 
  */
 public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTask, BoundedTask {
-	
+
 	public static int VERTICAL_SAFETY_BUFFER = 20;
-	
+
 	// Visible within package
 	ArrayList<MinecraftFitnessFunction> fitnessFunctions;
 	private ArrayList<MinecraftCoordinates> corners;
@@ -62,23 +64,23 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 
 	// It's kind of bad for this to be static, but there should only every be one task running at a time, so it should be ok
 	private static int numTimedFitnessFunctions;
-	
+
 	// Makes sure tiebreaking is run in the same way as before
 	@SuppressWarnings("unchecked")
 	public MinecraftShapeTask() {
 		// Cannot allow random tie breaking since some generated shapes would be different
 		Parameters.parameters.setBoolean("randomArgMaxTieBreak", false);
 		CommonConstants.randomArgMaxTieBreak = false;
-		
+
 		if(Parameters.parameters.booleanParameter("launchMinecraftServerFromJava")) {
 			MinecraftServer.launchServer();
 		}
 		// Launches the client script before the parallel code to assure that only one client script exists
 		MinecraftClient.getMinecraftClient();
-		
+
 		fitnessFunctions = defineFitnessFromParameters();
 		numTimedFitnessFunctions = numTimedEvaluationMinecraftFitnessFunctions(fitnessFunctions);
-		
+
 		// try catch for initialization error of NoSuchMethodException when creating block set	
 		try {
 			MMNEAT.blockSet = (BlockSet) ClassCreation.createObject("minecraftBlockSet");
@@ -87,7 +89,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			e1.printStackTrace();
 			System.exit(1);
 		}
-		
+
 		MMNEAT.discreteCeilings = ArrayUtil.intSpecified(Parameters.parameters.integerParameter("minecraftAmountOfBlocksToEvolve"),MMNEAT.blockSet.getPossibleBlocks().length);
 		// try catch for initialization error of NoSuchMethodException when creating shapeGenerator
 		try {
@@ -100,12 +102,12 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		for(MinecraftFitnessFunction ff : fitnessFunctions) {
 			MMNEAT.registerFitnessFunction(ff.getClass().getSimpleName());
 		}		
-		
+
 		startingX = Parameters.parameters.integerParameter("startX");
 		startingY = Parameters.parameters.integerParameter("startY");
 		startingZ = Parameters.parameters.integerParameter("startZ");
 	}
-	
+
 	/**
 	 * Number of fitness functions that require simulation in the game for a certain amount of time.
 	 * 
@@ -132,31 +134,31 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		if(Parameters.parameters.booleanParameter("minecraftTypeCountFitness")) {
 			fitness.add(new TypeCountFitness());
 		}
-		
+
 		if(Parameters.parameters.booleanParameter("minecraftTypeTargetFitness")) {
 			fitness.add(new TypeTargetFitness());
 		}
-		
+
 		if(Parameters.parameters.booleanParameter("minecraftOccupiedCountFitness")) {
 			fitness.add(new OccupiedCountFitness());
 		}
-		
+
 		if(Parameters.parameters.booleanParameter("minecraftDiversityBlockFitness")) {
 			fitness.add(new DiversityBlockFitness());
 		}
-		
+
 		if(Parameters.parameters.booleanParameter("minecraftChangeCenterOfMassFitness")) {
 			fitness.add(new ChangeCenterOfMassFitness());
 		}
-		
+
 		if(Parameters.parameters.booleanParameter("NegativeSpaceCountFitness")) {
 			fitness.add(new NegativeSpaceCountFitness());
 		}
-		
+
 		if(Parameters.parameters.booleanParameter("minecraftFakeTestFitness")) {
 			fitness.add(new FakeTestFitness());
 		}
-		
+
 		if(Parameters.parameters.booleanParameter("minecraftWaterLavaSecondaryCreationFitness")) {
 			fitness.add(new WaterLavaSecondaryCreationFitness());
 		}
@@ -171,7 +173,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		}
 		return fitness;
 	}
-	
+
 	/**
 	 * get function for getting x coordinate of origin
 	 * @return int that represents coordinates 
@@ -187,7 +189,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	 * @return int that represents coordinates
 	 */
 	public int getStartingZ() { return startingZ; }
-		
+
 	/**
 	 * returns the sensorLabels
 	 * @return the sensorLabels
@@ -255,7 +257,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		// Must clear the space where shapes are placed
 		// Clear the individually instead.
 		//client.clearSpaceForShapes(new MinecraftCoordinates(startingX,MinecraftClient.GROUND_LEVEL+1,startingZ), MinecraftUtilClass.getRanges(), population.size(), Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER));
-		
+
 		// Generate and evaluate shapes in parallel
 		IntStream stream = IntStream.range(0, corners.size());
 		ArrayList<Score<T>> scores = stream.parallel().mapToObj( i -> {
@@ -267,7 +269,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		System.out.println("Finished collecting");
 		return scores;
 	}
-	
+
 	/**
 	 * For one genome at one corner location, spawn the blocks and calculate the fitness before returning the Score.
 	 * Fitness functions come from the instance variable.
@@ -279,7 +281,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	public Score<T> evaluateOneShape(Genotype<T> genome, MinecraftCoordinates corner) {
 		return evaluateOneShape(genome, corner, fitnessFunctions);
 	}
-	
+
 	/**
 	 * For one genome at one corner location, spawn the blocks and calculate the fitness before returning the Score
 	 * 
@@ -289,7 +291,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	 * @param fitnessFunctions List of fitness functions to evaluate the shape on
 	 * @return Score instance containing evaluation information
 	 */
-	
+
 	public static <T> Score<T> evaluateOneShape(Genotype<T> genome, MinecraftCoordinates corner, ArrayList<MinecraftFitnessFunction> fitnessFunctions) {
 		@SuppressWarnings("unchecked")
 		List<Block> blocks = MMNEAT.shapeGenerator.generateShape(genome, corner, MMNEAT.blockSet);
@@ -297,21 +299,21 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 
 		// Clear space around this one shape
 		MinecraftLonerShapeTask.clearBlocksForShape(MinecraftUtilClass.getRanges(), corner.sub(MinecraftUtilClass.emptySpaceOffsets()));
-		
+
 		MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
 		double[] fitnessScores = calculateFitnessScores(corner,fitnessFunctions,blocks);
 
 		Score<T> score = new Score<T>(genome, fitnessScores);
 		if(MMNEAT.usingDiversityBinningScheme) {
 			//System.out.println("evaluate "+genome.getId() + " at " + corner + ": scores = "+ Arrays.toString(fitnessScores));
-			
+
 			MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
 			// It is important to note that the original blocks from the CPPN are used here rather than the blocks
 			// read from the world. So, any properties collected will be before movement due to machine parts.
 			double[] propertyScores = calculateFitnessScores(corner,minecraftBinLabels.properties(), blocks);
 			// Map contains all required properties now
 			HashMap<String,Object> behaviorMap = minecraftBinLabels.behaviorMapFromScores(propertyScores);
-			
+
 			double binScore = qualityScore(fitnessScores); 
 			behaviorMap.put("binScore", binScore); // Quality Score!				
 
@@ -321,12 +323,12 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			int dim1D = minecraftBinLabels.oneDimensionalIndex(behaviorMap);
 			behaviorMap.put("dim1D", dim1D); // Save so it does not need to be computed again
 			score.assignMAPElitesBehaviorMapAndScore(behaviorMap);
-			
+
 			//if(genome.getId()  == 91) System.out.println(genome.getId() + ":" + blocks + ":" + behaviorMap);
 			assert !(minecraftBinLabels instanceof MinecraftMAPElitesBlockCountBinLabels) || ((Integer) behaviorMap.get("dim1D")).intValue() == (int) ((Double) behaviorMap.get("OccupiedCountFitness")).doubleValue() - 1 : behaviorMap + ":" + blocks;
 			assert !(minecraftBinLabels instanceof MinecraftMAPElitesBlockCountBinLabels) || blocks.size() == (int) ((Double) behaviorMap.get("OccupiedCountFitness")).doubleValue() : behaviorMap + ":" + blocks;
 		} 
-		
+
 		if(CommonConstants.netio && Parameters.parameters.booleanParameter("minecraftChangeCenterOfMassFitness") && certainFlying(fitnessFunctions, fitnessScores[0])) {
 			// Assuming that change in center of mass is at index 0, and that 5 is a suitable threshold for penalties to the max fitness
 			String flyingDir = FileUtilities.getSaveDirectory() + "/flyingMachines";
@@ -349,7 +351,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	public boolean certainFlying(double fitnessScore) {
 		return certainFlying(fitnessFunctions, fitnessScore);
 	}
-	
+
 	/**
 	 * A shape with a fitness of this amount must be flying (assumes first/only fitness is change in center of mass)
 	 * 
@@ -370,7 +372,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	 * @param fitnessScores All calculated fitness scores
 	 * @return Single quality score
 	 */
-	
+
 	public static double qualityScore(double[] fitnessScores) {
 		return fitnessScores[0]; // TODO: CHANGE THIS? Other code depends on it now
 	}
@@ -378,19 +380,31 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	/**
 	 * Calculate all fitness scores for a shape at a given corner
 	 *  
-	 * @param corner Minimal corner from which shape is generated
+	 * @param shapeCorner Minimal corner from which shape is generated
 	 * @param fitnessFunctions Fitness functions to calculate
-	 * @param numTimedFitnessFunctions Number that requrie timed evaluation
+	 * @param numTimedFitnessFunctions Number that require timed evaluation
 	 * @param originalBlocks blocks from generator, before rendering
 	 * @return double array of all fitness values in order
 	 */
-	public static double[] calculateFitnessScores(MinecraftCoordinates corner, List<MinecraftFitnessFunction> fitnessFunctions, List<Block> originalBlocks) {
-		if(numTimedFitnessFunctions > 1) {
-			throw new UnsupportedOperationException("Can currently only have one fitness function that extends TimedEvaluationMinecraftFitnessFunction");
-		} else {
-			// Parallelize fitness calculation
-			return fitnessFunctions.parallelStream().mapToDouble(ff -> ff.fitnessScore(corner,originalBlocks)).toArray();
-		}
+	public static double[] calculateFitnessScores(MinecraftCoordinates shapeCorner, List<MinecraftFitnessFunction> fitnessFunctions, List<Block> originalBlocks) {
+		//create separate lists for the TimedEvaluationMinecraftFitnessFunctions and MinecraftFitnessFunctions
+		List<TimedEvaluationMinecraftFitnessFunction> timedEvaluationFitnessFunctionsList = new ArrayList<TimedEvaluationMinecraftFitnessFunction>(numTimedFitnessFunctions);
+		List<MinecraftFitnessFunction> notTimedFitnessFunctionsList = new ArrayList<MinecraftFitnessFunction>(fitnessFunctions.size()-numTimedFitnessFunctions);
+
+		//sort through the passed fitness functions to separate the TimedEvaluationMinecraftFitnessFunctions from the not timed fitness functions into two lists
+		for(MinecraftFitnessFunction mff : fitnessFunctions) {
+			if(mff instanceof TimedEvaluationMinecraftFitnessFunction) {
+				timedEvaluationFitnessFunctionsList.add((TimedEvaluationMinecraftFitnessFunction) mff);
+			} else {
+				notTimedFitnessFunctionsList.add(mff);
+			}
+		}	
+
+		//concatenate both lists here, a list must be made and then combined in a new list
+		double[] timedEvalResults = TimedEvaluationMinecraftFitnessFunction.multipleFitnessScores(timedEvaluationFitnessFunctionsList, shapeCorner, originalBlocks);
+		double[] notTimedEvalResults = fitnessFunctions.parallelStream().mapToDouble(ff -> ff.fitnessScore(shapeCorner,originalBlocks)).toArray();
+		return ArrayUtil.combineArrays(timedEvalResults, notTimedEvalResults);
+
 	}
 
 	/**
@@ -407,7 +421,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		ArrayList<MinecraftCoordinates> corners = new ArrayList<>(size);
 		int extraSpace = Parameters.parameters.integerParameter("extraSpaceBetweenMinecraftShapes");
 		int totalSpaceBetweenShapes = Math.max(Math.max(ranges.x(), ranges.y()), ranges.z()) + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes") + extraSpace;
-		
+
 		// If placing diagonally, decrease the x and z coordinates. Increase the Y
 		if(Parameters.parameters.booleanParameter("displayDiagonally")) {
 			int yCoordinate = startingY;
@@ -421,14 +435,14 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 				corners.add(corner);
 				yCoordinate += totalSpaceBetweenShapes;
 			}
-		// Otherwise, generate in line
+			// Otherwise, generate in line
 		}else {
 			for(int i = 0; i < size; i++) {
 				MinecraftCoordinates corner = new MinecraftCoordinates(startingX + i*totalSpaceBetweenShapes, startingY, startingZ);				
 				corners.add(corner);
 			}
 		}
-		
+
 		return corners;
 	}
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
@@ -438,7 +452,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	@Override
 	public double[] getUpperBounds() {
 		return ((BoundedVectorGenerator) MMNEAT.shapeGenerator).getUpperBounds(); // calling getUpperBounds from VectorToVolumeGenerator class
-	
+
 	}
 
 	@Override
