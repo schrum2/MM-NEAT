@@ -107,7 +107,7 @@ public class MinecraftBlockRenderExperiment implements Experiment {
 	static List<Block> shiftBlocks(File blockTextFile) throws FileNotFoundException {
 		List<Block> blocks = MinecraftUtilClass.loadMAPElitesOutputFile(blockTextFile); // get block list from output file
 		MinecraftCoordinates shapeCorner = MinecraftUtilClass.minCoordinates(blocks); // Original corner (or close to it) -shape corner
-		List<Block> shiftedBlocks = MinecraftUtilClass.shiftBlocksBetweenCorners(blocks, shapeCorner, MinecraftClient.POST_EVALUATION_CORNER);
+		List<Block> shiftedBlocks = MinecraftUtilClass.shiftBlocksBetweenCorners(blocks, shapeCorner, MinecraftClient.POST_EVALUATION_SHAPE_CORNER);
 		
 //		System.out.println("Spawning " + shiftedBlocks.size() + " blocks from " + dir);
 //		for(Block b: shiftedBlocks) {
