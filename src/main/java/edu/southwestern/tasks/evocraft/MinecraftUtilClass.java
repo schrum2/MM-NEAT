@@ -3,6 +3,7 @@ package edu.southwestern.tasks.evocraft;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
@@ -14,6 +15,7 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
 import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.datastructures.Vertex;
 
 /**
  * Some commonly used methods for dealing with the Minecraft world
@@ -132,6 +134,29 @@ public class MinecraftUtilClass {
 		}
 		return result;
 	}
+	/**
+	 * For two points, get one point that has the maximum coordinate across all listed points
+	 * @param c1 point 
+	 * @param c2 other point
+	 * @return maximum point
+	 */
+	public static MinecraftCoordinates maxCoordinates(MinecraftCoordinates c1, MinecraftCoordinates c2) {
+		return new MinecraftCoordinates(Math.max(c1.x(), c2.x()), Math.max(c1.y(), c2.y()), Math.max(c1.z(), c2.z()));
+	}
+	
+	/**
+	 * Across a list of blocks, find the maximum coordinate across all of their positions
+	 * @param blocks List of blocks
+	 * @return Corner that they were generated at
+	 */
+	public static MinecraftCoordinates maxCoordinates(List<Block> blocks) {
+		MinecraftCoordinates result = blocks.get(0).position;
+		for(int i = 1; i < blocks.size(); i++) {
+			result = maxCoordinates(result, blocks.get(i).position);
+		}
+		return result;
+	}
+	
 	
 	/**
 	 * Remove all blocks of a given type from a list of blocks
@@ -210,6 +235,8 @@ public class MinecraftUtilClass {
 	 * Called by readBlocksFromClient 
 	 * uses range previously calculated for evaluation area & uses client code to call readCube
 	 * 
+	 * TODO: shouldn't this be moved to MinecraftClients?
+	 * 
 	 * -Joanna
 	 * 
 	 * @param corner minimal coordinates of shape being checked
@@ -232,11 +259,11 @@ public class MinecraftUtilClass {
 	 * @return block list with only null orientations, but otherwise the same
 	 */
 	public static List<Block> wipeOrientations(List<Block> originalBlocks) {
-		ArrayList<Block> result = new ArrayList<>(originalBlocks.size());
+		ArrayList<Block> blockListWithoutOrientation = new ArrayList<>(originalBlocks.size());
 		for(Block b : originalBlocks) {
-			result.add(new Block(b.x(), b.y(), b.z(),b.type()));
+			blockListWithoutOrientation.add(new Block(b.x(), b.y(), b.z(),b.type()));
 		}
-		return result;
+		return blockListWithoutOrientation;
 	}
 	
 	/**
@@ -312,6 +339,60 @@ public class MinecraftUtilClass {
 		for(Block b : originalBlocks) {
 			MinecraftCoordinates newCoordinates = b.position.add(change);
 			result.add(new Block(newCoordinates, b.type, b.orientation));
+		}
+		return result;
+	}
+	
+	/**
+	 * Calculate center of mass for a list of blocks in a shape by averaging the 
+	 * x, y, and z coordinates across all non-AIR blocks in the shape.
+	 * 
+	 * @param blocks List of blocks in a shape
+	 * @return Center of mass of the shape (assumes all blocks have uniform mass)
+	 */
+	public static Vertex getCenterOfMass(List<Block> blocks) {
+		double x = 0;
+		double y = 0;
+		double z = 0;
+
+		List<Block> filteredBlocks = MinecraftUtilClass.filterOutBlock(blocks,BlockType.AIR);
+
+		for(Block b : filteredBlocks) {
+			x += b.x();
+			y += b.y();
+			z += b.z();
+		}
+
+		double avgX = x/filteredBlocks.size();
+		double avgY = y/filteredBlocks.size();
+		double avgZ = z/filteredBlocks.size();
+
+		Vertex centerOfMass = new Vertex(avgX,avgY,avgZ);
+
+		return centerOfMass;
+	}	
+	
+	/**
+	 * Get all the blocks that are in Shape 1 but not in Shape 2.
+	 * Blocks are only considered the same if they match in terms of position,
+	 * type, and orientation.
+	 * 
+	 * @param shape1 A list of blocks representing a shape
+	 * @param shape2 A list of blocks representing a shape
+	 * @return A list of blocks from shape 1, but excluding shared/common blocks with shape 2
+	 */
+	public static List<Block> shapeListDifference(List<Block> shape1, List<Block> shape2) {
+		HashSet<Block> shape1Blocks = new HashSet<>();
+		for(Block b : shape1) shape1Blocks.add(b); // Get all blocks from Shape 1
+		for(Block b : shape2) {
+			// Remove all blocks from Shape 2 from the set of Shape 1 blocks.
+			// If block is not present, then attempt simply returns false and does nothing.
+			shape1Blocks.remove(b);
+		}
+		// Put remaining blocks back in a List
+		ArrayList<Block> result = new ArrayList<>(shape1Blocks.size());
+		for(Block b : shape1Blocks) {
+			result.add(b);
 		}
 		return result;
 	}

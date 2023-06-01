@@ -20,6 +20,7 @@ import edu.southwestern.networks.ActivationFunctions;
 import edu.southwestern.networks.dl4j.VGG19Wrapper;
 import edu.southwestern.networks.hyperneat.CenteredSubstrateMapping;
 import edu.southwestern.tasks.evocraft.MinecraftClient;
+import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.blocks.MachineBlockSet;
 import edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGenerator;
 import edu.southwestern.tasks.gvgai.player.GVGAIOneStepNNPlayer;
@@ -388,6 +389,11 @@ public class Parameters {
 		integerOptions.add("zeldaMaxReachableRooms", 1000000, "Highest interval index for MAP Elites dimension associated with Zelda Dungeon Reachable Rooms");
 		integerOptions.add("minecraftPistonLabelSize", 6, "Dictates amount of bin labels made for MinecraftMAPElitesNorthSouthPistonCountBinLabels");
 		integerOptions.add("minecraftBlockLoadSkip", 0, "How many shapes to skip when doing a post-watch block loading experiment.");
+		integerOptions.add("minecraftTargetDistancefromShapeY", 0, "The distance from shape origin to target on the Y");
+		integerOptions.add("minecraftTargetDistancefromShapeX", 0, "The distance from shape origin to target on the X");
+		integerOptions.add("minecraftTargetDistancefromShapeZ", 0, "The distance from shape origin to target on the Z");
+		integerOptions.add("minecraftMissleTargetBlockType", BlockType.SLIME.ordinal(), "Block that is used in the target");
+		integerOptions.add("minecraftPostCornerAdjustY", 0, "This is an int whose value will be added to the y-coordinate of the POST_EVALUATION_CORNER to adjust the special shape");
 		
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
@@ -849,7 +855,13 @@ public class Parameters {
 		booleanOptions.add("minecraftFakeTestFitness", false, "Not a real fitness function, used for testing forcing offspring");
 		booleanOptions.add("minecraftSkipInitialClear", false, "Option to skip the initial clear of the world and immediatly start spawning shapes");
 		booleanOptions.add("minecraftRewardFastFlyingMachines", false, "rewards for fast flying machines in minecraft and penalizes for slow ones");
+		booleanOptions.add("minecraftWaterLavaSecondaryCreationFitness", false, "uses water and lava block set to reward for the creation of secondary blocks");
+		booleanOptions.add("minecraftMaximizeVolumeFitness", false, "rewards shapes that spread out over larger areas");
+		booleanOptions.add("minecraftMissileFitness", false, "rewards a shape for blowing up a target");
+		booleanOptions.add("minecraftClearWithGlass", true, "determines if glass is used to clear a space before air");
+		booleanOptions.add("minecraftChangeBlocksFitness", false, "rewards a shape for changing its blocks position");
 		
+	
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
 		doubleOptions.add("backpropLearningRate", 0.1, "Rate backprop learning for neural networks");
@@ -1000,6 +1012,7 @@ public class Parameters {
 		stringOptions.add("latestIterationSaved", "iterationX", "The last iteration of PictureTargetTask to be saved.");
 		
 		stringOptions.add("minecraftBlockListTextFile", "", "The file name of a MAPElite shape from that archive that is going to be spawned.");
+		stringOptions.add("minecraftBlockListTextFileSecond", "", "the file name of a second MAPElite shape from that archive that is going to be spawned.");
 		
 		// Class options
 		classOptions.add("zeldaGrammarRules", ZeldaHumanSubjectStudy2019GraphGrammar.class, "Determines what ruleset we're using");
@@ -1050,6 +1063,8 @@ public class Parameters {
 		classOptions.add("zeldaLevelLoader", SimpleLoader.class, "Loader to use when the dungeon is picking levels");
 		classOptions.add("minecraftShapeGenerator", ThreeDimensionalVolumeGenerator.class, "Defines the manner in which shapes are generated from genomes in Minecraft");
 		classOptions.add("minecraftBlockSet", MachineBlockSet.class, "Sets block set to be machine block set");
+		
+		
 	}
 
 	/**

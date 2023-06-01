@@ -11,7 +11,6 @@ import edu.southwestern.tasks.evocraft.MinecraftClient;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
-import edu.southwestern.tasks.evocraft.fitness.ChangeCenterOfMassFitness;
 import edu.southwestern.util.MiscUtil;
 
 /**
@@ -66,7 +65,7 @@ public class MinecraftBlockRenderExperiment implements Experiment {
 					do {
 						try {
 							System.out.println(i + " of " + seenList.length);
-							if(clear) ChangeCenterOfMassFitness.clearAreaAroundSpecialCorner();
+							if(clear) MinecraftClient.clearAreaAroundPostEvaluationCorner();
 							MinecraftClient.getMinecraftClient().spawnBlocks(shiftedBlocks);
 							System.out.println("Press enter to continue, 'b' to go back, 'r' to repeat, 'k' proceed without clearing");
 							String input = MiscUtil.waitForReadStringAndEnterKeyPress();
@@ -82,7 +81,7 @@ public class MinecraftBlockRenderExperiment implements Experiment {
 				}
 			} else {
 				// Is a single text file
-				ChangeCenterOfMassFitness.clearAreaAroundSpecialCorner();
+				MinecraftClient.clearAreaAroundPostEvaluationCorner();
 				generateOneShapeFromFile(file);
 			}
 		} catch (FileNotFoundException e) {
@@ -100,15 +99,15 @@ public class MinecraftBlockRenderExperiment implements Experiment {
 		MinecraftClient.getMinecraftClient().spawnBlocks(shiftedBlocks); // spawn blocks in minecraft world
 	}
 	/**
-	 * Shifts blocks to special corner 
+	 * Shifts blocks to POST_EVALUATION_CORNER 
 	 * @param blockTextFile text file that holds a shape
-	 * @return list of the same blocks at the special corner
+	 * @return list of the same blocks at the POST_EVALUATION_CORNER
 	 * @throws FileNotFoundException
 	 */
 	static List<Block> shiftBlocks(File blockTextFile) throws FileNotFoundException {
 		List<Block> blocks = MinecraftUtilClass.loadMAPElitesOutputFile(blockTextFile); // get block list from output file
-		MinecraftCoordinates corner = MinecraftUtilClass.minCoordinates(blocks); // Original corner (or close to it)
-		List<Block> shiftedBlocks = MinecraftUtilClass.shiftBlocksBetweenCorners(blocks, corner, ChangeCenterOfMassFitness.SPECIAL_CORNER);
+		MinecraftCoordinates shapeCorner = MinecraftUtilClass.minCoordinates(blocks); // Original corner (or close to it) -shape corner
+		List<Block> shiftedBlocks = MinecraftUtilClass.shiftBlocksBetweenCorners(blocks, shapeCorner, MinecraftClient.POST_EVALUATION_CORNER);
 		
 //		System.out.println("Spawning " + shiftedBlocks.size() + " blocks from " + dir);
 //		for(Block b: shiftedBlocks) {

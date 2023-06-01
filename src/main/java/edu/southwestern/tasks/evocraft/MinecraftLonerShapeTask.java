@@ -30,7 +30,6 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
 import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBinLabels;
-import edu.southwestern.tasks.evocraft.fitness.ChangeCenterOfMassFitness;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.file.FileUtilities;
 /**
@@ -541,7 +540,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		MinecraftCoordinates clearEnd = startPosition.add(MinecraftUtilClass.reservedSpace());
 		// Sub 1 to not delete interactive blocks
 		clearEnd = clearEnd.sub(new MinecraftCoordinates(1));
-		MinecraftClient.getMinecraftClient().fillCube(startPosition, clearEnd, BlockType.AIR);
+		MinecraftClient.getMinecraftClient().clearCube(startPosition, clearEnd);
 		return new Pair<MinecraftCoordinates,MinecraftCoordinates>(startPosition, clearEnd);
 	}
 
@@ -633,7 +632,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					double fitness = score.behaviorIndexScore();
 					if(this.internalMinecraftShapeTask.certainFlying(fitness)) {
 						@SuppressWarnings("unchecked")
-						List<Block> blocks = MMNEAT.shapeGenerator.generateShape(score.individual, ChangeCenterOfMassFitness.SPECIAL_CORNER, MMNEAT.blockSet);
+						List<Block> blocks = MMNEAT.shapeGenerator.generateShape(score.individual, MinecraftClient.POST_EVALUATION_CORNER, MMNEAT.blockSet);
 						String label = minecraftBinLabels.binLabels().get(i);
 						MinecraftLonerShapeTask.writeBlockListFile(blocks, flyingDir + File.separator + label+"ID"+score.individual.getId(), "FITNESS"+fitness+".txt");			
 					}

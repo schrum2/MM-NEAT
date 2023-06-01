@@ -21,6 +21,8 @@ hs_err_pid*
 .AppleDouble
 .LSOverride
 
+.vs
+
 # Thumbnails
 ._*
 
@@ -255,3 +257,5 @@ dagstuhlmario/
 dagstuhlzelda/
 minecraftshapetaskaccumulate/
 mariopdsl/
+waterlavaminecraft/
+minecraftmoo/
