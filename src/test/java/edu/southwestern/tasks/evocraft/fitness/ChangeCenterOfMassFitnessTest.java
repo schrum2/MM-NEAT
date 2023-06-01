@@ -232,7 +232,7 @@ public class ChangeCenterOfMassFitnessTest {
 	@Test
 	public void testFlyingWithoutMaxFitness() throws InterruptedException {
 		Parameters.initializeParameterCollections(new String[] {"minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:30","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L, "minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
-		MinecraftCoordinates cornerBS2 = new MinecraftCoordinates(0,16,-5);	// what is this the corner of?
+		MinecraftCoordinates cornerBS2 = new MinecraftCoordinates(0,16,-5);	// what is this the corner of? - shape corner
 		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 100);
 		
 		// List of flying machine blocks that should move
