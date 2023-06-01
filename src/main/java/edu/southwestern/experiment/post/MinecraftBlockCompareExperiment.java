@@ -42,7 +42,7 @@ public class MinecraftBlockCompareExperiment implements Experiment {
 			
 			//System.out.println("Clear space for both shapes");
 			// set up post evaluation corner & generate shapes
-			MinecraftClient.clearAreaAroundPostEvaluationCorner(); // TODO: May need to call twice around each specific corner
+			MinecraftClient.clearAreaAroundPostEvaluationCorner(); // May need to be modified to clear space around both corners or just clear a larger area
 			generateMultipleShapesFromFiles(shapeOneTextFile, shapeTwoTextFile);
 			
 			
