@@ -859,7 +859,7 @@ public class Parameters {
 		booleanOptions.add("minecraftMaximizeVolumeFitness", false, "rewards shapes that spread out over larger areas");
 		booleanOptions.add("minecraftMissileFitness", false, "rewards a shape for blowing up a target");
 		booleanOptions.add("minecraftClearWithGlass", true, "determines if glass is used to clear a space before air");
-
+		booleanOptions.add("minecraftChangeBlocksFitness", false, "rewards a shape for changing its blocks position");
 		
 	
 		// Double parameters
