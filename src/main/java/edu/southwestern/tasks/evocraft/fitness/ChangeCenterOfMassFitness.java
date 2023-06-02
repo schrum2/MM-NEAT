@@ -59,7 +59,6 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 		return fitnessResultForFlyingMachine(originalBlocks, history, newShapeBlockList);
 	}
 
-	// TODO: Add JavaDoc
 	/**
 	 * calculates the fitness for flying machines
 	 * Uses the change in center of mass and block lists to determine if the shape has flown away. 
