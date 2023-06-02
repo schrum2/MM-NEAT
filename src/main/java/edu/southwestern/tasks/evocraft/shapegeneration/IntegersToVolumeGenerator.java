@@ -6,25 +6,16 @@ import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
-import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
-import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
-import edu.southwestern.tasks.BoundedTask;
 import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 import edu.southwestern.tasks.evocraft.blocks.BlockSet;
 import edu.southwestern.util.datastructures.ArrayUtil;
 
 /**
- * This shape generator uses vectors to translate double values from an ArrayList into 
- * corresponding Minecraft block types. Depending on the command line parameters, there can 
- * be either one, two, or three numbers representing characteristics that a being considered that correspond to a single block. 
  * 
- * Creates a shape from a genotype
- * 
- * @author Alejandro Medina
- * Edited by Joanna Blatt Lewis
+ * @author raffertyt
  *
  */
 public class IntegersToVolumeGenerator implements ShapeGenerator<ArrayList<Integer>>, BoundedVectorGenerator {
@@ -49,8 +40,10 @@ public class IntegersToVolumeGenerator implements ShapeGenerator<ArrayList<Integ
 				//genotypeLength = 1+numberOfAttributesForBlocksInGenotype * (ranges.x() * ranges.y() * ranges.z()); 
 
 				//numOrientations = MinecraftUtilClass.getnumOrientationDirections();	//orientations being considered for this shape's blocks (all 6 or just 2)
+			
+				int maxIntGeneValue = MMNEAT.blockSet.getPossibleBlocks().length;
 				
-				upper = ArrayUtil.doubleSpecified(genotypeLength, 1.0); // upper bounds generic genotype
+				upper = ArrayUtil.doubleSpecified(genotypeLength, maxIntGeneValue); // upper bounds generic genotype
 				lower = ArrayUtil.doubleSpecified(genotypeLength, 0.0); // lower bounds generic genotype
 	}
 	/**
@@ -61,7 +54,7 @@ public class IntegersToVolumeGenerator implements ShapeGenerator<ArrayList<Integ
 	@Override
 	public List<Block> generateShape(Genotype<ArrayList<Integer>> genome, MinecraftCoordinates corner,
 			BlockSet blockSet) {
-		
+		//System.out.println("START");
 		MinecraftCoordinates ranges = MinecraftUtilClass.getRanges();
 		//boolean evolveOrientation = Parameters.parameters.booleanParameter("minecraftEvolveOrientation");
 		//boolean separatePresenceThreshold = Parameters.parameters.booleanParameter("vectorPresenceThresholdForEachBlock");
@@ -71,17 +64,22 @@ public class IntegersToVolumeGenerator implements ShapeGenerator<ArrayList<Integ
 
 		List<Block> blocks = new ArrayList<Block>();
 		ArrayList<Integer> phenotype = genome.getPhenotype();	
+		
+//		System.out.println(phenotype);
+//		System.out.println(phenotype.size());
+		
 		//Orientation blockOrientation = Orientation.NORTH; // all blocks will have orientation of north by default
 		int blockHeadIndexCounter= 0; // used to count the number of blocks added, points to the beginning of the specific block attribute list in phenotype
-		int numBlockTypes = blockSet.getPossibleBlocks().length;
-		
+		//int numBlockTypes = blockSet.getPossibleBlocks().length;
+		//System.out.println("1 is running");
 		for(int xi = 0; xi < ranges.x(); xi++) {
 			for(int yi = 0; yi < ranges.y(); yi++) {
 				for(int zi = 0; zi < ranges.z(); zi++) {		//loops through each block space to create a block
 					Block b = null;
-					
+					//System.out.println("2 s running");
 					// there will either be two or three numbers corresponding to one block's attributes/characteristics depending on if orientation is being evolved
-					int blockTypeIndex = (int)(phenotype.get(blockHeadIndexCounter)*(numBlockTypes)); // length+1 because there could be airblocks
+					int blockTypeIndex = phenotype.get(blockHeadIndexCounter);
+					//System.out.println(phenotype.get(blockHeadIndexCounter));
 					//blockHeadIndexCounter+=numberOfAttributesPerBlock;	// increments to the next block head/start index in the phenotype
 					b = new Block(corner.add(new MinecraftCoordinates(xi,yi,zi)), blockSet.getPossibleBlocks()[blockTypeIndex], MinecraftClient.Orientation.NORTH);
 					blocks.add(b);
@@ -90,7 +88,7 @@ public class IntegersToVolumeGenerator implements ShapeGenerator<ArrayList<Integ
 			}
 		}
 		assert blockHeadIndexCounter == phenotype.size() : "Counter "+blockHeadIndexCounter+" did not reach end of list: "+phenotype.size();
-
+		//stem.out.println("3 s running");
 		return blocks;	
 	}
 
@@ -111,57 +109,10 @@ public class IntegersToVolumeGenerator implements ShapeGenerator<ArrayList<Integ
 	public double[] getLowerBounds() { return lower; }
 	
 	public static void main(String[] args) {
-		int seed = 0;
+		
 		try {
-			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:10", "maxGens:100000",
-					"base:minecraft", "log:Minecraft-NorthSouthPistonCount", "saveTo:NorthSouthPistonCount",
-					"io:true", "netio:true", 
-					"launchMinecraftServerFromJava:false",
-					//"io:false", "netio:false", 
-					"mating:true", "fs:false", 
-					"minecraftContainsWholeMAPElitesArchive:true",
-					"genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype",
-					//"minecraftTypeCountFitness:true",
-					//"minecraftDiversityBlockFitness:true",
-					"minecraftChangeCenterOfMassFitness:true",
-					
-					
-					//"minecraftTypeTargetFitness:true", 
-					//"minecraftDesiredBlockCount:40",
-					"minecraftContainsWholeMAPElitesArchive:true",
-					"spaceBetweenMinecraftShapes:10","parallelMAPElitesInitialize:true",
-					
-					"vectorPresenceThresholdForEachBlock:true",
-					"voxelExpressionThreshold:0.5",
-					//"minecraftEvolveOrientation:false",
-					
-					
-					
-					//"oneOutputLabelForBlockTypeCPPN:true",
-					//"oneOutputLabelForBlockOrientationCPPN:true",
-					
-					
-					//"minecraftNorthSouthOnly:true",
-					
-					//"minecraftUpDownOnly:true",
-					
-					
-					//"minecraftOccupiedCountFitness:true",
-					//"minecraftEvolveOrientation:true",
-					//"minecraftRedirectConfinedSnakes:true",
-					//"minecraftStopConfinedSnakes:true",
-					//"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBlockCountBinLabels",
-					
-					"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesNorthSouthPistonCountBinLabels",
-					
-					"ea:edu.southwestern.evolution.mapelites.MAPElites", 
-					"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
-					"steadyStateIndividualsPerGeneration:100",
-					"minecraftXRange:2","minecraftYRange:2","minecraftZRange:2",
-					"minecraftStopConfinedSnakes:true",
-					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator",
-					"task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask", 
-					"watch:false", "cleanFrequency:-1", "saveAllChampions:true"}); 
+			MMNEAT.main("runNumber:665 randomSeed:665 minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.IntegersToVolumeGenerator minecraftChangeCenterOfMassFitness:true minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet trials:1 mu:100 maxGens:60000 minecraftContainsWholeMAPElitesArchive:false forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:false netio:false interactWithMapElitesInWorld:false mating:true fs:false ea:edu.southwestern.evolution.mapelites.MAPElites experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedIntegerValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5 crossover:edu.southwestern.evolution.crossover.ArrayCrossover".split(" ")); 
+
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}

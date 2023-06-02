@@ -70,6 +70,15 @@ public class MinecraftUtilClass {
 				Parameters.parameters.integerParameter("minecraftYRange"),
 				Parameters.parameters.integerParameter("minecraftZRange"));
 	}
+	
+	/**
+	 * Number of blocks that are reserved for each generated shape
+	 * @return total number of blocks
+	 */
+	public static int numberOfBlocksPossibleInShape() {
+		MinecraftCoordinates ranges = getRanges();
+		return ranges.x() * ranges.y() * ranges.z();
+	}
 
 	/**
 	 * Size of space around each shape, which includes all the empty space between shapes
