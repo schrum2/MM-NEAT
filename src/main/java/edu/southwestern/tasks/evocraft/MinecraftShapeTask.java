@@ -40,8 +40,6 @@ import edu.southwestern.tasks.evocraft.shapegeneration.ShapeGenerator;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.file.FileUtilities;
-import java_cup.internal_error;
-import weka.filters.unsupervised.attribute.Remove;
 
 /**
  *  MinecraftShapeTask is a class environment that lets you evaluate a phenotypes fitness geared towards minecraft shapes 
@@ -171,6 +169,9 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		if(Parameters.parameters.booleanParameter("minecraftChangeBlocksFitness")) {
 			fitness.add(new ChangeBlocksFitness());
 		}
+		
+		System.out.println(fitness);
+		
 		return fitness;
 	}
 
@@ -391,6 +392,8 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		List<TimedEvaluationMinecraftFitnessFunction> timedEvaluationFitnessFunctionsList = new ArrayList<TimedEvaluationMinecraftFitnessFunction>(numTimedFitnessFunctions);
 		List<MinecraftFitnessFunction> notTimedFitnessFunctionsList = new ArrayList<MinecraftFitnessFunction>(fitnessFunctions.size()-numTimedFitnessFunctions);
 
+		assert fitnessFunctions.size() == timedEvaluationFitnessFunctionsList.size() + notTimedFitnessFunctionsList.size();
+		
 		//sort through the passed fitness functions to separate the TimedEvaluationMinecraftFitnessFunctions from the not timed fitness functions into two lists
 		for(MinecraftFitnessFunction mff : fitnessFunctions) {
 			if(mff instanceof TimedEvaluationMinecraftFitnessFunction) {
@@ -402,7 +405,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 
 		//concatenate both lists here, a list must be made and then combined in a new list
 		double[] timedEvalResults = TimedEvaluationMinecraftFitnessFunction.multipleFitnessScores(timedEvaluationFitnessFunctionsList, shapeCorner, originalBlocks);
-		double[] notTimedEvalResults = fitnessFunctions.parallelStream().mapToDouble(ff -> ff.fitnessScore(shapeCorner,originalBlocks)).toArray();
+		double[] notTimedEvalResults = notTimedFitnessFunctionsList.parallelStream().mapToDouble(ff -> ff.fitnessScore(shapeCorner,originalBlocks)).toArray();
 		return ArrayUtil.combineArrays(timedEvalResults, notTimedEvalResults);
 
 	}
