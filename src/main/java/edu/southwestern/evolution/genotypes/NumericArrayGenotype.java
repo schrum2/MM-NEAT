@@ -1,9 +1,9 @@
 package edu.southwestern.evolution.genotypes;
 
-import edu.southwestern.evolution.EvolutionaryHistory;
-import edu.southwestern.evolution.crossover.ArrayCrossover;
-
 import java.util.ArrayList;
+
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.EvolutionaryHistory;
 
 /**
  * Genotype can represent a string of values of an arbitrary type. The name
@@ -15,9 +15,6 @@ import java.util.ArrayList;
  */
 public abstract class NumericArrayGenotype<T> implements Genotype<ArrayList<T>> {
 
-	@SuppressWarnings("rawtypes")
-	private static final ArrayCrossover ARRAY_CROSSOVER = new ArrayCrossover();
-	
 	ArrayList<T> genes;
 	private long id = EvolutionaryHistory.nextGenotypeId();
 	
@@ -57,7 +54,7 @@ public abstract class NumericArrayGenotype<T> implements Genotype<ArrayList<T>> 
 	 */
 	@SuppressWarnings("unchecked")
 	public Genotype<ArrayList<T>> crossover(Genotype<ArrayList<T>> g) {
-		return ARRAY_CROSSOVER.crossover(this, g);
+		return MMNEAT.crossoverOperator.crossover(this, g);
 	}
 
 	/**

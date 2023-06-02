@@ -1,8 +1,11 @@
 package edu.southwestern.evolution.crossover;
 
+import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.random.RandomNumbers;
+
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 /**
@@ -27,6 +30,8 @@ public class ArrayCrossover<T> extends Crossover<ArrayList<T>> {
 	 */
 	@Override
 	public Genotype<ArrayList<T>> crossover(Genotype<ArrayList<T>> toModify, Genotype<ArrayList<T>> toReturn) {
+		//System.out.println("BEFORE:"+toModify.getPhenotype() + ":"+toReturn.getPhenotype());
+		
 		// the random seeded number that corresponds to the single-point at
 		// which the crossover occurs
 		int point = RandomNumbers.randomGenerator.nextInt(toModify.getPhenotype().size());
@@ -36,6 +41,8 @@ public class ArrayCrossover<T> extends Crossover<ArrayList<T>> {
 			toReturn.getPhenotype().set(i, p.t1);
 			toModify.getPhenotype().set(i, p.t2);
 		}
+
+		//System.out.println("AFTER :"+toModify.getPhenotype() + ":"+toReturn.getPhenotype());
 		return toReturn;
 	}
 
@@ -51,5 +58,14 @@ public class ArrayCrossover<T> extends Crossover<ArrayList<T>> {
 	 */
 	public Pair<T, T> newIndexContents(T par1, T par2, int index) {
 		return swap(par1, par2);
+	}
+	
+	public static void main(String[] args) {
+		try {
+			MMNEAT.main("runNumber:100 randomSeed:100 minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftChangeCenterOfMassFitness:true minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet trials:1 mu:100 maxGens:60000 minecraftContainsWholeMAPElitesArchive:false forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:false mating:true fs:false ea:edu.southwestern.evolution.mapelites.MAPElites experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:minecraftaccumulate log:MinecraftAccumulate-MEObserverVectorPistonOrientation saveTo:MEObserverVectorPistonOrientation mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5".split(" "));
+		} catch (FileNotFoundException | NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
