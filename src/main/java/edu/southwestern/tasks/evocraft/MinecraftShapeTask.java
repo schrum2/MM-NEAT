@@ -309,7 +309,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		// Clear space around this one shape
 		MinecraftLonerShapeTask.clearBlocksForShape(MinecraftUtilClass.getRanges(), corner.sub(MinecraftUtilClass.emptySpaceOffsets()));
 
-		MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
+		//MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
 		double[] fitnessScores = calculateFitnessScores(corner,fitnessFunctions,blocks);
 
 		Score<T> score = new Score<T>(genome, fitnessScores);
