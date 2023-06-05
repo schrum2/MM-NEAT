@@ -284,8 +284,34 @@ public class MinecraftUtilClass {
 	 * @throws FileNotFoundException
 	 */
 	public static List<Block> loadMAPElitesOutputFile(File f) throws FileNotFoundException {
-		List<Block> blocks = new ArrayList<Block>();
 		Scanner s = new Scanner(f);
+		List<Block> blocks = readMinecraftBlockListFromScanner(s);
+		s.close(); // close the scanner
+		// System.out.println(blocks);
+		return blocks;
+	}
+
+	/**
+	 * Read String containing a Minecraft block list and construct the corresponding block list
+	 * 
+	 * @param s string describing list of Minecraft blocks
+	 * @return the list of blocks
+	 */
+	public static List<Block> readMinecraftBlockListFromString(String s){
+		Scanner scan = new Scanner(s);
+		List<Block> blocks = readMinecraftBlockListFromScanner(scan);
+		scan.close();
+		return blocks;
+	}
+	
+	/**
+	 * Read output containing a Minecraft block list from a Scanner and construct the corresponding block list
+	 * 
+	 * @param s Scanner of raw text that describes a list of Minecrafy blocks in a shape
+	 * @return Corresponding list of Minecraft blocks
+	 */
+	public static List<Block> readMinecraftBlockListFromScanner(Scanner s) {
+		List<Block> blocks = new ArrayList<Block>();
 		boolean start = true; // used because fencepost problem when parsing (starting "[" and ending "]" cause issues since this extra output is only at the beginning and end)
 		while(s.hasNext()) {
 			String line = ""; // empty string to begin with, will have 5 tokens per block (based on file output)
@@ -329,8 +355,6 @@ public class MinecraftUtilClass {
 				throw e;
 			}
 		}
-		s.close(); // close the scanner
-		// System.out.println(blocks);
 		return blocks;
 	}
 
