@@ -9,8 +9,10 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.genotypes.BoundedIntegerValuedGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.NetworkGenotype;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.networks.NetworkTask;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
@@ -88,7 +90,13 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			System.exit(1);
 		}
 
-		MMNEAT.discreteCeilings = ArrayUtil.intSpecified(Parameters.parameters.integerParameter("minecraftAmountOfBlocksToEvolve"),MMNEAT.blockSet.getPossibleBlocks().length);
+		if(Parameters.parameters.classParameter("genotype").equals(BoundedIntegerValuedGenotype.class)) {
+			MMNEAT.discreteCeilings = ArrayUtil.intSpecified(MinecraftUtilClass.numberOfBlocksPossibleInShape(),MMNEAT.blockSet.getPossibleBlocks().length);			
+		} else if(Parameters.parameters.classParameter("genotype").equals(TWEANNGenotype.class)) {
+			// This setting is used when evolving CPPNs that also maintain some information about the possible block types
+			MMNEAT.discreteCeilings = ArrayUtil.intSpecified(Parameters.parameters.integerParameter("minecraftAmountOfBlocksToEvolve"),MMNEAT.blockSet.getPossibleBlocks().length);
+		}
+		
 		// try catch for initialization error of NoSuchMethodException when creating shapeGenerator
 		try {
 			MMNEAT.shapeGenerator = (ShapeGenerator<T>) ClassCreation.createObject("minecraftShapeGenerator");
@@ -301,7 +309,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		// Clear space around this one shape
 		MinecraftLonerShapeTask.clearBlocksForShape(MinecraftUtilClass.getRanges(), corner.sub(MinecraftUtilClass.emptySpaceOffsets()));
 
-		MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
+		//MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
 		double[] fitnessScores = calculateFitnessScores(corner,fitnessFunctions,blocks);
 
 		Score<T> score = new Score<T>(genome, fitnessScores);
