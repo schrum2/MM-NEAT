@@ -322,7 +322,7 @@ public class ChangeCenterOfMassFitnessTest {
 		testBlockSet.add(new Block(-25,27,-35,BlockType.REDSTONE_BLOCK, Orientation.NORTH));
 		testBlockSet.add(new Block(-24,27,-35,BlockType.TNT, Orientation.NORTH));
 		
-		//slime slime slime, redstone, tnt
+		//coordinates for the base
 		int xMinCoordinate = -25;
 		int xMaxCoordinate = -23;
 		int zMinCoordinate = -36;
@@ -335,15 +335,7 @@ public class ChangeCenterOfMassFitnessTest {
 				testBlockSet.add(new Block(xIndex,yBaseCoodinate,zIndex,BlockType.SLIME, Orientation.NORTH));
 			}
 		}
-//		//creates the edges of the platform
-//		for(int xIndex = xMinCoordinate; xIndex <= xMaxCoordinate; xIndex++) {
-//			testBlockSet.add(new Block(xIndex,yBaseCoodinate+1,zMinCoordinate,BlockType.QUARTZ_BLOCK, Orientation.NORTH));
-//			testBlockSet.add(new Block(xIndex,yBaseCoodinate+1,zMaxCoordinate,BlockType.QUARTZ_BLOCK, Orientation.NORTH));
-//		}
-//		for(int zIndex = zMinCoordinate+1; zIndex < zMaxCoordinate; zIndex++) {
-//			testBlockSet.add(new Block(xMinCoordinate,yBaseCoodinate+1,zIndex,BlockType.QUARTZ_BLOCK, Orientation.NORTH));
-//			testBlockSet.add(new Block(xMaxCoordinate,yBaseCoodinate+1,zIndex,BlockType.QUARTZ_BLOCK, Orientation.NORTH));
-//		}
+
 		assertEquals(0.0, ff.fitnessScore(testCorner,testBlockSet),0.0); // Seems like a lot of wiggle room ... too much?
 	}
 	
