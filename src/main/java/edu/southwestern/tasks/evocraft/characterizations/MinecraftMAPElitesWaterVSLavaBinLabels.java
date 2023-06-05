@@ -15,7 +15,7 @@ import edu.southwestern.tasks.evocraft.fitness.NumWaterFitness;
 public class MinecraftMAPElitesWaterVSLavaBinLabels extends MinecraftMAPElites2DBlockCountBinLabels{
 
 	public MinecraftMAPElitesWaterVSLavaBinLabels() {
-		super(Arrays.asList(new NumLavaFitness(), new NumWaterFitness()));
+		super(Arrays.asList(new NumLavaFitness(), new NumPistonsFitness()));
 	}
 
 	
