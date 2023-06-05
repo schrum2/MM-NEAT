@@ -49,6 +49,19 @@ public class MissileFitness extends TimedEvaluationMinecraftFitnessFunction {
 	}
 
 	@Override
+	public Double earlyEvaluationTerminationResult(MinecraftCoordinates corner, List<Block> originalBlocks,
+			ArrayList<Pair<Long, List<Block>>> history, List<Block> newShapeBlockList) {
+		
+		// If there have been two consecutive empty readings, then assume the shape has been completely obliterated,
+		// and compute the final score in the normal fashion early.
+		if(newShapeBlockList.isEmpty() && history.get(history.size() - 2).t2.isEmpty()) {
+			return calculateFinalScore(history, corner, originalBlocks);
+		} else {
+			return null;
+		}
+	}
+	
+	@Override
 	public void preSpawnSetup(MinecraftCoordinates shapeCorner) {
 		// Create structure to be blown up
 		//changing the last add to a sub might fix the slight target offset from it intended position

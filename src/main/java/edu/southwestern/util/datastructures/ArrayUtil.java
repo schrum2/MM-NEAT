@@ -355,10 +355,8 @@ public class ArrayUtil {
 	 * Combine two double arrays into one array starting with the elements of the
 	 * first array and ending with the elements of the second array
 	 *
-	 * @param a
-	 *            starting elements
-	 * @param b
-	 *            ending elements
+	 * @param a starting elements
+	 * @param b ending elements
 	 * @return combined array
 	 */
 	public static double[] combineArrays(double[] a, double[] b) {

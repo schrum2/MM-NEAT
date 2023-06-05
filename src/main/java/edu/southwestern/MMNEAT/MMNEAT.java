@@ -365,8 +365,6 @@ public class MMNEAT {
 			EvolutionaryHistory.initGenotypeIds();
 			weightPerturber = (RandomGenerator) ClassCreation.createObject("weightPerturber");
 
-			setupCrossover();
-
 			// A task is always required
 			System.out.println("Set Task");
 			// modesToTrack has to be set before task initialization
@@ -377,6 +375,9 @@ public class MMNEAT {
 			
 			task = (Task) ClassCreation.createObject("task");
 			System.out.println("Load task: " + task);
+
+			// SBX crossover needs the bounds from the BoundedTask after it is instantiated
+			setupCrossover();
 			
 			// For all types of Ms Pac-Man tasks
 			if (Parameters.parameters.booleanParameter("scalePillsByGen")
