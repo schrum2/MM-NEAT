@@ -64,22 +64,30 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 
 	// It's kind of bad for this to be static, but there should only every be one task running at a time, so it should be ok
 	private static int numTimedFitnessFunctions;
+	
+	public static int getNumTimedFitnessFunctions() {
+		return numTimedFitnessFunctions;
+	}
 
 	// Makes sure tiebreaking is run in the same way as before
 	@SuppressWarnings("unchecked")
 	public MinecraftShapeTask() {
+		
+		fitnessFunctions = defineFitnessFromParameters();
+		numTimedFitnessFunctions = numTimedEvaluationMinecraftFitnessFunctions(fitnessFunctions);
+		
 		// Cannot allow random tie breaking since some generated shapes would be different
 		Parameters.parameters.setBoolean("randomArgMaxTieBreak", false);
 		CommonConstants.randomArgMaxTieBreak = false;
 
-		if(Parameters.parameters.booleanParameter("launchMinecraftServerFromJava")) {
-			MinecraftServer.launchServer();
-		}
-		// Launches the client script before the parallel code to assure that only one client script exists
-		MinecraftClient.getMinecraftClient();
+		if(numTimedFitnessFunctions != 0) {			//launch server if using timed fitness functions
+			if(Parameters.parameters.booleanParameter("launchMinecraftServerFromJava")) {
+				MinecraftServer.launchServer();
+			}
 
-		fitnessFunctions = defineFitnessFromParameters();
-		numTimedFitnessFunctions = numTimedEvaluationMinecraftFitnessFunctions(fitnessFunctions);
+			// Launches the client script before the parallel code to assure that only one client script exists
+			MinecraftClient.getMinecraftClient();
+		}
 
 		// try catch for initialization error of NoSuchMethodException when creating block set	
 		try {
@@ -307,6 +315,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		//System.out.println(genome.getId() + ":" + blocks);
 
 		// Clear space around this one shape
+		
 		MinecraftLonerShapeTask.clearBlocksForShape(MinecraftUtilClass.getRanges(), corner.sub(MinecraftUtilClass.emptySpaceOffsets()));
 
 		//MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
@@ -412,7 +421,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		}	
 
 		//concatenate both lists here, a list must be made and then combined in a new list
-		double[] timedEvalResults = TimedEvaluationMinecraftFitnessFunction.multipleFitnessScores(timedEvaluationFitnessFunctionsList, shapeCorner, originalBlocks);
+		double[] timedEvalResults = numTimedFitnessFunctions == 0 ? new double[0] : TimedEvaluationMinecraftFitnessFunction.multipleFitnessScores(timedEvaluationFitnessFunctionsList, shapeCorner, originalBlocks);
 		double[] notTimedEvalResults = notTimedFitnessFunctionsList.parallelStream().mapToDouble(ff -> ff.fitnessScore(shapeCorner,originalBlocks)).toArray();
 		return ArrayUtil.combineArrays(timedEvalResults, notTimedEvalResults);
 
