@@ -860,6 +860,7 @@ public class Parameters {
 		booleanOptions.add("minecraftMissileFitness", false, "rewards a shape for blowing up a target");
 		booleanOptions.add("minecraftClearWithGlass", true, "determines if glass is used to clear a space before air");
 		booleanOptions.add("minecraftChangeBlocksFitness", false, "rewards a shape for changing its blocks position");
+		booleanOptions.add("minecraftRandomFitness", false, "this is a very basic test fitness that returns a random fitnessScore");
 		
 	
 		// Double parameters
