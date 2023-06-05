@@ -274,7 +274,7 @@ public class ChangeCenterOfMassFitnessTest {
 	}
 
 	/**
-	 * TODO: i want to be able to have comments show about a variable, need to make this JavaDoc 
+	 * TODO:  JavaDoc 
 	 * @return
 	 */
 	public boolean flyingMachineWithRemainingBlocks() {
@@ -310,6 +310,42 @@ public class ChangeCenterOfMassFitnessTest {
 		return result1;
 	}
 	
+	//passed
+	@Test
+	public void testTNTnoMovement() {
+		Parameters.initializeParameterCollections(new String[] {"watch:true","minecraftClearWithGlass:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.ExplosiveBlockSet"});
+		
+		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,27,-35);
+		MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 50); // Larger buffer is important, but too large and it crashes!
+
+		ArrayList<Block> testBlockSet = new ArrayList<>();
+		testBlockSet.add(new Block(-25,27,-35,BlockType.REDSTONE_BLOCK, Orientation.NORTH));
+		testBlockSet.add(new Block(-24,27,-35,BlockType.TNT, Orientation.NORTH));
+		
+		//slime slime slime, redstone, tnt
+		int xMinCoordinate = -25;
+		int xMaxCoordinate = -23;
+		int zMinCoordinate = -36;
+		int zMaxCoordinate = -34;
+		int yBaseCoodinate = 25;
+
+		//creates the base platform
+		for(int xIndex = xMinCoordinate; xIndex <= xMaxCoordinate; xIndex++) {
+			for(int zIndex = zMinCoordinate; zIndex <= zMaxCoordinate; zIndex++) {
+				testBlockSet.add(new Block(xIndex,yBaseCoodinate,zIndex,BlockType.SLIME, Orientation.NORTH));
+			}
+		}
+//		//creates the edges of the platform
+//		for(int xIndex = xMinCoordinate; xIndex <= xMaxCoordinate; xIndex++) {
+//			testBlockSet.add(new Block(xIndex,yBaseCoodinate+1,zMinCoordinate,BlockType.QUARTZ_BLOCK, Orientation.NORTH));
+//			testBlockSet.add(new Block(xIndex,yBaseCoodinate+1,zMaxCoordinate,BlockType.QUARTZ_BLOCK, Orientation.NORTH));
+//		}
+//		for(int zIndex = zMinCoordinate+1; zIndex < zMaxCoordinate; zIndex++) {
+//			testBlockSet.add(new Block(xMinCoordinate,yBaseCoodinate+1,zIndex,BlockType.QUARTZ_BLOCK, Orientation.NORTH));
+//			testBlockSet.add(new Block(xMaxCoordinate,yBaseCoodinate+1,zIndex,BlockType.QUARTZ_BLOCK, Orientation.NORTH));
+//		}
+		assertEquals(0.0, ff.fitnessScore(testCorner,testBlockSet),0.0); // Seems like a lot of wiggle room ... too much?
+	}
 	
 	// Passes
 	@Test

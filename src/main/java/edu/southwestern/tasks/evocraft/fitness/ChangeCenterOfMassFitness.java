@@ -71,8 +71,13 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 	 */
 	private Double fitnessResultForFlyingMachine(List<Block> originalBlocks, ArrayList<Pair<Long, List<Block>>> history,
 			List<Block> newShapeBlockList) {
+		
 		// Shape was not empty before, but it is now, so it must have flown away. Award max fitness
 		if(newShapeBlockList.isEmpty()) { // If list is empty now (but was not before) then shape has flown completely away
+			if(!(shapeHistoryCheck(history))) {
+				//if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": Shape empty now but there was a moment of no change");
+				return minFitness();
+			}
 			if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": Shape empty now: max fitness!");
 			return maxFitness();
 		}
@@ -95,6 +100,32 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 		}
 		
 		return null;
+	}
+	/**
+	 * shape has already been proven to be empty now, check for slight changes vs large changes
+	 * @param history
+	 * @return
+	 */
+	private boolean shapeHistoryCheck(ArrayList<Pair<Long, List<Block>>> history) {
+		//check all of history for changes
+		//keep track of : no change, drastic change, amount of change?
+		//List<Block> previousBlockList = history.get(0).t2;
+		
+		for(int i = 2; i < history.size(); i++) {			//if the change is not present return false
+			//check for a change in the center of mass
+			
+			//check if I need all 3
+			//Vertex initialCenterOfMass = MinecraftUtilClass.getCenterOfMass(previousBlockList);
+			Vertex lastCenterOfMass = MinecraftUtilClass.getCenterOfMass(history.get(i-1).t2);
+			Vertex nextCenterOfMass = MinecraftUtilClass.getCenterOfMass(history.get(i).t2);
+			
+			// Only consider the shape to not be moving if the center of mass is the same AND the entire block list is the same
+			if(lastCenterOfMass.equals(nextCenterOfMass) && history.get(i-1).t2.equals(history.get(i).t2)) {		//this is no movement
+				//System.out.println("there was no movement and no change in the number of blocks");
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	@Override
