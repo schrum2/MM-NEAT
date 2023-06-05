@@ -3,11 +3,10 @@ package edu.southwestern.tasks.evocraft.fitness;
 import java.util.List;
 
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
-import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 /**
- *Counts air blocks in a shape using the original blocks size and the volume of the max space a shape can take up. 
+ * Counts air blocks in a shape using the original blocks size and the volume of the max space a shape can take up. 
  * @author raffertyt
  *
  */
