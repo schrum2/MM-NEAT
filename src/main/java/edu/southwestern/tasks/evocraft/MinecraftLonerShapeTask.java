@@ -538,15 +538,12 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	 * @return start and end coordinates of area that was cleared
 	 */
 	public static Pair<MinecraftCoordinates,MinecraftCoordinates> clearBlocksForShape(MinecraftCoordinates ranges, MinecraftCoordinates startPosition) {
-		if(MinecraftShapeTask.getNumTimedFitnessFunctions() == 0) {
-			return null;
-		}
 		MinecraftCoordinates clearEnd = startPosition.add(MinecraftUtilClass.reservedSpace());
 		// Sub 1 to not delete interactive blocks
 		clearEnd = clearEnd.sub(new MinecraftCoordinates(1));
-		if(MinecraftShapeTask.getNumTimedFitnessFunctions() != 0) {
+		if(MinecraftShapeTask.getNumTimedFitnessFunctions() > 0) {
 			MinecraftClient.getMinecraftClient().clearCube(startPosition, clearEnd);
-		}
+		} 
 		return new Pair<MinecraftCoordinates,MinecraftCoordinates>(startPosition, clearEnd);
 	}
 

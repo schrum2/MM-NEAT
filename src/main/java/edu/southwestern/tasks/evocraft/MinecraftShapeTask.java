@@ -39,6 +39,7 @@ import edu.southwestern.tasks.evocraft.fitness.TypeCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.TypeTargetFitness;
 import edu.southwestern.tasks.evocraft.fitness.WaterLavaSecondaryCreationFitness;
 import edu.southwestern.tasks.evocraft.shapegeneration.BoundedVectorGenerator;
+import edu.southwestern.tasks.evocraft.shapegeneration.IntegersToVolumeGenerator;
 import edu.southwestern.tasks.evocraft.shapegeneration.ShapeGenerator;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.ArrayUtil;
@@ -99,9 +100,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			System.exit(1);
 		}
 
-		if(Parameters.parameters.classParameter("genotype").equals(BoundedIntegerValuedGenotype.class)) {
-			MMNEAT.discreteCeilings = ArrayUtil.intSpecified(MinecraftUtilClass.numberOfBlocksPossibleInShape(),MMNEAT.blockSet.getPossibleBlocks().length);			
-		} else if(Parameters.parameters.classParameter("genotype").equals(TWEANNGenotype.class)) {
+		if(Parameters.parameters.classParameter("genotype").equals(TWEANNGenotype.class)) {
 			// This setting is used when evolving CPPNs that also maintain some information about the possible block types
 			MMNEAT.discreteCeilings = ArrayUtil.intSpecified(Parameters.parameters.integerParameter("minecraftAmountOfBlocksToEvolve"),MMNEAT.blockSet.getPossibleBlocks().length);
 		}
@@ -114,6 +113,11 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			e.printStackTrace();
 			System.exit(1);
 		}
+		// Have to construct IntegersToVolumeGenerator before getting the discrete ceilings from it
+		if(Parameters.parameters.classParameter("genotype").equals(BoundedIntegerValuedGenotype.class)) {
+			MMNEAT.discreteCeilings = ((IntegersToVolumeGenerator) MMNEAT.shapeGenerator).getDiscreteCeilings();		
+		}
+		
 		for(MinecraftFitnessFunction ff : fitnessFunctions) {
 			MMNEAT.registerFitnessFunction(ff.getClass().getSimpleName());
 		}		
@@ -412,8 +416,6 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		//create separate lists for the TimedEvaluationMinecraftFitnessFunctions and MinecraftFitnessFunctions
 		List<TimedEvaluationMinecraftFitnessFunction> timedEvaluationFitnessFunctionsList = new ArrayList<TimedEvaluationMinecraftFitnessFunction>(numTimedFitnessFunctions);
 		List<MinecraftFitnessFunction> notTimedFitnessFunctionsList = new ArrayList<MinecraftFitnessFunction>(fitnessFunctions.size()-numTimedFitnessFunctions);
-
-		assert fitnessFunctions.size() == timedEvaluationFitnessFunctionsList.size() + notTimedFitnessFunctionsList.size();
 		
 		//sort through the passed fitness functions to separate the TimedEvaluationMinecraftFitnessFunctions from the not timed fitness functions into two lists
 		for(MinecraftFitnessFunction mff : fitnessFunctions) {
@@ -424,6 +426,8 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			}
 		}	
 
+		assert fitnessFunctions.size() == timedEvaluationFitnessFunctionsList.size() + notTimedFitnessFunctionsList.size() : fitnessFunctions + " should match \n" + timedEvaluationFitnessFunctionsList + " and " + notTimedFitnessFunctionsList;
+		
 		//concatenate both lists here, a list must be made and then combined in a new list
 		double[] timedEvalResults = numTimedFitnessFunctions == 0 ? new double[0] : TimedEvaluationMinecraftFitnessFunction.multipleFitnessScores(timedEvaluationFitnessFunctionsList, shapeCorner, originalBlocks);
 		double[] notTimedEvalResults = notTimedFitnessFunctionsList.parallelStream().mapToDouble(ff -> ff.fitnessScore(shapeCorner,originalBlocks)).toArray();
