@@ -62,46 +62,52 @@ public class MaximizeVolumeFitnessTest {
 	//TODO: fix my mess
 	@Test
 	public void testTwoWorkingFlyingMachine() {	
-		Parameters.initializeParameterCollections(new String[] {"minecraftBlockListTextFile", "minecraftClearWithGlass:false","watch:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
-		
-		String shapeOneFileName = Parameters.parameters.stringParameter("minecraftBlockListTextFile");
-		File shapeOneTextFile = new File(shapeOneFileName);
+		Parameters.initializeParameterCollections(new String[] {"minecraftClearWithGlass:false","watch:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
 		
 		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,7,-35);
 		MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 50); // Larger buffer is important, but too large and it crashes!
 
+		String shapeOneString = " inset shape ";
+		String shapeTwoString = "insertshapetwostring";
+		List<Block> shapeOneBlockList = MinecraftUtilClass.readMinecraftBlockListFromString(shapeOneString);
+		List<Block> shapeTwoBlockList = MinecraftUtilClass.readMinecraftBlockListFromString(shapeTwoString);
+		
+		//overall test block set
 		List<Block> testBlockSet = new ArrayList<Block>();
 		//add blocks using file here
-		//List<Block> List1 = MinecraftBlockCompareExperiment.shiftBlocks(shapeOneTextFile,  MinecraftClient.POST_EVALUATION_SHAPE_CORNER);
-		List<Block> listOne = new ArrayList<Block>();
-		List<Block> listTwo = new ArrayList<Block>();
 		
-		try {
-			listOne = MinecraftUtilClass.loadMAPElitesOutputFile(shapeOneTextFile);
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-		//MinecraftCoordinates originalPostEvaluationShapeCornerCorner = new MinecraftCoordinates(MinecraftClient.POST_EVALUATION_SHAPE_CORNER);
-		MinecraftCoordinates originalShapeCoordinates = MinecraftUtilClass.minCoordinates(listOne);
-		listOne = MinecraftUtilClass.shiftBlocksBetweenCorners(listOne, originalShapeCoordinates, MinecraftClient.POST_EVALUATION_SHAPE_CORNER);
+		
+		//shift coordinates based on the testCorner
+//		MinecraftCoordinates originalShapeCoordinates = MinecraftUtilClass.minCoordinates(testBlockSet);
+//		testBlockSet = MinecraftUtilClass.shiftBlocksBetweenCorners(testBlockSet, originalShapeCoordinates, testCorner);
+		
+		
+		//create coordinates for shape one and shift over
+		
+		//original shape coordinates for shape one
+		MinecraftCoordinates originalShapeCoordinates = MinecraftUtilClass.minCoordinates(shapeOneBlockList);
+		
+		//shifting shape one block list to test corner
+		shapeOneBlockList = MinecraftUtilClass.shiftBlocksBetweenCorners(shapeOneBlockList, originalShapeCoordinates, testCorner);
 		//list one has list of blocks that are shifted
 		
-		//list two handling
-		try {
-			listTwo = MinecraftUtilClass.loadMAPElitesOutputFile(shapeOneTextFile);
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
+		
+		//augment testcorner by 
+		//Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")
+		
+		MinecraftCoordinates augmentedCoordinates = new MinecraftCoordinates(testCorner.sub(Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")));
+		
 		//MinecraftCoordinates augmentingCoordinates = new MinecraftCoordinates(Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes"));
 		//MinecraftCoordinates augmentedCoordinates = new MinecraftCoordinates(MinecraftClient.POST_EVALUATION_SHAPE_CORNER);
-		originalShapeCoordinates = MinecraftUtilClass.minCoordinates(listTwo);
-		testBlockSet = MinecraftUtilClass.shiftBlocksBetweenCorners(listTwo, originalShapeCoordinates, MinecraftClient.POST_EVALUATION_SHAPE_CORNER.sub(Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")));
-		testBlockSet.addAll(listOne);
+		originalShapeCoordinates = MinecraftUtilClass.minCoordinates(shapeTwoBlockList);
+		testBlockSet = MinecraftUtilClass.shiftBlocksBetweenCorners(shapeTwoBlockList, originalShapeCoordinates, augmentedCoordinates);
 		
-	
+		
+		testBlockSet.addAll(shapeOneBlockList);
+		
 		assertEquals(0.0,testInstance.fitnessScore(testCorner,testBlockSet),0.0);
 	}
-	//TODO: double check it works
+	//TODO: double check it works - does not work
 	@Test
 	public void testNoInteraction() {	
 		Parameters.initializeParameterCollections(new String[] {"minecraftClearWithGlass:false","watch:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
@@ -116,33 +122,23 @@ public class MaximizeVolumeFitnessTest {
 		assertEquals(0.0,testInstance.fitnessScore(testCorner,testBlockSet),0.0);
 	}
 	
+	//TODO: 
 	@Test
 	public void testWorkingFlyingMachine() {	
-		Parameters.initializeParameterCollections(new String[] {"minecraftBlockListTextFile:\\minecraftmoo\\NSGA2FlyVsMissile0\\flyingMachines\\ID113_.txt", "minecraftClearWithGlass:false","watch:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.ExplodingBlockSet"});
-		
-		String shapeOneFileName = Parameters.parameters.stringParameter("minecraftBlockListTextFile");
-		File shapeOneTextFile = new File(shapeOneFileName);
-		
+		Parameters.initializeParameterCollections(new String[] {"minecraftClearWithGlass:false","watch:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+
 		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,7,-35);
 		MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 50); // Larger buffer is important, but too large and it crashes!
+		
+		
+		String blockString = "[QUARTZ_BLOCK at (-1433,37,-1432) oriented NORTH, TNT at (-1433,37,-1431) oriented UP, QUARTZ_BLOCK at (-1433,37,-1429) oriented NORTH, REDSTONE_BLOCK at (-1433,38,-1433) oriented NORTH, OBSERVER at (-1433,38,-1431) oriented DOWN, QUARTZ_BLOCK at (-1433,39,-1433) oriented UP, OBSERVER at (-1433,39,-1431) oriented NORTH, TNT at (-1433,40,-1431) oriented WEST, QUARTZ_BLOCK at (-1433,40,-1430) oriented NORTH, OBSERVER at (-1433,41,-1433) oriented NORTH, QUARTZ_BLOCK at (-1432,37,-1432) oriented NORTH, QUARTZ_BLOCK at (-1432,37,-1430) oriented UP, PISTON at (-1432,39,-1429) oriented NORTH, STICKY_PISTON at (-1432,40,-1433) oriented NORTH, QUARTZ_BLOCK at (-1432,40,-1432) oriented NORTH, QUARTZ_BLOCK at (-1432,40,-1431) oriented NORTH, OBSERVER at (-1432,41,-1433) oriented EAST, QUARTZ_BLOCK at (-1432,41,-1430) oriented EAST, QUARTZ_BLOCK at (-1431,37,-1431) oriented NORTH, QUARTZ_BLOCK at (-1431,37,-1429) oriented NORTH, STICKY_PISTON at (-1431,38,-1432) oriented NORTH, QUARTZ_BLOCK at (-1431,39,-1433) oriented NORTH, QUARTZ_BLOCK at (-1431,41,-1432) oriented NORTH, QUARTZ_BLOCK at (-1430,38,-1430) oriented WEST, TNT at (-1430,39,-1432) oriented NORTH, QUARTZ_BLOCK at (-1430,40,-1433) oriented DOWN, QUARTZ_BLOCK at (-1430,41,-1433) oriented EAST, REDSTONE_BLOCK at (-1430,41,-1432) oriented WEST, QUARTZ_BLOCK at (-1429,37,-1430) oriented UP, QUARTZ_BLOCK at (-1429,37,-1429) oriented EAST, TNT at (-1429,39,-1432) oriented NORTH, QUARTZ_BLOCK at (-1429,41,-1433) oriented NORTH, TNT at (-1429,41,-1432) oriented SOUTH, SLIME at (-1429,41,-1429) oriented NORTH]";
+		List<Block> testBlockSet = MinecraftUtilClass.readMinecraftBlockListFromString(blockString);
 
-		List<Block> testBlockSet = new ArrayList<Block>();
-		//add blocks using file here
-		//List<Block> List1 = MinecraftBlockCompareExperiment.shiftBlocks(shapeOneTextFile,  MinecraftClient.POST_EVALUATION_SHAPE_CORNER);
-		List<Block> listOne = new ArrayList<Block>();
+
+		MinecraftCoordinates originalShapeCoordinates = MinecraftUtilClass.minCoordinates(testBlockSet);
+		testBlockSet = MinecraftUtilClass.shiftBlocksBetweenCorners(testBlockSet, originalShapeCoordinates, testCorner);
 		
-		try {
-			listOne = MinecraftUtilClass.loadMAPElitesOutputFile(shapeOneTextFile);
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-		//MinecraftCoordinates originalPostEvaluationShapeCornerCorner = new MinecraftCoordinates(MinecraftClient.POST_EVALUATION_SHAPE_CORNER);
-		MinecraftCoordinates originalShapeCoordinates = MinecraftUtilClass.minCoordinates(listOne);
-		testBlockSet = MinecraftUtilClass.shiftBlocksBetweenCorners(listOne, originalShapeCoordinates, MinecraftClient.POST_EVALUATION_SHAPE_CORNER);
-		//list one has list of blocks that are shifted
-		
-	
-		assertEquals(0.0,testInstance.fitnessScore(testCorner,testBlockSet),0.0);
+		assertEquals(125.0,testInstance.fitnessScore(testCorner,testBlockSet),0.0);
 	}
 	
 	@Test
