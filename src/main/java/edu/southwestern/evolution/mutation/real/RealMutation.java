@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.southwestern.evolution.mutation.real;
 
 import edu.southwestern.evolution.genotypes.Genotype;
@@ -9,7 +5,8 @@ import edu.southwestern.evolution.genotypes.RealValuedGenotype;
 import edu.southwestern.evolution.mutation.Mutation;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.parameters.Parameters;
-import java.util.ArrayList;
+import java.util.*;
+import java.util.stream.*;
 
 /**
  *
@@ -18,9 +15,11 @@ import java.util.ArrayList;
 public abstract class RealMutation extends Mutation<ArrayList<Double>> {
 
 	protected final double rate;
+	private int numVectorIndexMutations;
 
 	public RealMutation() {
 		this.rate = Parameters.parameters.doubleParameter("realMutateRate");
+		this.numVectorIndexMutations = Parameters.parameters.integerParameter("numVectorIndexMutations");
 	}
 
 	protected RealMutation(String paramLabel) {
@@ -41,10 +40,25 @@ public abstract class RealMutation extends Mutation<ArrayList<Double>> {
 
 	@Override
 	public void mutate(Genotype<ArrayList<Double>> genotype) {
-		for (int i = 0; i < genotype.getPhenotype().size(); i++) {
-			if (perform()) {
-				mutateIndex((RealValuedGenotype) genotype, i);
+		if(numVectorIndexMutations == -1) {
+			// Each index has its own chance of mutation
+			for (int i = 0; i < genotype.getPhenotype().size(); i++) {
+				if (perform()) {
+					mutateIndex((RealValuedGenotype) genotype, i);
+				}
 			}
+		} else {
+			// Pick several different indices and mutate each one
+			List<Integer> indices = IntStream.range(0, genotype.getPhenotype().size())
+	                .boxed()
+	                .collect(Collectors.toList());
+	        Collections.shuffle(indices);
+	        // shuffle the indices of the genotype: no repeats
+	        
+	        // mutate each index
+	        for(int index : indices) {
+	        	mutateIndex((RealValuedGenotype) genotype, index);
+	        }
 		}
 	}
 

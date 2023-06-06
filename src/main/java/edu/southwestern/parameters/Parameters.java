@@ -394,6 +394,7 @@ public class Parameters {
 		integerOptions.add("minecraftTargetDistancefromShapeZ", 0, "The distance from shape origin to target on the Z");
 		integerOptions.add("minecraftMissleTargetBlockType", BlockType.SLIME.ordinal(), "Block that is used in the target");
 		integerOptions.add("minecraftPostCornerAdjustY", 0, "This is an int whose value will be added to the y-coordinate of the POST_EVALUATION_CORNER to adjust the special shape");
+		integerOptions.add("numVectorIndexMutations", -1, "If -1, thne ignore this. Else, vector mutations target this specific number of indicies per occurrence rather than have a per-index mutation rate");
 		
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
