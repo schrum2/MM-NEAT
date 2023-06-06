@@ -33,10 +33,10 @@ public class ChangeCenterOfMassFitnessTest {
 	public static void setUpBeforeClass() throws Exception {
 		CommonConstants.netio = false;
 		Parameters.initializeParameterCollections(new String[] {"watch:true","minecraftClearWithGlass:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
-		if(!MinecraftServer.serverIsRunner()) {
-			MinecraftServer.launchServer();
-			MinecraftClient.getMinecraftClient();
-		}
+//		if(!MinecraftServer.serverIsRunner()) {
+//			MinecraftServer.launchServer();
+//			MinecraftClient.getMinecraftClient();
+//		}
 		CommonConstants.watch = true; // Displays debugging info
 	}
 
@@ -343,7 +343,7 @@ public class ChangeCenterOfMassFitnessTest {
 		assertEquals(0.0, ff.fitnessScore(testCorner,testBlockSet),0.0); // Seems like a lot of wiggle room ... too much?
 	}
 	
-	//passed
+	//passed TODO: tnt
 	//uses a string to create shape. Is a large shape that explodes and leaves some blocks behind
 	@Test
 	public void testTNTnoMovementLarger() {
@@ -358,7 +358,7 @@ public class ChangeCenterOfMassFitnessTest {
 		List<Block> testBlockSet = MinecraftUtilClass.readMinecraftBlockListFromString(listString);
 
 
-		//System.out.println("blocklist: " + shapeOriginalBlockList);
+		//System.out.println("blocklist: " + testBlockSet);
 
 		//shift coordinates based on the testCorner
 		MinecraftCoordinates originalShapeCoordinates = MinecraftUtilClass.minCoordinates(testBlockSet);
@@ -366,6 +366,42 @@ public class ChangeCenterOfMassFitnessTest {
 
 
 		assertEquals(0.0, ff.fitnessScore(testCorner,testBlockSet),0.0); 
+	}
+	
+	//testing a flying machine with something on it
+	@Test
+	public void testTNTwithFlyingMachine() {
+		//testing a flying machine that has tnt on it
+		Parameters.initializeParameterCollections(new String[] {"watch:true","minecraftClearWithGlass:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.ExplosiveBlockSet"});
+
+		//set up test corner and clear area
+		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,27,-35);
+		MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 50); // Larger buffer is important, but too large and it crashes!
+		
+		ArrayList<Block> testShapeBlockList = new ArrayList<>();
+		// Bottom layer
+		testShapeBlockList.add(new Block(1,11,1,BlockType.PISTON,Orientation.NORTH));
+		testShapeBlockList.add(new Block(1,11,0,BlockType.SLIME,Orientation.NORTH));
+		testShapeBlockList.add(new Block(1,11,-1,BlockType.STICKY_PISTON,Orientation.SOUTH));
+		testShapeBlockList.add(new Block(1,11,-2,BlockType.PISTON,Orientation.NORTH));
+		testShapeBlockList.add(new Block(1,11,-4,BlockType.SLIME,Orientation.NORTH));
+		// Top layer
+		testShapeBlockList.add(new Block(1,12,0,BlockType.REDSTONE_BLOCK,Orientation.NORTH));
+		testShapeBlockList.add(new Block(1,12,-4,BlockType.REDSTONE_BLOCK,Orientation.NORTH));
+		
+		//tnt
+		testShapeBlockList.add(new Block(1,12,-3,BlockType.TNT,Orientation.NORTH));
+		
+		// Activate
+		testShapeBlockList.add(new Block(1,13,-4,BlockType.QUARTZ_BLOCK,Orientation.NORTH));
+		
+		System.out.println("shortTimeBetweenMinecraftReads = " + Parameters.parameters.longParameter("shortTimeBetweenMinecraftReads"));
+		//MinecraftClient.getMinecraftClient().spawnBlocks(testShapeBlockList);
+
+		
+		double wiggleRoom = 2.0;
+		double expected = 17.0;
+		assertEquals(expected, ff.fitnessScore(testCorner,testShapeBlockList),wiggleRoom);
 	}
 
 	// Passes

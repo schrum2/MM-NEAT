@@ -59,6 +59,7 @@ public class MaximizeVolumeFitnessTest {
 		CommonConstants.watch = false; // Displays debugging info
 	}
 	
+	//TODO: fix my mess
 	@Test
 	public void testTwoWorkingFlyingMachine() {	
 		Parameters.initializeParameterCollections(new String[] {"minecraftBlockListTextFile", "minecraftClearWithGlass:false","watch:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
@@ -100,7 +101,7 @@ public class MaximizeVolumeFitnessTest {
 	
 		assertEquals(0.0,testInstance.fitnessScore(testCorner,testBlockSet),0.0);
 	}
-	
+	//TODO: double check it works
 	@Test
 	public void testNoInteraction() {	
 		Parameters.initializeParameterCollections(new String[] {"minecraftClearWithGlass:false","watch:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
