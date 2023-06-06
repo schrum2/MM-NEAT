@@ -21,7 +21,8 @@ import edu.southwestern.util.random.RandomNumbers;
 
 public class Archive<T> {
 	
-	Vector<Score<T>> archive; // Vector is used because it is thread-safe
+	//Vector<Vector<Score<T>>> archive; // Vector is used because it is thread-safe
+	Vector<Score<T>> archive;
 	private int occupiedBins; 
 	private BinLabels mapping;
 	private boolean saveElites;
@@ -39,6 +40,7 @@ public class Archive<T> {
 		}
 		int numBins = mapping.binLabels().size();
 		System.out.println("Archive contains "+numBins+" number of bins");
+		//archive = new Vector<Vector<Score<T>>>(numBins);
 		archive = new Vector<Score<T>>(numBins);
 		occupiedBins = 0;
 		// Archive directory

@@ -3,7 +3,9 @@ package edu.southwestern.tasks.evocraft.fitness;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -274,7 +276,7 @@ public class ChangeCenterOfMassFitnessTest {
 	}
 
 	/**
-	 * TODO: i want to be able to have comments show about a variable, need to make this JavaDoc 
+	 * TODO:  JavaDoc 
 	 * @return
 	 */
 	public boolean flyingMachineWithRemainingBlocks() {
@@ -310,6 +312,73 @@ public class ChangeCenterOfMassFitnessTest {
 		return result1;
 	}
 	
+	//passed
+	@Test
+	public void testTNTnoMovement() {
+		Parameters.initializeParameterCollections(new String[] {"watch:true","minecraftClearWithGlass:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.ExplosiveBlockSet"});
+		
+		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,27,-35);
+		MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 50); // Larger buffer is important, but too large and it crashes!
+
+		ArrayList<Block> testBlockSet = new ArrayList<>();
+		testBlockSet.add(new Block(-25,27,-35,BlockType.REDSTONE_BLOCK, Orientation.NORTH));
+		testBlockSet.add(new Block(-24,27,-35,BlockType.TNT, Orientation.NORTH));
+		
+		//coordinates for the base
+		int xMinCoordinate = -25;
+		int xMaxCoordinate = -23;
+		int zMinCoordinate = -36;
+		int zMaxCoordinate = -34;
+		int yBaseCoodinate = 25;
+
+		//creates the base platform
+		for(int xIndex = xMinCoordinate; xIndex <= xMaxCoordinate; xIndex++) {
+			for(int zIndex = zMinCoordinate; zIndex <= zMaxCoordinate; zIndex++) {
+				testBlockSet.add(new Block(xIndex,yBaseCoodinate,zIndex,BlockType.SLIME, Orientation.NORTH));
+			}
+		}
+
+		assertEquals(0.0, ff.fitnessScore(testCorner,testBlockSet),0.0); // Seems like a lot of wiggle room ... too much?
+	}
+	//passed
+		@Test
+		public void testTNTnoMovementLarger() {
+			Parameters.initializeParameterCollections(new String[] {"minecraftBlockListTextFile:\\\\minecraftmoo\\\\NSGA2FlyVsMissile0\\\\flyingMachines\\\\ID113_.txt","watch:true","minecraftClearWithGlass:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.ExplosiveBlockSet"});
+			
+			MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,27,-35);
+			MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 50); // Larger buffer is important, but too large and it crashes!
+//
+//			ArrayList<Block> testBlockSet = new ArrayList<>();
+//			testBlockSet.add(new Block(-25,27,-35,BlockType.REDSTONE_BLOCK, Orientation.NORTH));
+//			testBlockSet.add(new Block(-24,27,-35,BlockType.TNT, Orientation.NORTH));
+//			
+//			
+			String shapeOneFileName = Parameters.parameters.stringParameter("minecraftBlockListTextFile");
+			File shapeOneTextFile = new File(shapeOneFileName);
+			
+			//MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,7,-35);
+			MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 50); // Larger buffer is important, but too large and it crashes!
+
+			List<Block> testBlockSet = new ArrayList<Block>();
+			//add blocks using file here
+			//List<Block> List1 = MinecraftBlockCompareExperiment.shiftBlocks(shapeOneTextFile,  MinecraftClient.POST_EVALUATION_SHAPE_CORNER);
+			List<Block> listOne = new ArrayList<Block>();
+			
+			try {
+				listOne = MinecraftUtilClass.loadMAPElitesOutputFile(shapeOneTextFile);
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+			//MinecraftCoordinates originalPostEvaluationShapeCornerCorner = new MinecraftCoordinates(MinecraftClient.POST_EVALUATION_SHAPE_CORNER);
+			MinecraftCoordinates originalShapeCoordinates = MinecraftUtilClass.minCoordinates(listOne);
+			testBlockSet = MinecraftUtilClass.shiftBlocksBetweenCorners(listOne, originalShapeCoordinates, MinecraftClient.POST_EVALUATION_SHAPE_CORNER);
+			//list one has list of blocks that are shifted
+			/**
+			 * [QUARTZ_BLOCK at (-1553,158,-1553) oriented EAST, TNT at (-1553,159,-1550) oriented UP, PISTON at (-1553,159,-1549) oriented EAST, QUARTZ_BLOCK at (-1553,160,-1552) oriented NORTH, SLIME at (-1553,161,-1551) oriented UP, PISTON at (-1553,161,-1550) oriented NORTH, QUARTZ_BLOCK at (-1552,159,-1552) oriented WEST, QUARTZ_BLOCK at (-1552,160,-1553) oriented SOUTH, QUARTZ_BLOCK at (-1552,160,-1552) oriented DOWN, QUARTZ_BLOCK at (-1551,157,-1552) oriented NORTH, QUARTZ_BLOCK at (-1551,158,-1553) oriented WEST, PISTON at (-1551,159,-1552) oriented UP, TNT at (-1551,161,-1552) oriented NORTH, REDSTONE_BLOCK at (-1551,161,-1551) oriented NORTH, QUARTZ_BLOCK at (-1550,160,-1552) oriented NORTH, PISTON at (-1550,160,-1551) oriented NORTH, QUARTZ_BLOCK at (-1550,161,-1550) oriented UP, QUARTZ_BLOCK at (-1549,157,-1553) oriented DOWN, OBSERVER at (-1549,157,-1552) oriented DOWN, QUARTZ_BLOCK at (-1549,157,-1551) oriented NORTH, QUARTZ_BLOCK at (-1549,157,-1550) oriented NORTH, REDSTONE_BLOCK at (-1549,158,-1551) oriented NORTH, QUARTZ_BLOCK at (-1549,158,-1549) oriented UP, QUARTZ_BLOCK at (-1549,159,-1550) oriented NORTH, QUARTZ_BLOCK at (-1549,161,-1552) oriented NORTH, SLIME at (-1549,161,-1551) oriented SOUTH, QUARTZ_BLOCK at (-1549,161,-1550) oriented NORTH]
+			 */
+
+			assertEquals(0.0, ff.fitnessScore(testCorner,testBlockSet),0.0); // Seems like a lot of wiggle room ... too much?
+		}
 	
 	// Passes
 	@Test
