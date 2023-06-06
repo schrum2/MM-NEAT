@@ -33,10 +33,10 @@ public class ChangeCenterOfMassFitnessTest {
 	public static void setUpBeforeClass() throws Exception {
 		CommonConstants.netio = false;
 		Parameters.initializeParameterCollections(new String[] {"watch:true","minecraftClearWithGlass:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
-//		if(!MinecraftServer.serverIsRunner()) {
-//			MinecraftServer.launchServer();
-//			MinecraftClient.getMinecraftClient();
-//		}
+		if(!MinecraftServer.serverIsRunner()) {
+			MinecraftServer.launchServer();
+			MinecraftClient.getMinecraftClient();
+		}
 		CommonConstants.watch = true; // Displays debugging info
 	}
 
@@ -344,20 +344,13 @@ public class ChangeCenterOfMassFitnessTest {
 	
 		@Test
 		//undo all file stuff
-		public void testTNTnoMovementLarger() throws FileNotFoundException {
-			Parameters.initializeParameterCollections(new String[] {"minecraftBlockListTextFile:\\minecraftmoo\\\\NSGA2FlyVsMissile0\\\\flyingMachines\\\\ID113_.txt","watch:true","minecraftClearWithGlass:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.ExplosiveBlockSet"});
+		public void testTNTnoMovementLarger() {
+			Parameters.initializeParameterCollections(new String[] {"watch:true","minecraftClearWithGlass:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.ExplosiveBlockSet"});
 			
 			//set up test corner and clear area
 			MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,27,-35);
 			MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 50); // Larger buffer is important, but too large and it crashes!
-
-			//readMinecraftBlockListFromString("")
-			//read in file and convert to File
-			//String shapeOneFileName = Parameters.parameters.stringParameter("minecraftBlockListTextFile");
-			//File shapeOneTextFile = new File(shapeOneFileName);
 			
-			//MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,7,-35);
-			//MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 50); // Larger buffer is important, but too large and it crashes!
 			String listString = "[QUARTZ_BLOCK at (-1433,37,-1432) oriented NORTH, TNT at (-1433,37,-1431) oriented UP, QUARTZ_BLOCK at (-1433,37,-1429) oriented NORTH, REDSTONE_BLOCK at (-1433,38,-1433) oriented NORTH, OBSERVER at (-1433,38,-1431) oriented DOWN, QUARTZ_BLOCK at (-1433,39,-1433) oriented UP, OBSERVER at (-1433,39,-1431) oriented NORTH, TNT at (-1433,40,-1431) oriented WEST, QUARTZ_BLOCK at (-1433,40,-1430) oriented NORTH, OBSERVER at (-1433,41,-1433) oriented NORTH, QUARTZ_BLOCK at (-1432,37,-1432) oriented NORTH, QUARTZ_BLOCK at (-1432,37,-1430) oriented UP, PISTON at (-1432,39,-1429) oriented NORTH, STICKY_PISTON at (-1432,40,-1433) oriented NORTH, QUARTZ_BLOCK at (-1432,40,-1432) oriented NORTH, QUARTZ_BLOCK at (-1432,40,-1431) oriented NORTH, OBSERVER at (-1432,41,-1433) oriented EAST, QUARTZ_BLOCK at (-1432,41,-1430) oriented EAST, QUARTZ_BLOCK at (-1431,37,-1431) oriented NORTH, QUARTZ_BLOCK at (-1431,37,-1429) oriented NORTH, STICKY_PISTON at (-1431,38,-1432) oriented NORTH, QUARTZ_BLOCK at (-1431,39,-1433) oriented NORTH, QUARTZ_BLOCK at (-1431,41,-1432) oriented NORTH, QUARTZ_BLOCK at (-1430,38,-1430) oriented WEST, TNT at (-1430,39,-1432) oriented NORTH, QUARTZ_BLOCK at (-1430,40,-1433) oriented DOWN, QUARTZ_BLOCK at (-1430,41,-1433) oriented EAST, REDSTONE_BLOCK at (-1430,41,-1432) oriented WEST, QUARTZ_BLOCK at (-1429,37,-1430) oriented UP, QUARTZ_BLOCK at (-1429,37,-1429) oriented EAST, TNT at (-1429,39,-1432) oriented NORTH, QUARTZ_BLOCK at (-1429,41,-1433) oriented NORTH, TNT at (-1429,41,-1432) oriented SOUTH, SLIME at (-1429,41,-1429) oriented NORTH]";
 			//List<Block> testBlockSet = new ArrayList<Block>();readMinecraftBlockListFromString("")
 			List<Block> testBlockSet = MinecraftUtilClass.readMinecraftBlockListFromString(listString);
