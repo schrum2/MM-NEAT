@@ -115,6 +115,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		}
 		// Have to construct IntegersToVolumeGenerator before getting the discrete ceilings from it
 		if(Parameters.parameters.classParameter("genotype").equals(BoundedIntegerValuedGenotype.class)) {
+			System.out.println("Get discrete ceilings");
 			MMNEAT.discreteCeilings = ((IntegersToVolumeGenerator) MMNEAT.shapeGenerator).getDiscreteCeilings();		
 		}
 		

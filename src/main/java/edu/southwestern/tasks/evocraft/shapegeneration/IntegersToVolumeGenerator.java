@@ -48,6 +48,7 @@ public class IntegersToVolumeGenerator implements ShapeGenerator<ArrayList<Integ
 		int numBlockTypes = MMNEAT.blockSet.getPossibleBlocks().length;
 		int numPresenceValues = 2;
 
+		System.out.println("Bounded genotype length will be: "+genotypeLength);
 		discreteCeilings = new int[genotypeLength];
 		for(int i = 0; i < genotypeLength; i += numberOfAttributesPerBlock) {
 			int current = i;
@@ -96,18 +97,19 @@ public class IntegersToVolumeGenerator implements ShapeGenerator<ArrayList<Integ
 						final int PRESENCE_INDEX = blockHeadIndexCounter;
 						final int TYPE_INDEX = blockHeadIndexCounter+1;
 						
-						assert PRESENCE_INDEX < phenotype.size() : ""+phenotype+" size "+phenotype.size()+"\nx="+xi+",y="+yi+",z="+zi+",blockHeadIndexCounter="+blockHeadIndexCounter+"\n"+Arrays.toString(discreteCeilings)+":"+genotypeLength;
+						assert PRESENCE_INDEX < phenotype.size() : ""+phenotype+" size "+phenotype.size()+"\nx="+xi+",y="+yi+",z="+zi+",blockHeadIndexCounter="+blockHeadIndexCounter+"\n"+Arrays.toString(discreteCeilings)+":"+genotypeLength+":numberOfAttributesPerBlock="+numberOfAttributesPerBlock;
 						
 						if(phenotype.get(PRESENCE_INDEX) == PRESENCE_YES) { // add a block
 							int blockTypeIndex = phenotype.get(TYPE_INDEX);
 							if(evolveOrientation) {
 								final int ORIENTATION_INDEX = blockHeadIndexCounter+2;
+								assert ORIENTATION_INDEX < phenotype.size() : ""+phenotype+" size "+phenotype.size()+"\nx="+xi+",y="+yi+",z="+zi+",blockHeadIndexCounter="+blockHeadIndexCounter+"\n"+Arrays.toString(discreteCeilings)+":"+genotypeLength+":numberOfAttributesPerBlock="+numberOfAttributesPerBlock;
 								blockOrientation = MinecraftUtilClass.getOrientations()[phenotype.get(ORIENTATION_INDEX)];
 							}
 							b = new Block(corner.add(new MinecraftCoordinates(xi,yi,zi)), blockSet.getPossibleBlocks()[blockTypeIndex], blockOrientation);
 						} else {
 							// else do not add a block
-							assert phenotype.get(PRESENCE_INDEX) == PRESENCE_NO : PRESENCE_INDEX+":"+phenotype+" size "+phenotype.size()+"\nx="+xi+",y="+yi+",z="+zi+",blockHeadIndexCounter="+blockHeadIndexCounter+"\n"+Arrays.toString(discreteCeilings)+":"+genotypeLength;
+							assert phenotype.get(PRESENCE_INDEX) == PRESENCE_NO : PRESENCE_INDEX+":"+phenotype+" size "+phenotype.size()+"\nx="+xi+",y="+yi+",z="+zi+",blockHeadIndexCounter="+blockHeadIndexCounter+"\n"+Arrays.toString(discreteCeilings)+":"+genotypeLength+":numberOfAttributesPerBlock="+numberOfAttributesPerBlock;
 						}
 
 					} else { // there will either be one or two numbers per block depending on if orientation is being evolved
