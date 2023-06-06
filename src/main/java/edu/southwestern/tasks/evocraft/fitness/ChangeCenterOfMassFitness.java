@@ -95,6 +95,10 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 			Vertex farthestCenterOfMass = getFarthestCenterOfMass(history, initialCenterOfMass, lastCenterOfMass);
 			Double result = checkCreditForDepartedBlocks(originalBlocks.size(), initialCenterOfMass, farthestCenterOfMass, newShapeBlockList);
 			if(result != null) {
+				if(!(shapeHistoryCheck(history))) {
+					if(CommonConstants.watch) System.out.println("history fail");
+					return minFitness();
+				}
 				return result;
 			}
 		}
@@ -110,18 +114,23 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 		//check all of history for changes
 		//keep track of : no change, drastic change, amount of change?
 		//List<Block> previousBlockList = history.get(0).t2;
-		
+		System.out.println("in Shape history check");
+
 		for(int i = 2; i < history.size(); i++) {			//if the change is not present return false
 			//check for a change in the center of mass
 			
 			//check if I need all 3
-			//Vertex initialCenterOfMass = MinecraftUtilClass.getCenterOfMass(previousBlockList);
+			Vertex initialCenterOfMass = MinecraftUtilClass.getCenterOfMass(history.get(0).t2);
 			Vertex lastCenterOfMass = MinecraftUtilClass.getCenterOfMass(history.get(i-1).t2);
 			Vertex nextCenterOfMass = MinecraftUtilClass.getCenterOfMass(history.get(i).t2);
 			
+			Vertex farthestCenterOfMass = getFarthestCenterOfMass(history, initialCenterOfMass, lastCenterOfMass);
+
+			
 			// Only consider the shape to not be moving if the center of mass is the same AND the entire block list is the same
-			if(lastCenterOfMass.equals(nextCenterOfMass) && history.get(i-1).t2.equals(history.get(i).t2)) {		//this is no movement
-				//System.out.println("there was no movement and no change in the number of blocks");
+			if(lastCenterOfMass.equals(nextCenterOfMass) && history.get(i-1).t2.equals(history.get(i).t2) && farthestCenterOfMass == initialCenterOfMass) {		//this is no movement
+				System.out.println("there was no movement and no change in the number of blocks, farthest center of mass = initial");
+				//this caught a moving shape
 				return false;
 			}
 		}
