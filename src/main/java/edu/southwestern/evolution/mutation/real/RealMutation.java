@@ -1,12 +1,16 @@
 package edu.southwestern.evolution.mutation.real;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.RealValuedGenotype;
 import edu.southwestern.evolution.mutation.Mutation;
-import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.parameters.Parameters;
-import java.util.*;
-import java.util.stream.*;
+import edu.southwestern.util.random.RandomNumbers;
 
 /**
  *
@@ -56,8 +60,8 @@ public abstract class RealMutation extends Mutation<ArrayList<Double>> {
 	        // shuffle the indices of the genotype: no repeats
 	        
 	        // mutate each index
-	        for(int index : indices) {
-	        	mutateIndex((RealValuedGenotype) genotype, index);
+	        for(int i = 0; i < numVectorIndexMutations; i++) {
+	        	mutateIndex((RealValuedGenotype) genotype, indices.get(i));
 	        }
 		}
 	}

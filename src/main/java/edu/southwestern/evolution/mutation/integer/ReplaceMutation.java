@@ -46,6 +46,7 @@ public class ReplaceMutation extends Mutation<ArrayList<Integer>> {
 				}
 			}
 		} else {
+	        //System.out.println("BEFORE: "+genotype.getPhenotype());
 			// Pick several different indices and mutate each one
 			List<Integer> indices = IntStream.range(0, genotype.getPhenotype().size())
 	                .boxed()
@@ -54,9 +55,11 @@ public class ReplaceMutation extends Mutation<ArrayList<Integer>> {
 	        // shuffle the indices of the genotype: no repeats
 	        
 	        // mutate each index
-	        for(int index : indices) {
-	        	mutateIndex((BoundedIntegerValuedGenotype) genotype, index);
+	        for(int i = 0; i < numVectorIndexMutations; i++) {
+	        	mutateIndex((BoundedIntegerValuedGenotype) genotype, indices.get(i));
 	        }
+	        
+	        //System.out.println("AFTER : "+genotype.getPhenotype());
 		}		
 	}
 
