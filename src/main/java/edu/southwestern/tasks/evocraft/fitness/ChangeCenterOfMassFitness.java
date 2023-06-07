@@ -76,6 +76,7 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 		if(newShapeBlockList.isEmpty()) { // If list is empty now (but was not before) then shape has flown completely away
 			if(!(shapeHistoryCheck(history))) {
 				//if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": Shape empty now but there was a moment of no change");
+				if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": Shape empty now after history check fail");
 				return minFitness();
 			}
 			if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": Shape empty now: max fitness!");
@@ -86,6 +87,7 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 		Vertex initialCenterOfMass = MinecraftUtilClass.getCenterOfMass(originalBlocks);
 		Vertex lastCenterOfMass = MinecraftUtilClass.getCenterOfMass(previousBlocks);
 		Vertex nextCenterOfMass = MinecraftUtilClass.getCenterOfMass(newShapeBlockList);
+		
 		// Only consider the shape to not be moving if the center of mass is the same AND the entire block list is the same
 		if(Parameters.parameters.booleanParameter("minecraftEndEvalNoMovement") && lastCenterOfMass.equals(nextCenterOfMass) && previousBlocks.equals(newShapeBlockList)) {
 			// This means that it hasn't moved, so move on to the next.
@@ -115,7 +117,8 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 		//check all of history for changes
 		//keep track of : no change, drastic change, amount of change?
 		//List<Block> previousBlockList = history.get(0).t2;
-		if(CommonConstants.watch) System.out.println("in Shape history check");
+		//if(CommonConstants.watch) System.out.println("in Shape history check");
+		System.out.println("in Shape history check");
 		
 		//check if I need all 3
 		Vertex initialCenterOfMass = MinecraftUtilClass.getCenterOfMass(history.get(0).t2);
@@ -132,28 +135,60 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 			if(CommonConstants.watch) System.out.println("farthest == initial : " + farthestCenterOfMass + " " + initialCenterOfMass);
 		}
 		int noMovementCount = 0;
+		int yesMovementCount = 0;
 		if(CommonConstants.watch) System.out.println("history size: " + history.size());
 
 		for(int i = 2; i < history.size(); i++) {			//if the change is not present return false
 			//check for a change in the center of mass
-			
-			//for loop count
-			if(CommonConstants.watch) System.out.println("for loop i: " + i);
+
+			//REMOVE BELOW LATER, TESTING ONLY
+			//check for a change in the center of mass
+			Vertex REMOVElastCenterOfMass = MinecraftUtilClass.getCenterOfMass(history.get(i-1).t2);
+			Vertex REMOVEnextCenterOfMass = MinecraftUtilClass.getCenterOfMass(history.get(i).t2);
+			// Only consider the shape to not be moving if the center of mass is the same AND the entire block list is the same
+			if((REMOVElastCenterOfMass.equals(REMOVEnextCenterOfMass) && history.get(i-1).t2.equals(history.get(i).t2))) {		//this is no movement
+				if(CommonConstants.watch) System.out.println("TESTING FOR RETURN FALSE / center of mass i-1 == i, blocks i-1 == i");
+				//return true;
+				//return false;
+				noMovementCount++;
+				//if(CommonConstants.watch) System.out.println("noMovementCount: " + noMovementCount);
+			} else {
+				yesMovementCount++;
+				if(CommonConstants.watch) System.out.println("yesMovementCount: " + yesMovementCount);
+			}
+//			if((REMOVElastCenterOfMass.equals(REMOVEnextCenterOfMass))) {
+//				if(CommonConstants.watch) System.out.println("TESTING / center of mass i-1 == i");
+//
+//			}
+//			if((history.get(i-1).t2.equals(history.get(i).t2))) {
+//				if(CommonConstants.watch) System.out.println("TESTING / blocks i-1 == i");
+//			}
+				//REMOVE ABOVE LATER, TESTING ONLY
+
+				//for loop count
+				if(CommonConstants.watch) System.out.println("for loop i: " + i);
 			
 			
 			// Only consider the shape to not be moving if the center of mass is the same AND the entire block list is the same
+				//last == next center of mass 				block list same
+				if((REMOVElastCenterOfMass.equals(REMOVEnextCenterOfMass) && history.get(i-1).t2.equals(history.get(i).t2) && yesMovementCount<noMovementCount)) {
+					if(CommonConstants.watch) System.out.println(" RETURNING FALSE inside / center of mass i-1 == i, blocks i-1 == i, ysM < noM");
+					return false;
+				}
 			if(lastCenterOfMass.equals(nextCenterOfMass) && history.get(i-1).t2.equals(history.get(i).t2)) {		//this is no movement
 				if(farthestCenterOfMass.equals(initialCenterOfMass)) {
 					if(CommonConstants.watch) System.out.println("farthest == initial : " + farthestCenterOfMass + " " + initialCenterOfMass);
 				}
-				if(CommonConstants.watch) System.out.println("there was no movement and no change in the number of blocks");
+				if(CommonConstants.watch) System.out.println("RETURN FALSE: there was no movement and no change in the number of blocks");
 				//this caught a moving shape
 				return false;
 			}
-			noMovementCount++;
+			//noMovementCount++;
+			//if(CommonConstants.watch) System.out.println("last: " + REMOVElastCenterOfMass + " next: " + REMOVEnextCenterOfMass /**+ " blocks1: " + history.get(i-1).t2 + " blocks2: " + history.get(i).t2 **/);
+
 		}
-		if(CommonConstants.watch) System.out.println("noMiovementCount: " + noMovementCount);
-		if(CommonConstants.watch) System.out.println("end shape history");
+		if(CommonConstants.watch) System.out.println("noMovementCount: " + noMovementCount + " yesMovementCount: " + yesMovementCount);
+		if(CommonConstants.watch) System.out.println("RETURN TRUE: end shape history");
 
 		return true;
 	}
