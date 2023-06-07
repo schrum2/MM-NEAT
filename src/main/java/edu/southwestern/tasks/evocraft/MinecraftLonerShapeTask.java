@@ -290,18 +290,20 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			System.exit(1);
 		}
 
-		// Minimum over HashMap values
-		for(HashMap.Entry<String,Object> entry : score.MAPElitesBehaviorMap().entrySet()) {
-			if(behaviorCharacteristics.containsKey(entry.getKey()) && entry.getValue() instanceof Double) {
-				double previous = ((Double) behaviorCharacteristics.get(entry.getKey())).doubleValue();
-				double current = ((Double) entry.getValue()).doubleValue();
-				//double avg = previous + (current - previous) / (num + 1); // Incremental average calculation 
-				//behaviorCharacteristics.put(entry.getKey(), avg);
-				double min = Math.min(previous,current); // Minimum: has to really succeed as flying machine, at least twice
-				behaviorCharacteristics.put(entry.getKey(), min);
-			} else { // Overwrite, fresh start
-				assert num == 0 || !(entry.getValue() instanceof Double) : ""+behaviorCharacteristics;
-				behaviorCharacteristics.put(entry.getKey(), entry.getValue());
+		if(score.usesMAPElitesMapSpecification()) {
+			// Minimum over HashMap values
+			for(HashMap.Entry<String,Object> entry : score.MAPElitesBehaviorMap().entrySet()) {
+				if(behaviorCharacteristics.containsKey(entry.getKey()) && entry.getValue() instanceof Double) {
+					double previous = ((Double) behaviorCharacteristics.get(entry.getKey())).doubleValue();
+					double current = ((Double) entry.getValue()).doubleValue();
+					//double avg = previous + (current - previous) / (num + 1); // Incremental average calculation 
+					//behaviorCharacteristics.put(entry.getKey(), avg);
+					double min = Math.min(previous,current); // Minimum: has to really succeed as flying machine, at least twice
+					behaviorCharacteristics.put(entry.getKey(), min);
+				} else { // Overwrite, fresh start
+					assert num == 0 || !(entry.getValue() instanceof Double) : ""+behaviorCharacteristics;
+					behaviorCharacteristics.put(entry.getKey(), entry.getValue());
+				}
 			}
 		}
 		// Checks command line param on whether or not to generate shapes in archive
