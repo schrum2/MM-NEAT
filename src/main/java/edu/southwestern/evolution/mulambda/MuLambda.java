@@ -66,16 +66,11 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 	/**
 	 * Initialize evolutionary algorithm.
 	 * 
-	 * @param mltype
-	 *            MLTYPE_PLUS or MLTYPE_COMMA
-	 * @param task
-	 *            Task to evolve in
-	 * @param mu
-	 *            Parent population size
-	 * @param lambda
-	 *            Child population size
-	 * @param io
-	 *            Whether to write file output
+	 * @param mltype MLTYPE_PLUS or MLTYPE_COMMA
+	 * @param task Task to evolve in
+	 * @param mu Parent population size
+	 * @param lambda Child population size
+	 * @param io Whether to write file output
 	 */
 	public MuLambda(int mltype, SinglePopulationTask<T> task, int mu, int lambda, boolean io) {
 		this.mltype = mltype;
@@ -109,6 +104,10 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 		}
 	}
 	
+	/**
+	 * If the command line parameter trackPseudoArchive:true is used, then
+	 * a MAP-Elites style archive will be maintained of every individual produced.
+	 */
 	public void setUpPseudoArchive() {
 		int numLabels = MMNEAT.pseudoArchive.getBinMapping().binLabels().size();
 		String infix = "Objective";
@@ -146,9 +145,8 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 	 * The initial parent population is of size mu, and is randomly generated
 	 * based on an example genotype.
 	 *
-	 * @param example
-	 *            = used to generate random genotypes
-	 * @return = the initial parent population size
+	 * @param example used to generate random genotypes
+	 * @return the initial parent population size
 	 */
 	@Override
 	public ArrayList<Genotype<T>> initialPopulation(Genotype<T> example) {
@@ -158,8 +156,7 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 	/**
 	 * Write info to file about parent population
 	 * 
-	 * @param parentScores
-	 *            Score details of all parents after evaluation
+	 * @param parentScores Score details of all parents after evaluation
 	 */
 	@SuppressWarnings("rawtypes")
 	public void logParentInfo(ArrayList<Score<T>> parentScores) {
@@ -251,8 +248,7 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 	 * Given parent scores/genotypes, generate children, evaluate them, and
 	 * return their scores.
 	 * 
-	 * @param parentScores
-	 *            Scores of evaluated parents (contains genotypes)
+	 * @param parentScores Scores of evaluated parents (contains genotypes)
 	 * @return Scores of children (contains genotypes)
 	 */
 	public ArrayList<Score<T>> processChildren(ArrayList<Score<T>> parentScores) {
@@ -272,8 +268,7 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 	 * Whether or not to perform delta coding on this generation. Depends on if
 	 * setting is turned on, and how frequently it is done.
 	 * 
-	 * @param generation
-	 *            Current generation
+	 * @param generation Current generation
 	 * @return Whether or not delta coding should happen
 	 */
 	public static boolean performDeltaCoding(int generation) {
@@ -290,10 +285,8 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 	 * Given the scores of evaluated parents and the scores of evaluated
 	 * children, generate the next parent population via selection.
 	 * 
-	 * @param parentScores
-	 *            Parent scores (contains genotypes as well)
-	 * @param childrenScores
-	 *            Child scores (contains genotypes as well)
+	 * @param parentScores Parent scores (contains genotypes as well)
+	 * @param childrenScores Child scores (contains genotypes as well)
 	 * @return New parent population
 	 */
 	public ArrayList<Genotype<T>> selectAndAdvance(ArrayList<Score<T>> parentScores, ArrayList<Score<T>> childrenScores) {
@@ -325,12 +318,9 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 	 * next generation. This method can be overridden by other EAs to do extra
 	 * work to prepare the population
 	 * 
-	 * @param parentScores
-	 *            Parent scores (contains genotypes as well)
-	 * @param childrenScores
-	 *            Child scores (contains genotypes as well)
-	 * @return One combined list of scores of only individuals being selected
-	 *         from
+	 * @param parentScores Parent scores (contains genotypes as well)
+	 * @param childrenScores Child scores (contains genotypes as well)
+	 * @return One combined list of scores of only individuals being selected from
 	 */
 	public ArrayList<Score<T>> prepareSourcePopulation(ArrayList<Score<T>> parentScores, ArrayList<Score<T>> childrenScores) {
 		return prepareSourcePopulation(parentScores, childrenScores, mltype);
@@ -339,16 +329,11 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 	/**
 	 * Standard preparation based on Mu and Lambda
 	 * 
-	 * @param <T>
-	 *            Type of phenotype being evolved
-	 * @param parentScores
-	 *            Parent scores (contains genotypes as well)
-	 * @param childrenScores
-	 *            Child scores (contains genotypes as well)
-	 * @param mltype
-	 *            MLTYPE_PLUS or MLTYPE_COMMA
-	 * @return List of combined scores to perform selection on for next
-	 *         generation
+	 * @param <T> Type of phenotype being evolved
+	 * @param parentScores Parent scores (contains genotypes as well)
+	 * @param childrenScores Child scores (contains genotypes as well)
+	 * @param mltype MLTYPE_PLUS or MLTYPE_COMMA
+	 * @return List of combined scores to perform selection on for next generation
 	 */
 	public static <T> ArrayList<Score<T>> prepareSourcePopulation(ArrayList<Score<T>> parentScores, ArrayList<Score<T>> childrenScores, int mltype) {
 		ArrayList<Score<T>> population = null;
@@ -370,9 +355,8 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 	/**
 	 * Given the current parent population, return the next parent population
 	 *
-	 * @param parents
-	 *            = current parent population
-	 * @return = next parent population
+	 * @param parents current parent population
+	 * @return next parent population
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -454,8 +438,7 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 	/**
 	 * Cleanup needed at end of evolution
 	 * 
-	 * @param population
-	 *            Final population
+	 * @param population Final population
 	 */
 	@Override
 	public void close(ArrayList<Genotype<T>> population) {
@@ -487,10 +470,8 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 	/**
 	 * Generate a certain number of children based on parent scores/genotypes
 	 * 
-	 * @param numChildren
-	 *            Number of children to generate
-	 * @param parentScores
-	 *            List of evaluated parent scores (contains genotypes)
+	 * @param numChildren Number of children to generate
+	 * @param parentScores List of evaluated parent scores (contains genotypes)
 	 * @return numChildren of child genotypes
 	 */
 	public abstract ArrayList<Genotype<T>> generateChildren(int numChildren, ArrayList<Score<T>> parentScores);
@@ -499,10 +480,8 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 	 * From the provided population of scores, filter down to a certain number
 	 * of parent genotypes for the next generation.
 	 * 
-	 * @param numParents
-	 *            Number of parents to filter down to
-	 * @param scores
-	 *            Scores of agents to select from (contains genotypes)
+	 * @param numParents Number of parents to filter down to
+	 * @param scores Scores of agents to select from (contains genotypes)
 	 * @return Genotypes of filtered/selected individuals.
 	 */
 	public abstract ArrayList<Genotype<T>> selection(int numParents, ArrayList<Score<T>> scores);
