@@ -307,7 +307,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			}
 		}
 		// Checks command line param on whether or not to generate shapes in archive
-		if(Parameters.parameters.booleanParameter("minecraftContainsWholeMAPElitesArchive") || CommonConstants.netio) {
+		if(Parameters.parameters.booleanParameter("minecraftContainsWholeMAPElitesArchive")) { // || CommonConstants.netio) { // Why netio?
 			// Places the shapes in the world based on their position
 			placeArchiveInWorld(individual, behaviorCharacteristics, ranges);	
 		}
