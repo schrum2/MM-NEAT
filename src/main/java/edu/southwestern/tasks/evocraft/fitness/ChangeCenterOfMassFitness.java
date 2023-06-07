@@ -104,14 +104,18 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 				return result;
 			}
 		}
-		
 		return null;
 	}
+	
 	/**
 	 * TODO: finish javadoc
-	 * shape has already been proven to be empty now, check for slight changes vs large changes
-	 * @param history
-	 * @return
+	 * This checks that a shape is actually moving by going through its history.
+	 * returns false if the shape has the same center of mass consistently and same block list.
+	 * returns true if it reads more movement than not
+	 * measures the center of mass and block list, counts the number of movement reads and no movement reads, compares movement reads when returning false
+	 * it does not compare movement reads when returning true, it may not need to compare the number of blocks
+	 * @param history the list of time stamps and related block list readings at those times
+	 * @return true for moving, false for not moving
 	 */
 	private boolean shapeHistoryCheck(ArrayList<Pair<Long, List<Block>>> history) {
 		//check all of history for changes
