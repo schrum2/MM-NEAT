@@ -1,10 +1,12 @@
 package edu.southwestern.tasks.evocraft.genotype;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.IntStream;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.EvolutionaryHistory;
@@ -18,7 +20,8 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.random.RandomNumbers;
 /**
- * 
+ * New way to represent a shape as Pair<HashMap<MinecraftCoordinates, Block>, HashSet<MinecraftCoordinates>>
+ * This allows us to define mutation operators that are more appropriate for Minecraft and make it easier to search the space.
  * @author raffertyt
  *
  */
@@ -47,7 +50,9 @@ public class MinecraftShapeGenotype implements Genotype<Pair<HashMap<MinecraftCo
 		this.blocks = blocks;
 		this.emptySpace = emptySpace;
 	}
-
+	/**
+	 * Creates a randomized initial shape
+	 */
 	public MinecraftShapeGenotype() {
 		this.blocks = new HashMap<MinecraftCoordinates, Block>();
 		this.emptySpace = new HashSet<MinecraftCoordinates>();
@@ -111,10 +116,10 @@ public class MinecraftShapeGenotype implements Genotype<Pair<HashMap<MinecraftCo
 	}
 	
 	/**
-	 * 
-	 * @param coordinates
-	 * @param type
-	 * @param orientation
+	 * adds a new block
+	 * @param coordinates new block coordinates
+	 * @param type new block type
+	 * @param orientation new block orientation
 	 */
 	public void addBlock(MinecraftCoordinates coordinates, BlockType type, Orientation orientation) {
 		Block newBlock = new Block(coordinates, type, orientation);
@@ -123,36 +128,83 @@ public class MinecraftShapeGenotype implements Genotype<Pair<HashMap<MinecraftCo
 		boolean emptyRemoved = emptySpace.remove(coordinates);
 		assert emptyRemoved : "Space was not in empty list "+ coordinates + ":" + emptySpace + ":" + blocks;
 	}
-	
-	// remove block from coordinates
+	/**
+	 * remove block from coordinates
+	 * @param coordinates the coordinates of the block you want removed
+	 */
 	public void removeBlock(MinecraftCoordinates coordinates) {
-		blocks.remove(coordinates);
-		emptySpace.add(coordinates);
+		Block removed = blocks.remove(coordinates);
+		assert removed != null;
+		boolean added = emptySpace.add(coordinates);
+		assert added;
 	}
-	// swap blocks at two coordinates (throw IllegalStatException if either is not in blocks HashMap)
-	public void swapBlocks(MinecraftCoordinates coordinates1, BlockType type1, Orientation orientation1, MinecraftCoordinates coordinates2, BlockType type2, Orientation orientation2) {
-		if(blocks.containsValue(new Block(coordinates1, type1, orientation1))) throw new IllegalStateException("Block 1 was not present in the blocks hash map");
-		if(blocks.containsValue(new Block(coordinates2, type2, orientation2))) throw new IllegalStateException("Block 2 was not present in the blocks hash map");
+	
+	/**
+	 * swap blocks at two coordinates (throw IllegalStatException if either is not in blocks HashMap)
+	 * @param coordinates1 block 1
+	 * @param coordinates2 block 2
+	 */
+	public void swapBlocks(MinecraftCoordinates coordinates1, MinecraftCoordinates coordinates2) {
+		if(!blocks.containsKey(coordinates1)) throw new IllegalStateException("Block 1 was not present in the blocks hash map");
+		else if(!blocks.containsKey(coordinates2)) throw new IllegalStateException("Block 2 was not present in the blocks hash map");
 		else {
-			blocks.remove(coordinates1);
-			blocks.remove(coordinates2);
+			Block block1 = blocks.remove(coordinates1);
+			Block block2 = blocks.remove(coordinates2);
+
+			Block newBlock1 = new Block(coordinates2, MMNEAT.blockSet.getPossibleBlocks()[block1.type()], Orientation.values()[block1.orientation()]);
+			Block newBlock2 = new Block(coordinates1, MMNEAT.blockSet.getPossibleBlocks()[block2.type()], Orientation.values()[block2.orientation()]);
 			
-			Block newBlock1 = new Block(coordinates1, type2, orientation2);
-			blocks.put(coordinates1, newBlock1);
-			
-			Block newBlock2 = new Block(coordinates2, type1, orientation1);
-			blocks.put(coordinates2, newBlock2);
-			
+			blocks.put(coordinates2, newBlock1);
+			blocks.put(coordinates1, newBlock2);
 		}
 	}
-	// change rotation (exception if not present)
-	public void rotationBlock(MinecraftCoordinates coordinates, BlockType type, Orientation orientation) {
-		if(blocks.containsValue(new Block(coordinates, type, orientation))) throw new IllegalStateException("Block was not present in the blocks hash map");
+	
+	/**
+	 * Changes a desired blocks type
+	 * @param coordinates desired block location
+	 * @param type desired type
+	 */
+	public void changeBlockType(MinecraftCoordinates coordinates, BlockType type) {
+		if(!blocks.containsKey(coordinates)) throw new IllegalStateException("Block was not present in the blocks hash map");
+		Block oldBlock = blocks.remove(coordinates);	
+		blocks.put(coordinates, new Block(coordinates, type, Orientation.values()[oldBlock.orientation()]));
 	}
-	// change orientation (exception if not present)
+	
+	
+	// Change type
+//	public void changeBlockType(MinecraftCoordinates coordinates, BlockType type) {
+//		if(!blocks.containsKey(coordinates)) throw new IllegalStateException("Block was not present in the blocks hash map");
+//		Block oldBlock = blocks.get(coordinates);
+//		int[] otherTypes = IntStream.range(0, MMNEAT.blockSet.getPossibleBlocks().length).filter(i -> i != oldBlock.type()).toArray();
+//		int newTypeIndex = RandomNumbers.randomElement(otherTypes);
+//		
+//		
+//		List<BlockType> types = Arrays.asList(MMNEAT.blockSet.getPossibleBlocks());
+//		
+//		//oldBlock.type()
+//		
+//		//types.remove()
+//	}
+	/**
+	 * change orientation (exception if not present)		
+	 * @param coordinates desired block location
+	 * @param orientation desired orientation
+	 */
+
+	public void changeBlockOrientation(MinecraftCoordinates coordinates, Orientation orientation) {
+		if(!blocks.containsKey(coordinates)) throw new IllegalStateException("Block was not present in the blocks hash map");
+		Block oldBlock = blocks.remove(coordinates);	
+		blocks.put(coordinates, new Block(coordinates, MMNEAT.blockSet.getPossibleBlocks()[oldBlock.type()], orientation));
+	}
 	
 	@Override
 	public long getId() {
 		return id;
+	}
+	
+	public static void main(String[] args) {
+		IntStream stream = IntStream.range(0, 10).filter(i -> i != 3);
+		
+		System.out.println(Arrays.toString(stream.toArray()));
 	}
 }
