@@ -16,12 +16,14 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.SinglePopulationGenerationalEA;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.HyperNEATCPPNforDL4JGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.metaheuristics.Metaheuristic;
 import edu.southwestern.evolution.mulambda.MuLambda;
 import edu.southwestern.log.EvalLog;
+import edu.southwestern.log.MMNEATLog;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
@@ -51,14 +53,17 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 	 */
 	public void forgetDeadScores(ArrayList<Genotype<T>> nextGeneration) {
 		if(previousEvaluationMemory != null) {
+			//System.out.println("LonerTask: " + previousEvaluationMemory.size() + " previous scores stored");
 			ConcurrentHashMap<Long, Score<T>> newMemory = new ConcurrentHashMap<>(nextGeneration.size());
 			nextGeneration.parallelStream().forEach(g -> {
-				if(previousEvaluationMemory.contains(g.getId())) {
+				if(previousEvaluationMemory.containsKey(g.getId())) {
 					newMemory.put(g.getId(), previousEvaluationMemory.get(g.getId()));
 				}
 			});
 			previousEvaluationMemory = newMemory; // Old forgotten entries will be garpage collected
 			System.out.println("LonerTask: " + previousEvaluationMemory.size() + " previous scores remembered");
+			// This line will crash if used with MAP Elites, but MAP Elites should not be remembering parent scores anyway
+			rememberedLog.log(((SinglePopulationGenerationalEA<?>) MMNEAT.ea).currentGeneration() + "\t" + previousEvaluationMemory.size());
 		}
 	}
 	
@@ -109,6 +114,7 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 			
 			Score<T> score = null;
 			if(previousEvaluationMemory != null && previousEvaluationMemory.containsKey(genotype.getId()) ) {
+				//System.out.println("Score for "+genotype.getId()+" already known");
 				// get old score if known
 				score = previousEvaluationMemory.get(genotype.getId());
 			} else {
@@ -119,6 +125,7 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 				
 				// May need to remember score for later
 				if(previousEvaluationMemory != null) {
+					//System.out.println("Save score for "+genotype.getId());
 					previousEvaluationMemory.put(genotype.getId(), score);
 				}
 			}
@@ -161,6 +168,7 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 
 	private final boolean parallel;
 	private final int threads;
+	private MMNEATLog rememberedLog;
 
 	/**
 	 * constructor for a LonerTask based upon command line specified evaluation
@@ -171,6 +179,7 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 		this.threads = Parameters.parameters.integerParameter("threads");
 		if(Parameters.parameters.booleanParameter("rememberParentScores")) {
 			previousEvaluationMemory = new ConcurrentHashMap<>();
+			rememberedLog = new MMNEATLog("Remembered", false, false, false, true);
 		}
 	}
 

@@ -362,12 +362,21 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 	@SuppressWarnings("unchecked")
 	@Override
 	public ArrayList<Genotype<T>> getNextGeneration(ArrayList<Genotype<T>> parents) {
+		
+//		System.out.println("1.Parents");
+//		parents.stream().forEach(g -> System.out.print(g.getId()+","));
+//		System.out.println();
+		
 		evaluatingParents = true;
 		long start = System.currentTimeMillis();
 		System.out.println("Eval parents: ");
 		ArrayList<Score<T>> parentScores = task.evaluateAll(parents);
 		long end = System.currentTimeMillis();
 		System.out.println("Done parents: " + TimeUnit.MILLISECONDS.toMinutes(end - start) + " minutes");
+
+//		System.out.println("2.Parents");
+//		parentScores.stream().forEach(s -> System.out.print(s.individual.getId()+","));
+//		System.out.println();
 
 		// Get some info about modes, if doing mode mutation
 		if (TWEANN.preferenceNeuron()) {
@@ -387,7 +396,12 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 		start = System.currentTimeMillis();
 		System.out.println("Eval children: ");
 		ArrayList<Score<T>> childrenScores = processChildren(parentScores);
+		end = System.currentTimeMillis();
 		
+//		System.out.println("3.Children");
+//		childrenScores.stream().forEach(s -> System.out.print(s.individual.getId()+","));
+//		System.out.println();
+
 		if (MMNEAT.usingDiversityBinningScheme) {
 			// Add evaluated parent and child scores to pseudo archive if it is not null TODO
 			if (MMNEAT.pseudoArchive != null) {
@@ -406,7 +420,7 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 			final double qdScore = MAPElites.calculateQDScore(elite);
 			fillLog.log(generation + "\t" + numFilledBins + "\t" + qdScore + "\t" + maximumFitness + "\t" + 1.0);
 		}
-		end = System.currentTimeMillis();
+		
 		System.out.println("Done children: " + TimeUnit.MILLISECONDS.toMinutes(end - start) + " minutes");
 
 		// Parent logging occurs after child evals to decrease odds of logs
@@ -421,6 +435,10 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 			MMNEAT.logPerformanceInformation(combined, generation);
 		}
 		ArrayList<Genotype<T>> result = selectAndAdvance(parentScores, childrenScores);
+		
+//		System.out.println("4.Combined");
+//		result.stream().forEach(g -> System.out.print(g.getId()+","));
+//		System.out.println();		
 		
 		// Clear cached scores that will never be used again, since parent died
 		if(task instanceof LonerTask) {
