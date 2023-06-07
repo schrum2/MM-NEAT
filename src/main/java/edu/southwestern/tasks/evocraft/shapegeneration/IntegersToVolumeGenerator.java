@@ -15,7 +15,7 @@ import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 import edu.southwestern.tasks.evocraft.blocks.BlockSet;
 
 /**
- * 
+ * New shape generator that makes use of integer based encoding.
  * @author raffertyt
  *
  */
