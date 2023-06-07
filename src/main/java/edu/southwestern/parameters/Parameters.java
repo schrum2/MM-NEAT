@@ -863,6 +863,7 @@ public class Parameters {
 		booleanOptions.add("minecraftChangeBlocksFitness", false, "rewards a shape for changing its blocks position");
 		booleanOptions.add("minecraftRandomFitness", false, "this is a very basic test fitness that returns a random fitnessScore");
 		booleanOptions.add("numAirFitness", false, "Fitness test for number of air blocks");
+		booleanOptions.add("rememberParentScores", false, "Avoid repeated evaluation of parents");
 		
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");

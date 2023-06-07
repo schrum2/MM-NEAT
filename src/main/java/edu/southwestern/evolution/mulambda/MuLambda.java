@@ -22,6 +22,7 @@ import edu.southwestern.networks.hyperneat.architecture.CascadeNetworks;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.tasks.SinglePopulationTask;
 import edu.southwestern.tasks.Task;
 import edu.southwestern.tasks.mspacman.MsPacManTask;
@@ -420,6 +421,12 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 			MMNEAT.logPerformanceInformation(combined, generation);
 		}
 		ArrayList<Genotype<T>> result = selectAndAdvance(parentScores, childrenScores);
+		
+		// Clear cached scores that will never be used again, since parent died
+		if(task instanceof LonerTask) {
+			((LonerTask<T>) task).forgetDeadScores(result);
+		}
+		
 		if(CommonConstants.hybrID && currentGeneration() == Parameters.parameters.integerParameter("hybrIDSwitchGeneration")) {	
 			if(Parameters.parameters.booleanParameter("offsetHybrID")) { //offsetHybrid is being used
 				result = OffsetHybrIDGenotype.getSubstrateGenotypesFromCPPNs(result);
