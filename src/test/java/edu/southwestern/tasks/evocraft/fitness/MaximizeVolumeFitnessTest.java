@@ -203,9 +203,5 @@ public class MaximizeVolumeFitnessTest {
 		assertEquals(476.0,testInstance.fitnessScore(testCorner,testBlockSet),0.0);
 	}
 
-	@Test
-	public void test() {
-		fail("Not yet implemented");
-	}
 
 }
