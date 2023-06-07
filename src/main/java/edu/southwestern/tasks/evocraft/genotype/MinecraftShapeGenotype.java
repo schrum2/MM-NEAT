@@ -126,16 +126,29 @@ public class MinecraftShapeGenotype implements Genotype<Pair<HashMap<MinecraftCo
 	
 	// remove block from coordinates
 	public void removeBlock(MinecraftCoordinates coordinates) {
-		emptySpace.remove(coordinates);
+		blocks.remove(coordinates);
+		emptySpace.add(coordinates);
 	}
 	// swap blocks at two coordinates (throw IllegalStatException if either is not in blocks HashMap)
 	public void swapBlocks(MinecraftCoordinates coordinates1, BlockType type1, Orientation orientation1, MinecraftCoordinates coordinates2, BlockType type2, Orientation orientation2) {
 		if(blocks.containsValue(new Block(coordinates1, type1, orientation1))) throw new IllegalStateException("Block 1 was not present in the blocks hash map");
 		if(blocks.containsValue(new Block(coordinates2, type2, orientation2))) throw new IllegalStateException("Block 2 was not present in the blocks hash map");
-		
+		else {
+			blocks.remove(coordinates1);
+			blocks.remove(coordinates2);
+			
+			Block newBlock1 = new Block(coordinates1, type2, orientation2);
+			blocks.put(coordinates1, newBlock1);
+			
+			Block newBlock2 = new Block(coordinates2, type1, orientation1);
+			blocks.put(coordinates2, newBlock2);
+			
+		}
 	}
 	// change rotation (exception if not present)
-	
+	public void rotationBlock(MinecraftCoordinates coordinates, BlockType type, Orientation orientation) {
+		if(blocks.containsValue(new Block(coordinates, type, orientation))) throw new IllegalStateException("Block was not present in the blocks hash map");
+	}
 	// change orientation (exception if not present)
 	
 	@Override
