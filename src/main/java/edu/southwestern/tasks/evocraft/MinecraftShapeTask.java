@@ -32,6 +32,7 @@ import edu.southwestern.tasks.evocraft.fitness.MaximizeVolumeFitness;
 import edu.southwestern.tasks.evocraft.fitness.MinecraftFitnessFunction;
 import edu.southwestern.tasks.evocraft.fitness.MissileFitness;
 import edu.southwestern.tasks.evocraft.fitness.NegativeSpaceCountFitness;
+import edu.southwestern.tasks.evocraft.fitness.NumAirFitness;
 import edu.southwestern.tasks.evocraft.fitness.OccupiedCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.RandomFitness;
 import edu.southwestern.tasks.evocraft.fitness.TimedEvaluationMinecraftFitnessFunction;
@@ -194,7 +195,9 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		if(Parameters.parameters.booleanParameter("minecraftRandomFitness")) {
 			fitness.add(new RandomFitness());
 		}
-		
+		if(Parameters.parameters.booleanParameter("numAirFitness")) {
+			fitness.add(new NumAirFitness());
+		}
 		System.out.println(fitness);
 		
 		return fitness;

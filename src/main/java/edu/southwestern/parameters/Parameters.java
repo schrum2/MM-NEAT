@@ -862,8 +862,8 @@ public class Parameters {
 		booleanOptions.add("minecraftClearWithGlass", true, "determines if glass is used to clear a space before air");
 		booleanOptions.add("minecraftChangeBlocksFitness", false, "rewards a shape for changing its blocks position");
 		booleanOptions.add("minecraftRandomFitness", false, "this is a very basic test fitness that returns a random fitnessScore");
+		booleanOptions.add("numAirFitness", false, "Fitness test for number of air blocks");
 		
-	
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
 		doubleOptions.add("backpropLearningRate", 0.1, "Rate backprop learning for neural networks");
