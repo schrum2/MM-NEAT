@@ -116,25 +116,15 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 	private boolean shapeHistoryCheck(ArrayList<Pair<Long, List<Block>>> history) {
 		//check all of history for changes
 		if(CommonConstants.watch) System.out.println("in Shape history check");
-		//System.out.println("in Shape history check");
 
-		//check if I need all 3
-		//		Vertex initialCenterOfMass = MinecraftUtilClass.getCenterOfMass(history.get(0).t2);
-		Vertex lastCenterOfMass = MinecraftUtilClass.getCenterOfMass(history.get(history.size()-3).t2);
-		Vertex nextCenterOfMass = MinecraftUtilClass.getCenterOfMass(history.get(history.size()-2).t2);
-
-		
 		int noMovementCount = 0;
 		int yesMovementCount = 0;
 		if(CommonConstants.watch) System.out.println("history size: " + history.size());
 
 		for(int i = 2; i < history.size(); i++) {			//if the change is not present return false
 			//check for a change in the center of mass
-
-			//REMOVE BELOW LATER, TESTING ONLY
-			//check for a change in the center of mass
-			lastCenterOfMass = MinecraftUtilClass.getCenterOfMass(history.get(i-1).t2);
-			nextCenterOfMass = MinecraftUtilClass.getCenterOfMass(history.get(i).t2);
+			Vertex lastCenterOfMass = MinecraftUtilClass.getCenterOfMass(history.get(i-1).t2);
+			Vertex nextCenterOfMass = MinecraftUtilClass.getCenterOfMass(history.get(i).t2);
 			
 			// Only consider the shape to not be moving if the center of mass is the same AND the entire block list is the same
 			if(lastCenterOfMass.equals(nextCenterOfMass) && history.get(i-1).t2.equals(history.get(i).t2)) {		//this is no movement
@@ -149,15 +139,13 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 			//for loop count
 			if(CommonConstants.watch) System.out.println("for loop i: " + i);
 
-			// Only consider the shape to not be moving if the center of mass is the same AND the entire block list is the same
+			// Only consider the shape to not be moving overall if the center of mass is the same AND the entire block list is the same AND there are fewer movement reads than no movement reads
 			//last == next center of mass 				block list same                yesMovement < noMovement
 			if((lastCenterOfMass.equals(nextCenterOfMass) && history.get(i-1).t2.equals(history.get(i).t2) && yesMovementCount<noMovementCount)) {
-				if(CommonConstants.watch) System.out.println(" RETURNING FALSE inside / center of mass i-1 == i, blocks i-1 == i, ysM < noM");
+				if(CommonConstants.watch) System.out.println(" RETURNING FALSE / center of mass i-1 == i, blocks i-1 == i, yesMovement < noMovement");
 				return false;
 			}
-
 			//if(CommonConstants.watch) System.out.println("last: " + lastCenterOfMass + " next: " + nextCenterOfMass /**+ " blocks1: " + history.get(i-1).t2 + " blocks2: " + history.get(i).t2 **/);
-
 		}
 		if(CommonConstants.watch) System.out.println("noMovementCount: " + noMovementCount + " yesMovementCount: " + yesMovementCount);
 		if(CommonConstants.watch) System.out.println("RETURN TRUE: end shape history");
