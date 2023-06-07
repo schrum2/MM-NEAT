@@ -838,7 +838,7 @@ public class Parameters {
 		booleanOptions.add("minecraftRedirectConfinedSnakes", false, "Confines the snakes to a given area and will redirect the snake when the next direction is out of bounds");
 		booleanOptions.add("minecraftStopConfinedSnakes", false, "Confines the snakes to a given area and will stop the snake when the next direction is out of bounds");
 		booleanOptions.add("launchMinecraftServerFromJava", true, "The Java code can launch a server, or it can simply join whatever server is already running on the localhost");
-		booleanOptions.add("minecraftContainsWholeMAPElitesArchive", true, "Spawns in the MAP Elite archive in the Minecraft world");
+		booleanOptions.add("minecraftContainsWholeMAPElitesArchive", false, "Spawns in the MAP Elite archive in the Minecraft world");
 		booleanOptions.add("forceLinearArchiveLayoutInMinecraft", false, "minecraftContainsWholeMAPElitesArchive must be true for this. Generates shape in a linear fashion, as opposed to in 2D or 3D");
 		booleanOptions.add("minecraftChangeCenterOfMassFitness", false, "Calculates the change in position of a shapes center of mass.");
 		booleanOptions.add("NegativeSpaceCountFitness", false, "Tries to maximixe the negative space in a shape that i generated");
