@@ -115,7 +115,7 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 		//check all of history for changes
 		//keep track of : no change, drastic change, amount of change?
 		//List<Block> previousBlockList = history.get(0).t2;
-		System.out.println("in Shape history check");
+		if(CommonConstants.watch) System.out.println("in Shape history check");
 		
 		//check if I need all 3
 		Vertex initialCenterOfMass = MinecraftUtilClass.getCenterOfMass(history.get(0).t2);
@@ -132,7 +132,7 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 			if(CommonConstants.watch) System.out.println("farthest == initial : " + farthestCenterOfMass + " " + initialCenterOfMass);
 		}
 		int noMovementCount = 0;
-		System.out.println("history size: " + history.size());
+		if(CommonConstants.watch) System.out.println("history size: " + history.size());
 
 		for(int i = 2; i < history.size(); i++) {			//if the change is not present return false
 			//check for a change in the center of mass
@@ -146,14 +146,14 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 				if(farthestCenterOfMass.equals(initialCenterOfMass)) {
 					if(CommonConstants.watch) System.out.println("farthest == initial : " + farthestCenterOfMass + " " + initialCenterOfMass);
 				}
-				System.out.println("there was no movement and no change in the number of blocks");
+				if(CommonConstants.watch) System.out.println("there was no movement and no change in the number of blocks");
 				//this caught a moving shape
 				return false;
 			}
 			noMovementCount++;
 		}
 		if(CommonConstants.watch) System.out.println("noMiovementCount: " + noMovementCount);
-		System.out.println("end shape history");
+		if(CommonConstants.watch) System.out.println("end shape history");
 
 		return true;
 	}
