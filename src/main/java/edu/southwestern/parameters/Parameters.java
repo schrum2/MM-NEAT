@@ -394,6 +394,7 @@ public class Parameters {
 		integerOptions.add("minecraftTargetDistancefromShapeZ", 0, "The distance from shape origin to target on the Z");
 		integerOptions.add("minecraftMissleTargetBlockType", BlockType.SLIME.ordinal(), "Block that is used in the target");
 		integerOptions.add("minecraftPostCornerAdjustY", 0, "This is an int whose value will be added to the y-coordinate of the POST_EVALUATION_CORNER to adjust the special shape");
+		integerOptions.add("numVectorIndexMutations", -1, "If -1, thne ignore this. Else, vector mutations target this specific number of indicies per occurrence rather than have a per-index mutation rate");
 		
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
@@ -837,7 +838,7 @@ public class Parameters {
 		booleanOptions.add("minecraftRedirectConfinedSnakes", false, "Confines the snakes to a given area and will redirect the snake when the next direction is out of bounds");
 		booleanOptions.add("minecraftStopConfinedSnakes", false, "Confines the snakes to a given area and will stop the snake when the next direction is out of bounds");
 		booleanOptions.add("launchMinecraftServerFromJava", true, "The Java code can launch a server, or it can simply join whatever server is already running on the localhost");
-		booleanOptions.add("minecraftContainsWholeMAPElitesArchive", true, "Spawns in the MAP Elite archive in the Minecraft world");
+		booleanOptions.add("minecraftContainsWholeMAPElitesArchive", false, "Spawns in the MAP Elite archive in the Minecraft world");
 		booleanOptions.add("forceLinearArchiveLayoutInMinecraft", false, "minecraftContainsWholeMAPElitesArchive must be true for this. Generates shape in a linear fashion, as opposed to in 2D or 3D");
 		booleanOptions.add("minecraftChangeCenterOfMassFitness", false, "Calculates the change in position of a shapes center of mass.");
 		booleanOptions.add("NegativeSpaceCountFitness", false, "Tries to maximixe the negative space in a shape that i generated");
@@ -861,8 +862,9 @@ public class Parameters {
 		booleanOptions.add("minecraftClearWithGlass", true, "determines if glass is used to clear a space before air");
 		booleanOptions.add("minecraftChangeBlocksFitness", false, "rewards a shape for changing its blocks position");
 		booleanOptions.add("minecraftRandomFitness", false, "this is a very basic test fitness that returns a random fitnessScore");
+		booleanOptions.add("numAirFitness", false, "Fitness test for number of air blocks");
+		booleanOptions.add("rememberParentScores", false, "Avoid repeated evaluation of parents");
 		
-	
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
 		doubleOptions.add("backpropLearningRate", 0.1, "Rate backprop learning for neural networks");
