@@ -26,5 +26,8 @@ public class RemoveBlockMutation extends MinecraftShapeMutation {
 		MinecraftCoordinates randomCoordinates = MinecraftUtilClass.randomCoordinatesInShapeRange();
 		shapeGenotype.removeBlock(randomCoordinates);
 	}
+
+	public static void main(String[] args) {
+	}
 	
 }
