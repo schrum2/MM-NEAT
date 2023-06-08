@@ -44,7 +44,7 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 	 * 
 	 * @return Overestimate of distance from center to edge
 	 */
-	public double overestimatedDistanceToEdge() {
+	public double overestimatedDistanceToEdge() {	//the (max between given x,y,z ranges plus the spaceBetweenMinecraftShapes) divided by 2
 		double oneDir = Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes") + Math.max(Math.max(Parameters.parameters.integerParameter("minecraftXRange"), Parameters.parameters.integerParameter("minecraftYRange")),Parameters.parameters.integerParameter("minecraftZRange"));
 		return oneDir / 2;
 	}
@@ -76,7 +76,7 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 		if(newShapeBlockList.isEmpty()) { // If list is empty now (but was not before) then shape has flown completely away
 			if(!(shapeHistoryCheck(history))) {
 				//if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": Shape empty now but there was a moment of no change");
-				if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": Shape empty now after history check fail");
+				if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": Shape empty now after history check fail, RETURN");
 				return minFitness();
 			}
 			if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": Shape empty now: max fitness!");
@@ -95,15 +95,28 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 			if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": No movement.");
 			// Compute farthest center of mass from history
 			Vertex farthestCenterOfMass = getFarthestCenterOfMass(history, initialCenterOfMass, lastCenterOfMass);
-			Double result = checkCreditForDepartedBlocks(originalBlocks.size(), initialCenterOfMass, farthestCenterOfMass, newShapeBlockList);
+			Double result = ifSufficientBlocksDepartedThenMaximumFitnessWithPenalty(originalBlocks.size(), initialCenterOfMass, farthestCenterOfMass, newShapeBlockList);
 			if(result != null) {
-				if(!(shapeHistoryCheck(history))) {
+				if(!(shapeHistoryCheck(history))) {	//checks if there is no movement, there are departed blocks, catches tnt explosion
 					if(CommonConstants.watch) System.out.println("history fail");
-					return minFitness();
+					return minFitness();	//compute final fitness
 				}
+				if(CommonConstants.watch) System.out.println("no movement, there are departed blocks, RETURN result");
 				return result;
+			} else {
+				//a lot of blocks left and no movement
+				//compute final fitness
+				//result of blocks leaving is null
+				if(CommonConstants.watch) System.out.println("no movement/missing blocks, RETURN min fitness");
+				//return minFitness();
+				//return 0.0;
+				//cannot return 0/ min fitness
 			}
+			//TODO: testing
+			
 		}
+		if(CommonConstants.watch) System.out.println("RETURN null");
+
 		return null;
 	}
 	
@@ -159,6 +172,8 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 
 	@Override
 	public double calculateFinalScore(ArrayList<Pair<Long,List<Block>>> history, MinecraftCoordinates corner, List<Block> originalBlocks) {
+		if(CommonConstants.watch) System.out.println("	CALC FINAL SCORE	");
+
 		Vertex initialCenterOfMass = MinecraftUtilClass.getCenterOfMass(originalBlocks);
 		Vertex lastCenterOfMass = MinecraftUtilClass.getCenterOfMass(history.get(0).t2);
 		double totalChangeDistance = 0;
@@ -171,15 +186,18 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 				if(fitnessResult != null) { totalChangeDistance += fitnessResult; 
 				//else calculate based on initial center of mass and the next center of mass to add to total change distance
 				} else { totalChangeDistance += initialCenterOfMass.distance(nextCenterOfMass); }
-			} else {
+			} else {		///this is the distance change when not rewarding fas flying machines
 				totalChangeDistance += lastCenterOfMass.distance(nextCenterOfMass);
+				if(CommonConstants.watch) System.out.println("total change distance: " + totalChangeDistance);
+
 			}
 			lastCenterOfMass = nextCenterOfMass;
 		}
 		
 		// It is possible that blocks flew away, but some remaining component kept oscillating until the end. This is still a flying machine though.
 		Vertex farthestCenterOfMass = getFarthestCenterOfMass(history, initialCenterOfMass, lastCenterOfMass);
-		Double result = checkCreditForDepartedBlocks(originalBlocks.size(), initialCenterOfMass, farthestCenterOfMass, history.get(history.size() - 1).t2);
+		Double result = ifSufficientBlocksDepartedThenMaximumFitnessWithPenalty(originalBlocks.size(), initialCenterOfMass, farthestCenterOfMass, history.get(history.size() - 1).t2);
+		if(CommonConstants.watch) System.out.println("RETURN result from calc final score: " + result);
 		if(result != null) return result;
 		
 		// Machine did not fly away
@@ -189,7 +207,8 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 		if(!Parameters.parameters.booleanParameter("minecraftAccumulateChangeInCenterOfMass")) {
 			fitness = changeInPosition;		
 		}
-		return fitness;
+		if(CommonConstants.watch) System.out.println("RETURN result final score fitness: " + fitness);
+		return fitness;		//fitness is either the total distance in accumulated change or just the distance from start to 
 	}	
 
 	/**
@@ -219,9 +238,9 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 	 * @param initialCenterOfMass initial center of mass
 	 * @param lastCenterOfMass center of mass at the last point
 	 * @param newShapeBlockList a list of blocks after a recent update
-	 * @return fitness after punishment for remaining blocks, or null if shape is deemed to not have flown away
+	 * @return fitness after punishment for remaining blocks, or null if shape is deemed to not have flown away (not enough blocks leave)
 	 */
-	private Double checkCreditForDepartedBlocks(int initialBlockCount, Vertex initialCenterOfMass, Vertex lastCenterOfMass, List<Block> newShapeBlockList) {
+	private Double ifSufficientBlocksDepartedThenMaximumFitnessWithPenalty(int initialBlockCount, Vertex initialCenterOfMass, Vertex lastCenterOfMass, List<Block> newShapeBlockList) {
 		int remainingBlockCount = newShapeBlockList.size(); // Could be larger than initial due to extensions
 		int departedBlockCount = initialBlockCount - remainingBlockCount; // Could be negative due to extensions
 		Double result = null;

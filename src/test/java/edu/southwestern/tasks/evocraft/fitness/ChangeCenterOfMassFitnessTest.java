@@ -372,7 +372,7 @@ public class ChangeCenterOfMassFitnessTest {
 	@Test
 	public void testTNTwithFlyingMachine() {
 		//testing a flying machine that has tnt on it
-		Parameters.initializeParameterCollections(new String[] {"watch:true","minecraftClearWithGlass:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.ExplosiveBlockSet"});
+		Parameters.initializeParameterCollections(new String[] {"minecraftRewardFastFlyingMachines:false", "watch:true","minecraftClearWithGlass:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.ExplosiveBlockSet"});
 
 		//set up test corner and clear area
 		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,27,-35);
@@ -419,7 +419,7 @@ public class ChangeCenterOfMassFitnessTest {
 
 		System.out.println("shortTimeBetweenMinecraftReads = " + Parameters.parameters.longParameter("shortTimeBetweenMinecraftReads"));
 
-		double wiggleRoom = 1.0;
+		double wiggleRoom = 0.0;
 		double expected = 0.0;
 		assertEquals(expected, ff.fitnessScore(testCorner,testShapeBlockList),wiggleRoom);
 	}
