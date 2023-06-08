@@ -63,7 +63,7 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 			previousEvaluationMemory = newMemory; // Old forgotten entries will be garpage collected
 			System.out.println("LonerTask: " + previousEvaluationMemory.size() + " previous scores remembered");
 			// This line will crash if used with MAP Elites, but MAP Elites should not be remembering parent scores anyway
-			rememberedLog.log(((SinglePopulationGenerationalEA<?>) MMNEAT.ea).currentGeneration() + "\t" + previousEvaluationMemory.size());
+			//rememberedLog.log(((SinglePopulationGenerationalEA<?>) MMNEAT.ea).currentGeneration() + "\t" + previousEvaluationMemory.size());
 		}
 	}
 	
@@ -168,7 +168,7 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 
 	private final boolean parallel;
 	private final int threads;
-	private MMNEATLog rememberedLog;
+	//private MMNEATLog rememberedLog;
 
 	/**
 	 * constructor for a LonerTask based upon command line specified evaluation
@@ -179,7 +179,7 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 		this.threads = Parameters.parameters.integerParameter("threads");
 		if(Parameters.parameters.booleanParameter("rememberParentScores")) {
 			previousEvaluationMemory = new ConcurrentHashMap<>();
-			rememberedLog = new MMNEATLog("Remembered", false, false, false, true);
+			//rememberedLog = new MMNEATLog("Remembered", false, false, false, true);
 		}
 	}
 
