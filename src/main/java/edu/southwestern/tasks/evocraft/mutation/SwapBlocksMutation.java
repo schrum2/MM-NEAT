@@ -12,7 +12,6 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.genotype.MinecraftShapeGenotype;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.random.RandomNumbers;
-import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 /**
  * Takes two random blocks from the occupied block set and swaps them.
  * @author raffertyt

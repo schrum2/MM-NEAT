@@ -865,6 +865,7 @@ public class Parameters {
 		booleanOptions.add("numAirFitness", false, "Fitness test for number of air blocks");
 		booleanOptions.add("rememberParentScores", false, "Avoid repeated evaluation of parents");
 		
+		
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
 		doubleOptions.add("backpropLearningRate", 0.1, "Rate backprop learning for neural networks");
