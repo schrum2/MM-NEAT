@@ -12,7 +12,7 @@ import edu.southwestern.tasks.evocraft.genotype.MinecraftShapeGenotype;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.random.RandomNumbers;
 /**
- * Removes a block at a random coordinate in the genotype based on the rate set in the parameter.
+ * Adds a block at a random coordinate in the empty set based on the rate set in the parameter.
  * @author raffertyt
  *
  */
