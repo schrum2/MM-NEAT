@@ -33,10 +33,10 @@ public class ChangeCenterOfMassFitnessTest {
 	public static void setUpBeforeClass() throws Exception {
 		CommonConstants.netio = false;
 		Parameters.initializeParameterCollections(new String[] {"watch:true","minecraftClearWithGlass:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
-		if(!MinecraftServer.serverIsRunner()) {
-			MinecraftServer.launchServer();
-			MinecraftClient.getMinecraftClient();
-		}
+//		if(!MinecraftServer.serverIsRunner()) {
+//			MinecraftServer.launchServer();
+//			MinecraftClient.getMinecraftClient();
+//		}
 		CommonConstants.watch = true; // Displays debugging info
 	}
 
@@ -234,8 +234,8 @@ public class ChangeCenterOfMassFitnessTest {
 	//passed
 	@Test
 	public void testFlyingWithoutMaxFitness() throws InterruptedException {
-		Parameters.initializeParameterCollections(new String[] {"minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:30","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L, "minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
-		MinecraftCoordinates cornerBS2 = new MinecraftCoordinates(0,16,-5);	// what is this the corner of? - shape corner
+		Parameters.initializeParameterCollections(new String[] {"watch:true", "minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:30","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L, "minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+		MinecraftCoordinates cornerBS2 = new MinecraftCoordinates(0,11,-5);	// what is this the corner of? - shape corner
 		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 100);
 		
 		// List of flying machine blocks that should move
@@ -362,6 +362,8 @@ public class ChangeCenterOfMassFitnessTest {
 		//shift coordinates based on the testCorner
 		MinecraftCoordinates originalShapeCoordinates = MinecraftUtilClass.minCoordinates(testBlockSet);
 		testBlockSet = MinecraftUtilClass.shiftBlocksBetweenCorners(testBlockSet, originalShapeCoordinates, testCorner);
+		
+		testBlockSet.add(new Block(-26,25,-30,BlockType.OBSIDIAN,Orientation.NORTH));
 
 		assertEquals(0.0, ff.fitnessScore(testCorner,testBlockSet),1.0); 
 	}
@@ -378,25 +380,47 @@ public class ChangeCenterOfMassFitnessTest {
 		
 		ArrayList<Block> testShapeBlockList = new ArrayList<>();
 		// Bottom layer
-		testShapeBlockList.add(new Block(1,11,1,BlockType.PISTON,Orientation.NORTH));
-		testShapeBlockList.add(new Block(1,11,0,BlockType.SLIME,Orientation.NORTH));
-		testShapeBlockList.add(new Block(1,11,-1,BlockType.STICKY_PISTON,Orientation.SOUTH));
-		testShapeBlockList.add(new Block(1,11,-2,BlockType.PISTON,Orientation.NORTH));
-		testShapeBlockList.add(new Block(1,11,-4,BlockType.SLIME,Orientation.NORTH));
+		testShapeBlockList.add(new Block(-26,28,-30,BlockType.PISTON,Orientation.NORTH));
+		testShapeBlockList.add(new Block(-26,28,-31,BlockType.SLIME,Orientation.NORTH));
+		testShapeBlockList.add(new Block(-26,28,-32,BlockType.STICKY_PISTON,Orientation.SOUTH));
+		testShapeBlockList.add(new Block(-26,28,-33,BlockType.PISTON,Orientation.NORTH));
+		testShapeBlockList.add(new Block(-26,28,-35,BlockType.SLIME,Orientation.NORTH));
+
 		// Top layer
-		testShapeBlockList.add(new Block(1,12,0,BlockType.REDSTONE_BLOCK,Orientation.NORTH));
-		testShapeBlockList.add(new Block(1,12,-4,BlockType.REDSTONE_BLOCK,Orientation.NORTH));
+		testShapeBlockList.add(new Block(-26,29,-31,BlockType.REDSTONE_BLOCK,Orientation.NORTH));
+		testShapeBlockList.add(new Block(-26,29,-35,BlockType.REDSTONE_BLOCK,Orientation.NORTH));
 		
 		//tnt
-		testShapeBlockList.add(new Block(1,12,-3,BlockType.TNT,Orientation.NORTH));
+		testShapeBlockList.add(new Block(-26,29,-34,BlockType.TNT,Orientation.NORTH));
 		
 		// Activate
-		testShapeBlockList.add(new Block(1,13,-4,BlockType.QUARTZ_BLOCK,Orientation.NORTH));
+		testShapeBlockList.add(new Block(-26,30,-4,BlockType.QUARTZ_BLOCK,Orientation.NORTH));
 		
 		System.out.println("shortTimeBetweenMinecraftReads = " + Parameters.parameters.longParameter("shortTimeBetweenMinecraftReads"));
 		
-		double wiggleRoom = 2.0;
+		double wiggleRoom = 0.0;
 		double expected = 8.0;
+		assertEquals(expected, ff.fitnessScore(testCorner,testShapeBlockList),wiggleRoom);
+	}
+	
+	@Test
+	public void testSinglePistonShapeEarlyTermination() {
+		// TODO Auto-generated method stub
+		Parameters.initializeParameterCollections(new String[] {"minecraftRewardFastFlyingMachines:false", "watch:true","minecraftClearWithGlass:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.ExplosiveBlockSet"});
+
+		//set up test corner and clear area
+		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,27,-35);
+		MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 50); // Larger buffer is important, but too large and it crashes!
+
+		ArrayList<Block> testShapeBlockList = new ArrayList<>();
+		
+		testShapeBlockList.add(new Block(-26,25,-35,BlockType.PISTON,Orientation.WEST));
+		testShapeBlockList.add(new Block(-26,25,-34,BlockType.REDSTONE_BLOCK,Orientation.NORTH));
+
+		System.out.println("shortTimeBetweenMinecraftReads = " + Parameters.parameters.longParameter("shortTimeBetweenMinecraftReads"));
+
+		double wiggleRoom = 1.0;
+		double expected = 0.0;
 		assertEquals(expected, ff.fitnessScore(testCorner,testShapeBlockList),wiggleRoom);
 	}
 
