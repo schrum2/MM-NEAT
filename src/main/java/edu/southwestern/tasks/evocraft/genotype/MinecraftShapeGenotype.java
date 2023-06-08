@@ -15,6 +15,8 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
 import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
+import edu.southwestern.tasks.evocraft.mutation.AddBlockMutation;
+import edu.southwestern.tasks.evocraft.mutation.RemoveBlockMutation;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.random.RandomNumbers;
 /**
@@ -66,14 +68,24 @@ public class MinecraftShapeGenotype implements Genotype<Pair<HashMap<MinecraftCo
 					boolean empty = RandomNumbers.coinFlip();					
 					if(empty) emptySpace.add(coordinates);
 					else  {
-						BlockType type = RandomNumbers.randomElement(MMNEAT.blockSet.getPossibleBlocks());
-						Orientation orientation = RandomNumbers.randomElement(Orientation.values());
+						BlockType type = randomBlockType();
+						Orientation orientation = randomBlockOrientation();
 						Block newBlock = new Block(coordinates, type, orientation);
 						blocks.put(coordinates, newBlock);
 					}
 				}
 			}
 		}
+	}
+
+	public static Orientation randomBlockOrientation() {
+		Orientation orientation = RandomNumbers.randomElement(Orientation.values());
+		return orientation;
+	}
+
+	public static BlockType randomBlockType() {
+		BlockType type = RandomNumbers.randomElement(MMNEAT.blockSet.getPossibleBlocks());
+		return type;
 	}
 
 	@Override
@@ -90,7 +102,11 @@ public class MinecraftShapeGenotype implements Genotype<Pair<HashMap<MinecraftCo
 
 	@Override
 	public void mutate() {
-		// TODO Auto-generated method stub
+		StringBuilder sb = new StringBuilder();
+		sb.append(this.getId());
+		sb.append(" ");
+		new AddBlockMutation().go(this, sb);
+		new RemoveBlockMutation().go(this, sb);
 
 	}
 
