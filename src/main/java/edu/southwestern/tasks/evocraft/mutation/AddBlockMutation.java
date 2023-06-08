@@ -16,18 +16,19 @@ import edu.southwestern.util.random.RandomNumbers;
  * @author raffertyt
  *
  */
-public class RemoveBlockMutation extends MinecraftShapeMutation {
+public class AddBlockMutation extends MinecraftShapeMutation {
 
-	public RemoveBlockMutation() {
-		super("minecraftRemoveBlockMutationRate");
+	public AddBlockMutation() {
+		super("minecraftAddBlockMutation");
 	}
 
 	@Override
 	public void mutate(Genotype<Pair<HashMap<MinecraftCoordinates, Block>, HashSet<MinecraftCoordinates>>> genotype) {
-		List<MinecraftCoordinates> occupiedCoordinates = genotype.getPhenotype().t1.keySet().stream().collect(Collectors.toList());
-		if(!occupiedCoordinates.isEmpty()) {
-			MinecraftCoordinates toReplace = RandomNumbers.randomElement(occupiedCoordinates);
-			((MinecraftShapeGenotype) genotype).removeBlock(toReplace);
-		}
-	}	
+		List<MinecraftCoordinates> emptyCoordinates = genotype.getPhenotype().t2.stream().collect(Collectors.toList());
+		if(!emptyCoordinates.isEmpty()) {
+			MinecraftCoordinates toReplace = RandomNumbers.randomElement(emptyCoordinates);
+			((MinecraftShapeGenotype) genotype).addBlock(toReplace, MinecraftShapeGenotype.randomBlockType(), MinecraftShapeGenotype.randomBlockOrientation());
+		}		
+	}
+	
 }
