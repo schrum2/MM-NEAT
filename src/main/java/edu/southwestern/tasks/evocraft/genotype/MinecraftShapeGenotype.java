@@ -99,7 +99,7 @@ public class MinecraftShapeGenotype implements Genotype<Pair<HashMap<MinecraftCo
 	@Override
 	public Genotype<Pair<HashMap<MinecraftCoordinates, Block>, HashSet<MinecraftCoordinates>>> crossover(
 			Genotype<Pair<HashMap<MinecraftCoordinates, Block>, HashSet<MinecraftCoordinates>>> g) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -195,6 +195,34 @@ public class MinecraftShapeGenotype implements Genotype<Pair<HashMap<MinecraftCo
 		if(!blocks.containsKey(coordinates)) throw new IllegalStateException("Block was not present in the blocks hash map");
 		Block oldBlock = blocks.remove(coordinates);	
 		blocks.put(coordinates, new Block(coordinates, MMNEAT.blockSet.getPossibleBlocks()[oldBlock.type()], orientation));
+	}
+	
+	/**
+	 * placeBlock puts a block into the shape. It replaces what is already there. If there is a block at the location, 
+	 * change the type and orientation to match the new one. 
+	 * @param block
+	 */
+	public void placeBlock(Block block) {
+		if(!blocks.containsKey(block.blockPosition())) {
+			blocks.put(block.blockPosition(), block);
+			emptySpace.remove(block.blockPosition());
+		}else {
+			blocks.put(block.blockPosition(), block);
+		}
+	}
+	/**
+	 * returns a Block from blocks if it exists, or creates an AIR block at those coordinates if the location is in the empty spaces.
+	 * @param coord position
+	 * @return the block at coord
+	 */
+	public Block getBlockAtLocation(MinecraftCoordinates coord) {
+		Block checkBlock = blocks.get(coord);
+		if(checkBlock != null) {
+			return checkBlock;
+		}else {
+			return new Block(coord, BlockType.AIR, Orientation.NORTH);
+		}
+		
 	}
 	
 	@Override
