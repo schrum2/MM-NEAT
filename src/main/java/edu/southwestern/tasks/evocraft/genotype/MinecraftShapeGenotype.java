@@ -99,8 +99,26 @@ public class MinecraftShapeGenotype implements Genotype<Pair<HashMap<MinecraftCo
 	@Override
 	public Genotype<Pair<HashMap<MinecraftCoordinates, Block>, HashSet<MinecraftCoordinates>>> crossover(
 			Genotype<Pair<HashMap<MinecraftCoordinates, Block>, HashSet<MinecraftCoordinates>>> g) {
-		
-		return null;
+
+		MinecraftShapeGenotype other = (MinecraftShapeGenotype) g;
+		MinecraftCoordinates ranges = MinecraftUtilClass.getRanges();
+		for(int xi = 0; xi < ranges.x(); xi++) {
+			for(int yi = 0; yi < ranges.y(); yi++) {
+				for(int zi = 0; zi < ranges.z(); zi++) {
+					boolean flip = RandomNumbers.coinFlip();
+					if(flip) {
+						MinecraftCoordinates coordinates = new MinecraftCoordinates(xi, yi, zi);
+						Block saveBlock1 = this.getBlockAtLocation(coordinates);
+						Block saveBlock2 = other.getBlockAtLocation(coordinates);
+						
+						this.placeBlock(saveBlock2);
+						other.placeBlock(saveBlock1);
+					}
+				}
+			}
+		}
+
+		return other;
 	}
 
 	@Override
