@@ -16,14 +16,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import edu.southwestern.MMNEAT.MMNEAT;
-import edu.southwestern.evolution.SinglePopulationGenerationalEA;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.HyperNEATCPPNforDL4JGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.metaheuristics.Metaheuristic;
 import edu.southwestern.evolution.mulambda.MuLambda;
 import edu.southwestern.log.EvalLog;
-import edu.southwestern.log.MMNEATLog;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
