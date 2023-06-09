@@ -197,7 +197,7 @@ public class ChangeCenterOfMassFitnessTest {
 	//passed
 	@Test
 	public void testFlyingRewardSpeed() throws InterruptedException {
-		Parameters.initializeParameterCollections(new String[] {"watch:true", "minecraftRewardFastFlyingMachines:true", "minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:30","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L, "minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+		Parameters.initializeParameterCollections(new String[] {"watch:true", "minecraftClearWithGlass:false", "minecraftRewardFastFlyingMachines:true", "minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:30","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L, "minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
 		MinecraftCoordinates cornerBS2 = new MinecraftCoordinates(0,16,-5);
 		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 100);
 		
@@ -340,7 +340,7 @@ public class ChangeCenterOfMassFitnessTest {
 			}
 		}
 
-		assertEquals(0.0, ff.fitnessScore(testCorner,testBlockSet),1.0); // Seems like a lot of wiggle room ... too much?
+		assertEquals(0.0, ff.fitnessScore(testCorner,testBlockSet),0.0); // Seems like a lot of wiggle room ... too much?
 	}
 	
 	//passed TODO: tnt
@@ -365,7 +365,7 @@ public class ChangeCenterOfMassFitnessTest {
 		
 		testBlockSet.add(new Block(-26,25,-30,BlockType.OBSIDIAN,Orientation.NORTH));
 
-		assertEquals(0.0, ff.fitnessScore(testCorner,testBlockSet),1.0); 
+		assertEquals(0.0, ff.fitnessScore(testCorner,testBlockSet),0.0); 
 	}
 	
 	//testing a flying machine with TNT on it, evaluation ends before TNT explodes

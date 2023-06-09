@@ -145,7 +145,7 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 				index++;
 			}
 			// Every fitness function wants to terminate early
-			if(CommonConstants.watch) System.out.println("all fitness functions returned RESULTS: "+allFitnessFunctionsReturnEarlyResult);
+//			if(CommonConstants.watch) System.out.println("all fitness functions returned RESULTS: "+allFitnessFunctionsReturnEarlyResult);
 
 			if(allFitnessFunctionsReturnEarlyResult) return ArrayUtil.doubleArrayFromList(Arrays.asList(earlyResults));
 			
