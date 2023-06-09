@@ -131,19 +131,21 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 			if(CommonConstants.watch) System.out.println("Block update: "+newShapeReadingBlockList);
 
 			int index = 0;
-			boolean allNonNull = true; // Assume early termination will happen
+			boolean allFitnessFunctionsReturnEarlyResult = true; // Assume early termination will happen
 			for(TimedEvaluationMinecraftFitnessFunction ff : fitnessFunctions) {
 				// See if this fitness function wants to end early
 				if(earlyResults[index] == null) // Only check if it didn't already end early
 					earlyResults[index] = ff.earlyEvaluationTerminationResult(shapeCorner, originalBlocks, history, newShapeReadingBlockList);
 				// If it still does not want to end early
 				if(earlyResults[index] == null)
-					allNonNull = false; // Then evaluation must continue
+					allFitnessFunctionsReturnEarlyResult = false; // Then evaluation must continue
 				
 				index++;
 			}
 			// Every fitness function wants to terminate early
-			if(allNonNull) return ArrayUtil.doubleArrayFromList(Arrays.asList(earlyResults));
+			if(CommonConstants.watch) System.out.println("all fitness functions returned RESULTS: "+allFitnessFunctionsReturnEarlyResult);
+
+			if(allFitnessFunctionsReturnEarlyResult) return ArrayUtil.doubleArrayFromList(Arrays.asList(earlyResults));
 			
 			// If enough time has elapsed since the start, then end the evaluation
 			if(System.currentTimeMillis() - startTime > Parameters.parameters.longParameter("minecraftMandatoryWaitTime")) {

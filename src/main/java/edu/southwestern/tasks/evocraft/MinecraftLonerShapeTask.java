@@ -449,6 +449,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	}
 
 	/**
+	 * TODO: deals with saving files
 	 * Save a test list of the blocks in the generated shape to the archive directory for MAP Elites
 	 * 
 	 * @param <T>
@@ -469,6 +470,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	}
 
 	/**
+	 * TODO: deals with saving files
 	 * Write block list text file to specified location
 	 * @param blocks The blocks to write
 	 * @param pathAndPrefix Path plus first part of filename. Will be followed by _ before the fileSuffix
@@ -621,6 +623,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		if(Parameters.parameters.booleanParameter("minecraftChangeCenterOfMassFitness") && MMNEAT.usingDiversityBinningScheme && CommonConstants.netio) {
 			System.out.println("Write block lists for all flying elites to finalFlyingMachines");
 			
+			//final flying machines directory is created
 			String flyingDir = FileUtilities.getSaveDirectory() + "/finalFlyingMachines";
 			File dir = new File(flyingDir);
 			// Create dir
@@ -633,8 +636,10 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
 			for(int i = 0; i < archiveVector.size(); i++) {
 				Score<T> score = archiveVector.get(i);
+				//if there is a fitness score related to this bin (ie. there exists a shape)
 				if(score != null) {
 					double fitness = score.behaviorIndexScore();
+					//TODO: this deals with saving shapes
 					if(this.internalMinecraftShapeTask.certainFlying(fitness)) {
 						@SuppressWarnings("unchecked")
 						List<Block> blocks = MMNEAT.shapeGenerator.generateShape(score.individual, MinecraftClient.POST_EVALUATION_SHAPE_CORNER, MMNEAT.blockSet);
