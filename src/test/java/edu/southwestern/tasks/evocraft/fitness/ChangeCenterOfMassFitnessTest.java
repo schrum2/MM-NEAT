@@ -553,4 +553,48 @@ public class ChangeCenterOfMassFitnessTest {
 		 assertEquals(maxFitness, ff.maxFitness(), 0.0);
 		 
 	}
+	
+	//TODO: fix broken fitness function
+	@Test
+	public void testNotFlyingButGivingMaxFitnessOne() {
+		Parameters.initializeParameterCollections(new String[] {"watch:true","minecraftClearWithGlass:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+
+		//set up test corner and clear area
+		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,27,-35);
+		MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 50); // Larger buffer is important, but too large and it crashes!
+
+		//this string is for a machine that explodes, is large, and leaves a few blocks behind
+		String listString = "[AIR at (-665,99,-765) oriented NORTH, REDSTONE_BLOCK at (-663,99,-763) oriented NORTH, SLIME at (-663,99,-764) oriented WEST, REDSTONE_BLOCK at (-665,99,-763) oriented EAST, AIR at (-663,99,-765) oriented NORTH, SLIME at (-665,98,-765) oriented EAST, STICKY_PISTON at (-664,100,-764) oriented NORTH, AIR at (-663,98,-763) oriented NORTH, AIR at (-663,98,-764) oriented NORTH, OBSERVER at (-663,98,-765) oriented DOWN, AIR at (-665,98,-764) oriented NORTH, STICKY_PISTON at (-664,99,-765) oriented WEST, AIR at (-664,99,-763) oriented NORTH, SLIME at (-663,100,-765) oriented WEST, AIR at (-665,100,-764) oriented NORTH, STICKY_PISTON at (-665,100,-765) oriented EAST, AIR at (-664,98,-763) oriented NORTH, PISTON at (-664,98,-764) oriented SOUTH, REDSTONE_BLOCK at (-663,100,-763) oriented EAST, QUARTZ_BLOCK at (-664,98,-765) oriented SOUTH, PISTON at (-663,100,-764) oriented EAST]";
+		List<Block> testBlockSet = MinecraftUtilClass.readMinecraftBlockListFromString(listString);
+
+		//System.out.println("blocklist: " + testBlockSet);
+
+		//shift coordinates based on the testCorner
+		MinecraftCoordinates originalShapeCoordinates = MinecraftUtilClass.minCoordinates(testBlockSet);
+		testBlockSet = MinecraftUtilClass.shiftBlocksBetweenCorners(testBlockSet, originalShapeCoordinates, testCorner);
+		
+
+		assertEquals(0.0, ff.fitnessScore(testCorner,testBlockSet),0.0); 
+	}
+	@Test
+	public void testNotFlyingButGivingMaxFitnessTwo() {
+		Parameters.initializeParameterCollections(new String[] {"watch:true","minecraftClearWithGlass:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+
+		//set up test corner and clear area
+		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,27,-35);
+		MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 50); // Larger buffer is important, but too large and it crashes!
+
+		//this string is for a machine that explodes, is large, and leaves a few blocks behind
+		String listString = "[REDSTONE_BLOCK at (-665,99,-764) oriented NORTH, AIR at (-665,99,-765) oriented NORTH, AIR at (-663,99,-763) oriented NORTH, AIR at (-663,99,-764) oriented NORTH, AIR at (-663,99,-765) oriented NORTH, QUARTZ_BLOCK at (-664,100,-764) oriented SOUTH, QUARTZ_BLOCK at (-664,100,-765) oriented EAST, AIR at (-663,98,-763) oriented NORTH, QUARTZ_BLOCK at (-663,98,-764) oriented NORTH, AIR at (-665,98,-763) oriented NORTH, SLIME at (-664,100,-763) oriented SOUTH, QUARTZ_BLOCK at (-665,98,-764) oriented WEST, AIR at (-664,99,-763) oriented NORTH, QUARTZ_BLOCK at (-665,100,-763) oriented DOWN, STICKY_PISTON at (-663,100,-765) oriented UP, AIR at (-665,100,-764) oriented NORTH, OBSERVER at (-665,100,-765) oriented SOUTH, OBSERVER at (-664,98,-763) oriented SOUTH, STICKY_PISTON at (-664,98,-764) oriented NORTH]";
+		List<Block> testBlockSet = MinecraftUtilClass.readMinecraftBlockListFromString(listString);
+
+		//System.out.println("blocklist: " + testBlockSet);
+
+		//shift coordinates based on the testCorner
+		MinecraftCoordinates originalShapeCoordinates = MinecraftUtilClass.minCoordinates(testBlockSet);
+		testBlockSet = MinecraftUtilClass.shiftBlocksBetweenCorners(testBlockSet, originalShapeCoordinates, testCorner);
+		
+
+		assertEquals(0.0, ff.fitnessScore(testCorner,testBlockSet),0.0); 
+	}
 }
