@@ -80,7 +80,7 @@ public class ChangeCenterOfMassFitnessTest {
 	
 	@Test
 	public void testSimpleCases() {
-		Parameters.initializeParameterCollections("watch:true minecraftXRange:4 minecraftYRange:4 minecraftZRange:4 minecraftChangeCenterOfMassFitness:true launchMinecraftServerFromJava:false io:false netio:false spaceBetweenMinecraftShapes:5 voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true minecraftClearSleepTimer:400".split(" "));
+		Parameters.initializeParameterCollections("minecraftXRange:4 minecraftYRange:4 minecraftZRange:4 minecraftChangeCenterOfMassFitness:true launchMinecraftServerFromJava:false io:false netio:false spaceBetweenMinecraftShapes:5 voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true minecraftClearSleepTimer:400".split(" "));
 		CommonConstants.watch = true; // For extra debug info
 		
 		MinecraftCoordinates cornerBS1 = new MinecraftCoordinates(0,8,0);
