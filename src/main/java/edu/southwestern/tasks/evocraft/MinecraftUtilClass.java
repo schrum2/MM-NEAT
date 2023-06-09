@@ -202,6 +202,17 @@ public class MinecraftUtilClass {
 		return blocks.stream().filter(b -> ArrayUtil.contains(typesToKeep, BlockType.values()[b.type()])  ).collect(Collectors.toList());
 	}
 	
+	/**
+	 * Check if any blocks of the specified type are in the shape
+	 * 
+	 * @param blocks collection of blocks in a shape
+	 * @param type block type to look for
+	 * @return true if type is in the list of blocks, false otherwise
+	 */
+	public static boolean containsBlockType(List<Block> blocks, BlockType type) {
+		return !getDesiredBlocks(blocks, new BlockType[] {type}).isEmpty();
+	}
+	
 	/** 
 	 * This static method will either return a restricted array of orientations, or
 	 * it will return an array of orientations with all 6 orientations.

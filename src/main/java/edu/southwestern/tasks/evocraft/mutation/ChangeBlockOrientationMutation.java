@@ -11,7 +11,6 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.genotype.MinecraftShapeGenotype;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.random.RandomNumbers;
-import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 /**
  * Takes a block from the occupied set and changes its orientation to a random orientation.
  * @author raffertyt
