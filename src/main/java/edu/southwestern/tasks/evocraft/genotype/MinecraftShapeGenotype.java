@@ -130,7 +130,7 @@ public class MinecraftShapeGenotype implements Genotype<Pair<HashMap<MinecraftCo
 						MinecraftCoordinates coordinates = new MinecraftCoordinates(xi, yi, zi);
 						Block saveBlock1 = this.getBlockAtLocation(coordinates);
 						Block saveBlock2 = other.getBlockAtLocation(coordinates);
-						
+
 						this.placeBlock(saveBlock2);
 						other.placeBlock(saveBlock1);
 					}
@@ -152,7 +152,7 @@ public class MinecraftShapeGenotype implements Genotype<Pair<HashMap<MinecraftCo
 		MinecraftShapeGenotype newMinecraftShapeGenotype = new MinecraftShapeGenotype();
 		return newMinecraftShapeGenotype; // call public constructor and return
 	}
-	
+
 	/**
 	 * adds a new block
 	 * @param coordinates new block coordinates
@@ -176,7 +176,7 @@ public class MinecraftShapeGenotype implements Genotype<Pair<HashMap<MinecraftCo
 		boolean added = emptySpace.add(coordinates);
 		assert added;
 	}
-	
+
 	/**
 	 * swap blocks at two coordinates (throw IllegalStatException if either is not in blocks HashMap)
 	 * @param coordinates1 block 1
@@ -191,12 +191,12 @@ public class MinecraftShapeGenotype implements Genotype<Pair<HashMap<MinecraftCo
 
 			Block newBlock1 = new Block(coordinates2, BlockType.values()[block1.type()], Orientation.values()[block1.orientation()]);
 			Block newBlock2 = new Block(coordinates1, BlockType.values()[block2.type()], Orientation.values()[block2.orientation()]);
-			
+
 			blocks.put(coordinates2, newBlock1);
 			blocks.put(coordinates1, newBlock2);
 		}
 	}
-	
+
 	/**
 	 * Changes a desired blocks type
 	 * @param coordinates desired block location
@@ -207,22 +207,22 @@ public class MinecraftShapeGenotype implements Genotype<Pair<HashMap<MinecraftCo
 		Block oldBlock = blocks.remove(coordinates);	
 		blocks.put(coordinates, new Block(coordinates, type, Orientation.values()[oldBlock.orientation()]));
 	}
-	
-	
+
+
 	// Change type
-//	public void changeBlockType(MinecraftCoordinates coordinates, BlockType type) {
-//		if(!blocks.containsKey(coordinates)) throw new IllegalStateException("Block was not present in the blocks hash map");
-//		Block oldBlock = blocks.get(coordinates);
-//		int[] otherTypes = IntStream.range(0, MMNEAT.blockSet.getPossibleBlocks().length).filter(i -> i != oldBlock.type()).toArray();
-//		int newTypeIndex = RandomNumbers.randomElement(otherTypes);
-//		
-//		
-//		List<BlockType> types = Arrays.asList(MMNEAT.blockSet.getPossibleBlocks());
-//		
-//		//oldBlock.type()
-//		
-//		//types.remove()
-//	}
+	//	public void changeBlockType(MinecraftCoordinates coordinates, BlockType type) {
+	//		if(!blocks.containsKey(coordinates)) throw new IllegalStateException("Block was not present in the blocks hash map");
+	//		Block oldBlock = blocks.get(coordinates);
+	//		int[] otherTypes = IntStream.range(0, MMNEAT.blockSet.getPossibleBlocks().length).filter(i -> i != oldBlock.type()).toArray();
+	//		int newTypeIndex = RandomNumbers.randomElement(otherTypes);
+	//		
+	//		
+	//		List<BlockType> types = Arrays.asList(MMNEAT.blockSet.getPossibleBlocks());
+	//		
+	//		//oldBlock.type()
+	//		
+	//		//types.remove()
+	//	}
 	/**
 	 * change orientation (exception if not present)		
 	 * @param coordinates desired block location
@@ -234,18 +234,23 @@ public class MinecraftShapeGenotype implements Genotype<Pair<HashMap<MinecraftCo
 		Block oldBlock = blocks.remove(coordinates);	
 		blocks.put(coordinates, new Block(coordinates, BlockType.values()[oldBlock.type()], orientation));
 	}
-	
+
 	/**
 	 * placeBlock puts a block into the shape. It replaces what is already there. If there is a block at the location, 
 	 * change the type and orientation to match the new one. 
 	 * @param block
 	 */
 	public void placeBlock(Block block) {
-		if(!blocks.containsKey(block.blockPosition())) {
-			blocks.put(block.blockPosition(), block);
+		if(BlockType.values()[block.type()] != BlockType.AIR) {
+			if(!blocks.containsKey(block.blockPosition())) {
+				//blocks.replace(block.blockPosition(), blocks.get(block.blockPosition()), block);
+				blocks.put(block.blockPosition(), block);
+			}else {
+				blocks.put(block.blockPosition(), block);
+				emptySpace.remove(block.blockPosition());
+			}
 		}else {
-			blocks.put(block.blockPosition(), block);
-			emptySpace.remove(block.blockPosition());
+			emptySpace.add(block.blockPosition());
 		}
 	}
 	/**
@@ -260,17 +265,17 @@ public class MinecraftShapeGenotype implements Genotype<Pair<HashMap<MinecraftCo
 		}else {
 			return new Block(coord, BlockType.AIR, Orientation.NORTH);
 		}
-		
+
 	}
-	
+
 	@Override
 	public long getId() {
 		return id;
 	}
-	
+
 	public static void main(String[] args) {
 		IntStream stream = IntStream.range(0, 10).filter(i -> i != 3);
-		
+
 		System.out.println(Arrays.toString(stream.toArray()));
 	}
 }
