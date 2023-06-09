@@ -238,7 +238,8 @@ public class MinecraftShapeGenotype implements Genotype<Pair<HashMap<MinecraftCo
 	public void changeBlockOrientation(MinecraftCoordinates coordinates, Orientation orientation) {
 		if(!blocks.containsKey(coordinates)) throw new IllegalStateException("Block was not present in the blocks hash map");
 		Block oldBlock = blocks.remove(coordinates);	
-		blocks.put(coordinates, new Block(coordinates, MMNEAT.blockSet.getPossibleBlocks()[oldBlock.type()], orientation));
+		blocks.put(coordinates, new Block(coordinates, BlockType.values()[oldBlock.type()], orientation));
+		assert !MinecraftUtilClass.containsBlockType(new ArrayList<>(blocks.values()), BlockType.AIR) : "Generated shapes should not contain AIR: "+ blocks + "\n" + emptySpace;
 	}
 	
 	/**
