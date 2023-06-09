@@ -16,7 +16,10 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
 import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 import edu.southwestern.tasks.evocraft.mutation.AddBlockMutation;
+import edu.southwestern.tasks.evocraft.mutation.ChangeBlockOrientationMutation;
+import edu.southwestern.tasks.evocraft.mutation.ChangeBlockTypeMutation;
 import edu.southwestern.tasks.evocraft.mutation.RemoveBlockMutation;
+import edu.southwestern.tasks.evocraft.mutation.SwapBlocksMutation;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.random.RandomNumbers;
 /**
@@ -107,7 +110,10 @@ public class MinecraftShapeGenotype implements Genotype<Pair<HashMap<MinecraftCo
 		sb.append(" ");
 		new AddBlockMutation().go(this, sb);
 		new RemoveBlockMutation().go(this, sb);
-
+		new ChangeBlockTypeMutation().go(this, sb);
+		new SwapBlocksMutation().go(this, sb);
+		new AddBlockMutation().go(this, sb);
+		new ChangeBlockOrientationMutation().go(this, sb);
 	}
 
 	@Override
@@ -237,9 +243,9 @@ public class MinecraftShapeGenotype implements Genotype<Pair<HashMap<MinecraftCo
 	public void placeBlock(Block block) {
 		if(!blocks.containsKey(block.blockPosition())) {
 			blocks.put(block.blockPosition(), block);
-			emptySpace.remove(block.blockPosition());
 		}else {
 			blocks.put(block.blockPosition(), block);
+			emptySpace.remove(block.blockPosition());
 		}
 	}
 	/**
