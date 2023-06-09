@@ -55,14 +55,14 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 
 		//if using fast fitness return null, prevents early termination
 		if(Parameters.parameters.booleanParameter("minecraftRewardFastFlyingMachines")) return null;
-		else {
-			//this is if it's not that return something else, if it's not flying
-//			if(CommonConstants.watch) System.out.println("shape history check - early termination result");
-			if(!shapeHistoryCheck(history)) {
-				if(CommonConstants.watch) System.out.println("ENDEARLYEVAL Shape history check is failing");
-				//return 0.0;
-			}
-		}
+//		else {
+//			//this is if it's not that return something else, if it's not flying
+////			if(CommonConstants.watch) System.out.println("shape history check - early termination result");
+//			if(!shapeHistoryCheck(history)) {
+//				if(CommonConstants.watch) System.out.println("ENDEARLYEVAL Shape history check is failing");
+//				//return 0.0;
+//			}
+//		}
 		
 		return fitnessResultForFlyingMachine(originalBlocks, history, newShapeBlockList);
 	}
@@ -79,23 +79,22 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 	 */
 	private Double fitnessResultForFlyingMachine(List<Block> originalBlocks, ArrayList<Pair<Long, List<Block>>> history,
 			List<Block> newShapeBlockList) {
-		///TESTING BELOW
-//		if(CommonConstants.watch) System.out.println("noMovementCount: " + noMovementCount + " yesMovementCount: " + yesMovementCount);
 		
-		if(CommonConstants.watch) System.out.println("shape history check -fitness result 1");
+//		if(CommonConstants.watch) System.out.println("shape history check -fitness result 1");
 		if(!shapeHistoryCheck(history)) {
-//			if(CommonConstants.watch) System.out.println("beginning of FitnessResult shape history check false");
-			//return minFitness();
+			if(CommonConstants.watch) System.out.println("beginning of FitnessResult TESTING shape not moving end early - calc final score");
+			MinecraftCoordinates shapeCorner = MinecraftUtilClass.minCoordinates(originalBlocks);
+			return calculateFinalScore(history, shapeCorner, originalBlocks);
 		}
 		///TESTING ABOVE
 		
 		// Shape was not empty before, but it is now, so it must have flown away. Award max fitness
 		if(newShapeBlockList.isEmpty()) { // If list is empty now (but was not before) then shape has flown completely away
-			if(CommonConstants.watch) System.out.println("shape history check -fitness result 2");
-			if(!(shapeHistoryCheck(history))) {
-//				if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": Shape empty now after history check fail, RETURN");
-				return minFitness();
-			}
+//			if(CommonConstants.watch) System.out.println("shape history check -fitness result 2");
+//			if(!(shapeHistoryCheck(history))) {
+////				if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": Shape empty now after history check fail, RETURN");
+//				return minFitness();
+//			}
 			if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": Shape empty now: max fitness!");
 			return maxFitness();
 		}
@@ -113,20 +112,18 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 			// Compute farthest center of mass from history
 			Double result = ifSufficientBlocksDepartedThenMaximumFitnessWithPenalty(originalBlocks.size(), newShapeBlockList);
 			
-			if(CommonConstants.watch) System.out.println("shape history check -fitness result 3");
-			if(!(shapeHistoryCheck(history))) {	//checks if there is no movement, there are departed blocks, catches tnt explosion
-				if(CommonConstants.watch) System.out.println("XXX----history fail");
-//				return minFitness();	//compute final fitness
-				MinecraftCoordinates shapeCorner = MinecraftUtilClass.minCoordinates(originalBlocks);
-				return calculateFinalScore(history, shapeCorner, originalBlocks);
-			}
+//			if(CommonConstants.watch) System.out.println("shape history check -fitness result 3");
+//			if(!(shapeHistoryCheck(history))) {	//checks if there is no movement, there are departed blocks, catches tnt explosion
+//				if(CommonConstants.watch) System.out.println("XXX----history fail");
+////				return minFitness();	//compute final fitness
+//				MinecraftCoordinates shapeCorner = MinecraftUtilClass.minCoordinates(originalBlocks);
+//				return calculateFinalScore(history, shapeCorner, originalBlocks);
+//			}
 			
 			if(result != null) {
 //				if(CommonConstants.watch) System.out.println("no movement, there are departed blocks, RETURN result");
 				return result;
-			}
-//			} else {
-			//TODO: testing		
+			}		
 		}
 		//if(CommonConstants.watch) System.out.println("RETURN null");
 
@@ -201,17 +198,15 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 
 			Vertex nextCenterOfMass = MinecraftUtilClass.getCenterOfMass(history.get(i).t2);
 			//if evaluating and rewarding fast flying machines
+			
 			if(Parameters.parameters.booleanParameter("minecraftRewardFastFlyingMachines")) {
-//if the fitnessResult is not null, use it for calculating totalChangeDistance
-
-//this call seems to be fine
-//fitness result seems to only control how the total change is calculated
 				Double fitnessResult = fitnessResultForFlyingMachine(originalBlocks, history, history.get(i).t2);
 //				if(CommonConstants.watch) System.out.println("AFTER CALL fitness result: " + fitnessResult + " i: " + i);
 
 				if(fitnessResult != null) { totalChangeDistance += fitnessResult; 
 				//else calculate based on initial center of mass and the next center of mass to add to total change distance
 				} else { totalChangeDistance += initialCenterOfMass.distance(nextCenterOfMass); }
+				
 			} else {		///this is the distance change when not rewarding fas flying machines
 				totalChangeDistance += lastCenterOfMass.distance(nextCenterOfMass);
 //				if(CommonConstants.watch) System.out.println("total change distance: " + totalChangeDistance);
