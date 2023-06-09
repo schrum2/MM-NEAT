@@ -290,22 +290,24 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			System.exit(1);
 		}
 
-		// Minimum over HashMap values
-		for(HashMap.Entry<String,Object> entry : score.MAPElitesBehaviorMap().entrySet()) {
-			if(behaviorCharacteristics.containsKey(entry.getKey()) && entry.getValue() instanceof Double) {
-				double previous = ((Double) behaviorCharacteristics.get(entry.getKey())).doubleValue();
-				double current = ((Double) entry.getValue()).doubleValue();
-				//double avg = previous + (current - previous) / (num + 1); // Incremental average calculation 
-				//behaviorCharacteristics.put(entry.getKey(), avg);
-				double min = Math.min(previous,current); // Minimum: has to really succeed as flying machine, at least twice
-				behaviorCharacteristics.put(entry.getKey(), min);
-			} else { // Overwrite, fresh start
-				assert num == 0 || !(entry.getValue() instanceof Double) : ""+behaviorCharacteristics;
-				behaviorCharacteristics.put(entry.getKey(), entry.getValue());
+		if(score.usesMAPElitesMapSpecification()) {
+			// Minimum over HashMap values
+			for(HashMap.Entry<String,Object> entry : score.MAPElitesBehaviorMap().entrySet()) {
+				if(behaviorCharacteristics.containsKey(entry.getKey()) && entry.getValue() instanceof Double) {
+					double previous = ((Double) behaviorCharacteristics.get(entry.getKey())).doubleValue();
+					double current = ((Double) entry.getValue()).doubleValue();
+					//double avg = previous + (current - previous) / (num + 1); // Incremental average calculation 
+					//behaviorCharacteristics.put(entry.getKey(), avg);
+					double min = Math.min(previous,current); // Minimum: has to really succeed as flying machine, at least twice
+					behaviorCharacteristics.put(entry.getKey(), min);
+				} else { // Overwrite, fresh start
+					assert num == 0 || !(entry.getValue() instanceof Double) : ""+behaviorCharacteristics;
+					behaviorCharacteristics.put(entry.getKey(), entry.getValue());
+				}
 			}
 		}
 		// Checks command line param on whether or not to generate shapes in archive
-		if(Parameters.parameters.booleanParameter("minecraftContainsWholeMAPElitesArchive") || CommonConstants.netio) {
+		if(Parameters.parameters.booleanParameter("minecraftContainsWholeMAPElitesArchive")) { // || CommonConstants.netio) { // Why netio?
 			// Places the shapes in the world based on their position
 			placeArchiveInWorld(individual, behaviorCharacteristics, ranges);	
 		}
@@ -447,6 +449,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	}
 
 	/**
+	 * TODO: deals with saving files
 	 * Save a test list of the blocks in the generated shape to the archive directory for MAP Elites
 	 * 
 	 * @param <T>
@@ -467,6 +470,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	}
 
 	/**
+	 * TODO: deals with saving files
 	 * Write block list text file to specified location
 	 * @param blocks The blocks to write
 	 * @param pathAndPrefix Path plus first part of filename. Will be followed by _ before the fileSuffix
@@ -619,6 +623,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		if(Parameters.parameters.booleanParameter("minecraftChangeCenterOfMassFitness") && MMNEAT.usingDiversityBinningScheme && CommonConstants.netio) {
 			System.out.println("Write block lists for all flying elites to finalFlyingMachines");
 			
+			//final flying machines directory is created
 			String flyingDir = FileUtilities.getSaveDirectory() + "/finalFlyingMachines";
 			File dir = new File(flyingDir);
 			// Create dir
@@ -631,8 +636,10 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
 			for(int i = 0; i < archiveVector.size(); i++) {
 				Score<T> score = archiveVector.get(i);
+				//if there is a fitness score related to this bin (ie. there exists a shape)
 				if(score != null) {
 					double fitness = score.behaviorIndexScore();
+					//TODO: this deals with saving shapes
 					if(this.internalMinecraftShapeTask.certainFlying(fitness)) {
 						@SuppressWarnings("unchecked")
 						List<Block> blocks = MMNEAT.shapeGenerator.generateShape(score.individual, MinecraftClient.POST_EVALUATION_SHAPE_CORNER, MMNEAT.blockSet);

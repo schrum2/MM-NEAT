@@ -33,4 +33,10 @@ public abstract class MinecraftFitnessFunction {
 	 * @return Maximum possible fitness
 	 */
 	public abstract double maxFitness();
+	
+	//TODO: figure out parameters then do javadoc
+	public void saveInterestingResult() {
+		//do nothing
+	}
 }
+

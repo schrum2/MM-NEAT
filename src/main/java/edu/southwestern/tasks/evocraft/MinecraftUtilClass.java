@@ -16,6 +16,7 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Vertex;
+import edu.southwestern.util.random.RandomNumbers;
 
 /**
  * Some commonly used methods for dealing with the Minecraft world
@@ -69,6 +70,17 @@ public class MinecraftUtilClass {
 				Parameters.parameters.integerParameter("minecraftXRange"),
 				Parameters.parameters.integerParameter("minecraftYRange"),
 				Parameters.parameters.integerParameter("minecraftZRange"));
+	}
+	
+	/**
+	 * Generates random coordinates within the shape ranges
+	 * @return random coordinates
+	 */
+	public static MinecraftCoordinates randomCoordinatesInShapeRange() {
+		return new MinecraftCoordinates(
+				RandomNumbers.randomGenerator.nextInt(Parameters.parameters.integerParameter("minecraftXRange")),
+				RandomNumbers.randomGenerator.nextInt(Parameters.parameters.integerParameter("minecraftYRange")),
+				RandomNumbers.randomGenerator.nextInt(Parameters.parameters.integerParameter("minecraftZRange")));
 	}
 	
 	/**

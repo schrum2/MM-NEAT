@@ -347,6 +347,17 @@ public class RandomNumbers {
 	}
 
 	/**
+	 * Takes in an array and selects a random index. 
+	 * 
+	 * @param array of ints
+	 * @return random int in input array
+	 */
+	public static int randomElement(int[] list) {
+		int index = randomGenerator.nextInt(list.length);
+		return list[index];
+	}
+	
+	/**
 	 * Return true if random double in [0,1] is less than input, and false otherwise
 	 * @param chance Chance of true result
 	 * @return true with chance probability, false otherwise

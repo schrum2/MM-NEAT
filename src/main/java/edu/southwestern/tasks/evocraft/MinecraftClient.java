@@ -607,7 +607,10 @@ public class MinecraftClient extends Comm {
 		public int z() {
 			return position.z();
 		}
-
+		public MinecraftCoordinates blockPosition() {
+			return position;
+		}
+		
 		/**
 		 * Get type index of the type that will be recognized by Python
 		 * @return Type index/number for type

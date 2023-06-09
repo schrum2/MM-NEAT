@@ -71,6 +71,10 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	public static int getNumTimedFitnessFunctions() {
 		return numTimedFitnessFunctions;
 	}
+	
+	public static void setNumTimedFitnessFunctions(int num) {
+		numTimedFitnessFunctions = num;
+	}
 
 	// Makes sure tiebreaking is run in the same way as before
 	@SuppressWarnings("unchecked")
@@ -327,7 +331,6 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		//System.out.println(genome.getId() + ":" + blocks);
 
 		// Clear space around this one shape
-		
 		MinecraftLonerShapeTask.clearBlocksForShape(MinecraftUtilClass.getRanges(), corner.sub(MinecraftUtilClass.emptySpaceOffsets()));
 
 		//MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
@@ -359,11 +362,12 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			assert !(minecraftBinLabels instanceof MinecraftMAPElitesBlockCountBinLabels) || blocks.size() == (int) ((Double) behaviorMap.get("OccupiedCountFitness")).doubleValue() : behaviorMap + ":" + blocks;
 		} 
 
+		//TODO: calls certainFlying and saves the shapes
+		//makes a directory, and writes block list
 		if(CommonConstants.netio && Parameters.parameters.booleanParameter("minecraftChangeCenterOfMassFitness") && certainFlying(fitnessFunctions, fitnessScores[0])) {
 			// Assuming that change in center of mass is at index 0, and that 5 is a suitable threshold for penalties to the max fitness
 			String flyingDir = FileUtilities.getSaveDirectory() + "/flyingMachines";
-			File dir = new File(flyingDir);
-			// Create dir
+			File dir = new File(flyingDir);	// Create dir
 			if (!dir.exists()) {
 				dir.mkdir();
 			}
