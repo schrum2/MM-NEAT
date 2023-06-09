@@ -45,7 +45,7 @@ public class MinecraftBlockEvaluateExperiment implements Experiment{
 
 	@Override
 	public void run() {
-		try {
+//		try {
 			seen = new HashSet<>();
 			File file = new File(dir);
 			if(file.isDirectory()) {
@@ -89,13 +89,14 @@ public class MinecraftBlockEvaluateExperiment implements Experiment{
 					} while(tryAgain);
 				}
 			} else {
+				throw new UnsupportedOperationException("Does not actually work with single files. Load a directory instead");
 				// Is a single text file
-				MinecraftClient.clearAreaAroundPostEvaluationCorner();
-				MinecraftBlockRenderExperiment.generateOneShapeFromFile(file);
+//				MinecraftClient.clearAreaAroundPostEvaluationCorner();
+//				MinecraftBlockRenderExperiment.generateOneShapeFromFile(file);
 			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
+//		} catch (FileNotFoundException e) {
+//			e.printStackTrace();
+//		}
 	}
 
 	
