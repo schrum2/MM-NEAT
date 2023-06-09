@@ -71,6 +71,10 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	public static int getNumTimedFitnessFunctions() {
 		return numTimedFitnessFunctions;
 	}
+	
+	public static void setNumTimedFitnessFunctions(int num) {
+		numTimedFitnessFunctions = num;
+	}
 
 	// Makes sure tiebreaking is run in the same way as before
 	@SuppressWarnings("unchecked")
