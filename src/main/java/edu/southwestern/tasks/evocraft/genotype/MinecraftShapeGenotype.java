@@ -97,10 +97,8 @@ public class MinecraftShapeGenotype implements Genotype<Pair<HashMap<MinecraftCo
 	@Override
 	public Genotype<Pair<HashMap<MinecraftCoordinates, Block>, HashSet<MinecraftCoordinates>>> copy() {
 		// Create new map and set and copy each item from original map and set, put into a genotype instance and return
-		HashMap<MinecraftCoordinates, Block> copyBlocks;
-		HashSet<MinecraftCoordinates> copyEmptySpace;
-		copyBlocks = blocks;
-		copyEmptySpace = emptySpace;
+		HashMap<MinecraftCoordinates, Block> copyBlocks = new HashMap<MinecraftCoordinates, Block>(blocks);
+		HashSet<MinecraftCoordinates> copyEmptySpace = new HashSet<>(emptySpace);
 		return new MinecraftShapeGenotype(copyBlocks, copyEmptySpace); // use private constructor
 	}
 
