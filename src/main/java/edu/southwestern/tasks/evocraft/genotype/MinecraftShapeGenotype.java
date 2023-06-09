@@ -248,16 +248,18 @@ public class MinecraftShapeGenotype implements Genotype<Pair<HashMap<MinecraftCo
 	 * @param block
 	 */
 	public void placeBlock(Block block) {
-		if(BlockType.values()[block.type()] != BlockType.AIR) {
-			if(!blocks.containsKey(block.blockPosition())) {
-				//blocks.replace(block.blockPosition(), blocks.get(block.blockPosition()), block);
-				blocks.put(block.blockPosition(), block);
-			}else {
-				blocks.put(block.blockPosition(), block);
-				emptySpace.remove(block.blockPosition());
+		if(!BlockType.values()[block.type()].equals(BlockType.AIR)) {
+			if(!blocks.containsKey(block.blockPosition())) { // No block present
+				blocks.put(block.blockPosition(), block); // Add a block
+				emptySpace.remove(block.blockPosition()); // Remove the space
+			}else { // There is a block present
+				blocks.replace(block.blockPosition(), block); // Change the block
 			}
-		}else {
-			emptySpace.add(block.blockPosition());
+		} else {
+			if(!emptySpace.contains(block.blockPosition())) { // block is in the space
+				blocks.remove(block.blockPosition()); // remove the block
+				emptySpace.add(block.blockPosition());	// add empty block
+			}
 		}
 		assert !MinecraftUtilClass.containsBlockType(new ArrayList<>(blocks.values()), BlockType.AIR) : "Generated shapes should not contain AIR: "+ blocks + "\n" + emptySpace;
 	}
