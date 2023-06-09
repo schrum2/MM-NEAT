@@ -17,7 +17,10 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
 import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 import edu.southwestern.tasks.evocraft.mutation.AddBlockMutation;
+import edu.southwestern.tasks.evocraft.mutation.ChangeBlockOrientationMutation;
+import edu.southwestern.tasks.evocraft.mutation.ChangeBlockTypeMutation;
 import edu.southwestern.tasks.evocraft.mutation.RemoveBlockMutation;
+import edu.southwestern.tasks.evocraft.mutation.SwapBlocksMutation;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.random.RandomNumbers;
 /**
@@ -108,7 +111,10 @@ public class MinecraftShapeGenotype implements Genotype<Pair<HashMap<MinecraftCo
 		sb.append(" ");
 		new AddBlockMutation().go(this, sb);
 		new RemoveBlockMutation().go(this, sb);
-
+		new ChangeBlockTypeMutation().go(this, sb);
+		new SwapBlocksMutation().go(this, sb);
+		new AddBlockMutation().go(this, sb);
+		new ChangeBlockOrientationMutation().go(this, sb);
 		assert !MinecraftUtilClass.containsBlockType(new ArrayList<>(blocks.values()), BlockType.AIR) : "Generated shapes should not contain AIR: "+ blocks + "\n" + emptySpace;
 	}
 
@@ -187,8 +193,8 @@ public class MinecraftShapeGenotype implements Genotype<Pair<HashMap<MinecraftCo
 			Block block1 = blocks.remove(coordinates1);
 			Block block2 = blocks.remove(coordinates2);
 
-			Block newBlock1 = new Block(coordinates2, MMNEAT.blockSet.getPossibleBlocks()[block1.type()], Orientation.values()[block1.orientation()]);
-			Block newBlock2 = new Block(coordinates1, MMNEAT.blockSet.getPossibleBlocks()[block2.type()], Orientation.values()[block2.orientation()]);
+			Block newBlock1 = new Block(coordinates2, BlockType.values()[block1.type()], Orientation.values()[block1.orientation()]);
+			Block newBlock2 = new Block(coordinates1, BlockType.values()[block2.type()], Orientation.values()[block2.orientation()]);
 			
 			blocks.put(coordinates2, newBlock1);
 			blocks.put(coordinates1, newBlock2);
@@ -233,7 +239,6 @@ public class MinecraftShapeGenotype implements Genotype<Pair<HashMap<MinecraftCo
 		if(!blocks.containsKey(coordinates)) throw new IllegalStateException("Block was not present in the blocks hash map");
 		Block oldBlock = blocks.remove(coordinates);	
 		blocks.put(coordinates, new Block(coordinates, MMNEAT.blockSet.getPossibleBlocks()[oldBlock.type()], orientation));
-		assert !MinecraftUtilClass.containsBlockType(new ArrayList<>(blocks.values()), BlockType.AIR) : "Generated shapes should not contain AIR: "+ blocks + "\n" + emptySpace;
 	}
 	
 	/**
@@ -244,9 +249,9 @@ public class MinecraftShapeGenotype implements Genotype<Pair<HashMap<MinecraftCo
 	public void placeBlock(Block block) {
 		if(!blocks.containsKey(block.blockPosition())) {
 			blocks.put(block.blockPosition(), block);
-			emptySpace.remove(block.blockPosition());
 		}else {
 			blocks.put(block.blockPosition(), block);
+			emptySpace.remove(block.blockPosition());
 		}
 		assert !MinecraftUtilClass.containsBlockType(new ArrayList<>(blocks.values()), BlockType.AIR) : "Generated shapes should not contain AIR: "+ blocks + "\n" + emptySpace;
 	}
