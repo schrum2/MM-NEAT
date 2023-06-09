@@ -16,6 +16,7 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Vertex;
+import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.random.RandomNumbers;
 
 /**
@@ -440,5 +441,31 @@ public class MinecraftUtilClass {
 			result.add(b);
 		}
 		return result;
+	}
+	
+	//TODO: general shape saving function
+	//makes a directory
+	public static void saveShapes(List<Block> shapeToSaveBlockList , String directoryNameString) {
+		//make the directory first
+		String directoryString = FileUtilities.getSaveDirectory() + directoryNameString;
+		File directoryFile = new File(directoryString);
+		if(!directoryFile.exists() ) {
+			directoryFile.mkdir();
+		}
+		
+		//save block list?
+//		String gen = "GEN"+(MMNEAT.ea instanceof GenerationalEA ? ((GenerationalEA) MMNEAT.ea).currentGeneration() : "ME");
+//		MinecraftLonerShapeTask.writeBlockListFile(shapeToSaveBlockList, directoryString + File.separator + "ID"+genome.getId(), ".txt");
+		/**
+		 * 	String flyingDir = FileUtilities.getSaveDirectory() + "/flyingMachines";
+			File dir = new File(flyingDir);	// Create dir
+			if (!dir.exists()) {
+				dir.mkdir();
+			}
+			//Orientation flyingDirection = directionOfMaximumDisplacement(deltaX,deltaY,deltaZ);
+			//String gen = "GEN"+(MMNEAT.ea instanceof GenerationalEA ? ((GenerationalEA) MMNEAT.ea).currentGeneration() : "ME");
+			MinecraftLonerShapeTask.writeBlockListFile(blocks, flyingDir + File.separator + "ID"+genome.getId(), ".txt");
+		 */
+		
 	}
 }
