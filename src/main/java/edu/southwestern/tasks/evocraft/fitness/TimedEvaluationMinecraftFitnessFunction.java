@@ -45,6 +45,8 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 	 * @return array where each index if a fitness score for the corresponding fitness function
 	 */
 	public static double[] multipleFitnessScores(List<TimedEvaluationMinecraftFitnessFunction> fitnessFunctions, MinecraftCoordinates shapeCorner, List<Block> originalBlocks) {		
+		originalBlocks = MinecraftUtilClass.filterOutBlock(originalBlocks, BlockType.AIR);
+		
 		// Should this be true for all fitness functions?
 		if(originalBlocks.isEmpty()) {
 			if(CommonConstants.watch) System.out.println("Empty shape: Immediate failure");
