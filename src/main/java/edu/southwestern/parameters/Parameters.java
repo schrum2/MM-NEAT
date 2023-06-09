@@ -865,6 +865,7 @@ public class Parameters {
 		booleanOptions.add("numAirFitness", false, "Fitness test for number of air blocks");
 		booleanOptions.add("rememberParentScores", false, "Avoid repeated evaluation of parents");
 		
+		
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
 		doubleOptions.add("backpropLearningRate", 0.1, "Rate backprop learning for neural networks");
@@ -954,6 +955,11 @@ public class Parameters {
 		doubleOptions.add("GANSegmentCopyMutationRate", 0.0, "Segment copy mutation rate.");
 		doubleOptions.add("anyRealVectorModificationRate", 1.0, "The chance to use either perturb or polynomial mutation");
 		doubleOptions.add("voxelExpressionThreshold", 0.1, "The value that determines the presence of a block");
+		doubleOptions.add("minecraftRemoveBlockMutationRate", 0.2, "Rate of mutation to remove a block");
+		doubleOptions.add("minecraftAddBlockMutation", 0.2, "Rate of mutation to add a block");
+		doubleOptions.add("minecraftChangeBlockTypeMutation", 0.2, "Rate of mutation to change a block type");
+		doubleOptions.add("minecraftChangeBlockOrientationMutation", 0.2, "Rate of mutation to change a block orientation");
+		doubleOptions.add("minecraftSwapBlocksMutation", 0.2, "Rate of mutation to swap two blocks");
 		
 		// String parameters
 		stringOptions.add("marioTargetLevel", "data\\VGLC\\SuperMarioBrosNewEncoding\\overworld\\mario-1-1.txt", "Relative path to json file with Mario level to target");

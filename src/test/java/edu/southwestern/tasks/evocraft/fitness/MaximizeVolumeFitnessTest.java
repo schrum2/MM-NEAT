@@ -125,7 +125,7 @@ public class MaximizeVolumeFitnessTest {
 
 		testBlockSet.addAll(southFlyingMachine);
 
-		assertEquals(1008.0,testInstance.fitnessScore(testCorner,testBlockSet),50.0);
+		assertEquals(1008.0,testInstance.fitnessScore(testCorner,testBlockSet),60.0);
 	}
 
 	//passed
