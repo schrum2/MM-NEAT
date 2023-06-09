@@ -189,8 +189,8 @@ public class MinecraftShapeGenotype implements Genotype<Pair<HashMap<MinecraftCo
 			Block block1 = blocks.remove(coordinates1);
 			Block block2 = blocks.remove(coordinates2);
 
-			Block newBlock1 = new Block(coordinates2, MMNEAT.blockSet.getPossibleBlocks()[block1.type()], Orientation.values()[block1.orientation()]);
-			Block newBlock2 = new Block(coordinates1, MMNEAT.blockSet.getPossibleBlocks()[block2.type()], Orientation.values()[block2.orientation()]);
+			Block newBlock1 = new Block(coordinates2, BlockType.values()[block1.type()], Orientation.values()[block1.orientation()]);
+			Block newBlock2 = new Block(coordinates1, BlockType.values()[block2.type()], Orientation.values()[block2.orientation()]);
 			
 			blocks.put(coordinates2, newBlock1);
 			blocks.put(coordinates1, newBlock2);
@@ -232,7 +232,7 @@ public class MinecraftShapeGenotype implements Genotype<Pair<HashMap<MinecraftCo
 	public void changeBlockOrientation(MinecraftCoordinates coordinates, Orientation orientation) {
 		if(!blocks.containsKey(coordinates)) throw new IllegalStateException("Block was not present in the blocks hash map");
 		Block oldBlock = blocks.remove(coordinates);	
-		blocks.put(coordinates, new Block(coordinates, MMNEAT.blockSet.getPossibleBlocks()[oldBlock.type()], orientation));
+		blocks.put(coordinates, new Block(coordinates, BlockType.values()[oldBlock.type()], orientation));
 	}
 	
 	/**
