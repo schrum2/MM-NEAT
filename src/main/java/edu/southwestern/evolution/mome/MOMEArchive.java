@@ -176,14 +176,19 @@ public class MOMEArchive<T> {
 		saveElites = otherSaveElites;
 	}
 	
+	//unsure if I even need this but made a stub
+	public Vector<Score<T>> getWholeArchiveScores(){
+		//needed?
+		return null;
+	}
+	
 	/**
 	 * returns all the scores for a specific bin
-	 * @param keyBinLabel	the key which should be the coordinates of that bin?
-	 * need to better understand this object structure
-	 * @return the scores for that key (integer/coordinate/bin?)
+	 * @param keyBinCoordinates	the key which is the coordinates of the bin
+	 * @return the scores for that bin
 	 */
-	public Vector<Score<T>> getScores(Vector<Integer> keyBinLabel){
-		return archive.get(keyBinLabel);
+	public Vector<Score<T>> getScores(Vector<Integer> keyBinCoordinates){
+		return archive.get(keyBinCoordinates);
 	}
 	
 	//don't know if I even need the below method
