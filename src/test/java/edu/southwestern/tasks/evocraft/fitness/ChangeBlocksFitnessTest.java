@@ -87,7 +87,28 @@ public class ChangeBlocksFitnessTest {
 		MinecraftCoordinates originalShapeCoordinates = MinecraftUtilClass.minCoordinates(testBlockSet);
 		testBlockSet = MinecraftUtilClass.shiftBlocksBetweenCorners(testBlockSet, originalShapeCoordinates, testCorner);
 
-		assertEquals(125.0,testInstance.fitnessScore(testCorner,testBlockSet),0.0);
+		assertEquals(500.0,testInstance.fitnessScore(testCorner,testBlockSet),100.0);
 	}
+	@Test
+	public void testOscillatingMachine() {
+		Parameters.initializeParameterCollections(new String[] {"minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:false","shortTimeBetweenMinecraftReads:" + 100L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+		
+		System.out.println("testOscillatingMachine");
 
+		MinecraftCoordinates cornerBS2 = new MinecraftCoordinates(0,11,-5);
+		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 100);
+
+		// Machine that moves back and forth (in the same spot)
+		ArrayList<Block> oscillatingMachine = new ArrayList<>();
+		oscillatingMachine.add(new Block(1,12,1,BlockType.STICKY_PISTON,Orientation.NORTH));
+		oscillatingMachine.add(new Block(1,12,0,BlockType.SLIME,Orientation.NORTH));
+		oscillatingMachine.add(new Block(1,11,1,BlockType.REDSTONE_BLOCK,Orientation.NORTH));
+		oscillatingMachine.add(new Block(1,11,0,BlockType.SLIME,Orientation.NORTH));
+
+		// When the time is small (50L) then the score becomes large
+		MinecraftClient.getMinecraftClient().spawnBlocks(oscillatingMachine);
+		double amount = testInstance.fitnessScore(cornerBS2,oscillatingMachine);
+		System.out.println("movement fitness when oscillating: "+ amount);
+		assertTrue(30 <= amount);
+	}
 }
