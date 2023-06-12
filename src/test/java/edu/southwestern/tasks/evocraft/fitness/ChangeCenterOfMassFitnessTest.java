@@ -622,7 +622,7 @@ public class ChangeCenterOfMassFitnessTest {
 		MinecraftCoordinates originalShapeCoordinates = MinecraftUtilClass.minCoordinates(testBlockSet);
 		testBlockSet = MinecraftUtilClass.shiftBlocksBetweenCorners(testBlockSet, originalShapeCoordinates, testCorner);
 		
-		System.out.println("testNotFlyingButGivingMaxFitnessTwo");
+		System.out.println( "testNotFlyingButGivingMaxFitnessTwo");
 
 		assertEquals(0.0, ff.fitnessScore(testCorner,testBlockSet),1.0); 
 	}

@@ -62,15 +62,15 @@ public class MaximizeVolumeFitnessTest {
 	public void testNoInteraction() {	
 		Parameters.initializeParameterCollections(new String[] {"minecraftClearWithGlass:false","watch:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
 		
+		System.out.println("testNoInteraction");
+
 		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,7,-35);
 		MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 50); // Larger buffer is important, but too large and it crashes!
 
 		ArrayList<Block> testBlockSet = new ArrayList<>();
 		testBlockSet.add(new Block(-25,7,-35,BlockType.SLIME, Orientation.WEST));
 		testBlockSet.add(new Block(-20,7,-35,BlockType.QUARTZ_BLOCK, Orientation.EAST));
-		
-		System.out.println("testNoInteraction");
-		
+				
 		assertEquals(6.0,testInstance.fitnessScore(testCorner,testBlockSet),0.0);
 	}
 	
@@ -78,6 +78,8 @@ public class MaximizeVolumeFitnessTest {
 	@Test
 	public void testWorkingFlyingMachine() {	
 		Parameters.initializeParameterCollections(new String[] {"minecraftClearWithGlass:false","watch:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+
+		System.out.println("testWorkingFlyingMachine");
 
 		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,7,-35);
 		MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 50); // Larger buffer is important, but too large and it crashes!
@@ -90,8 +92,6 @@ public class MaximizeVolumeFitnessTest {
 		MinecraftCoordinates originalShapeCoordinates = MinecraftUtilClass.minCoordinates(testBlockSet);
 		testBlockSet = MinecraftUtilClass.shiftBlocksBetweenCorners(testBlockSet, originalShapeCoordinates, testCorner);
 
-		System.out.println("testWorkingFlyingMachine");
-
 		assertEquals(125.0,testInstance.fitnessScore(testCorner,testBlockSet),0.0);
 	}
 
@@ -101,6 +101,8 @@ public class MaximizeVolumeFitnessTest {
 	@Test
 	public void testTwoWorkingFlyingMachineSomethingSouth() {	
 		Parameters.initializeParameterCollections(new String[] {"minecraftClearWithGlass:false","watch:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+
+		System.out.println("testTwoWorkingFlyingMachineSomethingSouth");
 
 		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,7,-35);
 		MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 50); // Larger buffer is important, but too large and it crashes!
@@ -129,8 +131,6 @@ public class MaximizeVolumeFitnessTest {
 
 		testBlockSet.addAll(southFlyingMachine);
 
-		System.out.println("testTwoWorkingFlyingMachineSomethingSouth");
-
 		assertEquals(1008.0,testInstance.fitnessScore(testCorner,testBlockSet),60.0);
 	}
 
@@ -138,6 +138,8 @@ public class MaximizeVolumeFitnessTest {
 	@Test
 	public void testTwoWorkingFlyingMachineWestSouth() {	
 		Parameters.initializeParameterCollections(new String[] {"minecraftClearWithGlass:false","watch:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+
+		System.out.println("testTwoWorkingFlyingMachineWestSouth");
 
 		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,7,-35);
 		MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 50); // Larger buffer is important, but too large and it crashes!
@@ -168,8 +170,6 @@ public class MaximizeVolumeFitnessTest {
 
 		testBlockSet.addAll(southFlyingMachine);
 
-		System.out.println("testTwoWorkingFlyingMachineWestSouth");
-
 		assertEquals(392.0,testInstance.fitnessScore(testCorner,testBlockSet),0.0);
 	}
 
@@ -177,6 +177,8 @@ public class MaximizeVolumeFitnessTest {
 	@Test
 	public void testTwoWorkingFlyingMachineNorthSouth() {	
 		Parameters.initializeParameterCollections(new String[] {"minecraftClearWithGlass:false","watch:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+
+		System.out.println("testTwoWorkingFlyingMachineNorthSouth");
 
 		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,7,-35);
 		MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 50); // Larger buffer is important, but too large and it crashes!
@@ -205,8 +207,6 @@ public class MaximizeVolumeFitnessTest {
 		testBlockSet = MinecraftUtilClass.shiftBlocksBetweenCorners(northFlyingMachine, originalShapeCoordinates, augmentedCoordinates);
 
 		testBlockSet.addAll(southFlyingMachine);
-
-		System.out.println("testTwoWorkingFlyingMachineNorthSouth");
 
 		assertEquals(476.0,testInstance.fitnessScore(testCorner,testBlockSet),0.0);
 	}
