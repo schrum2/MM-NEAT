@@ -38,16 +38,23 @@ public class ChangeBlocksFitness extends TimedEvaluationMinecraftFitnessFunction
 			List<Block> originalBlocks) {
 
 		double fitness = 0;
-		
-		for(int i = 1; i < history.size(); i++) {
+		// Start at index 2 to skip the first shape (the only one with orientation information)
+		for(int i = 2; i < history.size(); i++) {
 			// Remove the blocks that changed between consecutive readings
 			List<Block> shape1 = history.get(i-1).t2;
+			//System.out.println("shape 1:" + shape1);
 			List<Block> shape2 = history.get(i).t2;
+			//System.out.println("shape 2:" + shape2);
 			List<Block> shape1minusShape2 = MinecraftUtilClass.shapeListDifference(shape1, shape2);
+			//System.out.println("shape1minusShape2:" + shape1minusShape2);
 			// If more blocks move, then less will stay the same, and fitness will be higher
+			int difference = shape1minusShape2.size();
+			//System.out.println("difference:" + difference);
 			if(Parameters.parameters.booleanParameter("minecraftChangeBlocksMomentum")) {
-				fitness += (shape1.size() - shape1minusShape2.size()) * MinecraftUtilClass.getCenterOfMass(shape1).distance(MinecraftUtilClass.getCenterOfMass(shape2));
-			}else fitness += shape1.size() - shape1minusShape2.size();
+				fitness += difference * MinecraftUtilClass.getCenterOfMass(shape1).distance(MinecraftUtilClass.getCenterOfMass(shape2));
+			} else {
+				fitness += difference;
+			}
 		}
 		
 		return fitness;
