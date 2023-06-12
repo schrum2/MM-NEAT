@@ -199,7 +199,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		if(Parameters.parameters.booleanParameter("minecraftRandomFitness")) {
 			fitness.add(new RandomFitness());
 		}
-		if(Parameters.parameters.booleanParameter("numAirFitness")) {
+		if(Parameters.parameters.booleanParameter("minecraftNumAirFitness")) {
 			fitness.add(new NumAirFitness());
 		}
 		System.out.println(fitness);
