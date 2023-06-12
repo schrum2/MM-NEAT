@@ -608,6 +608,8 @@ public class ChangeCenterOfMassFitnessTest {
 	public void testNotFlyingButGivingMaxFitnessTwo() {
 		Parameters.initializeParameterCollections(new String[] {"watch:true","minecraftClearWithGlass:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
 
+		System.out.println( "testNotFlyingButGivingMaxFitnessTwo");
+
 		//set up test corner and clear area
 		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,27,-35);
 		MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 50); // Larger buffer is important, but too large and it crashes!
@@ -622,8 +624,6 @@ public class ChangeCenterOfMassFitnessTest {
 		MinecraftCoordinates originalShapeCoordinates = MinecraftUtilClass.minCoordinates(testBlockSet);
 		testBlockSet = MinecraftUtilClass.shiftBlocksBetweenCorners(testBlockSet, originalShapeCoordinates, testCorner);
 		
-		System.out.println( "testNotFlyingButGivingMaxFitnessTwo");
-
 		assertEquals(0.0, ff.fitnessScore(testCorner,testBlockSet),1.0); 
 	}
 }
