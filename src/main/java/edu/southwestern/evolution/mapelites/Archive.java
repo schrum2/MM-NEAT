@@ -170,6 +170,9 @@ public class Archive<T> {
 				result = replaceIfBetter(candidate, oneD, currentBinOccupant);
 			}
 			return result;
+			
+			
+			// TODO: Why are we inserting if the binning scheme says to discard it?
 		} else if(candidate.usesMAPElitesBinSpecification()) {
 			int[] candidateBinIndices = candidate.MAPElitesBinIndex();
 			int oneD = this.getBinMapping().oneDimensionalIndex(candidateBinIndices);
