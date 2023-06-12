@@ -139,9 +139,6 @@ public class MOMEArchive<T> {
 		if(saveElites) {
 			new File(archiveDir).mkdirs(); // make directory
 		}
-//		for(int i = 0; i < numBins; i++) {
-//			archive.add(null); // Place holder for first individual and future elites
-//		}
 	}
 	
 	/**
@@ -173,11 +170,10 @@ public class MOMEArchive<T> {
 			}
 			
 		});
+		saveElites = otherSaveElites;
 	}
 	/**
-	public Archive(Archive<T> other) {
-		this(other.getArchive(), other.mapping, other.getArchiveDir(), other.saveElites);
-	}
+	
 	
 	public Archive(Vector<Score<T>> other, BinLabels otherMapping, String otherDir, boolean otherSave) {
 		saveElites = false; // Don't save while reorganizing
