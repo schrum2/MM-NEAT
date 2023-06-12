@@ -28,15 +28,11 @@ public class MOMEArchive<T> {
 	ConcurrentHashMap<Vector<Integer>,Vector<Score<T>>> archive;
 	//vector of integers represents coordinates for bins of arbitrary dimension
 	//vector of scores are the scores of candidates in that bin
-	//Vector<Vector<Score<T>>> archive; // Vector is used because it is thread-safe
-	//What do the integer vector represent? Coordinates? why not tuple?
-
 	
-	//Vector<Score<T>> archive; // Vector is used because it is thread-safe
-	//Vector<Vector<Score<T>> ????
+
 	private int occupiedBins; 
 	private BinLabels mapping;
-	private boolean saveElites;
+	private boolean saveElites;	//would like to know what this is exactly
 	private String archiveDir;
 	
 	public int getOccupiedBins() {
@@ -73,14 +69,15 @@ public class MOMEArchive<T> {
 	
 	
 	/**
+	 * This adds an individual to the archive, recalculated the pareto front, and returns whether that candidate stayed in the archive
 	 * get new individual, figure out index array of primitive int to vector, 
 	 * get correct subpop from archive via vector lookup, take new individual and add to subpop 
 	 * then recalculate pareito front
 	 * returns bool about if something changed
 	 * return true if new candidate added in some way
 	 * false if not added
-	 * @param candidate
-	 * @return
+	 * @param candidate	the new shape to add to the population of a bin in the archive
+	 * @return true if the candidate is in the archive after pareto front calculation and false if the candidate is not added
 	 */
 	public boolean add(Score<T> candidate) {
 		if(candidate.usesTraditionalBehaviorVector()) {
@@ -143,12 +140,20 @@ public class MOMEArchive<T> {
 	
 	/**
 	 * copy constructor
-	 * @param other
+	 * takes another archive, reevaluates shapes and adds them to the new archive
+	 * this might end up different from the original
+	 * @param other the archive you want to copy
 	 */
 	public MOMEArchive(MOMEArchive<T> other) {
 		this(other.archive, other.mapping, other.archiveDir, other.saveElites);
 	}
-	
+	/**
+	 * takes the specifics of the above constructor
+	 * @param otherArchiveHashMap	this is the original archive being copied from
+	 * @param otherMapping	this is the original archive's BinLabels mapping being copied
+	 * @param otherArchiveDirectory	the directory of the original archive that the new archive will save to
+	 * @param otherSaveElites	the boolean for the original archives saveElites variable
+	 */
 	public MOMEArchive(ConcurrentHashMap<Vector<Integer>, Vector<Score<T>>> otherArchiveHashMap, BinLabels otherMapping, String otherArchiveDirectory, boolean otherSaveElites) {
 		saveElites = false;	//don't save while reorganizing
 		mapping = otherMapping;
@@ -156,9 +161,7 @@ public class MOMEArchive<T> {
 		archive = new ConcurrentHashMap<Vector<Integer>, Vector<Score<T>>>(numBins);
 		occupiedBins = 0;
 		setArchiveDir(otherArchiveDirectory);	//will save in the same place
-		
-		//don't need to fill with null
-		
+
 		//go through the original archive and add
 		otherArchiveHashMap.forEach( (coords, subpop) -> {
 			
@@ -172,34 +175,6 @@ public class MOMEArchive<T> {
 		});
 		saveElites = otherSaveElites;
 	}
-	/**
-	
-	
-	public Archive(Vector<Score<T>> other, BinLabels otherMapping, String otherDir, boolean otherSave) {
-		saveElites = false; // Don't save while reorganizing
-		mapping = otherMapping;
-		int numBins = otherMapping.binLabels().size();
-		archive = new Vector<Score<T>>(numBins);
-		occupiedBins = 0;
-		setArchiveDir(otherDir); // Will save in the same place!
-
-		// Fill with null values before actually selecting individuals to copy over
-		for(int i = 0; i < numBins; i++) {
-			archive.add(null); // Place holder for first individual and future elites
-		}
-		// Loop through original archive
-		other.parallelStream().forEach( (s) -> {
-			if(s != null) { // Ignore empty cells
-				@SuppressWarnings("unchecked")
-				Score<T> newScore = ((MAPElites<T>) MMNEAT.ea).task.evaluate(s.individual);
-				this.add(newScore);
-			}
-		});
-		
-		// Ok to save moving forward
-		saveElites = otherSave;
-	}
-	**/
 	
 	/**
 	 * returns all the scores for a specific bin
@@ -211,30 +186,35 @@ public class MOMEArchive<T> {
 		return archive.get(keyBinLabel);
 	}
 	
-	public float[] getAllEliteScores( ) {
-		float[] result = new float[archive.size()];
-		//iterate through each key
-		int keyIndexCount = 0; ///to offset placement in float array
-		//TODO: find a way to offset the result float for each key entry
-		//use previous function and += array or whatever
-		archive.forEach( (k,v) -> {
-			float[] temp1 = result;
-			float[] temp2 = turnVectorScoresIntoFloatArray(v);
-			//Vector<Score<T>> scoreVector = getScores(k);
-			//Vector<Score<T>> scoreVector = v;
-			
-			
-
-			//after that temp2 should hold new vector list
-			
-			//add both temps to result
-
-
-		});
-		return result;
-	}
+	//don't know if I even need the below method
+//	public float[] getAllEliteScores( ) {
+//		float[] result = new float[archive.size()];
+//		//iterate through each key
+//		int keyIndexCount = 0; ///to offset placement in float array
+//		//TODO: find a way to offset the result float for each key entry
+//		//use previous function and += array or whatever
+//		archive.forEach( (k,v) -> {
+//			float[] temp1 = result;
+//			float[] temp2 = turnVectorScoresIntoFloatArray(v);
+//			//Vector<Score<T>> scoreVector = getScores(k);
+//			//Vector<Score<T>> scoreVector = v;
+//			
+//			
+//
+//			//after that temp2 should hold new vector list
+//			
+//			//add both temps to result
+//
+//
+//		});
+//		return result;
+//	}
 	
-	
+	/**
+	 * turns a vector of Scores into a float array. Unsure if actually needed
+	 * @param scoresList the original scores
+	 * @return	a float array containing the score values
+	 */
 	public float[] turnVectorScoresIntoFloatArray(Vector<Score<T>> scoresList) {
 		float[] result = new float[scoresList.size()];
 		for(int i = 0; i < result.length; i++) {

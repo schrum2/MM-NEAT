@@ -21,8 +21,7 @@ import edu.southwestern.util.random.RandomNumbers;
 
 public class Archive<T> {
 	
-	//Vector<Vector<Score<T>>> archive; // Vector is used because it is thread-safe
-	Vector<Score<T>> archive;
+	Vector<Score<T>> archive; // Vector is used because it is thread-safe
 	private int occupiedBins; 
 	private BinLabels mapping;
 	private boolean saveElites;
