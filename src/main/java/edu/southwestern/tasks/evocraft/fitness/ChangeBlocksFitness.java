@@ -3,6 +3,7 @@ package edu.southwestern.tasks.evocraft.fitness;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
@@ -16,7 +17,9 @@ import edu.southwestern.util.datastructures.Pair;
  *
  */
 public class ChangeBlocksFitness extends TimedEvaluationMinecraftFitnessFunction {
-
+	
+	
+	
 	@Override
 	public Double earlyEvaluationTerminationResult(MinecraftCoordinates corner, List<Block> originalBlocks,
 			ArrayList<Pair<Long, List<Block>>> history, List<Block> newShapeBlockList) {
@@ -42,7 +45,9 @@ public class ChangeBlocksFitness extends TimedEvaluationMinecraftFitnessFunction
 			List<Block> shape2 = history.get(i).t2;
 			List<Block> shape1minusShape2 = MinecraftUtilClass.shapeListDifference(shape1, shape2);
 			// If more blocks move, then less will stay the same, and fitness will be higher
-			fitness += shape1.size() - shape1minusShape2.size();
+			if(Parameters.parameters.booleanParameter("minecraftChangeBlocksMomentum")) {
+				fitness += (shape1.size() - shape1minusShape2.size()) * MinecraftUtilClass.getCenterOfMass(shape1).distance(MinecraftUtilClass.getCenterOfMass(shape2));
+			}else fitness += shape1.size() - shape1minusShape2.size();
 		}
 		
 		return fitness;
