@@ -40,8 +40,6 @@ public class MOME<T> implements SteadyStateEA<T>{
 		//initialize ranges
 		MinecraftCoordinates ranges = new MinecraftCoordinates(Parameters.parameters.integerParameter("minecraftXRange"),Parameters.parameters.integerParameter("minecraftYRange"),Parameters.parameters.integerParameter("minecraftZRange"));
 		
-		//not sure if I needed all the minecraft Init stuff, seems to be post evaluation related?
-		
 		//add initial population to the archive
 		Vector<Score<T>> evaluatedPopulation = new Vector<Score<T>>(startingPopulation.size());
 		//not sure if we need netio stuff at all
@@ -50,6 +48,14 @@ public class MOME<T> implements SteadyStateEA<T>{
 		Stream<Genotype<T>> evaluateStream = Parameters.parameters.booleanParameter("parallelMAPElitesInitialize") ? 
 												startingPopulation.parallelStream() :
 												startingPopulation.stream();
+		if(Parameters.parameters.booleanParameter("parallelMAPElitesInitialize"))										
+			System.out.println("Evaluate archive in parallel");
+		// Evaluate initial population
+		evaluateStream.forEach( (g) -> {
+			Score<T> s = task.evaluate(g);
+			evaluatedPopulation.add(s);
+		});
+		CommonConstants.netio = backupNetIO;
 		/**
 		 * 
 		boolean backupNetIO = CommonConstants.netio;
