@@ -47,14 +47,16 @@ public class ChangeBlocksFitness extends TimedEvaluationMinecraftFitnessFunction
 			//System.out.println("shape 2:" + shape2);
 			List<Block> shape1minusShape2 = MinecraftUtilClass.shapeListDifference(shape1, shape2);
 			//System.out.println("shape1minusShape2:" + shape1minusShape2);
+			//System.out.println("change in center of mass:" + MinecraftUtilClass.getCenterOfMass(shape1).distance(MinecraftUtilClass.getCenterOfMass(shape2)));
 			// If more blocks move, then less will stay the same, and fitness will be higher
 			int difference = shape1minusShape2.size();
 			//System.out.println("difference:" + difference);
 			if(Parameters.parameters.booleanParameter("minecraftChangeBlocksMomentum")) {
-				fitness += difference * MinecraftUtilClass.getCenterOfMass(shape1).distance(MinecraftUtilClass.getCenterOfMass(shape2));
+				fitness += difference + MinecraftUtilClass.getCenterOfMass(shape1).distance(MinecraftUtilClass.getCenterOfMass(shape2));
 			} else {
 				fitness += difference;
 			}
+			//System.out.println("fitness so far:" + fitness);
 		}
 		
 		return fitness;
