@@ -3,19 +3,11 @@ package edu.southwestern.evolution.mome;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.IntStream;
-
-import com.sun.org.apache.xalan.internal.xsltc.dom.KeyIndex;
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.Collections;
 
 import edu.southwestern.MMNEAT.MMNEAT;
-import edu.southwestern.evolution.mapelites.Archive;
 import edu.southwestern.evolution.mapelites.BinLabels;
-import edu.southwestern.evolution.mapelites.MAPElites;
 import edu.southwestern.evolution.nsga2.NSGA2;
 import edu.southwestern.evolution.nsga2.NSGA2Score;
 import edu.southwestern.scores.Score;
@@ -23,8 +15,8 @@ import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.random.RandomNumbers;
-import edu.southwestern.util.datastructures.ArrayUtil;
 
+// TODO: Put your header comment here too
 public class MOMEArchive<T> {
 
 	
@@ -72,6 +64,7 @@ public class MOMEArchive<T> {
 	
 	
 	/**
+	 * TODO: explain more
 	 * constructor
 	 * @param saveElites
 	 * @param archiveDirectoryName
@@ -81,7 +74,7 @@ public class MOMEArchive<T> {
 		this.saveElites = saveElites;
 		// Initialize mapping
 		try {
-			mapping = (BinLabels) ClassCreation.createObject("MOMEBinLabels");
+			mapping = (BinLabels) ClassCreation.createObject("MOMEBinLabels"); // TODO: Change to what it was before: will simply use the MAP Elites labels parameter
 		} catch (NoSuchMethodException e) {
 			System.out.println("Failed to get Bin Mapping for MOME!");
 			e.printStackTrace();
@@ -164,17 +157,22 @@ public class MOMEArchive<T> {
 			for (int i = 0; i < binIndex.length; i++) {		//turns int array into vector
 				candidateBinCoordinates.add(binIndex[i]);
 			}
+			// If the bin has never been filled before, then initialize as empty vector
+			if(!archive.containsKey(candidateBinCoordinates)) {
+				archive.put(candidateBinCoordinates, new Vector<Score<T>>());
+			}
 			//add the candidate (Score) to the vector of scores for that bin
 			archive.get(candidateBinCoordinates).add(candidate);	
 			
-			//recalculate pareito front, first convert a bunch of things
-			ArrayList<Score<T>> arrayListOfScores = new ArrayList<Score<T>>();
-			arrayListOfScores.addAll(archive.get(candidateBinCoordinates));
-			NSGA2.getParetoFront(NSGA2.staticNSGA2Scores(arrayListOfScores));
+			// Recalculate Pareto front
+			ArrayList<NSGA2Score<T>> front = NSGA2.getParetoFront(NSGA2.staticNSGA2Scores(archive.get(candidateBinCoordinates)));
 			//check if the candidate it there and return if it is
 			long candidateID = candidate.individual.getId();
-			for (Score<T> score : archive.get(candidateBinCoordinates)) {
+			for (NSGA2Score<T> score : front) {
 				if(score.individual.getId() == candidateID) {
+					// Since the new individual is present, the Pareto front must have changed.
+					// The Map needs to be updated, and we return true to indicate the change.
+					archive.replace(candidateBinCoordinates, new Vector<>(front));
 					return true;
 				}
 			}
@@ -191,7 +189,7 @@ public class MOMEArchive<T> {
 	 * randomly picks a bin, then randomly picks an individual's score from the bin
 	 * @return random individual from archive (Score<T>)
 	 */
-	public Score<T> getRandomIndividaul (){
+	public Score<T> getRandomIndividaul(){
 		//grab a random individual from a random bin
 		return RandomNumbers.randomElement(getRandomPopulation());
 	}
@@ -199,7 +197,7 @@ public class MOMEArchive<T> {
 	 * get's a random bin from the archive
 	 * @return 
 	 */
-	public Vector<Score<T>> getRandomPopulation (){
+	public Vector<Score<T>> getRandomPopulation(){
 		//grab a random bin
 		return RandomNumbers.randomElement(archive.values());
 	}
@@ -248,6 +246,7 @@ public class MOMEArchive<T> {
 	 * @param scoresList the original scores
 	 * @return	a float array containing the score values
 	 */
+	// TODO: We may not need this, but if we do, it will be for logging purposes
 	public float[] turnVectorScoresIntoFloatArray(Vector<Score<T>> scoresList) {
 		float[] result = new float[scoresList.size()];
 		for(int i = 0; i < result.length; i++) {
@@ -256,6 +255,7 @@ public class MOMEArchive<T> {
 		}
 		return result;
 	}
+	
 	//main for testing
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		int runNum = 50; 

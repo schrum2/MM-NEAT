@@ -17,6 +17,7 @@ import edu.southwestern.util.random.RandomNumbers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Implementation of Deb's NSGA2 multiobjective EA. NSGA2 stands for non-sorting
@@ -189,7 +190,7 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 	 *            scores to convert
 	 * @return array of NSGA2Scores
 	 */
-	public static <T> NSGA2Score<T>[] staticNSGA2Scores(ArrayList<Score<T>> scores) {
+	public static <T> NSGA2Score<T>[] staticNSGA2Scores(List<Score<T>> scores) {
 		@SuppressWarnings("unchecked")
 		NSGA2Score<T>[] scoresArray = new NSGA2Score[scores.size()];
 		for (int i = 0; i < scores.size(); i++) {
