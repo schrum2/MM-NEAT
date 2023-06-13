@@ -21,8 +21,7 @@ import edu.southwestern.util.random.RandomNumbers;
 
 public class Archive<T> {
 	
-	//Vector<Vector<Score<T>>> archive; // Vector is used because it is thread-safe
-	Vector<Score<T>> archive;
+	Vector<Score<T>> archive; // Vector is used because it is thread-safe
 	private int occupiedBins; 
 	private BinLabels mapping;
 	private boolean saveElites;
@@ -45,9 +44,9 @@ public class Archive<T> {
 		occupiedBins = 0;
 		// Archive directory
 		String experimentDir = FileUtilities.getSaveDirectory();
-		archiveDir = experimentDir + File.separator + archiveDirectoryName;
+		setArchiveDir(experimentDir + File.separator + archiveDirectoryName);
 		if(saveElites) {
-			new File(archiveDir).mkdirs(); // make directory
+			new File(getArchiveDir()).mkdirs(); // make directory
 		}
 		for(int i = 0; i < numBins; i++) {
 			archive.add(null); // Place holder for first individual and future elites
@@ -62,7 +61,7 @@ public class Archive<T> {
 	 * @param other Archive to draw contents from
 	 */
 	public Archive(Archive<T> other) {
-		this(other.getArchive(), other.mapping, other.archiveDir, other.saveElites);
+		this(other.getArchive(), other.mapping, other.getArchiveDir(), other.saveElites);
 	}
 	
 	public Archive(Vector<Score<T>> other, BinLabels otherMapping, String otherDir, boolean otherSave) {
@@ -71,7 +70,7 @@ public class Archive<T> {
 		int numBins = otherMapping.binLabels().size();
 		archive = new Vector<Score<T>>(numBins);
 		occupiedBins = 0;
-		archiveDir = otherDir; // Will save in the same place!
+		setArchiveDir(otherDir); // Will save in the same place!
 
 		// Fill with null values before actually selecting individuals to copy over
 		for(int i = 0; i < numBins; i++) {
@@ -129,7 +128,7 @@ public class Archive<T> {
 	 * @return Path to directory
 	 */
 	public String getArchiveDirectory() {
-		return archiveDir;
+		return getArchiveDir();
 	}
 	
 	/**
@@ -170,6 +169,9 @@ public class Archive<T> {
 				result = replaceIfBetter(candidate, oneD, currentBinOccupant);
 			}
 			return result;
+			
+			
+			// TODO: Why are we inserting if the binning scheme says to discard it?
 		} else if(candidate.usesMAPElitesBinSpecification()) {
 			int[] candidateBinIndices = candidate.MAPElitesBinIndex();
 			int oneD = this.getBinMapping().oneDimensionalIndex(candidateBinIndices);
@@ -253,7 +255,7 @@ public class Archive<T> {
 		// Need to save all elites so that re-load on resume works
 		if(saveElites) {
 			// Easier to reload on resume if file name is uniform. Will also save space by overwriting
-			String binPath = archiveDir + File.separator + mapping.binLabels().get(binIndex);
+			String binPath = getArchiveDir() + File.separator + mapping.binLabels().get(binIndex);
 			Serialization.save(candidate.individual, binPath + "-elite");
 			// Write scores as simple text file (less to write than xml)
 			try {
@@ -351,5 +353,13 @@ public class Archive<T> {
 		MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" mapElitesQDBaseOffset:525 io:true base:nsga2test log:NSG2Test-MAPElites saveTo:MAPElites netio:false maxGens:10000 ea:edu.southwestern.evolution.mapelites.MAPElites task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.SphereFunction steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foBinDimension:50 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
 		//MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" mapElitesQDBaseOffset:525 base:nsga2test log:NSG2Test-CMAES saveTo:CMAES trackPseudoArchive:true netio:true mu:37 lambda:37 maxGens:200 ea:edu.southwestern.evolution.cmaes.CMAEvolutionStrategyEA task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.SphereFunction genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foBinDimension:500 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
 		 
+	}
+
+	public String getArchiveDir() {
+		return archiveDir;
+	}
+
+	public void setArchiveDir(String archiveDir) {
+		this.archiveDir = archiveDir;
 	}
 }
