@@ -44,7 +44,6 @@ public class MOME<T> implements SteadyStateEA<T>{
 		// Do not allow Minecraft to contain archive when using MOME
 		Parameters.parameters.setBoolean("minecraftContainsWholeMAPElitesArchive", false);
 		
-		// TODO Auto-generated method stub
 		ArrayList<Genotype<T>> startingPopulation; // Will be new or from saved archive
 
 		System.out.println("Fill up initial archive");		
@@ -65,14 +64,18 @@ public class MOME<T> implements SteadyStateEA<T>{
 												startingPopulation.stream();
 		if(Parameters.parameters.booleanParameter("parallelMAPElitesInitialize"))										
 			System.out.println("Evaluate archive in parallel");
-		// Evaluate initial population
+		
+		// Evaluate initial population and add to evaluated population
 		evaluateStream.forEach( (g) -> {
 			Score<T> s = task.evaluate(g);
 			evaluatedPopulation.add(s);
 		});
-		CommonConstants.netio = backupNetIO;
 		
-		 // Add initial population to archive, if add is true
+		//unsure if we need netio stuff
+		CommonConstants.netio = backupNetIO;
+	
+//ask later if this is a flag?
+		 // Add evaluated population to archive, if add is true
 		evaluatedPopulation.parallelStream().forEach( (s) -> {
 			archive.add(s); // Fill the archive with random starting individuals, only when this flag is true
 		});
@@ -84,8 +87,6 @@ public class MOME<T> implements SteadyStateEA<T>{
 
 	@Override
 	public void newIndividual() {
-		// TODO Auto-generated method stub
-		//steal a lot
 		//get random individual for parent 1
 		Genotype<T> parentGenotype1 = archive.getRandomIndividaul().individual;
 		long parentId1 = parentGenotype1.getId();
@@ -97,13 +98,14 @@ public class MOME<T> implements SteadyStateEA<T>{
 
 		// Potentially mate with second individual
 		if (mating && RandomNumbers.randomGenerator.nextDouble() < crossoverRate) {
-			//get a random idividual for parent 2
+			//get a random individual for parent 2
 			Genotype<T> parentGenotype2 = archive.getRandomIndividaul().individual;
 			parentId2 = parentGenotype2.getId();	// Parent Id comes from original genome
+			
 			//create second child
 			Genotype<T> childGenotype2 = parentGenotype2.copy(); // Copy with different Id (further modified below)
 			
-			// Replace child2 with a crossover result, and modify child1 in the process (two new children)
+			// Replace child2 with a crossover result
 			childGenotype2 = childGenotype1.crossover(childGenotype2);
 			childGenotype2.mutate(); // Probabilistic mutation of child
 			
@@ -159,7 +161,6 @@ public class MOME<T> implements SteadyStateEA<T>{
 	 */
 	@Override
 	public ArrayList<Genotype<T>> getPopulation() {
-		// TODO Auto-generated method stub
 		 ArrayList<Genotype<T>> result = new ArrayList<Genotype<T>>(archive.archive.size());
 
 		 archive.archive.forEach( (coords, subpop) -> {	////goes through the archive
