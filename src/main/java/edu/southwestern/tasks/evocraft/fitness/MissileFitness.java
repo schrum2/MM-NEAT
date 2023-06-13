@@ -66,6 +66,8 @@ public class MissileFitness extends TimedEvaluationMinecraftFitnessFunction {
 		// Create structure to be blown up
 		//changing the last add to a sub might fix the slight target offset from it intended position
 		MinecraftClient.getMinecraftClient().fillCube(shapeCorner.add(targetCornerOffset), shapeCorner.add(targetCornerOffset).add(MinecraftUtilClass.getRanges().sub(1)), targetBlockType);
+		System.out.println("targetCornerOffset" + targetCornerOffset);
+		System.out.println("TARGET!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 	}
 
 	@Override
