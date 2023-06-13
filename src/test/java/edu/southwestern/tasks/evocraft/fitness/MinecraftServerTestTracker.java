@@ -15,7 +15,7 @@ package edu.southwestern.tasks.evocraft.fitness;
 public class MinecraftServerTestTracker {
 	// WaterLavaSecondaryCreationFitnessTest
 	// ChangeCenterOfMassFitnessTest
-	private static int numberOfUnitTestsThatMakeAServer = 4;
+	private static int numberOfUnitTestsThatMakeAServer = 5;
 	
 	public static synchronized void decrementServerTestCount() {
 		numberOfUnitTestsThatMakeAServer--;
