@@ -64,7 +64,7 @@ public class MaximizeVolumeFitnessTest {
 		
 		System.out.println("Unit test: testNoInteraction");
 
-		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,20,-35);
+		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,30,-35);
 		MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 50); // Larger buffer is important, but too large and it crashes!
 
 		ArrayList<Block> testBlockSet = new ArrayList<>();

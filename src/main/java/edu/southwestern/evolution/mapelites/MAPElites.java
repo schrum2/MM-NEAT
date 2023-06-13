@@ -332,7 +332,9 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			Parameters.parameters.setBoolean("discardFromBinOutsideRestrictedRange", false);
 		}	
 		
-		if(iterations > 0) {
+		// logLock generally means we are doing a post experiment evaluation rather than attempting
+		// to resume an experiment, so loading results is ok if logLock is true
+		if(!Parameters.parameters.booleanParameter("logLock") && iterations > 0) {
 			
 			System.out.println("It is not safe to resume MAP-Elites runs that crash.");
 			System.out.println("Because logging is periodic, the state of the archive may not reflect the state of the logs.");
