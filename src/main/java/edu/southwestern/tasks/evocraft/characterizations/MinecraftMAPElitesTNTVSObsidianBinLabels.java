@@ -2,8 +2,8 @@ package edu.southwestern.tasks.evocraft.characterizations;
 
 import java.util.Arrays;
 
-import edu.southwestern.tasks.evocraft.fitness.NumPistonsFitness;
-import edu.southwestern.tasks.evocraft.fitness.NumRedstoneFitness;
+import edu.southwestern.tasks.evocraft.fitness.NumObsidianFitness;
+import edu.southwestern.tasks.evocraft.fitness.NumTNTFitness;
 
 /**
  * Class that extends MinecraftMAPElites2DBlockCountBinLabels and sets properties = Redstone and pistons
@@ -13,7 +13,7 @@ import edu.southwestern.tasks.evocraft.fitness.NumRedstoneFitness;
 public class MinecraftMAPElitesTNTVSObsidianBinLabels extends MinecraftMAPElites2DBlockCountBinLabels{
 
 	public MinecraftMAPElitesTNTVSObsidianBinLabels() {
-		super(Arrays.asList(new NumRedstoneFitness(), new NumPistonsFitness()));
+		super(Arrays.asList(new NumObsidianFitness(), new NumTNTFitness()));
 	}
 
 	
