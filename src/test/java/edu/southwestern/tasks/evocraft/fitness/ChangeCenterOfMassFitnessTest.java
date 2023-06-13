@@ -448,6 +448,7 @@ public class ChangeCenterOfMassFitnessTest {
 
 		//set up test corner and clear area
 		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,27,-35);
+		
 		MinecraftClient.getMinecraftClient().extraClearAreaClearAroundCornerWithGlass(testCorner);
 		//MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 50); // Larger buffer is important, but too large and it crashes!
 
@@ -469,15 +470,6 @@ public class ChangeCenterOfMassFitnessTest {
 		Parameters.initializeParameterCollections(new String[] {"minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:false","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
 		MinecraftCoordinates cornerBS2 = new MinecraftCoordinates(0,11,-5);
 		//MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 100);
-//		if(cornerBS2.y() <= MinecraftClient.GROUND_LEVEL) { // Push up if close to ground
-//			System.out.println("Pushed up from " + cornerBS2);
-//			MinecraftCoordinates shiftPoint = new MinecraftCoordinates(0,MinecraftClient.EMPTY_SPACE_SAFETY_BUFFER,0);
-//			//MinecraftCoordinates oldCorner = evaluationCorner;
-//			//evaluationCorner = evaluationCorner.add(shiftPoint); // move sufficiently above the ground
-//			cornerBS2 = cornerBS2.add(shiftPoint);			//shifts the shape corner as well
-//			//originalBlocks = MinecraftUtilClass.shiftBlocksBetweenCorners(originalBlocks, oldCorner, evaluationCorner);
-//		}
-//		MinecraftClient.getMinecraftClient().extraClearAreaClearAroundCornerWithGlass(cornerBS2);
 
 		
 		// List of flying machine blocks that should move
@@ -533,7 +525,11 @@ public class ChangeCenterOfMassFitnessTest {
 		System.out.println("testOscillatingMachine");
 
 		MinecraftCoordinates cornerBS2 = new MinecraftCoordinates(0,11,-5);
-		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 100);
+		
+		//check and clear space around test corner
+		MinecraftCoordinates testCorner = MinecraftClient.getMinecraftClient().checkForYOutOfBoundsAndShiftUp(cornerBS2);
+		MinecraftClient.getMinecraftClient().clearEvaluationSpaceForJUnitTests(testCorner);
+//		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 100);
 
 		// Machine that moves back and forth (in the same spot)
 		ArrayList<Block> oscillatingMachine = new ArrayList<>();
@@ -542,9 +538,13 @@ public class ChangeCenterOfMassFitnessTest {
 		oscillatingMachine.add(new Block(1,11,1,BlockType.REDSTONE_BLOCK,Orientation.NORTH));
 		oscillatingMachine.add(new Block(1,11,0,BlockType.SLIME,Orientation.NORTH));
 
+		MinecraftCoordinates originalShapeCoordinates = MinecraftUtilClass.minCoordinates(oscillatingMachine);
+
+		List<Block> testBlockSet = MinecraftUtilClass.shiftBlocksBetweenCorners(oscillatingMachine, originalShapeCoordinates, testCorner);
+
 		// When the time is small (50L) then the score becomes large
-		MinecraftClient.getMinecraftClient().spawnBlocks(oscillatingMachine);
-		double amount = ff.fitnessScore(cornerBS2,oscillatingMachine);
+		MinecraftClient.getMinecraftClient().spawnBlocks(testBlockSet);
+		double amount = ff.fitnessScore(testCorner,testBlockSet);
 		System.out.println("movement fitness when oscillating: "+ amount);
 		assertTrue(30 <= amount);
 	}

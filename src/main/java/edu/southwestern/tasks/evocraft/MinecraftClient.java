@@ -12,6 +12,8 @@ import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
+import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.mario.gan.Comm;
 import edu.southwestern.util.PythonUtil;
 import edu.southwestern.util.datastructures.Triple;
@@ -727,6 +729,33 @@ public class MinecraftClient extends Comm {
 			}	
 			System.out.println("Clearing done");
 		}
+	}
+	/**
+	 * This checks some coordinates to see if the evaluation space for them would go below ground level
+	 * It then shifts the coordinates if necessary and then returns the shifted (or not shifted) coordinates
+	 * @param originalShapeCorner the shape corner that was passed for evaluation
+	 * @return the new shifted coordinates if they needed to be shifter, or the old coordinates if not
+	 */
+	public MinecraftCoordinates checkForYOutOfBoundsAndShiftUp (MinecraftCoordinates originalShapeCorner) {
+		MinecraftCoordinates newShapeCorner = originalShapeCorner;
+		
+		//check for out of bounds
+		if(originalShapeCorner.y() - EMPTY_SPACE_SAFETY_BUFFER - Parameters.parameters.integerParameter("minecraftExtraClearSpace") <= MinecraftClient.GROUND_LEVEL) { // Push up if close to ground)
+			System.out.println("Pushed up from " + originalShapeCorner);
+			
+			MinecraftCoordinates shiftPoint = new MinecraftCoordinates(0,MinecraftClient.EMPTY_SPACE_SAFETY_BUFFER,0);
+			newShapeCorner = originalShapeCorner.add(shiftPoint);			//shifts the shape corner to a new adjusted corner
+		}
+		return newShapeCorner;
+	}
+	
+	/**
+	 * this just gives access to the extra clear method
+	 * @param originalShapeCorner
+	 */
+	public void clearEvaluationSpaceForJUnitTests(MinecraftCoordinates originalShapeCorner) {
+		//clear this area
+		extraClearAreaClearAroundCornerWithGlass(originalShapeCorner);
 	}
 	
 	/**
