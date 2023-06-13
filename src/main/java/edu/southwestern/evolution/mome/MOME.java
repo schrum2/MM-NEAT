@@ -1,28 +1,24 @@
 package edu.southwestern.evolution.mome;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Vector;
 import java.util.stream.Stream;
-
-import org.jenetics.internal.math.random;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.SteadyStateEA;
 import edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
-import edu.southwestern.evolution.mapelites.BinLabels;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
-import edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask;
-import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.util.PopulationUtil;
 import edu.southwestern.util.random.RandomNumbers;
-import java_cup.parse_action;
 
 /**
+ * TODO: Explain a bit more, and also cite the paper whose algorithm we are implementing using ACM style
  * yay! I made this!
  * @author lewisj
  *
@@ -31,6 +27,7 @@ import java_cup.parse_action;
 public class MOME<T> implements SteadyStateEA<T>{
 
 	protected MOMEArchive<T> archive;
+								// TODO: Yes, iterations tracks the number of individuals generated. This needs to be incremented somewhere
 	protected int iterations;	//might want to rename? what is it, just the number of individuals created so far?
 	protected LonerTask<T> task; ///seems to be for cleanup, not sure what else
 	
@@ -175,10 +172,16 @@ public class MOME<T> implements SteadyStateEA<T>{
 	@Override
 	public boolean populationChanged() {
 		// TODO Auto-generated method stub
-		return false;
+		return false; // TODO: This needs to be based on whether new individuals are added to the archive
 	}
 
 	public static void main (String[] args) {
-		//
+		try {
+			// This is a GECCO set of parameters with some minor changes for MOME
+			MMNEAT.main("runNumber:1 randomSeed:1 minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftChangeCenterOfMassFitness:true minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet trials:1 mu:100 maxGens:60000 minecraftContainsWholeMAPElitesArchive:false forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:false mating:true fs:false ea:edu.southwestern.evolution.mome.MOME experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:mometest log:MOMETest-MEObserverVectorPistonOrientation saveTo:MEObserverVectorPistonOrientation mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5 crossover:edu.southwestern.evolution.crossover.ArrayCrossover".split(" "));
+		} catch (FileNotFoundException | NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
