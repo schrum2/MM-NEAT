@@ -611,9 +611,9 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			// Replace child2 with a crossover result, and modify child1 in the process (two new children)
 			child2 = child1.crossover(child2);
 			child2.mutate(); // Probabilistic mutation of child
-			child2.addParent(parent2.getId());
-			child2.addParent(parent1.getId());
-			child1.addParent(parent2.getId());
+			child2.addParent(parentId2);
+			child2.addParent(parentId1);
+			child1.addParent(parentId2);
 			EvolutionaryHistory.logLineageData(parentId1,parentId2,child2);
 			// Evaluate and add child to archive
 			Score<T> s2 = task.evaluate(child2);
