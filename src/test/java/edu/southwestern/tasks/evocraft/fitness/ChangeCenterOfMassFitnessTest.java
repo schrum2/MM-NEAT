@@ -31,10 +31,10 @@ public class ChangeCenterOfMassFitnessTest {
 	public static void setUpBeforeClass() throws Exception {
 		CommonConstants.netio = false;
 		Parameters.initializeParameterCollections(new String[] {"watch:true","minecraftClearWithGlass:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
-		if(!MinecraftServer.serverIsRunner()) {
-			MinecraftServer.launchServer();
-			MinecraftClient.getMinecraftClient();
-		}
+//		if(!MinecraftServer.serverIsRunner()) {
+//			MinecraftServer.launchServer();
+//			MinecraftClient.getMinecraftClient();
+//		}
 		CommonConstants.watch = true; // Displays debugging info
 	}
 
@@ -386,7 +386,7 @@ public class ChangeCenterOfMassFitnessTest {
 		assertEquals(0.09488358802109932, ff.fitnessScore(testCorner,testBlockSet),0.0); 
 	}
 	
-	//testing a flying machine with TNT on it, evaluation ends before TNT explodes
+	//testing a flying machine with TNT on it, evaluation ends before TNT explodes, shape leaves evaluation area before exploding
 	@Test
 	public void testTNTwithFlyingMachine() {
 		//testing a flying machine that has tnt on it
@@ -421,9 +421,9 @@ public class ChangeCenterOfMassFitnessTest {
 		assertEquals(expected, ff.fitnessScore(testCorner,testShapeBlockList),wiggleRoom);
 	}
 	
+	//passed
 	@Test
 	public void testSinglePistonShapeEarlyTermination() {
-		// TODO Auto-generated method stub
 		Parameters.initializeParameterCollections(new String[] {"minecraftRewardFastFlyingMachines:false", "watch:true","minecraftClearWithGlass:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.ExplosiveBlockSet"});
 
 		//set up test corner and clear area
@@ -441,13 +441,36 @@ public class ChangeCenterOfMassFitnessTest {
 		double expected = 0.37267799624996284;
 		assertEquals(expected, ff.fitnessScore(testCorner,testShapeBlockList),wiggleRoom);
 	}
+	
+	@Test
+	public void testSinglePistonShapeClearWithExtraSpace() {
+		Parameters.initializeParameterCollections(new String[] {"minecraftRewardFastFlyingMachines:false", "watch:true","minecraftClearWithGlass:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.ExplosiveBlockSet"});
+
+		//set up test corner and clear area
+		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,27,-35);
+		
+		MinecraftClient.getMinecraftClient().extraClearAreaClearAroundCornerWithGlass(testCorner);
+		//MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 50); // Larger buffer is important, but too large and it crashes!
+
+		ArrayList<Block> testShapeBlockList = new ArrayList<>();
+		
+		testShapeBlockList.add(new Block(-26,25,-35,BlockType.PISTON,Orientation.WEST));
+		testShapeBlockList.add(new Block(-26,25,-34,BlockType.REDSTONE_BLOCK,Orientation.NORTH));
+
+		System.out.println("testSinglePistonShapeClearWithExtraSpace");
+
+		double wiggleRoom = 0.0;
+		double expected = 0.37267799624996284;
+		assertEquals(expected, ff.fitnessScore(testCorner,testShapeBlockList),wiggleRoom);
+	}
 
 	// Passes
 	@Test
 	public void testChangeInPosition() {
 		Parameters.initializeParameterCollections(new String[] {"minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:false","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
 		MinecraftCoordinates cornerBS2 = new MinecraftCoordinates(0,11,-5);
-		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 100);
+		//MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 100);
+
 		
 		// List of flying machine blocks that should move
 		// Not really sure what the fitness would be after 10 seconds
@@ -465,13 +488,32 @@ public class ChangeCenterOfMassFitnessTest {
 		blockSet2.add(new Block(1,12,-1,BlockType.QUARTZ_BLOCK,Orientation.NORTH));
 
 		System.out.println("shortTimeBetweenMinecraftReads = " + Parameters.parameters.longParameter("shortTimeBetweenMinecraftReads") + "testChangeInPosition");
+		
+		//MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 100);
+		List<Block> listBlockSet = new ArrayList<Block>(blockSet2.size());
 
+		if(cornerBS2.y() - MinecraftClient.EMPTY_SPACE_SAFETY_BUFFER - Parameters.parameters.integerParameter("minecraftExtraClearSpace") <= MinecraftClient.GROUND_LEVEL) { // Push up if close to ground
+			System.out.println("Pushed up from " + cornerBS2);
+			MinecraftCoordinates shiftPoint = new MinecraftCoordinates(0,MinecraftClient.EMPTY_SPACE_SAFETY_BUFFER,0);
+			
+			MinecraftCoordinates evaluationCorner = cornerBS2.sub(MinecraftUtilClass.emptySpaceOffsets());
 
-		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet2);
+			MinecraftCoordinates oldCorner = evaluationCorner;
+			evaluationCorner = evaluationCorner.add(shiftPoint); // move sufficiently above the ground
+			cornerBS2 = cornerBS2.add(shiftPoint);			//shifts the shape corner as well
+			for(Block b : blockSet2) {
+				listBlockSet.add(b);
+			}
+			listBlockSet = MinecraftUtilClass.shiftBlocksBetweenCorners(listBlockSet, oldCorner, evaluationCorner);
+		}
+		MinecraftClient.getMinecraftClient().extraClearAreaClearAroundCornerWithGlass(cornerBS2);
+
+		
+		MinecraftClient.getMinecraftClient().spawnBlocks(listBlockSet);
 		// Machine flies away completely
 		System.out.println("Flying away should earn "+ff.maxFitness());
 		//System.out.println("Second flying machine fitness: " + ff.fitnessScore(cornerBS2));
-		assertEquals(ff.maxFitness(), ff.fitnessScore(cornerBS2,blockSet2), 0.0);
+		assertEquals(ff.maxFitness(), ff.fitnessScore(cornerBS2,listBlockSet), 0.0);
 	}
 	
 	// Passes
@@ -483,7 +525,11 @@ public class ChangeCenterOfMassFitnessTest {
 		System.out.println("testOscillatingMachine");
 
 		MinecraftCoordinates cornerBS2 = new MinecraftCoordinates(0,11,-5);
-		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 100);
+		
+		//check and clear space around test corner
+		MinecraftCoordinates testCorner = MinecraftClient.getMinecraftClient().checkForYOutOfBoundsAndShiftUp(cornerBS2);
+		MinecraftClient.getMinecraftClient().clearEvaluationSpaceForJUnitTests(testCorner);
+//		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 100);
 
 		// Machine that moves back and forth (in the same spot)
 		ArrayList<Block> oscillatingMachine = new ArrayList<>();
@@ -492,9 +538,13 @@ public class ChangeCenterOfMassFitnessTest {
 		oscillatingMachine.add(new Block(1,11,1,BlockType.REDSTONE_BLOCK,Orientation.NORTH));
 		oscillatingMachine.add(new Block(1,11,0,BlockType.SLIME,Orientation.NORTH));
 
+		MinecraftCoordinates originalShapeCoordinates = MinecraftUtilClass.minCoordinates(oscillatingMachine);
+
+		List<Block> testBlockSet = MinecraftUtilClass.shiftBlocksBetweenCorners(oscillatingMachine, originalShapeCoordinates, testCorner);
+
 		// When the time is small (50L) then the score becomes large
-		MinecraftClient.getMinecraftClient().spawnBlocks(oscillatingMachine);
-		double amount = ff.fitnessScore(cornerBS2,oscillatingMachine);
+		MinecraftClient.getMinecraftClient().spawnBlocks(testBlockSet);
+		double amount = ff.fitnessScore(testCorner,testBlockSet);
 		System.out.println("movement fitness when oscillating: "+ amount);
 		assertTrue(30 <= amount);
 	}
