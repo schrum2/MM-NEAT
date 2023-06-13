@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.Vector;
 import java.util.stream.Stream;
 
+import org.jenetics.internal.math.random;
+
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.SteadyStateEA;
 import edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.mapelites.BinLabels;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
@@ -15,6 +18,7 @@ import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.util.PopulationUtil;
+import edu.southwestern.util.random.RandomNumbers;
 
 public class MOME<T> implements SteadyStateEA<T>{
 
@@ -65,7 +69,11 @@ public class MOME<T> implements SteadyStateEA<T>{
 	@Override
 	public void newIndividual() {
 		// TODO Auto-generated method stub
-		
+		//steal a lot
+		//ranomize bin
+		//get random sub population in MOMe archive
+		//BinLabels randomBin = RandomNumbers.randomChoose(archive);
+		//randomize parent
 	}
 
 	@Override

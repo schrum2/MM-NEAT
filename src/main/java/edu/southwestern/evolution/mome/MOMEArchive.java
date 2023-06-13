@@ -3,6 +3,7 @@ package edu.southwestern.evolution.mome;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.IntStream;
@@ -20,6 +21,7 @@ import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.file.FileUtilities;
+import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.datastructures.ArrayUtil;
 
 public class MOMEArchive<T> {
@@ -30,18 +32,18 @@ public class MOMEArchive<T> {
 	//vector of scores are the scores of candidates in that bin
 	
 
-	private int occupiedBins; 
+	//private int occupiedBins; 
 	private BinLabels mapping;
 	private boolean saveElites;	//would like to know what this is exactly
 	private String archiveDir;
 	
-	public int getOccupiedBins() {
-		return occupiedBins;
-	}
-
-	public void setOccupiedBins(int occupiedBins) {
-		this.occupiedBins = occupiedBins;
-	}
+//	public int getOccupiedBins() {
+//		return occupiedBins;
+//	}
+//
+//	public void setOccupiedBins(int occupiedBins) {
+//		this.occupiedBins = occupiedBins;
+//	}
 
 	public BinLabels getBinMapping() {
 		return mapping;
@@ -67,6 +69,75 @@ public class MOMEArchive<T> {
 		this.archiveDir = archiveDir;
 	}
 	
+	
+	/**
+	 * constructor
+	 * @param saveElites
+	 * @param archiveDirectoryName
+	 * @param initNumIndividualsInCells
+	 */
+	public MOMEArchive(boolean saveElites, String archiveDirectoryName, int initNumIndividualsInCells) {
+		this.saveElites = saveElites;
+		// Initialize mapping
+		try {
+			mapping = (BinLabels) ClassCreation.createObject("MOMEBinLabels");
+		} catch (NoSuchMethodException e) {
+			System.out.println("Failed to get Bin Mapping for MOME!");
+			e.printStackTrace();
+			System.exit(1);
+		}
+		
+		//establish number of bins and initialize with none occupied
+		int numBins = mapping.binLabels().size();
+		System.out.println("Archive contains "+numBins+" number of bins");
+		archive = new ConcurrentHashMap<Vector<Integer>,Vector<Score<T>>>(numBins);
+//		occupiedBins = 0;
+		
+		// Archive directory
+		String experimentDir = FileUtilities.getSaveDirectory();
+		archiveDir = experimentDir + File.separator + archiveDirectoryName;
+		if(saveElites) {
+			new File(archiveDir).mkdirs(); // make directory
+		}
+	}
+	
+	/**
+	 * copy constructor
+	 * takes another archive, reevaluates shapes and adds them to the new archive
+	 * this might end up different from the original
+	 * @param other the archive you want to copy
+	 */
+	public MOMEArchive(MOMEArchive<T> other) {
+		this(other.archive, other.mapping, other.archiveDir, other.saveElites);
+	}
+	/**
+	 * takes the specifics of the above constructor
+	 * @param otherArchiveHashMap	this is the original archive being copied from
+	 * @param otherMapping	this is the original archive's BinLabels mapping being copied
+	 * @param otherArchiveDirectory	the directory of the original archive that the new archive will save to
+	 * @param otherSaveElites	the boolean for the original archives saveElites variable
+	 */
+	public MOMEArchive(ConcurrentHashMap<Vector<Integer>, Vector<Score<T>>> otherArchiveHashMap, BinLabels otherMapping, String otherArchiveDirectory, boolean otherSaveElites) {
+		saveElites = false;	//don't save while reorganizing
+		mapping = otherMapping;
+		int numBins = otherMapping.binLabels().size();	
+		archive = new ConcurrentHashMap<Vector<Integer>, Vector<Score<T>>>(numBins);
+//		occupiedBins = 0;
+		setArchiveDir(otherArchiveDirectory);	//will save in the same place
+
+		//go through the original archive and add
+		otherArchiveHashMap.forEach( (coords, subpop) -> {
+			
+			for(Score<T> s : subpop) {
+			
+				@SuppressWarnings("unchecked")
+				Score<T> newScore = ((LonerTask<T>) MMNEAT.task).evaluate(s.individual);
+				this.add(newScore);
+			}
+			
+		});
+		saveElites = otherSaveElites;
+	}
 	
 	/**
 	 * This adds an individual to the archive, recalculated the pareto front, and returns whether that candidate stayed in the archive
@@ -100,7 +171,14 @@ public class MOMEArchive<T> {
 			arrayListOfScores.addAll(archive.get(candidateBinCoordinates));
 			NSGA2.getParetoFront(NSGA2.staticNSGA2Scores(arrayListOfScores));
 			//check if the candidate it there and return if it is
-			return archive.get(candidateBinCoordinates).contains(candidate);
+			long candidateID = candidate.individual.getId();
+			for (Score<T> score : archive.get(candidateBinCoordinates)) {
+				if(score.individual.getId() == candidateID) {
+					return true;
+				}
+			}
+			return false;
+			//return archive.get(candidateBinCoordinates).contains(candidate);
 		} else {
 			// In some domains, a flawed genotype can emerge which cannot produce a behavior vector. Obviously cannot be added to archive.
 			return false; // nothing added
@@ -108,72 +186,15 @@ public class MOMEArchive<T> {
 	}
 	
 	/**
-	 * constructor
-	 * @param saveElites
-	 * @param archiveDirectoryName
-	 * @param initNumIndividualsInCells
+	 * from the archive it retrieves a random individual
+	 * randomly picks a bin, then randomly picks an individual's score from the bin
+	 * @return random individual from archive (Score<T>)
 	 */
-	public MOMEArchive(boolean saveElites, String archiveDirectoryName, int initNumIndividualsInCells) {
-		this.saveElites = saveElites;
-		// Initialize mapping
-		try {
-			mapping = (BinLabels) ClassCreation.createObject("MOMEBinLabels");
-		} catch (NoSuchMethodException e) {
-			System.out.println("Failed to get Bin Mapping for MOME!");
-			e.printStackTrace();
-			System.exit(1);
-		}
-		
-		//establish number of bins and initialize with none occupied
-		int numBins = mapping.binLabels().size();
-		System.out.println("Archive contains "+numBins+" number of bins");
-		archive = new ConcurrentHashMap<Vector<Integer>,Vector<Score<T>>>(numBins);
-		occupiedBins = 0;
-		
-		// Archive directory
-		String experimentDir = FileUtilities.getSaveDirectory();
-		archiveDir = experimentDir + File.separator + archiveDirectoryName;
-		if(saveElites) {
-			new File(archiveDir).mkdirs(); // make directory
-		}
-	}
-	
-	/**
-	 * copy constructor
-	 * takes another archive, reevaluates shapes and adds them to the new archive
-	 * this might end up different from the original
-	 * @param other the archive you want to copy
-	 */
-	public MOMEArchive(MOMEArchive<T> other) {
-		this(other.archive, other.mapping, other.archiveDir, other.saveElites);
-	}
-	/**
-	 * takes the specifics of the above constructor
-	 * @param otherArchiveHashMap	this is the original archive being copied from
-	 * @param otherMapping	this is the original archive's BinLabels mapping being copied
-	 * @param otherArchiveDirectory	the directory of the original archive that the new archive will save to
-	 * @param otherSaveElites	the boolean for the original archives saveElites variable
-	 */
-	public MOMEArchive(ConcurrentHashMap<Vector<Integer>, Vector<Score<T>>> otherArchiveHashMap, BinLabels otherMapping, String otherArchiveDirectory, boolean otherSaveElites) {
-		saveElites = false;	//don't save while reorganizing
-		mapping = otherMapping;
-		int numBins = otherMapping.binLabels().size();	
-		archive = new ConcurrentHashMap<Vector<Integer>, Vector<Score<T>>>(numBins);
-		occupiedBins = 0;
-		setArchiveDir(otherArchiveDirectory);	//will save in the same place
-
-		//go through the original archive and add
-		otherArchiveHashMap.forEach( (coords, subpop) -> {
-			
-			for(Score<T> s : subpop) {
-			
-				@SuppressWarnings("unchecked")
-				Score<T> newScore = ((LonerTask<T>) MMNEAT.task).evaluate(s.individual);
-				this.add(newScore);
-			}
-			
-		});
-		saveElites = otherSaveElites;
+	public Score<T> getRandomIndividaul (){
+		//grab a random individual
+		Vector<Score<T>> randomVectorOfScores = RandomNumbers.randomElement(archive.values());
+		Score<T> randomIndividaulScore = RandomNumbers.randomElement(randomVectorOfScores);
+		return randomIndividaulScore;
 	}
 	
 	//unsure if I even need this but made a stub
