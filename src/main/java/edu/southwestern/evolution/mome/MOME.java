@@ -20,6 +20,7 @@ import edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.util.PopulationUtil;
 import edu.southwestern.util.random.RandomNumbers;
+import java_cup.parse_action;
 
 /**
  * yay! I made this!
@@ -99,29 +100,46 @@ public class MOME<T> implements SteadyStateEA<T>{
 			//get a random idividual for parent 2
 			Genotype<T> parentGenotype2 = archive.getRandomIndividaul().individual;
 			parentId2 = parentGenotype2.getId();	// Parent Id comes from original genome
-			
-		}
-		/**
-		 * // Potentially mate with second individual
-		if (mating && RandomNumbers.randomGenerator.nextDouble() < crossoverRate) {
-			
-			parentId2 = parent2.getId(); // Parent Id comes from original genome
-			Genotype<T> child2 = parent2.copy(); // Copy with different Id (further modified below)
+			//create second child
+			Genotype<T> childGenotype2 = parentGenotype2.copy(); // Copy with different Id (further modified below)
 			
 			// Replace child2 with a crossover result, and modify child1 in the process (two new children)
-			child2 = child1.crossover(child2);
-			child2.mutate(); // Probabilistic mutation of child
-			child2.addParent(parent2.getId());
-			child2.addParent(parent1.getId());
-			child1.addParent(parent2.getId());
-			EvolutionaryHistory.logLineageData(parentId1,parentId2,child2);
+			childGenotype2 = childGenotype1.crossover(childGenotype2);
+			childGenotype2.mutate(); // Probabilistic mutation of child
+			
+			//add parent ids to both children
+			childGenotype2.addParent(parentId2);
+			childGenotype2.addParent(parentId1);
+			childGenotype1.addParent(parentId2);
+			
+			//evolutionary history log data
+			EvolutionaryHistory.logLineageData(parentId1,parentId2,childGenotype2);
+
 			// Evaluate and add child to archive
-			Score<T> s2 = task.evaluate(child2);
+			Score<T> s2 = task.evaluate(childGenotype2);
 			// Indicate whether elite was added
-			boolean child2WasElite = archive.add(s2);
-			fileUpdates(child2WasElite); // Log for each individual produced
+			boolean child2WasElite = archive.add(s2);		//this variable is relevant to logging
+			
+			//some sort of logging should be placed here
+			//fileUpdates(child2WasElite); // Log for each individual produced
 		}
-		 */
+		
+		childGenotype1.mutate(); // Was potentially modified by crossover
+		
+		//evolutionary history log data
+		if (parentId2 == NUM_CODE_EMPTY) {
+			EvolutionaryHistory.logLineageData(parentId1,childGenotype1);
+		} else {
+			EvolutionaryHistory.logLineageData(parentId1,parentId2,childGenotype1);
+		}
+		
+		// Evaluate and add child 1 to archive
+		Score<T> s1 = task.evaluate(childGenotype1);
+		// Indicate whether elite was added
+		boolean child1WasElite = archive.add(s1);	//this variable is relevant to logging
+		
+		//some sort of logging should be placed here
+		//fileUpdates(child1WasElite); // Log for each individual produced
 	}
 
 	@Override

@@ -192,13 +192,13 @@ public class MOMEArchive<T> {
 	 */
 	public Score<T> getRandomIndividaul (){
 		//grab a random individual from a random bin
-		return RandomNumbers.randomElement(getRandomBinPopulationVector());
+		return RandomNumbers.randomElement(getRandomPopulation());
 	}
 	/**
 	 * get's a random bin from the archive
 	 * @return 
 	 */
-	public Vector<Score<T>> getRandomBinPopulationVector (){
+	public Vector<Score<T>> getRandomPopulation (){
 		//grab a random bin
 		return RandomNumbers.randomElement(archive.values());
 	}
