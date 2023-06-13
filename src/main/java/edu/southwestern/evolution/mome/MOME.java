@@ -85,7 +85,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 	public void newIndividual() {
 		// TODO Auto-generated method stub
 		//steal a lot
-		//get random individual for parent
+		//get random individual for parent 1
 		Genotype<T> parentGenotype1 = archive.getRandomIndividaul().individual;
 		long parentId1 = parentGenotype1.getId();
 		long parentId2 = NUM_CODE_EMPTY;	//initialize second parent in case it's needed
@@ -96,12 +96,15 @@ public class MOME<T> implements SteadyStateEA<T>{
 
 		// Potentially mate with second individual
 		if (mating && RandomNumbers.randomGenerator.nextDouble() < crossoverRate) {
+			//get a random idividual for parent 2
+			Genotype<T> parentGenotype2 = archive.getRandomIndividaul().individual;
+			parentId2 = parentGenotype2.getId();	// Parent Id comes from original genome
+			
 		}
 		/**
 		 * // Potentially mate with second individual
 		if (mating && RandomNumbers.randomGenerator.nextDouble() < crossoverRate) {
-			int otherIndex = archive.randomOccupiedBinIndex(); // From a different bin
-			Genotype<T> parent2 = archive.getElite(otherIndex).individual;
+			
 			parentId2 = parent2.getId(); // Parent Id comes from original genome
 			Genotype<T> child2 = parent2.copy(); // Copy with different Id (further modified below)
 			
