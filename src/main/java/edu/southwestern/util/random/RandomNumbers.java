@@ -321,6 +321,17 @@ public class RandomNumbers {
 		}
 		return result;
 	}
+
+	/**
+	 * Calls below with a set, returning 1 value, and using random generator
+	 * @param <T>	the type of the element from the set
+	 * @param set	the set of elements
+	 * @return 	a single randomly genereated element from that set
+	 */
+	public static <T> T randomChoose(Set<T> set) {
+		return randomChoose(set, 1, randomGenerator).get(0);
+	}
+	
 	
 	/**
 	 * Same as above, but allows a Set as input.

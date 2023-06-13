@@ -37,8 +37,6 @@ public class MOME<T> implements SteadyStateEA<T>{
 		
 		assert startingPopulation.size() == 0 || !(startingPopulation.get(0) instanceof BoundedRealValuedGenotype) || ((BoundedRealValuedGenotype) startingPopulation.get(0)).isBounded() : "Initial individual not bounded: "+startingPopulation.get(0);
 	
-		//initialize ranges
-		MinecraftCoordinates ranges = new MinecraftCoordinates(Parameters.parameters.integerParameter("minecraftXRange"),Parameters.parameters.integerParameter("minecraftYRange"),Parameters.parameters.integerParameter("minecraftZRange"));
 		
 		//add initial population to the archive
 		Vector<Score<T>> evaluatedPopulation = new Vector<Score<T>>(startingPopulation.size());
@@ -56,29 +54,11 @@ public class MOME<T> implements SteadyStateEA<T>{
 			evaluatedPopulation.add(s);
 		});
 		CommonConstants.netio = backupNetIO;
-		/**
-		 * 
-		boolean backupNetIO = CommonConstants.netio;
-		CommonConstants.netio = false; // Some tasks require archive comparison to do this, but it does not exist yet.
-		Stream<Genotype<T>> evaluateStream = Parameters.parameters.booleanParameter("parallelMAPElitesInitialize") ? 
-												startingPopulation.parallelStream() :
-												startingPopulation.stream();
-		if(Parameters.parameters.booleanParameter("parallelMAPElitesInitialize"))
-			System.out.println("Evaluate archive in parallel");
-		// Evaluate initial population
-		evaluateStream.forEach( (g) -> {
-			Score<T> s = task.evaluate(g);
-			evaluatedPopulation.add(s);
+		
+		 // Add initial population to archive, if add is true
+		evaluatedPopulation.parallelStream().forEach( (s) -> {
+			archive.add(s); // Fill the archive with random starting individuals, only when this flag is true
 		});
-		CommonConstants.netio = backupNetIO;
-		 * 
-		 * 		Vector<Score<T>> evaluatedPopulation = new Vector<>(startingPopulation.size());
-		 * // Add initial population to archive, if add is true
-			evaluatedPopulation.parallelStream().forEach( (s) -> {
-				boolean result = archive.add(s); // Fill the archive with random starting individuals, only when this flag is true
-
-			});
-		 */
 		
 	}
 
@@ -123,4 +103,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 		return false;
 	}
 
+	public static void main (String[] args) {
+		//
+	}
 }
