@@ -21,8 +21,7 @@ import edu.southwestern.util.random.RandomNumbers;
 
 public class Archive<T> {
 	
-	//Vector<Vector<Score<T>>> archive; // Vector is used because it is thread-safe
-	Vector<Score<T>> archive;
+	Vector<Score<T>> archive; // Vector is used because it is thread-safe
 	private int occupiedBins; 
 	private BinLabels mapping;
 	private boolean saveElites;
@@ -170,6 +169,9 @@ public class Archive<T> {
 				result = replaceIfBetter(candidate, oneD, currentBinOccupant);
 			}
 			return result;
+			
+			
+			// TODO: Why are we inserting if the binning scheme says to discard it?
 		} else if(candidate.usesMAPElitesBinSpecification()) {
 			int[] candidateBinIndices = candidate.MAPElitesBinIndex();
 			int oneD = this.getBinMapping().oneDimensionalIndex(candidateBinIndices);
