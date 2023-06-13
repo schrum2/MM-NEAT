@@ -25,6 +25,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 	protected MOMEArchive<T> archive;
 	protected int iterations;	//might want to rename? what is it, just the number of individuals created so far?
 	protected LonerTask<T> task; ///seems to be for cleanup, not sure what else
+	private static final int NUM_CODE_EMPTY = -1;	//initialization number for a non existent parent
 
 	@Override
 	public void initialize(Genotype<T> example) {
@@ -70,10 +71,12 @@ public class MOME<T> implements SteadyStateEA<T>{
 	public void newIndividual() {
 		// TODO Auto-generated method stub
 		//steal a lot
-		//ranomize bin
-		//get random sub population in MOMe archive
-		//BinLabels randomBin = RandomNumbers.randomChoose(archive);
-		//randomize parent
+		//get random individual for parent
+		Genotype<T> parentGenotype1 = archive.getRandomIndividaul().individual;
+		long parentId1 = parentGenotype1.getId();
+		long parentId2 = NUM_CODE_EMPTY;
+		Genotype<T> childGenotype1 = parentGenotype1.copy(); // Copy with different Id (will be further modified below)
+		childGenotype1.addParent(parentId1);
 	}
 
 	@Override
