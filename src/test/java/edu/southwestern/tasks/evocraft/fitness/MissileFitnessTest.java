@@ -24,7 +24,7 @@ public class MissileFitnessTest {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		CommonConstants.netio = false;
-		//Parameters.initializeParameterCollections(new String[] {"minecraftClearWithGlass:false","watch:false","minecraftXRange:5","minecraftYRange:5","minecraftZRange:5","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.CannonBlockSet", "minecraftTargetDistancefromShapeY:-10", "minecraftTargetDistancefromShapeX:0", "minecraftTargetDistancefromShapeZ:0"});
+		Parameters.initializeParameterCollections(new String[] {"minecraftClearWithGlass:false","watch:false","minecraftXRange:5","minecraftYRange:5","minecraftZRange:5","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.CannonBlockSet", "minecraftTargetDistancefromShapeY:-10", "minecraftTargetDistancefromShapeX:0", "minecraftTargetDistancefromShapeZ:0"});
 		if(!MinecraftServer.serverIsRunner()) {
 			MinecraftServer.launchServer();
 			MinecraftClient.getMinecraftClient();
