@@ -3,6 +3,8 @@ package edu.southwestern.evolution.mome;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -190,8 +192,8 @@ public class MOMEArchive<T> {
 		return RandomNumbers.randomElement(getRandomPopulation());
 	}
 	/**
-	 * get's a random bin from the archive
-	 * @return 
+	 * get's a random sub population from a random bin in the archive
+	 * @return the identifiers of all the individuals in a random sub population in the archive
 	 */
 	public Vector<Score<T>> getRandomPopulation(){
 		//grab a random bin
@@ -199,9 +201,63 @@ public class MOMEArchive<T> {
 	}
 	
 	//unsure if I even need this but made a stub
+	/**
+	 * this will return a Vector of all the Scores in the archive / basically the identifier of all individuals in the archive
+	 * @return vector containing the Score of all individuals in the archive
+	 */
 	public Vector<Score<T>> getWholeArchiveScores(){
 		//needed?
-		return null;
+		Vector<Score<T>> vectorOfAllTheScores = new Vector<Score<T>>(archive.values().size());	//this is the result vector
+		Collection<Vector<Score<T>>> allScores = archive.values();	//this returns a collection of all the scores/values in the archive
+		for(Vector<Score<T>> score : allScores) {	//this loops through all the vectors of scores in the collection
+			//loops through all the  vectors of scores
+			vectorOfAllTheScores.addAll(score);		//this adds all the vectors from score to the result vector
+		}
+		return vectorOfAllTheScores;
+	}
+	
+	/**
+	 * this function should return the total number of individuals currently in the archive
+	 * not currently sure if it works TODO: test this if possible?, I put a print statement but currently not called by anything
+	 * @return total number of individuals in the archive
+	 */
+	public int totalNumberOfIndividualsInArchive() {
+		//int numberOfIndividualsInArchive = 0;
+		System.out.println("total number of individuals in archive:" + archive.values().size());
+		return archive.values().size();
+		//all the below is probably unnecessary and the above should work. If not these are starter ideas for going through the whole archive
+//		archive.forEach( (binCoords, subpop) -> {
+//			for (Score<T> s : subpop) {
+//				//Score<T> score = (Score<T>) iterator.next();
+//				numberOfIndividualsInArchive++;
+//			}
+//		}
+//		);
+//		Vector<Score<T>> vectorScore = new Vector<Score<T>>(archive.values().size());
+//		
+////		archive.forEachValue(vectorScore, subpop -> {
+////				numberOfIndividualsInArchive++;
+////		});
+//		for(int i = 0; i < archive.size(); i++) {	//loop through archive
+//			for(int s = 0; s <= archive.get(i).size(); s++) {
+//				//loops through
+//			}
+//		}
+		
+		/**
+		 * /go through the original archive and add
+		otherArchiveHashMap.forEach( (coords, subpop) -> {
+			
+			for(Score<T> s : subpop) {
+			
+				@SuppressWarnings("unchecked")
+				Score<T> newScore = ((LonerTask<T>) MMNEAT.task).evaluate(s.individual);
+				this.add(newScore);
+			}
+			
+		});
+		 */
+//		return 0;
 	}
 	
 	/**
@@ -209,10 +265,17 @@ public class MOMEArchive<T> {
 	 * @param keyBinCoordinates	the key which is the coordinates of the bin
 	 * @return the scores for that bin
 	 */
-	public Vector<Score<T>> getScores(Vector<Integer> keyBinCoordinates){
+	public Vector<Score<T>> getScoresForBin(Vector<Integer> keyBinCoordinates){
 		return archive.get(keyBinCoordinates);
 	}
 	
+	/**
+	 * return the total number of bins in use in the archive
+	 * @return
+	 */
+	public int getNumberOfOccupiedBins() {
+		return archive.size();
+	}
 	//don't know if I even need the below method
 //	public float[] getAllEliteScores( ) {
 //		float[] result = new float[archive.size()];
@@ -253,11 +316,11 @@ public class MOMEArchive<T> {
 	
 	//main for testing
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
-		int runNum = 50; 
-		//MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" base:nsga2test log:NSG2Test-Test saveTo:Test trackPseudoArchive:true netio:true lambda:37 maxGens:200 task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.SphereFunction genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foBinDimension:500 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
-		MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" mapElitesQDBaseOffset:525 io:true base:nsga2test log:NSG2Test-MAPElites saveTo:MAPElites netio:false maxGens:10000 ea:edu.southwestern.evolution.mapelites.MAPElites task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.SphereFunction steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foBinDimension:50 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
-		//MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" mapElitesQDBaseOffset:525 base:nsga2test log:NSG2Test-CMAES saveTo:CMAES trackPseudoArchive:true netio:true mu:37 lambda:37 maxGens:200 ea:edu.southwestern.evolution.cmaes.CMAEvolutionStrategyEA task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.SphereFunction genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foBinDimension:500 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
-		 
+//		int runNum = 50; 
+//		//MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" base:nsga2test log:NSG2Test-Test saveTo:Test trackPseudoArchive:true netio:true lambda:37 maxGens:200 task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.SphereFunction genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foBinDimension:500 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
+//		MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" mapElitesQDBaseOffset:525 io:true base:nsga2test log:NSG2Test-MAPElites saveTo:MAPElites netio:false maxGens:10000 ea:edu.southwestern.evolution.mapelites.MAPElites task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.SphereFunction steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foBinDimension:50 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
+//		//MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" mapElitesQDBaseOffset:525 base:nsga2test log:NSG2Test-CMAES saveTo:CMAES trackPseudoArchive:true netio:true mu:37 lambda:37 maxGens:200 ea:edu.southwestern.evolution.cmaes.CMAEvolutionStrategyEA task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.SphereFunction genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foBinDimension:500 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
+//		 
 	}
 
 }
