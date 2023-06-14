@@ -28,7 +28,7 @@ public class MaximizeVolumeFitnessTest {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		CommonConstants.netio = false;
-		Parameters.initializeParameterCollections(new String[] {"watch:true","minecraftClearWithGlass:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet","minecraftAccumulateChangeInCenterOfMass:false"});
+		Parameters.initializeParameterCollections(new String[] {"watch:false","minecraftClearWithGlass:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet","minecraftAccumulateChangeInCenterOfMass:false"});
 		if(!MinecraftServer.serverIsRunner()) {
 			MinecraftServer.launchServer();
 			MinecraftClient.getMinecraftClient();
@@ -65,12 +65,19 @@ public class MaximizeVolumeFitnessTest {
 		System.out.println("Unit test: testNoInteraction");
 
 		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,30,-35);
-		MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 50); // Larger buffer is important, but too large and it crashes!
-
-		ArrayList<Block> testBlockSet = new ArrayList<>();
+		//set up test corner and clear area
+		testCorner = MinecraftClient.getMinecraftClient().checkForYOutOfBoundsAndShiftUp(testCorner);
+		MinecraftClient.getMinecraftClient().clearEvaluationSpaceForJUnitTests(testCorner);
+		
+		
+		List<Block> testBlockSet = new ArrayList<>();
 		testBlockSet.add(new Block(-25,30,-35,BlockType.SLIME, Orientation.WEST));
 		testBlockSet.add(new Block(-20,30,-35,BlockType.QUARTZ_BLOCK, Orientation.EAST));
-				
+		
+		//shift flying machine shape to the test corner
+		MinecraftCoordinates originalShapeCoordinates = MinecraftUtilClass.minCoordinates(testBlockSet);
+		testBlockSet = MinecraftUtilClass.shiftBlocksBetweenCorners(testBlockSet, originalShapeCoordinates, testCorner);
+
 		assertEquals(6.0,testInstance.fitnessScore(testCorner,testBlockSet),0.0);
 	}
 	
@@ -82,7 +89,9 @@ public class MaximizeVolumeFitnessTest {
 		System.out.println("Unit test: testWorkingFlyingMachine");
 
 		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,30,-35);
-		MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 50); // Larger buffer is important, but too large and it crashes!
+		//set up test corner and clear area
+		testCorner = MinecraftClient.getMinecraftClient().checkForYOutOfBoundsAndShiftUp(testCorner);
+		MinecraftClient.getMinecraftClient().clearEvaluationSpaceForJUnitTests(testCorner);	
 		
 		//create shape
 		String blockString = "[QUARTZ_BLOCK at (-1433,37,-1432) oriented NORTH, TNT at (-1433,37,-1431) oriented UP, QUARTZ_BLOCK at (-1433,37,-1429) oriented NORTH, REDSTONE_BLOCK at (-1433,38,-1433) oriented NORTH, OBSERVER at (-1433,38,-1431) oriented DOWN, QUARTZ_BLOCK at (-1433,39,-1433) oriented UP, OBSERVER at (-1433,39,-1431) oriented NORTH, TNT at (-1433,40,-1431) oriented WEST, QUARTZ_BLOCK at (-1433,40,-1430) oriented NORTH, OBSERVER at (-1433,41,-1433) oriented NORTH, QUARTZ_BLOCK at (-1432,37,-1432) oriented NORTH, QUARTZ_BLOCK at (-1432,37,-1430) oriented UP, PISTON at (-1432,39,-1429) oriented NORTH, STICKY_PISTON at (-1432,40,-1433) oriented NORTH, QUARTZ_BLOCK at (-1432,40,-1432) oriented NORTH, QUARTZ_BLOCK at (-1432,40,-1431) oriented NORTH, OBSERVER at (-1432,41,-1433) oriented EAST, QUARTZ_BLOCK at (-1432,41,-1430) oriented EAST, QUARTZ_BLOCK at (-1431,37,-1431) oriented NORTH, QUARTZ_BLOCK at (-1431,37,-1429) oriented NORTH, STICKY_PISTON at (-1431,38,-1432) oriented NORTH, QUARTZ_BLOCK at (-1431,39,-1433) oriented NORTH, QUARTZ_BLOCK at (-1431,41,-1432) oriented NORTH, QUARTZ_BLOCK at (-1430,38,-1430) oriented WEST, TNT at (-1430,39,-1432) oriented NORTH, QUARTZ_BLOCK at (-1430,40,-1433) oriented DOWN, QUARTZ_BLOCK at (-1430,41,-1433) oriented EAST, REDSTONE_BLOCK at (-1430,41,-1432) oriented WEST, QUARTZ_BLOCK at (-1429,37,-1430) oriented UP, QUARTZ_BLOCK at (-1429,37,-1429) oriented EAST, TNT at (-1429,39,-1432) oriented NORTH, QUARTZ_BLOCK at (-1429,41,-1433) oriented NORTH, TNT at (-1429,41,-1432) oriented SOUTH, SLIME at (-1429,41,-1429) oriented NORTH]";
@@ -105,8 +114,10 @@ public class MaximizeVolumeFitnessTest {
 		System.out.println("Unit test: testTwoWorkingFlyingMachineSomethingSouth");
 
 		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,30,-35);
-		MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 50); // Larger buffer is important, but too large and it crashes!
-
+		//set up test corner and clear area
+		testCorner = MinecraftClient.getMinecraftClient().checkForYOutOfBoundsAndShiftUp(testCorner);
+		MinecraftClient.getMinecraftClient().clearEvaluationSpaceForJUnitTests(testCorner);
+		
 		//currently from minecraft 2022, MEOriginalVectorPistonOrientation19
 		String southFlyingMachineString = "[SLIME at (-500,100,501) oriented WEST, STICKY_PISTON at (-500,100,502) oriented NORTH, STICKY_PISTON at (-500,101,501) oriented SOUTH, SLIME at (-500,101,502) oriented WEST, QUARTZ_BLOCK at (-500,102,500) oriented SOUTH, REDSTONE_BLOCK at (-500,102,502) oriented DOWN, SLIME at (-499,100,501) oriented WEST, REDSTONE_BLOCK at (-499,100,502) oriented EAST, QUARTZ_BLOCK at (-499,101,500) oriented EAST, SLIME at (-499,101,501) oriented DOWN, STICKY_PISTON at (-499,102,502) oriented DOWN, QUARTZ_BLOCK at (-498,100,500) oriented DOWN, SLIME at (-498,100,501) oriented NORTH, REDSTONE_BLOCK at (-498,101,502) oriented EAST]";
 		//currently from minecraft 2022, MEOriginalVectorPistonOrientation0
@@ -142,8 +153,9 @@ public class MaximizeVolumeFitnessTest {
 		System.out.println("Unit test: testTwoWorkingFlyingMachineWestSouth");
 
 		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,30,-35);
-		MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 50); // Larger buffer is important, but too large and it crashes!
-
+		testCorner = MinecraftClient.getMinecraftClient().checkForYOutOfBoundsAndShiftUp(testCorner);
+		MinecraftClient.getMinecraftClient().clearEvaluationSpaceForJUnitTests(testCorner);
+		
 		//currently from minecraft 2022, MEOriginalVectorPistonOrientation19
 		String southFlyingMachineString = "[SLIME at (-500,100,501) oriented WEST, STICKY_PISTON at (-500,100,502) oriented NORTH, STICKY_PISTON at (-500,101,501) oriented SOUTH, SLIME at (-500,101,502) oriented WEST, QUARTZ_BLOCK at (-500,102,500) oriented SOUTH, REDSTONE_BLOCK at (-500,102,502) oriented DOWN, SLIME at (-499,100,501) oriented WEST, REDSTONE_BLOCK at (-499,100,502) oriented EAST, QUARTZ_BLOCK at (-499,101,500) oriented EAST, SLIME at (-499,101,501) oriented DOWN, STICKY_PISTON at (-499,102,502) oriented DOWN, QUARTZ_BLOCK at (-498,100,500) oriented DOWN, SLIME at (-498,100,501) oriented NORTH, REDSTONE_BLOCK at (-498,101,502) oriented EAST]";
 		//currently from minecraft 2022 experiments, MEOriginalVectorPistonOrientation21
@@ -181,8 +193,9 @@ public class MaximizeVolumeFitnessTest {
 		System.out.println("Unit test: testTwoWorkingFlyingMachineNorthSouth");
 
 		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,30,-35);
-		MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 50); // Larger buffer is important, but too large and it crashes!
-
+		testCorner = MinecraftClient.getMinecraftClient().checkForYOutOfBoundsAndShiftUp(testCorner);
+		MinecraftClient.getMinecraftClient().clearEvaluationSpaceForJUnitTests(testCorner);
+		
 		//currently from minecraft 2022, MEOriginalVectorPistonOrientation19
 		String southFlyingMachineString = "[SLIME at (-500,100,501) oriented WEST, STICKY_PISTON at (-500,100,502) oriented NORTH, STICKY_PISTON at (-500,101,501) oriented SOUTH, SLIME at (-500,101,502) oriented WEST, QUARTZ_BLOCK at (-500,102,500) oriented SOUTH, REDSTONE_BLOCK at (-500,102,502) oriented DOWN, SLIME at (-499,100,501) oriented WEST, REDSTONE_BLOCK at (-499,100,502) oriented EAST, QUARTZ_BLOCK at (-499,101,500) oriented EAST, SLIME at (-499,101,501) oriented DOWN, STICKY_PISTON at (-499,102,502) oriented DOWN, QUARTZ_BLOCK at (-498,100,500) oriented DOWN, SLIME at (-498,100,501) oriented NORTH, REDSTONE_BLOCK at (-498,101,502) oriented EAST]";
 		//currently from minecraft 2022 experiments, MEOriginalVectorPistonOrientation14

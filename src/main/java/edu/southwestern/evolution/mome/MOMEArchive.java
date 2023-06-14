@@ -68,13 +68,13 @@ public class MOMEArchive<T> {
 	 * constructor
 	 * @param saveElites
 	 * @param archiveDirectoryName
-	 * @param initNumIndividualsInCells
+	 * @param initNumIndividualsInCells the max size of the population in each cell, currently unrestricted
 	 */
 	public MOMEArchive(boolean saveElites, String archiveDirectoryName, int initNumIndividualsInCells) {
 		this.saveElites = saveElites;
 		// Initialize mapping
 		try {
-			mapping = (BinLabels) ClassCreation.createObject("MOMEBinLabels"); // TODO: Change to what it was before: will simply use the MAP Elites labels parameter
+			mapping = (BinLabels) ClassCreation.createObject("mapElitesBinLabels"); // TODO: Change to what it was before: will simply use the MAP Elites labels parameter
 		} catch (NoSuchMethodException e) {
 			System.out.println("Failed to get Bin Mapping for MOME!");
 			e.printStackTrace();
@@ -222,7 +222,6 @@ public class MOMEArchive<T> {
 //		float[] result = new float[archive.size()];
 //		//iterate through each key
 //		int keyIndexCount = 0; ///to offset placement in float array
-//		//TODO: find a way to offset the result float for each key entry
 //		//use previous function and += array or whatever
 //		archive.forEach( (k,v) -> {
 //			float[] temp1 = result;

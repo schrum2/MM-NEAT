@@ -9,7 +9,11 @@ import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.SteadyStateEA;
 import edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype;
+import edu.southwestern.evolution.genotypes.CPPNOrBlockVectorGenotype;
+import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.mapelites.Archive;
+import edu.southwestern.log.MMNEATLog;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
@@ -19,7 +23,7 @@ import edu.southwestern.util.random.RandomNumbers;
 
 /**
  * TODO: Explain a bit more, and also cite the paper whose algorithm we are implementing using ACM style
- * yay! I made this!
+ * 
  * @author lewisj
  *
  * @param <T>
@@ -28,14 +32,74 @@ public class MOME<T> implements SteadyStateEA<T>{
 
 	protected MOMEArchive<T> archive;
 								// TODO: Yes, iterations tracks the number of individuals generated. This needs to be incremented somewhere
-	protected int iterations;	//might want to rename? what is it, just the number of individuals created so far?
+	//protected int iterations;	//might want to rename? what is it, just the number of individuals created so far?
 	protected LonerTask<T> task; ///seems to be for cleanup, not sure what else
 	
 	//below deals with new individual creation
 	private static final int NUM_CODE_EMPTY = -1;	//initialization number for a non existent parent
 	private boolean mating;	//determines if using mating functionality
 	private double crossoverRate;
+	
+	//tracking variables
+	private int addedIndividualCount;
+	private int discardedIndividualCount;	//don't know if we will need this
+	private boolean populationChangeCheck;	//this keeps track of what happened to the most recent individual created (if it was added or not)
+						//false means the individual was not added and so the population hasn't changed
+						//true means an individual was added and the population changed
+	
+	//logging variables (might be sorted into tracking or other grouping
+	public boolean io;
 
+
+	public MOME() {
+		this(Parameters.parameters.stringParameter("archiveSubDirectoryName"), Parameters.parameters.booleanParameter("io"), Parameters.parameters.booleanParameter("netio"), true);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public MOME(/*TODO*/String archiveSubDirectoryName, boolean ioOption, boolean netioOption, boolean createLogs) {
+		MMNEAT.usingDiversityBinningScheme = true;
+		this.task = (LonerTask<T>) MMNEAT.task;
+		
+		this.io = ioOption; // write logs
+		//TODO: figure out how we get this number below
+		int initNumIndividualsInCells = 1;	//this currently controls the initial number of individuals in each cell. Will probably be moved out or assigned some other way
+		this.archive = new MOMEArchive<>(netioOption, archiveSubDirectoryName, initNumIndividualsInCells);	//set up archive
+		this.mating = Parameters.parameters.booleanParameter("mating");
+		this.crossoverRate = Parameters.parameters.doubleParameter("crossoverRate");
+		this.populationChangeCheck = false;
+		this.addedIndividualCount = 0;
+		this.addedIndividualCount = 0;
+		/**
+		 *  // below deals with writing logs and other lines that may be relevant later
+
+		if(io && createLogs) {
+			int numLabels = archive.getBinMapping().binLabels().size();
+			String infix = "MAPElites";
+			// Logging in RAW mode so that can append to log file on experiment resume
+			archiveLog = new MMNEATLog(infix, false, false, false, true); 
+			fillLog = new MMNEATLog("Fill", false, false, false, true);
+			// Can't check MMNEAT.genotype since MMNEAT.ea is initialized before MMNEAT.genotype
+			boolean cppnDirLogging = Parameters.parameters.classParameter("genotype").equals(CPPNOrDirectToGANGenotype.class) ||
+									 Parameters.parameters.classParameter("genotype").equals(CPPNOrBlockVectorGenotype.class);
+			if(cppnDirLogging) {
+				cppnThenDirectLog = new MMNEATLog("cppnToDirect", false, false, false, true);
+				cppnVsDirectFitnessLog = new MMNEATLog("cppnVsDirectFitness", false, false, false, true);
+			}
+			// Create gnuplot file for archive log
+			String experimentPrefix = Parameters.parameters.stringParameter("log")
+					+ Parameters.parameters.integerParameter("runNumber");
+			individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
+			int yrange = Parameters.parameters.integerParameter("maxGens")/individualsPerGeneration;
+			setUpLogging(numLabels, infix, experimentPrefix, yrange, cppnDirLogging, individualsPerGeneration, archive.getBinMapping().binLabels().size());
+		}
+		this.iterations = Parameters.parameters.integerParameter("lastSavedGeneration");
+		this.iterationsWithoutEliteCounter = 0;
+		this.iterationsWithoutElite = 0; // Not accurate on resume	
+		 */
+		
+	}
+	
+	
 	@Override
 	public void initialize(Genotype<T> example) {
 		// Do not allow Minecraft to contain archive when using MOME
@@ -116,9 +180,9 @@ public class MOME<T> implements SteadyStateEA<T>{
 
 			// Evaluate and add child to archive
 			Score<T> s2 = task.evaluate(childGenotype2);
-			// Indicate whether elite was added
-			boolean child2WasElite = archive.add(s2);		//this variable is relevant to logging
 			
+			populationChangeCheck= archive.add(s2);		//try and add new individual then check if successful and population has changed
+			afterIndividualCreationProcesses();			//this method will deal with anything that needs to be done after an individual is made
 			//some sort of logging should be placed here
 			//fileUpdates(child2WasElite); // Log for each individual produced
 		}
@@ -134,8 +198,10 @@ public class MOME<T> implements SteadyStateEA<T>{
 		
 		// Evaluate and add child 1 to archive
 		Score<T> s1 = task.evaluate(childGenotype1);
-		// Indicate whether elite was added
-		boolean child1WasElite = archive.add(s1);	//this variable is relevant to logging
+		
+		// Try and add newest individual and update population change variable on result
+		populationChangeCheck = archive.add(s1);	//this variable is relevant to logging
+		afterIndividualCreationProcesses();			//this will call anything we need to do after making a new individual
 		
 		//some sort of logging should be placed here
 		//fileUpdates(child1WasElite); // Log for each individual produced
@@ -144,7 +210,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 	@Override
 	public int currentIteration() {
 		// TODO Auto-generated method stub
-		return iterations;
+		return 0;
 	}
 
 	@Override
@@ -168,11 +234,39 @@ public class MOME<T> implements SteadyStateEA<T>{
 		 
 		return result;
 	}
+	
+	/**
+	 * within file update method
+	 * 	// Log to file
+		log();
+		Parameters.parameters.setInteger("lastSavedGeneration", iterations);
+		// Track total iterations
+		iterations++;
+		// Track how long we have gone without producing a new elite individual
+		if(newEliteProduced) {
+			iterationsWithoutElite = 0;
+		} else {
+			iterationsWithoutEliteCounter++;
+			iterationsWithoutElite++;
+		}
+		System.out.println(iterations + "\t" + iterationsWithoutElite + "\t");
+	 */
+	private void afterIndividualCreationProcesses() {
+		//this is a call for any processes that happened
+		//check population change bool
+		if(populationChangeCheck) {
+			//the individual was added and the population changed
+			addedIndividualCount++;
+		}
+		//if false, no change to pop
+		//if true, newest individual was added
+	}
+	
 
 	@Override
 	public boolean populationChanged() {
 		// TODO Auto-generated method stub
-		return false; // TODO: This needs to be based on whether new individuals are added to the archive
+		return populationChangeCheck; // TODO: This needs to be based on whether new individuals are added to the archive
 	}
 
 	public static void main (String[] args) {
