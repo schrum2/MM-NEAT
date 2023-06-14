@@ -276,7 +276,7 @@ public class ChangeCenterOfMassFitnessTest {
 	//passed
 	@Test
 	public void testFlyingWithoutMaxFitness() throws InterruptedException {
-		Parameters.initializeParameterCollections(new String[] {"watch:false", "minecraftClearWithGlass:false", "minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:30","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L, "minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+		Parameters.initializeParameterCollections(new String[] {"watch:true", "minecraftClearWithGlass:false", "minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:30","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L, "minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
 		MinecraftCoordinates cornerBS2 = new MinecraftCoordinates(0,11,-5);	// what is this the corner of? - shape corner
 
 		//set up test corner and clear area
