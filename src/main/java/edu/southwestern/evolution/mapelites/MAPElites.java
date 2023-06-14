@@ -229,6 +229,11 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		}
 	}
 
+	/**
+	 * TODO: JavaDoc
+	 * @param bins
+	 * @throws FileNotFoundException
+	 */
 	private void setupArchiveVisualizer(BinLabels bins) throws FileNotFoundException {
 		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
 		directory += (directory.equals("") ? "" : "/");
@@ -286,6 +291,17 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		}
 	}
 
+	/**
+	 * TODO: JavaDoc
+	 * I think this creates the .bat file?
+	 * @param directory
+	 * @param prefix
+	 * @param fullName
+	 * @param dimensionNames
+	 * @param dimensionSizes
+	 * @param ps
+	 * @param finalLine
+	 */
 	private void writeScriptLauncher(String directory, String prefix, String fullName, String[] dimensionNames,
 			int[] dimensionSizes, PrintStream ps, String finalLine) {
 		ps.println("cd ..");

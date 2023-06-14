@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.Vector;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
+
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.SteadyStateEA;
@@ -16,7 +19,10 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.util.PopulationUtil;
+import edu.southwestern.util.PythonUtil;
+import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.random.RandomNumbers;
+import edu.southwestern.log.MMNEATLog;
 
 /**
  * TODO: Explain a bit more, and also cite the paper whose algorithm we are implementing using ACM style
@@ -46,6 +52,9 @@ public class MOME<T> implements SteadyStateEA<T>{
 	
 	//logging variables (might be sorted into tracking or other grouping
 	public boolean io;
+	private boolean archiveFileCreated = false;	//track if the archive file is made
+	private MMNEATLog archiveLog = null; // Archive elite scores
+
 
 
 	public MOME() {
@@ -66,6 +75,10 @@ public class MOME<T> implements SteadyStateEA<T>{
 		this.populationChangeCheck = false;
 		this.addedIndividualCount = 0;
 		this.addedIndividualCount = 0;
+		
+		//logging
+		String infix = "MOMEArchive";
+		archiveLog = new MMNEATLog(infix, false, false, false, true);
 		/**
 		 *  // below deals with writing logs and other lines that may be relevant later
 
@@ -270,6 +283,48 @@ public class MOME<T> implements SteadyStateEA<T>{
 	public BinLabels getBinLabelsClass() {
 		return archive.getBinMapping();
 	}	
+	
+	public static void setUpLogging(int numLabels, String infix, String experimentPrefix, int yrange, boolean cppnDirLogging, int individualsPerGeneration, int archiveSize) {
+		//this is for logging, copied all the parameters but probably don't need it all
+	}
+	
+	private void setupArchiveVisualizer(BinLabels bins) throws FileNotFoundException {
+		//this might be the barebones logging?
+		//its to set up the visualizer bat files? Maybe open text files for editting?
+		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
+		directory += (directory.equals("") ? "" : "/");
+		String prefix = Parameters.parameters.stringParameter("log") + Parameters.parameters.integerParameter("runNumber") + "_MAPElites";
+		String fullName = directory + prefix + "_log.plt";
+		PythonUtil.setPythonProgram();
+		PythonUtil.checkPython();
+	}
+
+	/**
+	 * Write one line of data to each of the active log files, but only periodically,
+	 * when number of iterations divisible by individualsPerGeneration. 
+	 */
+	@SuppressWarnings("unchecked")
+	protected void log() {
+		if (!archiveFileCreated) {
+			try {
+				if(Parameters.parameters.booleanParameter("io")) setupArchiveVisualizer(archive.getBinMapping());
+			} catch (FileNotFoundException e) {
+				System.out.println("Could not create archive visualization file.");
+				e.printStackTrace();
+				System.exit(1);
+			}
+			archiveFileCreated = true;
+		}
+		//if time to log
+			//this creates a Float array of the scores of all individuals currently in the aarchive
+			Float[] allCurrentIndividuals = ArrayUtils.toObject(archive.turnVectorScoresIntoFloatArray(archive.getWholeArchiveScores()));
+			//archiveLog.log(pseudoGeneration + "\t" + StringUtils.join(elite, "\t").replaceAll("-Infinity", "X"));
+			//not sure about above line
+			//fillLog.log(pseudoGeneration + "\t" + numFilledBins   + "\t" + qdScore    + "\t" + maximumFitness + "\t" + iterationsWithoutEliteCounter + 
+            //"\t" + restrictedFilled+ "\t" +restrictedQD+ "\t" +restrictedMaxFitness);
+			int pseudoGeneration = addedIndividualCount/100;
+			log(pseudoGeneration + "\t" + archive.getNumberOfOccupiedBins() + "\t" + archive.totalNumberOfIndividualsInArchive() + "\t");
+	}
 	
 	public static void main (String[] args) {
 		try {
