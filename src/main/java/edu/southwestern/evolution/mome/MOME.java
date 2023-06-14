@@ -41,9 +41,9 @@ public class MOME<T> implements SteadyStateEA<T>{
 	private double crossoverRate;
 	
 	//tracking variables
-	private int addedIndividualCount = 0;
-	private int discardedIndividualCount = 0;	//don't know if we will need this
-	private boolean populationChangeCheck = false;	//this keeps track of what happened to the most recent individual created (if it was added or not)
+	private int addedIndividualCount;
+	private int discardedIndividualCount;	//don't know if we will need this
+	private boolean populationChangeCheck;	//this keeps track of what happened to the most recent individual created (if it was added or not)
 						//false means the individual was not added and so the population hasn't changed
 						//true means an individual was added and the population changed
 	
@@ -66,8 +66,11 @@ public class MOME<T> implements SteadyStateEA<T>{
 		this.archive = new MOMEArchive<>(netioOption, archiveSubDirectoryName, initNumIndividualsInCells);	//set up archive
 		this.mating = Parameters.parameters.booleanParameter("mating");
 		this.crossoverRate = Parameters.parameters.doubleParameter("crossoverRate");
+		this.populationChangeCheck = false;
+		this.addedIndividualCount = 0;
+		this.addedIndividualCount = 0;
 		/**
-		 *  // below deals with writing logs
+		 *  // below deals with writing logs and other lines that may be relevant later
 
 		if(io && createLogs) {
 			int numLabels = archive.getBinMapping().binLabels().size();
@@ -89,8 +92,6 @@ public class MOME<T> implements SteadyStateEA<T>{
 			int yrange = Parameters.parameters.integerParameter("maxGens")/individualsPerGeneration;
 			setUpLogging(numLabels, infix, experimentPrefix, yrange, cppnDirLogging, individualsPerGeneration, archive.getBinMapping().binLabels().size());
 		}
-		this.mating = Parameters.parameters.booleanParameter("mating");
-		this.crossoverRate = Parameters.parameters.doubleParameter("crossoverRate");
 		this.iterations = Parameters.parameters.integerParameter("lastSavedGeneration");
 		this.iterationsWithoutEliteCounter = 0;
 		this.iterationsWithoutElite = 0; // Not accurate on resume	

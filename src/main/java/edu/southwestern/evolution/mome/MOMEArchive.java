@@ -68,7 +68,7 @@ public class MOMEArchive<T> {
 	 * constructor
 	 * @param saveElites
 	 * @param archiveDirectoryName
-	 * @param initNumIndividualsInCells
+	 * @param initNumIndividualsInCells the max size of the population in each cell, currently unrestricted
 	 */
 	public MOMEArchive(boolean saveElites, String archiveDirectoryName, int initNumIndividualsInCells) {
 		this.saveElites = saveElites;
