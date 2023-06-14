@@ -365,10 +365,11 @@ public class Parameters {
 		integerOptions.add("minecraftDesiredBlockType", MinecraftClient.BlockType.REDSTONE_BLOCK.ordinal(), "Type desired by TypeCountFitness");
 		integerOptions.add("minecraftDesiredBlockCount", 0, "Count desired by TypeTargetFitness");
 		integerOptions.add("minecraftMaxSnakeLength", 100, "Maximum length that a generated snake can be");
-		integerOptions.add("spaceBetweenMinecraftShapes", 15, "The space in blocks that are in between each of the generated minecraft structures");
 		integerOptions.add("minecraftAmountOfBlocksToEvolve", 5, "The ammount of possible blocks that can be evolved by CPPN");
 		integerOptions.add("interactiveSleepTimer", 1000, "The ammount of time the interactive thread sleeps for");
+		integerOptions.add("spaceBetweenMinecraftShapes", 15, "The space in blocks that are in between each of the generated minecraft structures");
 		integerOptions.add("extraSpaceBetweenMinecraftShapes", 50, "The extra space that will be in between the shapes being evaluated");
+		integerOptions.add("minecraftExtraClearSpace", 2, "extra padding for evaluation clears");
 		integerOptions.add("startX", 0, "The X coordinate the shapes are generated on");
 		integerOptions.add("startY", 30, "The Y coordinate the shapes are generated on");
 		integerOptions.add("startZ", 0, "The Z coordinate the shapes are generated on");
@@ -395,6 +396,7 @@ public class Parameters {
 		integerOptions.add("minecraftMissleTargetBlockType", BlockType.SLIME.ordinal(), "Block that is used in the target");
 		integerOptions.add("minecraftPostCornerAdjustY", 0, "This is an int whose value will be added to the y-coordinate of the POST_EVALUATION_CORNER to adjust the special shape");
 		integerOptions.add("numVectorIndexMutations", -1, "If -1, thne ignore this. Else, vector mutations target this specific number of indicies per occurrence rather than have a per-index mutation rate");
+		integerOptions.add("maximumMOMESubPopulationSize", -1, "this contains the maximum number of individuals for each cell with implementing MOME with minecraft. -1 is unrestricted");
 		
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");

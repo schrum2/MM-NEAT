@@ -65,14 +65,16 @@ public class MissileFitness extends TimedEvaluationMinecraftFitnessFunction {
 	public void preSpawnSetup(MinecraftCoordinates shapeCorner) {
 		// Create structure to be blown up
 		//changing the last add to a sub might fix the slight target offset from it intended position
-		MinecraftClient.getMinecraftClient().fillCube(shapeCorner.add(targetCornerOffset), shapeCorner.add(targetCornerOffset).add(MinecraftUtilClass.getRanges()), targetBlockType);
+		MinecraftClient.getMinecraftClient().fillCube(shapeCorner.add(targetCornerOffset), shapeCorner.add(targetCornerOffset).add(MinecraftUtilClass.getRanges().sub(1)), targetBlockType);
+		//System.out.println("targetCornerOffset" + targetCornerOffset);
+		//System.out.println("TARGET!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 	}
 
 	@Override
 	public double calculateFinalScore(ArrayList<Pair<Long, List<Block>>> history, MinecraftCoordinates shapeCorner,
 			List<Block> originalBlocks) {
 
-		List<Block> leftOverBlocksFromTarget = MinecraftClient.getMinecraftClient().readCube(shapeCorner.add(targetCornerOffset), shapeCorner.add(targetCornerOffset).add(MinecraftUtilClass.getRanges()));
+		List<Block> leftOverBlocksFromTarget = MinecraftClient.getMinecraftClient().readCube(shapeCorner.add(targetCornerOffset), shapeCorner.add(targetCornerOffset).add(MinecraftUtilClass.getRanges().sub(1)));
 		List<Block> leftOverOfTargetBlocks = MinecraftUtilClass.getDesiredBlocks(leftOverBlocksFromTarget, acceptedBlownUpBlockTypes);
 		return -leftOverOfTargetBlocks.size();
 	}

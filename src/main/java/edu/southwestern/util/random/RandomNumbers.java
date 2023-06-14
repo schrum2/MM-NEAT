@@ -2,6 +2,7 @@ package edu.southwestern.util.random;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -320,6 +321,20 @@ public class RandomNumbers {
 			result.add(list.get(indices.get(i)));
 		}
 		return result;
+	}
+
+	public static <T> T randomElement(Collection<T> collection) {
+		return randomElement(new ArrayList<>(collection));
+	}
+		
+	/**
+	 * Calls below with a set, returning 1 value, and using random generator
+	 * @param <T>	the type of the element from the set
+	 * @param set	the set of elements
+	 * @return 	a single randomly genereated element from that set
+	 */
+	public static <T> T randomElement(Set<T> set) {
+		return randomChoose(set, 1, randomGenerator).get(0);
 	}
 	
 	/**
