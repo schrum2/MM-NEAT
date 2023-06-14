@@ -256,8 +256,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 	private void afterIndividualCreationProcesses() {
 		//this is a call for any processes that happened
 		//check population change bool
-		if(populationChangeCheck) {
-			//the individual was added and the population changed
+		if(populationChangeCheck) {	//the individual was added and the population changed
 			addedIndividualCount++;
 		}
 		//if false, no change to pop
@@ -286,3 +285,4 @@ public class MOME<T> implements SteadyStateEA<T>{
 		}
 	}
 }
+//archive contains 125 bins
