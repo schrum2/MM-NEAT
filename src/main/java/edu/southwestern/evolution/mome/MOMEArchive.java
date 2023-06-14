@@ -42,10 +42,6 @@ public class MOMEArchive<T> {
 		return mapping;
 	}
 
-	public void setMapping(BinLabels mapping) {
-		this.mapping = mapping;
-	}
-
 	public boolean isSaveElites() {
 		return saveElites;
 	}

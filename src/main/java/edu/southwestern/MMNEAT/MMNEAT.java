@@ -32,6 +32,7 @@ import edu.southwestern.evolution.metaheuristics.LinkPenalty;
 import edu.southwestern.evolution.metaheuristics.MaxModulesFitness;
 import edu.southwestern.evolution.metaheuristics.Metaheuristic;
 import edu.southwestern.evolution.metaheuristics.SubstrateLinkPenalty;
+import edu.southwestern.evolution.mome.MOME;
 import edu.southwestern.evolution.mulambda.MuLambda;
 import edu.southwestern.experiment.Experiment;
 import edu.southwestern.experiment.post.MinecraftBlockCompareExperiment;
@@ -129,8 +130,10 @@ public class MMNEAT {
 			return pseudoArchive.getBinMapping();
 		} else if (ea instanceof MAPElites) {
 			return ((MAPElites) ea).getBinLabelsClass();
+		} else if (ea instanceof MOME) {
+			return ((MOME) ea).getBinLabelsClass();
 		}
-		throw new IllegalStateException("Attempted to get archive bin label class without using MAP Elites or a psuedo-archive");
+		throw new IllegalStateException("Attempted to get archive bin label class without using MAP Elites, MOME, or a psuedo-archive");
 	}
 	
 	@SuppressWarnings("rawtypes")
