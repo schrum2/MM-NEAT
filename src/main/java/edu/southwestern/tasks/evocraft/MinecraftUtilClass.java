@@ -2,6 +2,7 @@ package edu.southwestern.tasks.evocraft;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -473,7 +474,7 @@ public class MinecraftUtilClass {
 		double fitness = score.behaviorIndexScore();
 		MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
 		String label = minecraftBinLabels.binLabels().get(0/*this needs to be the shape id*/);
-		MinecraftLonerShapeTask.writeBlockListFile(shapeToSaveBlockList, directoryString + File.separator + label+"ID"+score.individual.getId(), "FITNESS"+fitness+".txt");
+		MinecraftUtilClass.writeBlockListFile(shapeToSaveBlockList, directoryString + File.separator + label+"ID"+score.individual.getId(), "FITNESS"+fitness+".txt");
 		//save block list?
 		/**
 		 * 	String flyingDir = FileUtilities.getSaveDirectory() + "/flyingMachines";
@@ -507,5 +508,26 @@ public class MinecraftUtilClass {
 			}			
 		 */
 		
+	}
+
+	/** 
+	 * TODO: why not just pass fullName?
+	 * Write block list text file to specified location
+	 * @param blocks The blocks to write
+	 * @param pathAndPrefix Path plus first part of filename. Will be followed by _ before the fileSuffix
+	 * @param fileSuffix Last part of filename
+	 */
+	public static void writeBlockListFile(List<Block> blocks, String pathAndPrefix, String fileSuffix) {
+		String fullName = pathAndPrefix + "_" + fileSuffix;
+		System.out.println(fullName);
+		try {
+			PrintStream outputFile = new PrintStream(new File(fullName));
+			outputFile.println(blocks);
+			outputFile.close();
+		} catch (FileNotFoundException e) {
+			System.out.println("Error writing file "+fullName);
+			e.printStackTrace();
+			System.exit(1);
+		}
 	}
 }

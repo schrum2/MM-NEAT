@@ -10,7 +10,6 @@ import edu.southwestern.tasks.evocraft.MinecraftClient;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
-import edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask;
 import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.file.FileUtilities;
@@ -182,7 +181,7 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 						dir.mkdir();
 					}
 					// Save the shape
-					MinecraftLonerShapeTask.writeBlockListFile(originalBlocks, saveDir + File.separator + "Shape"+(++savedShapes), "FITNESS_"+finalResults[i]+".txt");
+					MinecraftUtilClass.writeBlockListFile(originalBlocks, saveDir + File.separator + "Shape"+(++savedShapes), "FITNESS_"+finalResults[i]+".txt");
 				}
 			}
 		}
