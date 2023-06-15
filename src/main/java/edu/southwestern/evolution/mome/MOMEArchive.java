@@ -12,6 +12,7 @@ import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.mapelites.BinLabels;
 import edu.southwestern.evolution.nsga2.NSGA2;
 import edu.southwestern.evolution.nsga2.NSGA2Score;
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.util.ClassCreation;
@@ -31,6 +32,9 @@ public class MOMEArchive<T> {
 	private BinLabels mapping;
 	private boolean saveElites;	//would like to know what this is exactly
 	private String archiveDir;
+	
+	public static final int MAX_SUB_POP_ALLOWED = 255; //this is the maximum number of individuals that can occupy a bin
+		//could create a parameter to control it?
 	
 //	public int getOccupiedBins() {
 //		return occupiedBins;
@@ -84,6 +88,9 @@ public class MOMEArchive<T> {
 		System.out.println("Archive contains "+numBins+" number of bins");
 		archive = new ConcurrentHashMap<Vector<Integer>,Vector<Score<T>>>(numBins);
 //		occupiedBins = 0;
+		
+		//set subPopulationMaximum size
+		//maxSubPopAllowed = Parameters.parameters.integerParameter("minecraftMaxSubPopAllowedInBins");
 		
 		// Archive directory
 		String experimentDir = FileUtilities.getSaveDirectory();
@@ -175,7 +182,6 @@ public class MOMEArchive<T> {
 				}
 			}
 			return false;
-			//return archive.get(candidateBinCoordinates).contains(candidate);
 		} else {
 			// In some domains, a flawed genotype can emerge which cannot produce a behavior vector. Obviously cannot be added to archive.
 			return false; // nothing added
@@ -217,47 +223,12 @@ public class MOMEArchive<T> {
 	}
 	
 	/**
-	 * this function should return the total number of individuals currently in the archive
-	 * not currently sure if it works TODO: test this if possible?, I put a print statement but currently not called by anything
+	 * this function returns the total number of individuals currently in the archive
 	 * @return total number of individuals in the archive
 	 */
 	public int totalNumberOfIndividualsInArchive() {
-		//int numberOfIndividualsInArchive = 0;
-		System.out.println("total number of individuals in archive:" + archive.values().size());
+		//System.out.println("total number of individuals in archive:" + archive.values().size());
 		return archive.values().size();
-		//all the below is probably unnecessary and the above should work. If not these are starter ideas for going through the whole archive
-//		archive.forEach( (binCoords, subpop) -> {
-//			for (Score<T> s : subpop) {
-//				//Score<T> score = (Score<T>) iterator.next();
-//				numberOfIndividualsInArchive++;
-//			}
-//		}
-//		);
-//		Vector<Score<T>> vectorScore = new Vector<Score<T>>(archive.values().size());
-//		
-////		archive.forEachValue(vectorScore, subpop -> {
-////				numberOfIndividualsInArchive++;
-////		});
-//		for(int i = 0; i < archive.size(); i++) {	//loop through archive
-//			for(int s = 0; s <= archive.get(i).size(); s++) {
-//				//loops through
-//			}
-//		}
-		
-		/**
-		 * /go through the original archive and add
-		otherArchiveHashMap.forEach( (coords, subpop) -> {
-			
-			for(Score<T> s : subpop) {
-			
-				@SuppressWarnings("unchecked")
-				Score<T> newScore = ((LonerTask<T>) MMNEAT.task).evaluate(s.individual);
-				this.add(newScore);
-			}
-			
-		});
-		 */
-//		return 0;
 	}
 	
 	/**
@@ -276,6 +247,80 @@ public class MOMEArchive<T> {
 	public int getNumberOfOccupiedBins() {
 		return archive.size();
 	}
+	
+	//TODO: the below methods would be useful it seems
+	//Max fitness in each objective
+	public float maxFitnessInEachObjective() {
+		float maxFitness = 0;
+		//for each bin
+			//for each objective
+				//check the max & compare
+		return maxFitness;
+	}
+	
+	//is this the above but min?
+	//Min fitness in each objective
+	public float minFitnessInEachObjective() {
+		return 0;
+	}
+	
+	//Max sub pop size across all bins
+	public int maxSubPopulationSizeInWholeArchive() {
+		int maxSubPop = 0;
+		Collection<Vector<Score<T>>> allVectorsOfScores = archive.values();	//this returns a collection of all the scores/values in the archive
+		for(Vector<Score<T>> scoreVector : allVectorsOfScores) {	//for each bin
+			if(scoreVector.size() > maxSubPop) {					//check population size
+				maxSubPop = scoreVector.size();	
+			}	
+		}
+		return maxSubPop;
+	}
+	
+	//Min sub pop size across occupied bins (ignore empty ones)
+	public int minSubPopulationSizeInWholeArchive() {
+		int minSubPop = MAX_SUB_POP_ALLOWED;
+		Collection<Vector<Score<T>>> allVectorsOfScores = archive.values();	//this returns a collection of all the scores/values in the archive
+		for(Vector<Score<T>> scoreVector : allVectorsOfScores) {	//for each bin
+			if((scoreVector.size() < minSubPop) && (scoreVector.size() != 0)) {					//check population size
+				minSubPop = scoreVector.size();	
+			}	
+		}
+		return minSubPop;
+	}
+	
+	//do not know what this is
+	//Max hyper volume in one bin
+	public int maxHyperVolumeInBin(Vector<Integer> keyBinCoordinates) {
+		return 0;
+	}
+	
+	//do not know what this is
+	//hypervolume across all bins
+	public int[] hyperVolumeOfAllBins() {
+		int[] placeHolder = {0,0};
+		return placeHolder;
+	}
+	
+	//not sure I understand what this is
+	//size of combined Pareto front across all bins
+	int sizeOfCombinedParetoFrontAcrossAllBins() {
+		/**
+		 * // Recalculate Pareto front
+			ArrayList<NSGA2Score<T>> front = NSGA2.getParetoFront(NSGA2.staticNSGA2Scores(archive.get(candidateBinCoordinates)));
+			//check if the candidate it there and return if it is
+			long candidateID = candidate.individual.getId();
+			for (NSGA2Score<T> score : front) {
+				if(score.individual.getId() == candidateID) {
+					// Since the new individual is present, the Pareto front must have changed.
+					// The Map needs to be updated, and we return true to indicate the change.
+					archive.replace(candidateBinCoordinates, new Vector<>(front));
+					return true;
+				}
+			}
+		 */
+		return 0;
+	}
+	
 	//don't know if I even need the below method
 //	public float[] getAllEliteScores( ) {
 //		float[] result = new float[archive.size()];
