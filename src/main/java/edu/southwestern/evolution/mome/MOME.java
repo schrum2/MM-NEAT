@@ -88,11 +88,19 @@ public class MOME<T> implements SteadyStateEA<T>{
 		archiveLog = new MMNEATLog(infix, false, false, false, true);
 		
 		//trying to create a file with the appropriate path name
-		String testingStringName = "testing";
+		String testingStringName = "testing.txt";
 		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
 		directory += (directory.equals("") ? "" : "/");
-		File testingFile = new File(testingStringName);
-		//PrintStream ps = new PrintStream(new File(testingStringName));
+		File testingFile = new File(directory+testingStringName);
+		try {
+			PrintStream ps = new PrintStream(testingFile);
+			ps.println("can I even print this? Yes I can!");
+			ps.close();
+		} catch (FileNotFoundException e) {
+			System.out.println("Could not create plot file: ");
+			e.printStackTrace();
+			System.exit(1);
+		}
 		/**
 		 *  // below deals with writing logs and other lines that may be relevant later
 
@@ -294,7 +302,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 		}
 		//System.out.println("before log method call");
 
-		//log();
+		log();
 		//System.out.println("after log method call");
 
 		//if false, no change to pop
@@ -356,7 +364,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 		//if time to log
 		//if(addedIndividualCount%100 == 0) {
 			//this creates a Float array of the scores of all individuals currently in the aarchive
-			Float[] allCurrentIndividuals = ArrayUtils.toObject(archive.turnVectorScoresIntoFloatArray(archive.getWholeArchiveScores()));
+			//Float[] allCurrentIndividuals = ArrayUtils.toObject(archive.turnVectorScoresIntoFloatArray(archive.getWholeArchiveScores()));
 			//archiveLog.log(pseudoGeneration + "\t" + StringUtils.join(elite, "\t").replaceAll("-Infinity", "X"));
 			//not sure about above line
 			//fillLog.log(pseudoGeneration + "\t" + numFilledBins   + "\t" + qdScore    + "\t" + maximumFitness + "\t" + iterationsWithoutEliteCounter + 

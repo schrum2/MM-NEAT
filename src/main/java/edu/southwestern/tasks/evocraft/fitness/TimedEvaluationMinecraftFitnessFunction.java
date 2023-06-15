@@ -177,7 +177,7 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 				if(fitnessFunctions.get(i).shapeIsWorthSaving(finalResults[i],history, shapeCorner, originalBlocks)) {
 					String saveDir = FileUtilities.getSaveDirectory() + "/" + fitnessFunctions.get(i).getClass().getSimpleName();
 					File dir = new File(saveDir);
-					// Create dir
+					// Create dir	-is this create directory or creating a text file?
 					if (!dir.exists()) {
 						dir.mkdir();
 					}
