@@ -2,6 +2,7 @@ package edu.southwestern.evolution.mome;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Vector;
 import java.util.stream.Stream;
@@ -82,10 +83,11 @@ public class MOME<T> implements SteadyStateEA<T>{
 		archiveLog = new MMNEATLog(infix, false, false, false, true);
 		
 		//trying to create a file with the appropriate path name
-		String testing = "testing";
+		String testingStringName = "testing";
 		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
 		directory += (directory.equals("") ? "" : "/");
-		File testingFile = new File(testing);
+		File testingFile = new File(testingStringName);
+		//PrintStream ps = new PrintStream(new File(testingStringName));
 		/**
 		 *  // below deals with writing logs and other lines that may be relevant later
 
@@ -276,6 +278,11 @@ public class MOME<T> implements SteadyStateEA<T>{
 		if(populationChangeCheck) {	//the individual was added and the population changed
 			addedIndividualCount++;
 		}
+		System.out.println("before log method call");
+
+		log();
+		System.out.println("after log method call");
+
 		//if false, no change to pop
 		//if true, newest individual was added
 	}
@@ -293,9 +300,18 @@ public class MOME<T> implements SteadyStateEA<T>{
 	
 	public static void setUpLogging(int numLabels, String infix, String experimentPrefix, int yrange, boolean cppnDirLogging, int individualsPerGeneration, int archiveSize) {
 		//this is for logging, copied all the parameters but probably don't need it all
+		System.out.println("in setUpLogging");
+
 	}
 	
+	/**
+	 * TODO: I'm not too sure about this method.
+	 * @param bins
+	 * @throws FileNotFoundException
+	 */
 	private void setupArchiveVisualizer(BinLabels bins) throws FileNotFoundException {
+		System.out.println("in setupArchiveVisualizer");
+
 		//this might be the barebones logging?
 		//its to set up the visualizer bat files? Maybe open text files for editting?
 		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
@@ -322,8 +338,9 @@ public class MOME<T> implements SteadyStateEA<T>{
 			}
 			archiveFileCreated = true;
 		}
+		System.out.println("in log method");
 		//if time to log
-		if(addedIndividualCount%100 == 0) {
+		//if(addedIndividualCount%100 == 0) {
 			//this creates a Float array of the scores of all individuals currently in the aarchive
 			Float[] allCurrentIndividuals = ArrayUtils.toObject(archive.turnVectorScoresIntoFloatArray(archive.getWholeArchiveScores()));
 			//archiveLog.log(pseudoGeneration + "\t" + StringUtils.join(elite, "\t").replaceAll("-Infinity", "X"));
@@ -332,7 +349,7 @@ public class MOME<T> implements SteadyStateEA<T>{
             //"\t" + restrictedFilled+ "\t" +restrictedQD+ "\t" +restrictedMaxFitness);
 			int pseudoGeneration = addedIndividualCount/100;
 			archiveLog.log(pseudoGeneration + "\t" + archive.getNumberOfOccupiedBins() + "\t" + archive.totalNumberOfIndividualsInArchive() + "\t");
-		}
+		//}
 	}
 	
 	public static void main (String[] args) {
