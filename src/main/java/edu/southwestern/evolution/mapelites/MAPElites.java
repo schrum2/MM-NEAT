@@ -85,6 +85,13 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		this(Parameters.parameters.stringParameter("archiveSubDirectoryName"), Parameters.parameters.booleanParameter("io"), Parameters.parameters.booleanParameter("netio"), true);
 	}
 	
+	/**
+	 * TODO: JavaDoc
+	 * @param archiveSubDirectoryName
+	 * @param ioOption
+	 * @param netioOption
+	 * @param createLogs
+	 */
 	@SuppressWarnings("unchecked")
 	public MAPElites(String archiveSubDirectoryName, boolean ioOption, boolean netioOption, boolean createLogs) {
 		MMNEAT.usingDiversityBinningScheme = true;
@@ -118,6 +125,17 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		this.iterationsWithoutElite = 0; // Not accurate on resume		
 	}
 
+	/**
+	 * TODO: JavaDoc
+	 * This seems to be all the set up necessary for the GNU Plot related files
+	 * @param numLabels
+	 * @param infix
+	 * @param experimentPrefix
+	 * @param yrange
+	 * @param cppnDirLogging
+	 * @param individualsPerGeneration
+	 * @param archiveSize
+	 */
 	public static void setUpLogging(int numLabels, String infix, String experimentPrefix, int yrange, boolean cppnDirLogging, int individualsPerGeneration, int archiveSize) {
 		
 		String prefix = experimentPrefix + "_" + infix;

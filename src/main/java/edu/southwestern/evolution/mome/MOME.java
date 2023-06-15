@@ -1,5 +1,6 @@
 package edu.southwestern.evolution.mome;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Vector;
@@ -74,11 +75,17 @@ public class MOME<T> implements SteadyStateEA<T>{
 		this.crossoverRate = Parameters.parameters.doubleParameter("crossoverRate");
 		this.populationChangeCheck = false;
 		this.addedIndividualCount = 0;
-		this.addedIndividualCount = 0;
+		this.discardedIndividualCount = 0;
 		
 		//logging
 		String infix = "MOMEArchive";
 		archiveLog = new MMNEATLog(infix, false, false, false, true);
+		
+		//trying to create a file with the appropriate path name
+		String testing = "testing";
+		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
+		directory += (directory.equals("") ? "" : "/");
+		File testingFile = new File(testing);
 		/**
 		 *  // below deals with writing logs and other lines that may be relevant later
 
@@ -316,6 +323,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 			archiveFileCreated = true;
 		}
 		//if time to log
+		if(addedIndividualCount%100 == 0) {
 			//this creates a Float array of the scores of all individuals currently in the aarchive
 			Float[] allCurrentIndividuals = ArrayUtils.toObject(archive.turnVectorScoresIntoFloatArray(archive.getWholeArchiveScores()));
 			//archiveLog.log(pseudoGeneration + "\t" + StringUtils.join(elite, "\t").replaceAll("-Infinity", "X"));
@@ -323,7 +331,8 @@ public class MOME<T> implements SteadyStateEA<T>{
 			//fillLog.log(pseudoGeneration + "\t" + numFilledBins   + "\t" + qdScore    + "\t" + maximumFitness + "\t" + iterationsWithoutEliteCounter + 
             //"\t" + restrictedFilled+ "\t" +restrictedQD+ "\t" +restrictedMaxFitness);
 			int pseudoGeneration = addedIndividualCount/100;
-			log(pseudoGeneration + "\t" + archive.getNumberOfOccupiedBins() + "\t" + archive.totalNumberOfIndividualsInArchive() + "\t");
+			archiveLog.log(pseudoGeneration + "\t" + archive.getNumberOfOccupiedBins() + "\t" + archive.totalNumberOfIndividualsInArchive() + "\t");
+		}
 	}
 	
 	public static void main (String[] args) {
