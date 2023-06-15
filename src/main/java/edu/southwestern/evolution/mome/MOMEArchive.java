@@ -249,6 +249,7 @@ public class MOMEArchive<T> {
 	}
 	
 	//TODO: the below methods would be useful it seems
+	//what is objective? Like, what am I using to differentiate that?
 	//Max fitness in each objective
 	public float maxFitnessInEachObjective() {
 		float maxFitness = 0;
@@ -258,14 +259,21 @@ public class MOMEArchive<T> {
 		return maxFitness;
 	}
 	
-	//is this the above but min?
-	//Min fitness in each objective
-	public float minFitnessInEachObjective() {
-		return 0;
+	//This should probably be passed maybe something else?
+	//Min fitness in each objective across all scores in the archive
+	public float[] minFitnessInEachObjective(int objectives) {
+		float[] listOfMinFitnessForEachObjective = new float[objectives];
+		Collection<Vector<Score<T>>> allVectorsOfScores = archive.values();	//this returns a collection of all the scores/values in the archive
+
+		//for all scores
+			//for all objectives
+				//add to min fitness for it
+		return listOfMinFitnessForEachObjective;
 	}
 	
 	//Max sub pop size across all bins
 	public int maxSubPopulationSizeInWholeArchive() {
+		//System.out.println("maxSubPop");
 		int maxSubPop = 0;
 		Collection<Vector<Score<T>>> allVectorsOfScores = archive.values();	//this returns a collection of all the scores/values in the archive
 		for(Vector<Score<T>> scoreVector : allVectorsOfScores) {	//for each bin
@@ -273,11 +281,13 @@ public class MOMEArchive<T> {
 				maxSubPop = scoreVector.size();	
 			}	
 		}
+		//System.out.println("maxSubPop:"+maxSubPop);
 		return maxSubPop;
 	}
 	
-	//Min sub pop size across occupied bins (ignore empty ones)
+	//Min sub pop size of all occupied bins in the archive
 	public int minSubPopulationSizeInWholeArchive() {
+		//System.out.println("minSubPop");
 		int minSubPop = MAX_SUB_POP_ALLOWED;
 		Collection<Vector<Score<T>>> allVectorsOfScores = archive.values();	//this returns a collection of all the scores/values in the archive
 		for(Vector<Score<T>> scoreVector : allVectorsOfScores) {	//for each bin
@@ -285,6 +295,7 @@ public class MOMEArchive<T> {
 				minSubPop = scoreVector.size();	
 			}	
 		}
+		//System.out.println("minSubPop:"+minSubPop);
 		return minSubPop;
 	}
 	
@@ -302,47 +313,18 @@ public class MOMEArchive<T> {
 	}
 	
 	//not sure I understand what this is
-	//size of combined Pareto front across all bins
-	int sizeOfCombinedParetoFrontAcrossAllBins() {
-		/**
-		 * // Recalculate Pareto front
-			ArrayList<NSGA2Score<T>> front = NSGA2.getParetoFront(NSGA2.staticNSGA2Scores(archive.get(candidateBinCoordinates)));
-			//check if the candidate it there and return if it is
-			long candidateID = candidate.individual.getId();
-			for (NSGA2Score<T> score : front) {
-				if(score.individual.getId() == candidateID) {
-					// Since the new individual is present, the Pareto front must have changed.
-					// The Map needs to be updated, and we return true to indicate the change.
-					archive.replace(candidateBinCoordinates, new Vector<>(front));
-					return true;
-				}
-			}
-		 */
-		return 0;
+	//oh! is it an int?
+	//ArrayList<NSGA2Score<T>> sizeOfCombinedParetoFrontAcrossAllBins() {
+	public int sizeOfCombinedParetoFrontAcrossAllBins() {
+		//create a result pareto front
+		Vector<Score<T>> wholeArchiveFront = new Vector<Score<T>>(getWholeArchiveScores());
+		ArrayList<NSGA2Score<T>> front = NSGA2.getParetoFront(NSGA2.staticNSGA2Scores(wholeArchiveFront));
+		//System.out.println("front:"+front+"\n whole archive:" + archive);
+		System.out.println("front size:"+front.size()+"\t whole archive size:" + archive.values().size());
+		return front.size();
+		//return front;
 	}
 	
-	//don't know if I even need the below method
-//	public float[] getAllEliteScores( ) {
-//		float[] result = new float[archive.size()];
-//		//iterate through each key
-//		int keyIndexCount = 0; ///to offset placement in float array
-//		//use previous function and += array or whatever
-//		archive.forEach( (k,v) -> {
-//			float[] temp1 = result;
-//			float[] temp2 = turnVectorScoresIntoFloatArray(v);
-//			//Vector<Score<T>> scoreVector = getScores(k);
-//			//Vector<Score<T>> scoreVector = v;
-//			
-//			
-//
-//			//after that temp2 should hold new vector list
-//			
-//			//add both temps to result
-//
-//
-//		});
-//		return result;
-//	}
 	
 	/**
 	 * turns a vector of Scores into a float array. Unsure if actually needed
@@ -356,6 +338,8 @@ public class MOMEArchive<T> {
 			Score<T> score = scoresList.get(i);
 			result[i] = score == null ? Float.NEGATIVE_INFINITY : new Double(score.behaviorIndexScore(i)).floatValue();
 		}
+		System.out.println("vector into FloatArray:"+result);
+
 		return result;
 	}
 	
