@@ -185,22 +185,13 @@ public class MOMEArchive<T> {
 			//check if the candidate it there and return if it is
 			long candidateID = candidate.individual.getId();
 			for (NSGA2Score<T> score : front) {
-				if(score == candidate) {
-					/////I cannot seem to find a way to print this to a file.
-					//attemptToLogInfoFromArchive();
-					System.out.println("score == candidate");
-					//do something
-					//assert archive.getElite(parentIndex) != null : parentIndex + " in " + archive;
-
-				}
-				assert score == candidate : "score == candidate";
+				
 				if(score.individual.getId() == candidateID) {
-					//System.out.println("id matches");
 
 					// Since the new individual is present, the Pareto front must have changed.
 					// The Map needs to be updated, and we return true to indicate the change.
 					archive.replace(candidateBinCoordinates, new Vector<>(front));
-					if((archive.get(candidateBinCoordinates).size() > maxSubPop) && (maxSubPop >= 0)) {
+					if((front.size() > maxSubPop) && (maxSubPop > 0)) {	//check the subpop size
 						discardRandomIndividualFromBin(candidateBinCoordinates, score); //this will discard a random individual who is not the one just added
 					}
 					return true;
@@ -213,9 +204,6 @@ public class MOMEArchive<T> {
 		}
 	}
 	
-	private void attemptToLogInfoFromArchive() {
-	
-	}
 
 	/**
 	 * removes a random individual from the specified bin
@@ -234,14 +222,14 @@ public class MOMEArchive<T> {
 	 * @return	true if successfully removed, false if not removed
 	 */
 	public boolean discardRandomIndividualFromBin(Vector<Integer> binCoordinates, Score<T> individualYouDoNotWantRemoved) {
-		Score<T> individualToDiscard = getRandomIndividaul(binCoordinates);
+		Score<T> individualToDiscard;
 		//while candidate is individual you want to keep, get another random candidate to delete
-		while(individualToDiscard.individual.getId() == individualYouDoNotWantRemoved.individual.getId()) {
+		do {
 			individualToDiscard = getRandomIndividaul(binCoordinates);
-		}	
-		if(individualToDiscard == individualYouDoNotWantRemoved) {
-			System.out.println("to discard and not discard are same based on score, something went wrong");
-		}
+		} while(individualToDiscard.individual.getId() == individualYouDoNotWantRemoved.individual.getId());	
+
+		assert (individualToDiscard != individualYouDoNotWantRemoved) : "to discard and not discard are same based on score, something went wrong";
+		
 		return discardSpecificIndividualFromBin(individualToDiscard, binCoordinates);
 	}
 	
