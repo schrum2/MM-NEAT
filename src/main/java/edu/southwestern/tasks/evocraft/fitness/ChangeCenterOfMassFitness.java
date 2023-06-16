@@ -82,6 +82,7 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 		// Shape was not empty before, but it is now, so it must have flown away. Award max fitness
 		if(newShapeBlockList.isEmpty()) { // If list is empty now (but was not before) then shape has flown completely away
 			if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": Shape empty now: max fitness!");
+			// TODO: This is a problem if the whole shape explodes!
 			return maxFitness();
 		}
 		
@@ -96,6 +97,7 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 			if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": No movement.");
 			
 			// check if it's missing any blocks from the original
+			// TODO: Could this also have a problem when most of the shape explodes?
 			Double result = ifSufficientBlocksDepartedThenMaximumFitnessWithPenalty(originalBlocks.size(), newShapeBlockList);
 			if(result != null) {
 //				if(CommonConstants.watch) System.out.println("return result");
