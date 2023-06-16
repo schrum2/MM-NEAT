@@ -70,5 +70,11 @@ public class ChangeBlocksFitness extends TimedEvaluationMinecraftFitnessFunction
 		// Assume the whole shape changes on each reading, which seems very unlikely
 		return volume * (minNumberOfShapeReadings()+1);
 	}
-
+	@Override
+	public boolean shapeIsWorthSaving(double fitnessScore, ArrayList<Pair<Long, List<Block>>> history, MinecraftCoordinates shapeCorner, List<Block> originalBlocks) {
+		//change later
+		
+		if(fitnessScore > 80) return true;
+		return false;
+	}
 }
