@@ -4,32 +4,24 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Vector;
 import java.util.stream.Stream;
-
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.SteadyStateEA;
 import edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
-import edu.southwestern.evolution.mapelites.Archive;
 import edu.southwestern.evolution.mapelites.BinLabels;
+import edu.southwestern.log.MMNEATLog;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
-import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
-import edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask;
-import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBinLabels;
 import edu.southwestern.util.PopulationUtil;
 import edu.southwestern.util.PythonUtil;
 import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.random.RandomNumbers;
-import edu.southwestern.log.MMNEATLog;
 
 /**
  * TODO: Explain a bit more, and also cite the paper whose algorithm we are implementing using ACM style
@@ -87,11 +79,10 @@ public class MOME<T> implements SteadyStateEA<T>{
 	public MOME(/*TODO*/String archiveSubDirectoryName, boolean ioOption, boolean netioOption, boolean createLogs) {
 		MMNEAT.usingDiversityBinningScheme = true;
 		this.task = (LonerTask<T>) MMNEAT.task;
-		this.archive = new MOMEArchive<>(netioOption, archiveSubDirectoryName, maxNumberOfIndividualsInEachSubPop);	//set up archive
+		this.archive = new MOMEArchive<>(netioOption, archiveSubDirectoryName);	//set up archive
 
 		this.io = ioOption; // write logs
 		//TODO: figure out how we get this number below
-		int maxNumberOfIndividualsInEachSubPop = -1;	//this currently controls the initial number of individuals in each cell. Will probably be moved out or assigned some other way
 		this.mating = Parameters.parameters.booleanParameter("mating");
 		this.crossoverRate = Parameters.parameters.doubleParameter("crossoverRate");
 		this.populationChangeCheck = false;
@@ -203,7 +194,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 		//System.out.println("new individual");
 
 		//get random individual for parent 1
-		Genotype<T> parentGenotype1 = archive.getRandomIndividaul().individual;
+		Genotype<T> parentGenotype1 = archive.getRandomIndividual().individual;
 		long parentId1 = parentGenotype1.getId();
 		long parentId2 = NUM_CODE_EMPTY;	//initialize second parent in case it's needed
 		
@@ -214,7 +205,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 		// Potentially mate with second individual
 		if (mating && RandomNumbers.randomGenerator.nextDouble() < crossoverRate) {
 			//get a random individual for parent 2
-			Genotype<T> parentGenotype2 = archive.getRandomIndividaul().individual;
+			Genotype<T> parentGenotype2 = archive.getRandomIndividual().individual;
 			parentId2 = parentGenotype2.getId();	// Parent Id comes from original genome
 			
 			//create second child
