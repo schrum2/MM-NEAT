@@ -40,7 +40,7 @@ public class MOMEArchive<T> {
 	private BinLabels mapping;
 	private boolean saveElites;	//would like to know what this is exactly
 	private String archiveDir;
-	
+	private int maximumNumberOfIndividualsInSubPops;
 	public static final int MAX_SUB_POP_ALLOWED = 255; //this is the maximum number of individuals that can occupy a bin
 		//could create a parameter to control it? use paramenter instead?  parameter: maximumMOMESubPopulationSize
 	//referenced in minSubPopulationSizeInWholeArchive
@@ -99,7 +99,8 @@ public class MOMEArchive<T> {
 		System.out.println("Archive contains "+numBins+" number of bins");
 		archive = new ConcurrentHashMap<Vector<Integer>,Vector<Score<T>>>(numBins);
 //		occupiedBins = 0;
-		
+		maximumNumberOfIndividualsInSubPops = Parameters.parameters.integerParameter("maximumMOMESubPopulationSize");
+
 		//set subPopulationMaximum size
 		//maxSubPopAllowed = Parameters.parameters.integerParameter("minecraftMaxSubPopAllowedInBins");
 		
@@ -166,7 +167,7 @@ public class MOMEArchive<T> {
 			throw new UnsupportedOperationException("This case is not supported");
 		} else if(candidate.usesMAPElitesMapSpecification() && !getBinMapping().discard(candidate.MAPElitesBehaviorMap())) {
 			//not discarded
-			int maxSubPop = Parameters.parameters.integerParameter("maximumMOMESubPopulationSize");
+		//	maximumNumberOfIndividualsInSubPops = Parameters.parameters.integerParameter("maximumMOMESubPopulationSize");
 			//returns an integer array of coordinates for the candidates bin
 			int[] binIndex = getBinMapping().multiDimensionalIndices(candidate.MAPElitesBehaviorMap());	//grabs bin coordinates int array
 			Vector<Integer> candidateBinCoordinates = new Vector<Integer>();
@@ -191,7 +192,7 @@ public class MOMEArchive<T> {
 					// Since the new individual is present, the Pareto front must have changed.
 					// The Map needs to be updated, and we return true to indicate the change.
 					archive.replace(candidateBinCoordinates, new Vector<>(front));
-					if((front.size() > maxSubPop) && (maxSubPop > 0)) {	//check the subpop size
+					if((front.size() > maximumNumberOfIndividualsInSubPops) && (maximumNumberOfIndividualsInSubPops > 0)) {	//check the subpop size
 						discardRandomIndividualFromBin(candidateBinCoordinates, score); //this will discard a random individual who is not the one just added
 					}
 					return true;
@@ -388,7 +389,6 @@ public class MOMEArchive<T> {
 	}
 	
 	//not sure I understand what this is
-	//oh! is it an int?
 	//ArrayList<NSGA2Score<T>> sizeOfCombinedParetoFrontAcrossAllBins() {
 	public int sizeOfCombinedParetoFrontAcrossAllBins() {
 		//create a result pareto front
