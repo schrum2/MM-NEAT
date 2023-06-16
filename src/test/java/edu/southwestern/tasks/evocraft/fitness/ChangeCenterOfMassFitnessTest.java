@@ -476,6 +476,48 @@ public class ChangeCenterOfMassFitnessTest {
 		assertEquals(expected, ff.fitnessScore(testCorner,testShapeBlockList),wiggleRoom);
 	}
 	
+	@Test
+	public void testTNTOscillating() {
+		// TODO: This test fails!
+		
+		Parameters.initializeParameterCollections(new String[] {"watch:true", "minecraftClearWithGlass:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.ExplosiveBlockSet"});
+		
+		System.out.println("testTNTnoMovement");
+
+		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,27,-35);
+		testCorner = MinecraftClient.getMinecraftClient().checkForYOutOfBoundsAndShiftUp(testCorner);
+		MinecraftClient.getMinecraftClient().clearEvaluationSpaceForJUnitTests(testCorner);
+
+		List<Block> testBlockSet = new ArrayList<>();
+		testBlockSet.add(new Block(-25,27,-35,BlockType.REDSTONE_BLOCK, Orientation.NORTH));
+		testBlockSet.add(new Block(-24,27,-35,BlockType.TNT, Orientation.NORTH));
+		testBlockSet.add(new Block(-25,29,-35,BlockType.STICKY_PISTON,Orientation.NORTH));
+		testBlockSet.add(new Block(-25,29,-36,BlockType.SLIME,Orientation.NORTH));
+		testBlockSet.add(new Block(-25,28,-35,BlockType.REDSTONE_BLOCK,Orientation.NORTH));
+		testBlockSet.add(new Block(-25,28,-36,BlockType.SLIME,Orientation.NORTH));
+		
+		//coordinates for the base
+		int xMinCoordinate = -25;
+		int xMaxCoordinate = -23;
+		int zMinCoordinate = -36;
+		int zMaxCoordinate = -34;
+		int yBaseCoodinate = 25;
+
+		//creates the base platform
+		for(int xIndex = xMinCoordinate; xIndex <= xMaxCoordinate; xIndex++) {
+			for(int zIndex = zMinCoordinate; zIndex <= zMaxCoordinate; zIndex++) {
+				testBlockSet.add(new Block(xIndex,yBaseCoodinate,zIndex,BlockType.SLIME, Orientation.NORTH));
+			}
+		}
+		//shift coordinates based on the testCorner
+		MinecraftCoordinates originalShapeCoordinates = MinecraftUtilClass.minCoordinates(testBlockSet);
+		testBlockSet = MinecraftUtilClass.shiftBlocksBetweenCorners(testBlockSet, originalShapeCoordinates, testCorner);
+
+		assertEquals(0.16388869433927275, ff.fitnessScore(testCorner,testBlockSet),0.0); // Seems like a lot of wiggle room ... too much?
+	}	
+	
+	
+	
 	//passed
 	@Test
 	public void testSinglePistonShapeEarlyTermination() {
