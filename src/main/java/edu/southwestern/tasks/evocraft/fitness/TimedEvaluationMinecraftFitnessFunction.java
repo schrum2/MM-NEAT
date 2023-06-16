@@ -185,7 +185,8 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 				}
 			}
 		}
-		if(Parameters.parameters.booleanParameter("minecraftClearAndVerify")) MinecraftClient.clearAndVerify(shapeCorner);
+		
+		if(Parameters.parameters.booleanParameter("minecraftClearAfterEvaluation")) MinecraftClient.clearAndVerify(shapeCorner);
 		
 		return finalResults;
 	}
