@@ -134,7 +134,7 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 			// Only consider the shape to not be moving if the center of mass is the same AND the entire block list is the same
 			//maybe add the minecraftEndEvalNoMovement parameter check? need to know when this might be used and if it gets called here
 			//could lead to the other no movement part being unnecessary
-			if(lastCenterOfMass.equals(nextCenterOfMass) && history.get(i-1).t2.equals(history.get(i).t2)) {		//this is no movement
+			if(lastCenterOfMass.equals(nextCenterOfMass) && history.get(i-1).t2.equals(history.get(i).t2)) {		//this is no movement & blocks are equal
 //			if(lastCenterOfMass.equals(nextCenterOfMass)) {		//this is no movement
 				noMovementCount++;
 			} else {
