@@ -1,7 +1,7 @@
 package edu.southwestern.tasks.evocraft.fitness;
 
+import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import edu.southwestern.parameters.CommonConstants;
@@ -11,8 +11,8 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
-import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.file.FileUtilities;
 
 /**
  * An abstract class to handle timed evaluation fitness functions that can be extended to other functions
@@ -25,6 +25,9 @@ import edu.southwestern.util.datastructures.Pair;
  */
 public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftFitnessFunction{
 
+	// Tracks number of shapes saved during evolution
+	private static int savedShapes = 0;
+	
 	@Override
 	public double fitnessScore(MinecraftCoordinates shapeCorner, List<Block> originalBlocks) {
 		// For a scenario using just one fitness function, put this function in a list by itself and use the multiple evaluation method on the list of one
@@ -147,11 +150,13 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 			// Every fitness function wants to terminate early
 //			if(CommonConstants.watch) System.out.println("all fitness functions returned RESULTS: "+allFitnessFunctionsReturnEarlyResult);
 
-			if(allFitnessFunctionsReturnEarlyResult) return ArrayUtil.doubleArrayFromList(Arrays.asList(earlyResults));
+			// Exit the loop to end evaluation. finalResults will fill from earlyResults below.
+			if(allFitnessFunctionsReturnEarlyResult) break; // return ArrayUtil.doubleArrayFromList(Arrays.asList(earlyResults));
 			
 			// If enough time has elapsed since the start, then end the evaluation
 			if(System.currentTimeMillis() - startTime > Parameters.parameters.longParameter("minecraftMandatoryWaitTime")) {
-				System.out.println("Time elapsed: minecraftMandatoryWaitTime = "+ Parameters.parameters.longParameter("minecraftMandatoryWaitTime"));
+				//System.out.println("Time elapsed: minecraftMandatoryWaitTime = "+ Parameters.parameters.longParameter("minecraftMandatoryWaitTime"));
+				if(CommonConstants.watch) System.out.println("Time elapsed: minecraftMandatoryWaitTime = "+ Parameters.parameters.longParameter("minecraftMandatoryWaitTime"));
 				stop = true;
 			}
 
@@ -165,8 +170,38 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 			} else { // otherwise, compute the normal final result
 				finalResults[i] = fitnessFunctions.get(i).calculateFinalScore(history, shapeCorner, originalBlocks);
 			}
+			
+			if(CommonConstants.netio) { // Is output being saved at all?
+				// Does this particular fitness function think the shape is worth saving?
+				if(fitnessFunctions.get(i).shapeIsWorthSaving(finalResults[i],history, shapeCorner, originalBlocks)) {
+					String saveDir = FileUtilities.getSaveDirectory() + "/" + fitnessFunctions.get(i).getClass().getSimpleName();
+					File dir = new File(saveDir);
+					// Create dir	-is this create directory or creating a text file?
+					if (!dir.exists()) {
+						dir.mkdir();
+					}
+					// Save the shape
+					MinecraftUtilClass.writeBlockListFile(originalBlocks, saveDir + File.separator + "Shape"+(++savedShapes), "FITNESS_"+finalResults[i]+".txt");
+				}
+			}
 		}
+		
 		return finalResults;
+	}
+
+	/**
+	 * Given the shape's final score and all the information used to compute the fitness, decide whether it
+	 * should be saved to disk for future examination.
+	 * 
+	 * @param fitnessScore Calculated fitness (could result from early termination)
+	 * @param history Periodic snapshots of shape taken during evaluation
+	 * @param shapeCorner Corner the shape was spawned at
+	 * @param originalBlocks Blocks before instantiation in the world
+	 * @return true if the shape should be saved, false otherwise
+	 */
+	public boolean shapeIsWorthSaving(double fitnessScore, ArrayList<Pair<Long, List<Block>>> history, MinecraftCoordinates shapeCorner, List<Block> originalBlocks) {
+		// By default, assume shapes are not worth saving, but this method can be overridden in child classes
+		return false;
 	}
 
 	/**

@@ -363,6 +363,9 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		} 
 
 		//TODO: calls certainFlying and saves the shapes
+		// If the new shapeIsWorthSaving method in TimedEvaluationMinecraftFitnessFunction works, then the code below is not needed,
+		// since we don't need to save shapes twice.
+		
 		//makes a directory, and writes block list
 		if(CommonConstants.netio && Parameters.parameters.booleanParameter("minecraftChangeCenterOfMassFitness") && certainFlying(fitnessFunctions, fitnessScores[0])) {
 			// Assuming that change in center of mass is at index 0, and that 5 is a suitable threshold for penalties to the max fitness
@@ -373,7 +376,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			}
 			//Orientation flyingDirection = directionOfMaximumDisplacement(deltaX,deltaY,deltaZ);
 			//String gen = "GEN"+(MMNEAT.ea instanceof GenerationalEA ? ((GenerationalEA) MMNEAT.ea).currentGeneration() : "ME");
-			MinecraftLonerShapeTask.writeBlockListFile(blocks, flyingDir + File.separator + "ID"+genome.getId(), ".txt");
+			MinecraftUtilClass.writeBlockListFile(blocks, flyingDir + File.separator + "ID"+genome.getId(), ".txt");
 		}
 		return score;
 	}
