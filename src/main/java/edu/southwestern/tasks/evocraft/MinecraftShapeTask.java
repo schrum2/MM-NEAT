@@ -378,6 +378,15 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			//String gen = "GEN"+(MMNEAT.ea instanceof GenerationalEA ? ((GenerationalEA) MMNEAT.ea).currentGeneration() : "ME");
 			MinecraftUtilClass.writeBlockListFile(blocks, flyingDir + File.separator + "ID"+genome.getId(), ".txt");
 		}
+		if(Parameters.parameters.integerParameter("minecraftDelayAfterEvaluation")> 0) {
+			try {
+				Thread.sleep(Parameters.parameters.integerParameter("minecraftDelayAfterEvaluation"));
+			} catch (InterruptedException e) {
+				System.out.println("Exception from interrupting sleep between shape placements!");
+				e.printStackTrace();
+				System.exit(1);
+			}
+		}
 		return score;
 	}
 	/**

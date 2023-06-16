@@ -397,6 +397,9 @@ public class Parameters {
 		integerOptions.add("minecraftPostCornerAdjustY", 0, "This is an int whose value will be added to the y-coordinate of the POST_EVALUATION_CORNER to adjust the special shape");
 		integerOptions.add("numVectorIndexMutations", -1, "If -1, thne ignore this. Else, vector mutations target this specific number of indicies per occurrence rather than have a per-index mutation rate");
 		integerOptions.add("maximumMOMESubPopulationSize", -1, "this contains the maximum number of individuals for each cell with implementing MOME with minecraft. -1 is unrestricted");
+		integerOptions.add("minecraftDelayAfterEvaluation", 0, "If the value is greater than 0 causes the thread to sleep for the amount it is set to");
+		integerOptions.add("minecraftXMovementBetweenEvals", 0, "If the value is greater than 0 it adds it to the x value");
+		integerOptions.add("minecraftMaxXShift", 0, "Max value we can shift X");
 		
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
@@ -867,6 +870,8 @@ public class Parameters {
 		booleanOptions.add("minecraftNumAirFitness", false, "Fitness test for number of air blocks");
 		booleanOptions.add("rememberParentScores", false, "Avoid repeated evaluation of parents");
 		booleanOptions.add("minecraftChangeBlocksMomentum", false, "Multiplies change blocks by change in center of madd fitness");
+		booleanOptions.add("minecraftClearAfterEvaluation", false, "If true clears and verifies the shapeCorner after evaluation");
+		
 		
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
