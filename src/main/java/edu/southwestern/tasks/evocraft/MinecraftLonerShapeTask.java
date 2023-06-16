@@ -2,7 +2,6 @@ package edu.southwestern.tasks.evocraft;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -449,7 +448,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	}
 
 	/**
-	 * TODO: deals with saving files
+	 * TODO: deals with saving files / should this also be generalized and moved?
 	 * Save a test list of the blocks in the generated shape to the archive directory for MAP Elites
 	 * 
 	 * @param <T>
@@ -465,29 +464,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			Archive<T> archive = MMNEAT.getArchive();
 			String fileName = String.format("%7.5f", scoreOfCurrentElite) + "_" + genomeId + ".txt";
 			String binPath = archive.getArchiveDirectory() + File.separator + minecraftBinLabels.binLabels().get(dim1D);
-			writeBlockListFile(blocks, binPath, fileName);
-		}
-	}
-
-	/**
-	 * TODO: This method should be moved to MinecraftUtilClass 
-	 * 
-	 * Write block list text file to specified location
-	 * @param blocks The blocks to write
-	 * @param pathAndPrefix Path plus first part of filename. Will be followed by _ before the fileSuffix
-	 * @param fileSuffix Last part of filename
-	 */
-	public static void writeBlockListFile(List<Block> blocks, String pathAndPrefix, String fileSuffix) {
-		String fullName = pathAndPrefix + "_" + fileSuffix;
-		System.out.println(fullName);
-		try {
-			PrintStream outputFile = new PrintStream(new File(fullName));
-			outputFile.println(blocks);
-			outputFile.close();
-		} catch (FileNotFoundException e) {
-			System.out.println("Error writing file "+fullName);
-			e.printStackTrace();
-			System.exit(1);
+			MinecraftUtilClass.writeBlockListFile(blocks, binPath, fileName);
 		}
 	}
 
@@ -645,7 +622,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 						@SuppressWarnings("unchecked")
 						List<Block> blocks = MMNEAT.shapeGenerator.generateShape(score.individual, MinecraftClient.POST_EVALUATION_SHAPE_CORNER, MMNEAT.blockSet);
 						String label = minecraftBinLabels.binLabels().get(i);
-						MinecraftLonerShapeTask.writeBlockListFile(blocks, flyingDir + File.separator + label+"ID"+score.individual.getId(), "FITNESS"+fitness+".txt");			
+						MinecraftUtilClass.writeBlockListFile(blocks, flyingDir + File.separator + label+"ID"+score.individual.getId(), "FITNESS"+fitness+".txt");			
 					}
 				}
 			}			

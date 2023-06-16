@@ -2,18 +2,25 @@ package edu.southwestern.tasks.evocraft;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Vector;
 import java.util.stream.Collectors;
 
 import cern.colt.Arrays;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.mapelites.Archive;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
+import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBinLabels;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Vertex;
 import edu.southwestern.util.file.FileUtilities;
@@ -456,17 +463,19 @@ public class MinecraftUtilClass {
 	
 	//TODO: general shape saving function
 	//makes a directory
-	public static void saveShapes(List<Block> shapeToSaveBlockList , String directoryNameString) {
+	//need to pass in Score<T>/genome/fitness score
+	public static <T> void saveShapes(Genotype<T> genome, List<Block> shapeToSaveBlockList , String directoryNameString, Score<T> score) {
 		//make the directory first
 		String directoryString = FileUtilities.getSaveDirectory() + directoryNameString;
 		File directoryFile = new File(directoryString);
 		if(!directoryFile.exists() ) {
 			directoryFile.mkdir();
 		}
-		
+		double fitness = score.behaviorIndexScore();
+		MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
+		String label = minecraftBinLabels.binLabels().get(0/*this needs to be the shape id*/);
+		MinecraftUtilClass.writeBlockListFile(shapeToSaveBlockList, directoryString + File.separator + label+"ID"+score.individual.getId(), "FITNESS"+fitness+".txt");
 		//save block list?
-//		String gen = "GEN"+(MMNEAT.ea instanceof GenerationalEA ? ((GenerationalEA) MMNEAT.ea).currentGeneration() : "ME");
-//		MinecraftLonerShapeTask.writeBlockListFile(shapeToSaveBlockList, directoryString + File.separator + "ID"+genome.getId(), ".txt");
 		/**
 		 * 	String flyingDir = FileUtilities.getSaveDirectory() + "/flyingMachines";
 			File dir = new File(flyingDir);	// Create dir
@@ -476,7 +485,49 @@ public class MinecraftUtilClass {
 			//Orientation flyingDirection = directionOfMaximumDisplacement(deltaX,deltaY,deltaZ);
 			//String gen = "GEN"+(MMNEAT.ea instanceof GenerationalEA ? ((GenerationalEA) MMNEAT.ea).currentGeneration() : "ME");
 			MinecraftLonerShapeTask.writeBlockListFile(blocks, flyingDir + File.separator + "ID"+genome.getId(), ".txt");
+			
+			
+		
+			@SuppressWarnings("unchecked")
+			Archive<T> archive = MMNEAT.getArchive();
+			Vector<Score<T>> archiveVector = archive.getArchive();
+			MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
+			for(int i = 0; i < archiveVector.size(); i++) {
+				Score<T> score = archiveVector.get(i);
+				//if there is a fitness score related to this bin (ie. there exists a shape)
+				if(score != null) {
+					double fitness = score.behaviorIndexScore();
+					//TODO: this deals with saving shapes
+					if(this.internalMinecraftShapeTask.certainFlying(fitness)) {
+						@SuppressWarnings("unchecked")
+						List<Block> blocks = MMNEAT.shapeGenerator.generateShape(score.individual, MinecraftClient.POST_EVALUATION_SHAPE_CORNER, MMNEAT.blockSet);
+						String label = minecraftBinLabels.binLabels().get(i);
+						MinecraftLonerShapeTask.writeBlockListFile(blocks, flyingDir + File.separator + label+"ID"+score.individual.getId(), "FITNESS"+fitness+".txt");			
+					}
+				}
+			}			
 		 */
 		
+	}
+
+	/** 
+	 * TODO: why not just pass fullName?
+	 * Write block list text file to specified location
+	 * @param blocks The blocks to write
+	 * @param pathAndPrefix Path plus first part of filename. Will be followed by _ before the fileSuffix
+	 * @param fileSuffix Last part of filename
+	 */
+	public static void writeBlockListFile(List<Block> blocks, String pathAndPrefix, String fileSuffix) {
+		String fullName = pathAndPrefix + "_" + fileSuffix;
+		System.out.println(fullName);
+		try {
+			PrintStream outputFile = new PrintStream(new File(fullName));
+			outputFile.println(blocks);
+			outputFile.close();
+		} catch (FileNotFoundException e) {
+			System.out.println("Error writing file "+fullName);
+			e.printStackTrace();
+			System.exit(1);
+		}
 	}
 }

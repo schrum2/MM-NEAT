@@ -1,22 +1,35 @@
 package edu.southwestern.evolution.mome;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 import java.util.stream.Stream;
+
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.SteadyStateEA;
 import edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.mapelites.Archive;
 import edu.southwestern.evolution.mapelites.BinLabels;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
+import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
+import edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask;
+import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBinLabels;
 import edu.southwestern.util.PopulationUtil;
+import edu.southwestern.util.PythonUtil;
+import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.random.RandomNumbers;
+import edu.southwestern.log.MMNEATLog;
 
 /**
  * TODO: Explain a bit more, and also cite the paper whose algorithm we are implementing using ACM style
@@ -43,10 +56,14 @@ public class MOME<T> implements SteadyStateEA<T>{
 	private boolean populationChangeCheck;	//this keeps track of what happened to the most recent individual created (if it was added or not)
 						//false means the individual was not added and so the population hasn't changed
 						//true means an individual was added and the population changed
+	private int individualsPerGeneration;
 	
 	//logging variables (might be sorted into tracking or other grouping
 	public boolean io;
-
+	private boolean archiveFileCreated = false;	//track if the archive file is made
+	private MMNEATLog archiveLog = null; // Archive elite scores
+	private MMNEATLog randomLog = null; //general random test logging for now
+	
 
 	public MOME() {
 		this(Parameters.parameters.stringParameter("archiveSubDirectoryName"), Parameters.parameters.booleanParameter("io"), Parameters.parameters.booleanParameter("netio"), true);
@@ -59,13 +76,34 @@ public class MOME<T> implements SteadyStateEA<T>{
 		
 		this.io = ioOption; // write logs
 		//TODO: figure out how we get this number below
-		int maxNumberOfIndividualsInEachSubPop = 1;	//this currently controls the initial number of individuals in each cell. Will probably be moved out or assigned some other way
+		int maxNumberOfIndividualsInEachSubPop = -1;	//this currently controls the initial number of individuals in each cell. Will probably be moved out or assigned some other way
 		this.archive = new MOMEArchive<>(netioOption, archiveSubDirectoryName, maxNumberOfIndividualsInEachSubPop);	//set up archive
 		this.mating = Parameters.parameters.booleanParameter("mating");
 		this.crossoverRate = Parameters.parameters.doubleParameter("crossoverRate");
 		this.populationChangeCheck = false;
 		this.addedIndividualCount = 0;
-		this.addedIndividualCount = 0;
+		this.discardedIndividualCount = 0;
+		this.individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
+		
+		//logging
+		String infix = "MOMEArchive";
+		archiveLog = new MMNEATLog(infix, false, false, false, true);
+		randomLog = new MMNEATLog("random", false, false, false, true);
+		
+		//trying to create a file with the appropriate path name
+		String testingStringName = "testing.txt";
+		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
+		directory += (directory.equals("") ? "" : "/");
+		File testingFile = new File(directory+testingStringName);
+		try {
+			PrintStream ps = new PrintStream(testingFile);
+			ps.println("can I even print this? Yes I can!");
+			ps.close();
+		} catch (FileNotFoundException e) {
+			System.out.println("Could not create plot file: ");
+			e.printStackTrace();
+			System.exit(1);
+		}
 		/**
 		 *  // below deals with writing logs and other lines that may be relevant later
 
@@ -101,7 +139,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 	public void initialize(Genotype<T> example) {
 		// Do not allow Minecraft to contain archive when using MOME
 		Parameters.parameters.setBoolean("minecraftContainsWholeMAPElitesArchive", false);
-		
+
 		ArrayList<Genotype<T>> startingPopulation; // Will be new or from saved archive
 
 		System.out.println("Fill up initial archive");		
@@ -123,15 +161,13 @@ public class MOME<T> implements SteadyStateEA<T>{
 		if(Parameters.parameters.booleanParameter("parallelMAPElitesInitialize"))										
 			System.out.println("Evaluate archive in parallel");
 		
-		//TODO: this seems to be giving issue?
-		//or Caused by: java.lang.IllegalStateException: Attempted to get archive bin label class without using MAP Elites or a psuedo-archive
 		// Evaluate initial population and add to evaluated population
 		evaluateStream.forEach( (g) -> {
 			Score<T> s = task.evaluate(g);
 			evaluatedPopulation.add(s);
 		});
+
 		
-		//unsure if we need netio stuff
 		CommonConstants.netio = backupNetIO;
 	
 //ask later if this is a flag?
@@ -147,6 +183,8 @@ public class MOME<T> implements SteadyStateEA<T>{
 
 	@Override
 	public void newIndividual() {
+		//System.out.println("new individual");
+
 		//get random individual for parent 1
 		Genotype<T> parentGenotype1 = archive.getRandomIndividaul().individual;
 		long parentId1 = parentGenotype1.getId();
@@ -223,6 +261,8 @@ public class MOME<T> implements SteadyStateEA<T>{
 	 */
 	@Override
 	public ArrayList<Genotype<T>> getPopulation() {
+		//System.out.println("in get population");
+
 		 ArrayList<Genotype<T>> result = new ArrayList<Genotype<T>>(archive.archive.size());
 
 		 archive.archive.forEach( (coords, subpop) -> {	////goes through the archive
@@ -251,12 +291,15 @@ public class MOME<T> implements SteadyStateEA<T>{
 		System.out.println(iterations + "\t" + iterationsWithoutElite + "\t");
 	 */
 	private void afterIndividualCreationProcesses() {
-		//this is a call for any processes that happened
-		//check population change bool
-		if(populationChangeCheck) {
-			//the individual was added and the population changed
+		//System.out.println("in afterIndividualCreation: " +archive.totalNumberOfIndividualsInArchive());
+		//this is a method for any processes that happened
+
+		if(populationChangeCheck) {	//the individual was added and the population changed
 			addedIndividualCount++;
 		}
+
+		log();
+
 		//if false, no change to pop
 		//if true, newest individual was added
 	}
@@ -264,14 +307,86 @@ public class MOME<T> implements SteadyStateEA<T>{
 
 	@Override
 	public boolean populationChanged() {
-		// TODO Auto-generated method stub
-		return populationChangeCheck; // TODO: This needs to be based on whether new individuals are added to the archive
+		return populationChangeCheck; 
 	}
 
 	public BinLabels getBinLabelsClass() {
 		return archive.getBinMapping();
 	}	
 	
+	/**
+	 * Write one line of data to each of the active log files, but only periodically,
+	 * when number of iterations divisible by individualsPerGeneration. 
+	 */
+	@SuppressWarnings("unchecked")
+	protected void log() {
+		//System.out.println("in log method");
+		if (!archiveFileCreated) {
+			try {
+				if(Parameters.parameters.booleanParameter("io")) setupArchiveVisualizer(archive.getBinMapping());
+			} catch (FileNotFoundException e) {
+				System.out.println("Could not create archive visualization file.");
+				e.printStackTrace();
+				System.exit(1);
+			}
+			archiveFileCreated = true;
+		}
+
+		//if an individual was added and the population count is even with the steadyStateIndividualsPerGeneration
+		if(addedIndividualCount%individualsPerGeneration == 0 && populationChangeCheck) {
+			System.out.println("#individualsBeforSaving:"+individualsPerGeneration+ " addedIndividualCount:" +addedIndividualCount);
+
+			//this creates a Float array of the scores of all individuals currently in the aarchive
+			//Float[] allCurrentIndividuals = ArrayUtils.toObject(archive.turnVectorScoresIntoFloatArray(archive.getWholeArchiveScores()));
+			//not sure about above line
+			//fillLog.log(pseudoGeneration + "\t" + numFilledBins   + "\t" + qdScore    + "\t" + maximumFitness + "\t" + iterationsWithoutEliteCounter + 
+            //"\t" + restrictedFilled+ "\t" +restrictedQD+ "\t" +restrictedMaxFitness);
+			
+			int pseudoGeneration = addedIndividualCount/individualsPerGeneration;
+			//Float[] elite = ArrayUtils.toObject(archive.turnVectorScoresIntoFloatArray(archive.getWholeArchiveScores()));
+			//archiveLog.log(pseudoGeneration + "\t" + StringUtils.join(elite, "\t").replaceAll("-Infinity", "X"));
+			
+//TODO: marker for file input
+			randomLog.log("pseudo generation" +pseudoGeneration + "\t occupiedBins:" + archive.getNumberOfOccupiedBins() + "\t number of current individuals in archive:" + archive.totalNumberOfIndividualsInArchive() + 
+					"\n maxSubPop in archive:" + archive.maxSubPopulationSizeInWholeArchive() + "\t minSubPop in archive:"+ archive.minSubPopulationSizeInWholeArchive()+
+					"\n pareto front size across whole archive:"+ archive.sizeOfCombinedParetoFrontAcrossAllBins() + "\n");
+		}
+	}
+	
+	//stubs of things from MAPElites
+	private void writeScriptLauncher(String directory, String prefix, String fullName, String[] dimensionNames,
+			int[] dimensionSizes, PrintStream ps, String finalLine) {
+		//might need later
+	}
+	public static void setUpLogging(int numLabels, String infix, String experimentPrefix, int yrange, boolean cppnDirLogging, int individualsPerGeneration, int archiveSize) {
+		//this is for logging, copied all the parameters but probably don't need it all
+		System.out.println("in setUpLogging");
+
+	}
+	
+	/**
+	 * TODO: I'm not too sure about this method.
+	 * @param bins
+	 * @throws FileNotFoundException
+	 */
+	private void setupArchiveVisualizer(BinLabels bins) throws FileNotFoundException {
+		System.out.println("in setupArchiveVisualizer");
+
+		//this might be the barebones logging?
+		//its to set up the visualizer bat files? Maybe open text files for editting?
+		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
+		directory += (directory.equals("") ? "" : "/");
+		String prefix = Parameters.parameters.stringParameter("log") + Parameters.parameters.integerParameter("runNumber") + "_MOMEElites";
+		String fullName = directory + prefix + "_log.plt";
+		System.out.println(fullName);
+		//fullname = mometest/MEObserverVectorPistonOrientation7/MOMETest-MEObserverVectorPistonOrientation7_MOMEElites_log.plt
+
+
+		PythonUtil.setPythonProgram();
+		PythonUtil.checkPython();
+	}
+	
+
 	public static void main (String[] args) {
 		try {
 			// This is a GECCO set of parameters with some minor changes for MOME
@@ -280,10 +395,12 @@ public class MOME<T> implements SteadyStateEA<T>{
 			//Attempted to get archive bin label class without using MAP Elites or a psuedo-archive
 			//Attempted to get archive bin label class without using MAP Elites or a psuedo-archive
 			//added trackPseudoArchive:true to deal with the above
-			MMNEAT.main("runNumber:1 randomSeed:1 trackPseudoArchive:false minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftChangeCenterOfMassFitness:true minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet trials:1 mu:100 maxGens:60000 minecraftContainsWholeMAPElitesArchive:false forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:false mating:true fs:false ea:edu.southwestern.evolution.mome.MOME experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:mometest log:MOMETest-MEObserverVectorPistonOrientation saveTo:MEObserverVectorPistonOrientation mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5 crossover:edu.southwestern.evolution.crossover.ArrayCrossover".split(" "));
+			MMNEAT.main("runNumber:7 randomSeed:2 minecraftMaximizeVolumeFitness:true trackPseudoArchive:false minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftChangeCenterOfMassFitness:true minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet trials:1 mu:100 maxGens:60000 minecraftContainsWholeMAPElitesArchive:false forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:false mating:true fs:false ea:edu.southwestern.evolution.mome.MOME experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:mometest log:MOMETest-MEObserverVectorPistonOrientation saveTo:MEObserverVectorPistonOrientation mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5 crossover:edu.southwestern.evolution.crossover.ArrayCrossover".split(" "));
+			//MMNEAT.main("runNumber:5 randomSeed:1 minecraftMaximizeVolumeFitness:true minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftChangeCenterOfMassFitness:true minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet trials:1 mu:5 maxGens:1 minecraftContainsWholeMAPElitesArchive:false forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:false mating:true fs:false ea:edu.southwestern.evolution.mome.MOME experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:5 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:mometest log:MOMETest-MEObserverVectorPistonOrientation saveTo:MEObserverVectorPistonOrientation mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5 crossover:edu.southwestern.evolution.crossover.ArrayCrossover".split(" "));
 		} catch (FileNotFoundException | NoSuchMethodException e) {
-			// TODO Auto-generated catch block
+			// Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 }
+//archive contains 125 bins

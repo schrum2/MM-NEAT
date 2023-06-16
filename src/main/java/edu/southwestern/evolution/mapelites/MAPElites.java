@@ -85,6 +85,13 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		this(Parameters.parameters.stringParameter("archiveSubDirectoryName"), Parameters.parameters.booleanParameter("io"), Parameters.parameters.booleanParameter("netio"), true);
 	}
 	
+	/**
+	 * TODO: JavaDoc
+	 * @param archiveSubDirectoryName
+	 * @param ioOption
+	 * @param netioOption
+	 * @param createLogs
+	 */
 	@SuppressWarnings("unchecked")
 	public MAPElites(String archiveSubDirectoryName, boolean ioOption, boolean netioOption, boolean createLogs) {
 		MMNEAT.usingDiversityBinningScheme = true;
@@ -118,6 +125,17 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		this.iterationsWithoutElite = 0; // Not accurate on resume		
 	}
 
+	/**
+	 * TODO: JavaDoc
+	 * This seems to be all the set up necessary for the GNU Plot related files
+	 * @param numLabels
+	 * @param infix
+	 * @param experimentPrefix
+	 * @param yrange
+	 * @param cppnDirLogging
+	 * @param individualsPerGeneration
+	 * @param archiveSize
+	 */
 	public static void setUpLogging(int numLabels, String infix, String experimentPrefix, int yrange, boolean cppnDirLogging, int individualsPerGeneration, int archiveSize) {
 		
 		String prefix = experimentPrefix + "_" + infix;
@@ -229,6 +247,11 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		}
 	}
 
+	/**
+	 * TODO: JavaDoc
+	 * @param bins
+	 * @throws FileNotFoundException
+	 */
 	private void setupArchiveVisualizer(BinLabels bins) throws FileNotFoundException {
 		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
 		directory += (directory.equals("") ? "" : "/");
@@ -286,6 +309,17 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		}
 	}
 
+	/**
+	 * TODO: JavaDoc
+	 * I think this creates the .bat file?
+	 * @param directory
+	 * @param prefix
+	 * @param fullName
+	 * @param dimensionNames
+	 * @param dimensionSizes
+	 * @param ps
+	 * @param finalLine
+	 */
 	private void writeScriptLauncher(String directory, String prefix, String fullName, String[] dimensionNames,
 			int[] dimensionSizes, PrintStream ps, String finalLine) {
 		ps.println("cd ..");

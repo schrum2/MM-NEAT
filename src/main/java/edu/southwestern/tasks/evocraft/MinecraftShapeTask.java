@@ -376,7 +376,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			}
 			//Orientation flyingDirection = directionOfMaximumDisplacement(deltaX,deltaY,deltaZ);
 			//String gen = "GEN"+(MMNEAT.ea instanceof GenerationalEA ? ((GenerationalEA) MMNEAT.ea).currentGeneration() : "ME");
-			MinecraftLonerShapeTask.writeBlockListFile(blocks, flyingDir + File.separator + "ID"+genome.getId(), ".txt");
+			MinecraftUtilClass.writeBlockListFile(blocks, flyingDir + File.separator + "ID"+genome.getId(), ".txt");
 		}
 		if(Parameters.parameters.integerParameter("minecraftDelayAfterEvaluation")> 0) {
 			try {

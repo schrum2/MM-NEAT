@@ -10,7 +10,6 @@ import edu.southwestern.tasks.evocraft.MinecraftClient;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
-import edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask;
 import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.file.FileUtilities;
@@ -156,7 +155,8 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 			
 			// If enough time has elapsed since the start, then end the evaluation
 			if(System.currentTimeMillis() - startTime > Parameters.parameters.longParameter("minecraftMandatoryWaitTime")) {
-				System.out.println("Time elapsed: minecraftMandatoryWaitTime = "+ Parameters.parameters.longParameter("minecraftMandatoryWaitTime"));
+				//System.out.println("Time elapsed: minecraftMandatoryWaitTime = "+ Parameters.parameters.longParameter("minecraftMandatoryWaitTime"));
+				if(CommonConstants.watch) System.out.println("Time elapsed: minecraftMandatoryWaitTime = "+ Parameters.parameters.longParameter("minecraftMandatoryWaitTime"));
 				stop = true;
 			}
 
@@ -176,12 +176,12 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 				if(fitnessFunctions.get(i).shapeIsWorthSaving(finalResults[i],history, shapeCorner, originalBlocks)) {
 					String saveDir = FileUtilities.getSaveDirectory() + "/" + fitnessFunctions.get(i).getClass().getSimpleName();
 					File dir = new File(saveDir);
-					// Create dir
+					// Create dir	-is this create directory or creating a text file?
 					if (!dir.exists()) {
 						dir.mkdir();
 					}
 					// Save the shape
-					MinecraftLonerShapeTask.writeBlockListFile(originalBlocks, saveDir + File.separator + "Shape"+(++savedShapes), "FITNESS_"+finalResults[i]+".txt");
+					MinecraftUtilClass.writeBlockListFile(originalBlocks, saveDir + File.separator + "Shape"+(++savedShapes), "FITNESS_"+finalResults[i]+".txt");
 				}
 			}
 		}
