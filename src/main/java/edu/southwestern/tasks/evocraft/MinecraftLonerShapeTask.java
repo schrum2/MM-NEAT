@@ -266,7 +266,6 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		//System.out.println("    Archive "+ Arrays.toString(MMNEAT.getArchive().getArchive().stream().map(s -> s == null ? "X" : ((Score) s).behaviorIndexScore() ).toArray()));
 		
 		MinecraftCoordinates ranges = MinecraftUtilClass.getRanges();
-
 		// Corner to clear and then place is taken from the queue. If the queue is empty, it waits until something is added in
 		MinecraftCoordinates corner=null;
 		try {
@@ -283,7 +282,8 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		// Evaluates the shape at the middle of the space defined by the corner, and then adds the corner back to the queue
 		Score<T> score = internalMinecraftShapeTask.evaluateOneShape(individual, middle);
 		try {
-			coordinateQueue.put(corner);
+			int shiftValue = (corner.x() + Parameters.parameters.integerParameter("minecraftXMovementBetweenEvals")) % Parameters.parameters.integerParameter("minecraftMaxXShift");
+			coordinateQueue.put(new MinecraftCoordinates(shiftValue, corner.y(), corner.z()));
 		} catch (InterruptedException e) {
 			System.out.println("Error with queue");
 			e.printStackTrace();

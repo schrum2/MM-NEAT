@@ -399,6 +399,7 @@ public class Parameters {
 		integerOptions.add("maximumMOMESubPopulationSize", -1, "this contains the maximum number of individuals for each cell with implementing MOME with minecraft. -1 is unrestricted");
 		integerOptions.add("minecraftDelayAfterEvaluation", 0, "If the value is greater than 0 causes the thread to sleep for the amount it is set to");
 		integerOptions.add("minecraftXMovementBetweenEvals", 0, "If the value is greater than 0 it adds it to the x value");
+		integerOptions.add("minecraftMaxXShift", 0, "Max value we can shift X");
 		
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
