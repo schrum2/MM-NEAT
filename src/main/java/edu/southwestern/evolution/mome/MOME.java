@@ -68,16 +68,30 @@ public class MOME<T> implements SteadyStateEA<T>{
 	public MOME() {
 		this(Parameters.parameters.stringParameter("archiveSubDirectoryName"), Parameters.parameters.booleanParameter("io"), Parameters.parameters.booleanParameter("netio"), true);
 	}
+	/**
+	 * MMNEAT.usingDiversityBinningScheme = true;
+		this.task = (LonerTask<T>) MMNEAT.task;
+		this.io = ioOption; // write logs
+		this.archive = new Archive<>(netioOption, archiveSubDirectoryName);
+	 */
+	
+	/**
+	 * 
+	 * @param archiveSubDirectoryName
+	 * @param ioOption
+	 * @param netioOption
+	 * @param createLogs
+	 */
 	
 	@SuppressWarnings("unchecked")
 	public MOME(/*TODO*/String archiveSubDirectoryName, boolean ioOption, boolean netioOption, boolean createLogs) {
 		MMNEAT.usingDiversityBinningScheme = true;
 		this.task = (LonerTask<T>) MMNEAT.task;
-		
+		this.archive = new MOMEArchive<>(netioOption, archiveSubDirectoryName, maxNumberOfIndividualsInEachSubPop);	//set up archive
+
 		this.io = ioOption; // write logs
 		//TODO: figure out how we get this number below
 		int maxNumberOfIndividualsInEachSubPop = -1;	//this currently controls the initial number of individuals in each cell. Will probably be moved out or assigned some other way
-		this.archive = new MOMEArchive<>(netioOption, archiveSubDirectoryName, maxNumberOfIndividualsInEachSubPop);	//set up archive
 		this.mating = Parameters.parameters.booleanParameter("mating");
 		this.crossoverRate = Parameters.parameters.doubleParameter("crossoverRate");
 		this.populationChangeCheck = false;
@@ -176,6 +190,9 @@ public class MOME<T> implements SteadyStateEA<T>{
 			archive.add(s); // Fill the archive with random starting individuals, only when this flag is true
 		});
 		
+		//want to check bin labels
+		getBinLabelsClass();
+		//if(CommonConstants.watch)
 		//initializing a variable
 		this.mating = Parameters.parameters.booleanParameter("mating");
 
@@ -310,7 +327,13 @@ public class MOME<T> implements SteadyStateEA<T>{
 		return populationChangeCheck; 
 	}
 
+	/**
+	 * retrieves bin labels, maybe I should see what this really is?
+	 * @return
+	 */
 	public BinLabels getBinLabelsClass() {
+		System.out.println("get bin labels class return this: " + archive.getBinMapping());
+
 		return archive.getBinMapping();
 	}	
 	
@@ -394,8 +417,6 @@ public class MOME<T> implements SteadyStateEA<T>{
 			//had to have a server running first
 			//there is an issue with bin labels - MMNEAT.java method getArchiveBinLabelsClass & getArchive
 			//Attempted to get archive bin label class without using MAP Elites or a psuedo-archive
-			//Attempted to get archive bin label class without using MAP Elites or a psuedo-archive
-			//added trackPseudoArchive:true to deal with the above
 			MMNEAT.main("runNumber:7 randomSeed:2 minecraftMaximizeVolumeFitness:true trackPseudoArchive:false minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftChangeCenterOfMassFitness:true minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet trials:1 mu:100 maxGens:60000 minecraftContainsWholeMAPElitesArchive:false forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:false mating:true fs:false ea:edu.southwestern.evolution.mome.MOME experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:mometest log:MOMETest-currentlyTesting saveTo:MEObserverVectorPistonOrientation mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5 crossover:edu.southwestern.evolution.crossover.ArrayCrossover".split(" "));
 
 			//MMNEAT.main("runNumber:7 randomSeed:2 minecraftMaximizeVolumeFitness:true trackPseudoArchive:false minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftChangeCenterOfMassFitness:true minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet trials:1 mu:100 maxGens:60000 minecraftContainsWholeMAPElitesArchive:false forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:false mating:true fs:false ea:edu.southwestern.evolution.mome.MOME experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:mometest log:MOMETest-MEObserverVectorPistonOrientation saveTo:MEObserverVectorPistonOrientation mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5 crossover:edu.southwestern.evolution.crossover.ArrayCrossover".split(" "));
