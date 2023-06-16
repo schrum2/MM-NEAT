@@ -312,7 +312,6 @@ public class MOME<T> implements SteadyStateEA<T>{
 		return archive.getBinMapping();
 	}	
 	
-
 	/**
 	 * Write one line of data to each of the active log files, but only periodically,
 	 * when number of iterations divisible by individualsPerGeneration. 
@@ -334,7 +333,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 		int generationSaveGap = 3;
 
 		if(addedIndividualCount%generationSaveGap == 0 && populationChangeCheck) {
-			System.out.println("generationSaveGap:"+generationSaveGap+ " addedIndividualCount:" +addedIndividualCount);
+			//System.out.println("generationSaveGap:"+generationSaveGap+ " addedIndividualCount:" +addedIndividualCount);
 
 			//this creates a Float array of the scores of all individuals currently in the aarchive
 			//Float[] allCurrentIndividuals = ArrayUtils.toObject(archive.turnVectorScoresIntoFloatArray(archive.getWholeArchiveScores()));
@@ -378,6 +377,8 @@ public class MOME<T> implements SteadyStateEA<T>{
 		directory += (directory.equals("") ? "" : "/");
 		String prefix = Parameters.parameters.stringParameter("log") + Parameters.parameters.integerParameter("runNumber") + "_MOMEElites";
 		String fullName = directory + prefix + "_log.plt";
+		System.out.println(fullName);
+
 		PythonUtil.setPythonProgram();
 		PythonUtil.checkPython();
 	}
