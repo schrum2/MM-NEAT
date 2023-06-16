@@ -2,28 +2,21 @@ package edu.southwestern.evolution.mome;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
 import edu.southwestern.MMNEAT.MMNEAT;
-import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.mapelites.BinLabels;
 import edu.southwestern.evolution.nsga2.NSGA2;
 import edu.southwestern.evolution.nsga2.NSGA2Score;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
-import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
-import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
-import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBinLabels;
 import edu.southwestern.util.ClassCreation;
-import edu.southwestern.util.PopulationUtil;
+import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.random.RandomNumbers;
 
@@ -40,7 +33,7 @@ public class MOMEArchive<T> {
 	private BinLabels mapping;
 	private boolean saveElites;	//would like to know what this is exactly
 	private String archiveDir;
-	
+	private int maximumNumberOfIndividualsInSubPops;
 	public static final int MAX_SUB_POP_ALLOWED = 255; //this is the maximum number of individuals that can occupy a bin
 		//could create a parameter to control it? use paramenter instead?  parameter: maximumMOMESubPopulationSize
 	//referenced in minSubPopulationSizeInWholeArchive
@@ -81,9 +74,8 @@ public class MOMEArchive<T> {
 	 * may not need to pass the max number of individuals if its just a parameter
 	 * @param saveElites	
 	 * @param archiveDirectoryName
-	 * @param maximumNumberOfIndividualsInSubPops the max size of the population in each cell, currently unrestricted
 	 */
-	public MOMEArchive(boolean saveElites, String archiveDirectoryName, int maximumNumberOfIndividualsInSubPops) {
+	public MOMEArchive(boolean saveElites, String archiveDirectoryName) {
 		this.saveElites = saveElites;
 		// Initialize mapping
 		try {
@@ -99,7 +91,8 @@ public class MOMEArchive<T> {
 		System.out.println("Archive contains "+numBins+" number of bins");
 		archive = new ConcurrentHashMap<Vector<Integer>,Vector<Score<T>>>(numBins);
 //		occupiedBins = 0;
-		
+		maximumNumberOfIndividualsInSubPops = Parameters.parameters.integerParameter("maximumMOMESubPopulationSize");
+
 		//set subPopulationMaximum size
 		//maxSubPopAllowed = Parameters.parameters.integerParameter("minecraftMaxSubPopAllowedInBins");
 		
@@ -166,7 +159,7 @@ public class MOMEArchive<T> {
 			throw new UnsupportedOperationException("This case is not supported");
 		} else if(candidate.usesMAPElitesMapSpecification() && !getBinMapping().discard(candidate.MAPElitesBehaviorMap())) {
 			//not discarded
-			int maxSubPop = Parameters.parameters.integerParameter("maximumMOMESubPopulationSize");
+		//	maximumNumberOfIndividualsInSubPops = Parameters.parameters.integerParameter("maximumMOMESubPopulationSize");
 			//returns an integer array of coordinates for the candidates bin
 			int[] binIndex = getBinMapping().multiDimensionalIndices(candidate.MAPElitesBehaviorMap());	//grabs bin coordinates int array
 			Vector<Integer> candidateBinCoordinates = new Vector<Integer>();
@@ -185,22 +178,13 @@ public class MOMEArchive<T> {
 			//check if the candidate it there and return if it is
 			long candidateID = candidate.individual.getId();
 			for (NSGA2Score<T> score : front) {
-				if(score == candidate) {
-					/////I cannot seem to find a way to print this to a file.
-					//attemptToLogInfoFromArchive();
-					System.out.println("score == candidate");
-					//do something
-					//assert archive.getElite(parentIndex) != null : parentIndex + " in " + archive;
-
-				}
-				assert score == candidate : "score == candidate";
+				
 				if(score.individual.getId() == candidateID) {
-					//System.out.println("id matches");
 
 					// Since the new individual is present, the Pareto front must have changed.
 					// The Map needs to be updated, and we return true to indicate the change.
 					archive.replace(candidateBinCoordinates, new Vector<>(front));
-					if((archive.get(candidateBinCoordinates).size() > maxSubPop) && (maxSubPop >= 0)) {
+					if((front.size() > maximumNumberOfIndividualsInSubPops) && (maximumNumberOfIndividualsInSubPops > 0)) {	//check the subpop size
 						discardRandomIndividualFromBin(candidateBinCoordinates, score); //this will discard a random individual who is not the one just added
 					}
 					return true;
@@ -213,9 +197,6 @@ public class MOMEArchive<T> {
 		}
 	}
 	
-	private void attemptToLogInfoFromArchive() {
-	
-	}
 
 	/**
 	 * removes a random individual from the specified bin
@@ -223,7 +204,7 @@ public class MOMEArchive<T> {
 	 * @return true if individual was removed, false if they were not removed
 	 */
 	public boolean discardRandomIndividualFromBin(Vector<Integer> binCoordinates) {
-		Score<T> candidateScore = getRandomIndividaul(binCoordinates);
+		Score<T> candidateScore = getRandomIndividual(binCoordinates);
 		return archive.get(binCoordinates).remove(candidateScore);
 	}
 	
@@ -234,14 +215,14 @@ public class MOMEArchive<T> {
 	 * @return	true if successfully removed, false if not removed
 	 */
 	public boolean discardRandomIndividualFromBin(Vector<Integer> binCoordinates, Score<T> individualYouDoNotWantRemoved) {
-		Score<T> individualToDiscard = getRandomIndividaul(binCoordinates);
+		Score<T> individualToDiscard;
 		//while candidate is individual you want to keep, get another random candidate to delete
-		while(individualToDiscard.individual.getId() == individualYouDoNotWantRemoved.individual.getId()) {
-			individualToDiscard = getRandomIndividaul(binCoordinates);
-		}	
-		if(individualToDiscard == individualYouDoNotWantRemoved) {
-			System.out.println("to discard and not discard are same based on score, something went wrong");
-		}
+		do {
+			individualToDiscard = getRandomIndividual(binCoordinates);
+		} while(individualToDiscard.individual.getId() == individualYouDoNotWantRemoved.individual.getId());	
+
+		assert (individualToDiscard != individualYouDoNotWantRemoved) : "to discard and not discard are same based on score, something went wrong";
+		
 		return discardSpecificIndividualFromBin(individualToDiscard, binCoordinates);
 	}
 	
@@ -263,17 +244,18 @@ public class MOMEArchive<T> {
 	 * randomly picks a bin, then randomly picks an individual's score from the bin
 	 * @return random individual from archive (Score<T>)
 	 */
-	public Score<T> getRandomIndividaul(){
+	public Score<T> getRandomIndividual(){
 		//grab a random individual from a random bin
 		return RandomNumbers.randomElement(getRandomPopulation());
 	}
 	/**
 	 * from the archive it retrieves a random individual from a given bin
+	 * @param binCoordinates Vector representing the multidimensional coordinates of a bin cell
 	 * @return random individual from archive (Score<T>) in specified bin
 	 */
-	public Score<T> getRandomIndividaul(Vector<Integer> binCoordinates){
+	public Score<T> getRandomIndividual(Vector<Integer> binCoordinates){
 		//grab a random individual from a specified bin
-		return RandomNumbers.randomElement(archive.get(binCoordinates));
+		return RandomNumbers.randomElement(getScoresForBin(binCoordinates));
 	}
 	/**
 	 * get's a random sub population from a random bin in the archive
@@ -325,29 +307,46 @@ public class MOMEArchive<T> {
 	public int getNumberOfOccupiedBins() {
 		return archive.size();
 	}
+
+	/**
+	 * For a given archive bin, get the max scores in each objective
+	 * 
+	 * @param keyBinCoordinates vector of multidimensional bin coordinates
+	 * @return max fitnesss in each objective within bin sub-pop
+	 */
+	public double[] maxFitnessInEachObjective(Vector<Integer> keyBinCoordinates) {
+		double[] maxFitnessScores = ArrayUtil.doubleSpecified(MMNEAT.task.numObjectives(), Double.NEGATIVE_INFINITY);
+		// get the sub-pop
+		// loop through each member
+		// Compare fitness scores to maxFitnessScores, keeping the larger values
+		return maxFitnessScores;
+	}	
 	
-	//TODO: the below methods would be useful it seems
-	//what is objective? Like, what am I using to differentiate that?
-	//Max fitness in each objective
-	public float maxFitnessInEachObjective() {
-		float maxFitness = 0;
-		//for each bin
-			//for each objective
-				//check the max & compare
-		return maxFitness;
+	/**
+	 * For the whole archive, get the max scores in each objective
+	 * @return max fitnesss in each objective
+	 */
+	public double[] maxFitnessInEachObjective() {
+		double[] maxFitnessScores = ArrayUtil.doubleSpecified(MMNEAT.task.numObjectives(), Double.NEGATIVE_INFINITY);
+		// for each set of bin coordinates call maxFitnessInEachObjective(Vector<Integer> keyBinCoordinates)
+		// get max in each objective across those results
+		return maxFitnessScores;
 	}
 	
 	//This should probably be passed maybe something else?
 	//Min fitness in each objective across all scores in the archive
-	public float[] minFitnessInEachObjective(int objectives) {
-		float[] listOfMinFitnessForEachObjective = new float[objectives];
-		Collection<Vector<Score<T>>> allVectorsOfScores = archive.values();	//this returns a collection of all the scores/values in the archive
-
-		//for all scores
-			//for all objectives
-				//add to min fitness for it
-		return listOfMinFitnessForEachObjective;
-	}
+	
+	// HOLD OFF ON CALCULATING MIN SCORES. NOT AS IMPORTANT, AND CODE WILL BE DIFFERENT
+	
+//	public float[] minFitnessInEachObjective(int objectives) {
+//		float[] listOfMinFitnessForEachObjective = new float[objectives];
+//		Collection<Vector<Score<T>>> allVectorsOfScores = archive.values();	//this returns a collection of all the scores/values in the archive
+//
+//		//for all scores
+//			//for all objectives
+//				//add to min fitness for it
+//		return listOfMinFitnessForEachObjective;
+//	}
 	
 	//Max sub pop size across all bins
 	/**
@@ -400,7 +399,6 @@ public class MOMEArchive<T> {
 	}
 	
 	//not sure I understand what this is
-	//oh! is it an int?
 	//ArrayList<NSGA2Score<T>> sizeOfCombinedParetoFrontAcrossAllBins() {
 	public int sizeOfCombinedParetoFrontAcrossAllBins() {
 		//create a result pareto front
