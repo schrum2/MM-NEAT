@@ -166,6 +166,8 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 				finalResults[i] = fitnessFunctions.get(i).calculateFinalScore(history, shapeCorner, originalBlocks);
 			}
 		}
+		if(Parameters.parameters.booleanParameter("minecraftClearAndVerify")) MinecraftClient.clearAndVerify(shapeCorner);
+		
 		return finalResults;
 	}
 

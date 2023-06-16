@@ -870,6 +870,8 @@ public class Parameters {
 		booleanOptions.add("minecraftNumAirFitness", false, "Fitness test for number of air blocks");
 		booleanOptions.add("rememberParentScores", false, "Avoid repeated evaluation of parents");
 		booleanOptions.add("minecraftChangeBlocksMomentum", false, "Multiplies change blocks by change in center of madd fitness");
+		booleanOptions.add("minecraftClearAndVerify", false, "If true clears and verifies the shapeCorner");
+		
 		
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
