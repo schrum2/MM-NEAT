@@ -350,6 +350,10 @@ public class MOMEArchive<T> {
 	}
 	
 	//Max sub pop size across all bins
+	/**
+	 * this gets the maximum population for a single bin from the whole archive
+	 * @return the number of the most individuals present in one bin
+	 */
 	public int maxSubPopulationSizeInWholeArchive() {
 		//System.out.println("maxSubPop");
 		int maxSubPop = 0;
@@ -364,6 +368,11 @@ public class MOMEArchive<T> {
 	}
 	
 	//Min sub pop size of all occupied bins in the archive
+	/**
+	 * this returns the least number of individuals in a subpopulation from the whole archive
+	 * this does not include empty bins
+	 * @return the least number of individuals in a single bin from all the bin in the archive
+	 */
 	public int minSubPopulationSizeInWholeArchive() {
 		//System.out.println("minSubPop");
 		int minSubPop = MAX_SUB_POP_ALLOWED;

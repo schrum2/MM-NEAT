@@ -56,6 +56,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 	private boolean populationChangeCheck;	//this keeps track of what happened to the most recent individual created (if it was added or not)
 						//false means the individual was not added and so the population hasn't changed
 						//true means an individual was added and the population changed
+	private int individualsPerGeneration;
 	
 	//logging variables (might be sorted into tracking or other grouping
 	public boolean io;
@@ -75,13 +76,14 @@ public class MOME<T> implements SteadyStateEA<T>{
 		
 		this.io = ioOption; // write logs
 		//TODO: figure out how we get this number below
-		int maxNumberOfIndividualsInEachSubPop = 1;	//this currently controls the initial number of individuals in each cell. Will probably be moved out or assigned some other way
+		int maxNumberOfIndividualsInEachSubPop = -1;	//this currently controls the initial number of individuals in each cell. Will probably be moved out or assigned some other way
 		this.archive = new MOMEArchive<>(netioOption, archiveSubDirectoryName, maxNumberOfIndividualsInEachSubPop);	//set up archive
 		this.mating = Parameters.parameters.booleanParameter("mating");
 		this.crossoverRate = Parameters.parameters.doubleParameter("crossoverRate");
 		this.populationChangeCheck = false;
 		this.addedIndividualCount = 0;
 		this.discardedIndividualCount = 0;
+		this.individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
 		
 		//logging
 		String infix = "MOMEArchive";
@@ -329,11 +331,10 @@ public class MOME<T> implements SteadyStateEA<T>{
 			}
 			archiveFileCreated = true;
 		}
-		//if time to log
-		int generationSaveGap = 3;
 
-		if(addedIndividualCount%generationSaveGap == 0 && populationChangeCheck) {
-			//System.out.println("generationSaveGap:"+generationSaveGap+ " addedIndividualCount:" +addedIndividualCount);
+		//if an individual was added and the population count is even with the steadyStateIndividualsPerGeneration
+		if(addedIndividualCount%individualsPerGeneration == 0 && populationChangeCheck) {
+			System.out.println("#individualsBeforSaving:"+individualsPerGeneration+ " addedIndividualCount:" +addedIndividualCount);
 
 			//this creates a Float array of the scores of all individuals currently in the aarchive
 			//Float[] allCurrentIndividuals = ArrayUtils.toObject(archive.turnVectorScoresIntoFloatArray(archive.getWholeArchiveScores()));
@@ -341,7 +342,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 			//fillLog.log(pseudoGeneration + "\t" + numFilledBins   + "\t" + qdScore    + "\t" + maximumFitness + "\t" + iterationsWithoutEliteCounter + 
             //"\t" + restrictedFilled+ "\t" +restrictedQD+ "\t" +restrictedMaxFitness);
 			
-			int pseudoGeneration = addedIndividualCount/generationSaveGap;
+			int pseudoGeneration = addedIndividualCount/individualsPerGeneration;
 			//Float[] elite = ArrayUtils.toObject(archive.turnVectorScoresIntoFloatArray(archive.getWholeArchiveScores()));
 			//archiveLog.log(pseudoGeneration + "\t" + StringUtils.join(elite, "\t").replaceAll("-Infinity", "X"));
 			
@@ -378,6 +379,8 @@ public class MOME<T> implements SteadyStateEA<T>{
 		String prefix = Parameters.parameters.stringParameter("log") + Parameters.parameters.integerParameter("runNumber") + "_MOMEElites";
 		String fullName = directory + prefix + "_log.plt";
 		System.out.println(fullName);
+		//fullname = mometest/MEObserverVectorPistonOrientation7/MOMETest-MEObserverVectorPistonOrientation7_MOMEElites_log.plt
+
 
 		PythonUtil.setPythonProgram();
 		PythonUtil.checkPython();
@@ -392,7 +395,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 			//Attempted to get archive bin label class without using MAP Elites or a psuedo-archive
 			//Attempted to get archive bin label class without using MAP Elites or a psuedo-archive
 			//added trackPseudoArchive:true to deal with the above
-			MMNEAT.main("runNumber:6 randomSeed:2 minecraftMaximizeVolumeFitness:true trackPseudoArchive:false minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftChangeCenterOfMassFitness:true minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet trials:1 mu:100 maxGens:60000 minecraftContainsWholeMAPElitesArchive:false forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:false mating:true fs:false ea:edu.southwestern.evolution.mome.MOME experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:mometest log:MOMETest-MEObserverVectorPistonOrientation saveTo:MEObserverVectorPistonOrientation mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5 crossover:edu.southwestern.evolution.crossover.ArrayCrossover".split(" "));
+			MMNEAT.main("runNumber:7 randomSeed:2 minecraftMaximizeVolumeFitness:true trackPseudoArchive:false minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftChangeCenterOfMassFitness:true minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet trials:1 mu:100 maxGens:60000 minecraftContainsWholeMAPElitesArchive:false forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:false mating:true fs:false ea:edu.southwestern.evolution.mome.MOME experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:mometest log:MOMETest-MEObserverVectorPistonOrientation saveTo:MEObserverVectorPistonOrientation mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5 crossover:edu.southwestern.evolution.crossover.ArrayCrossover".split(" "));
 			//MMNEAT.main("runNumber:5 randomSeed:1 minecraftMaximizeVolumeFitness:true minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftChangeCenterOfMassFitness:true minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet trials:1 mu:5 maxGens:1 minecraftContainsWholeMAPElitesArchive:false forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:false mating:true fs:false ea:edu.southwestern.evolution.mome.MOME experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:5 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:mometest log:MOMETest-MEObserverVectorPistonOrientation saveTo:MEObserverVectorPistonOrientation mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5 crossover:edu.southwestern.evolution.crossover.ArrayCrossover".split(" "));
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			// Auto-generated catch block
