@@ -42,10 +42,6 @@ public class MOMEArchive<T> {
 		return mapping;
 	}
 
-	public void setMapping(BinLabels mapping) {
-		this.mapping = mapping;
-	}
-
 	public boolean isSaveElites() {
 		return saveElites;
 	}
@@ -68,9 +64,9 @@ public class MOMEArchive<T> {
 	 * constructor
 	 * @param saveElites
 	 * @param archiveDirectoryName
-	 * @param initNumIndividualsInCells the max size of the population in each cell, currently unrestricted
+	 * @param maximumNumberOfIndividualsInSubPops the max size of the population in each cell, currently unrestricted
 	 */
-	public MOMEArchive(boolean saveElites, String archiveDirectoryName, int initNumIndividualsInCells) {
+	public MOMEArchive(boolean saveElites, String archiveDirectoryName, int maximumNumberOfIndividualsInSubPops) {
 		this.saveElites = saveElites;
 		// Initialize mapping
 		try {

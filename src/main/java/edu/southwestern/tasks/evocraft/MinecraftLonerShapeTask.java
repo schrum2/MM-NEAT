@@ -470,7 +470,8 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	}
 
 	/**
-	 * TODO: deals with saving files
+	 * TODO: This method should be moved to MinecraftUtilClass 
+	 * 
 	 * Write block list text file to specified location
 	 * @param blocks The blocks to write
 	 * @param pathAndPrefix Path plus first part of filename. Will be followed by _ before the fileSuffix
