@@ -382,8 +382,9 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			try {
 				Thread.sleep(Parameters.parameters.integerParameter("minecraftDelayAfterEvaluation"));
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
+				System.out.println("Exception from interrupting sleep between shape placements!");
 				e.printStackTrace();
+				System.exit(1);
 			}
 		}
 		return score;
