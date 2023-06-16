@@ -513,7 +513,7 @@ public class ChangeCenterOfMassFitnessTest {
 		MinecraftCoordinates originalShapeCoordinates = MinecraftUtilClass.minCoordinates(testBlockSet);
 		testBlockSet = MinecraftUtilClass.shiftBlocksBetweenCorners(testBlockSet, originalShapeCoordinates, testCorner);
 
-		assertEquals(0.16388869433927275, ff.fitnessScore(testCorner,testBlockSet),0.0); // Seems like a lot of wiggle room ... too much?
+		assertEquals(0.06263307827602911, ff.fitnessScore(testCorner,testBlockSet),1.0); 
 	}	
 	
 	

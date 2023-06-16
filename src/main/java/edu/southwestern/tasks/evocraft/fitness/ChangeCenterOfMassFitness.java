@@ -127,6 +127,8 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 		int yesMovementCount = 0;
 		if(CommonConstants.watch) System.out.println("history size: " + history.size());
 
+		if(CommonConstants.watch) System.out.println("oscillating? " + oscillatingOrFlying(history));
+
 		for(int i = 2; i < history.size(); i++) {			//if the change is not present return false
 			//if(CommonConstants.watch) System.out.println("noMovementCount: " + noMovementCount + " yesMovementCount: " + yesMovementCount + " i: " + i + " actual number of loops: " + (i-2));
 			//if(CommonConstants.watch) System.out.println(" i: " + i + " actual number of loops: " + (i-1));
@@ -192,7 +194,22 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 	}
 	
 	//placeholder for now
-	public boolean oscillatingOrFlying() {
+	//just checks if something is oscillating but if checked to soon just says it isn't
+	public boolean oscillatingOrFlying(ArrayList<Pair<Long, List<Block>>> history) {
+		//seting up relevant vertices
+		if(history.size() < 4) {
+			return false;
+		}
+		Vertex initialCenterOfMass = MinecraftUtilClass.getCenterOfMass(history.get(0).t2);
+		Vertex lastCenterOfMass = MinecraftUtilClass.getCenterOfMass(history.get(history.size()-3).t2);
+		
+		Vertex farthestCenterOfMass = getFarthestCenterOfMass(history, initialCenterOfMass, lastCenterOfMass);
+		
+		Double result = checkCreditForDepartedBlocks(history.get(0).t2.size(), initialCenterOfMass, farthestCenterOfMass, history.get(history.size()-2).t2);
+		if(result != null) {
+			return false;
+		}
+
 		/**
 		 *check if I need all 3
 		Vertex initialCenterOfMass = MinecraftUtilClass.getCenterOfMass(history.get(0).t2);
@@ -230,7 +247,7 @@ if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": No mo
 				return result;
 			}
 		 */
-		return false;
+		return true;
 	}
 
 	@Override
