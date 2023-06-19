@@ -323,8 +323,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 	 * @return
 	 */
 	public BinLabels getBinLabelsClass() {
-		System.out.println("get bin labels class return this: " + archive.getBinMapping());
-
+		//System.out.println("get bin labels class return this: " + archive.getBinMapping());
 		return archive.getBinMapping();
 	}	
 	
@@ -332,7 +331,6 @@ public class MOME<T> implements SteadyStateEA<T>{
 	 * Write one line of data to each of the active log files, but only periodically,
 	 * when number of iterations divisible by individualsPerGeneration. 
 	 */
-	@SuppressWarnings("unchecked")
 	protected void log() {
 		//System.out.println("in log method");
 		if (!archiveFileCreated) {
