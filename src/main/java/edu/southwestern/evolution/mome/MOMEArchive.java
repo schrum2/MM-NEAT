@@ -171,26 +171,28 @@ public class MOMEArchive<T> {
 				archive.put(candidateBinCoordinates, new Vector<Score<T>>());
 			}
 			//add the candidate (Score) to the vector of scores for that bin
-			archive.get(candidateBinCoordinates).add(candidate);	
-			
-			// Recalculate Pareto front
-			ArrayList<NSGA2Score<T>> front = NSGA2.getParetoFront(NSGA2.staticNSGA2Scores(archive.get(candidateBinCoordinates)));
-			//check if the candidate it there and return if it is
-			long candidateID = candidate.individual.getId();
-			for (NSGA2Score<T> score : front) {
-				
-				if(score.individual.getId() == candidateID) {
+			Vector<Score<T>> subpopInBin = archive.get(candidateBinCoordinates);
+			synchronized(subpopInBin) {
+				subpopInBin.add(candidate);	
+				// Recalculate Pareto front
+				ArrayList<NSGA2Score<T>> front = NSGA2.getParetoFront(NSGA2.staticNSGA2Scores(subpopInBin));
+				//check if the candidate it there and return if it is
+				long candidateID = candidate.individual.getId();
+				for (NSGA2Score<T> score : front) {
 
-					// Since the new individual is present, the Pareto front must have changed.
-					// The Map needs to be updated, and we return true to indicate the change.
-					archive.replace(candidateBinCoordinates, new Vector<>(front));
-					if((front.size() > maximumNumberOfIndividualsInSubPops) && (maximumNumberOfIndividualsInSubPops > 0)) {	//check the subpop size
-						discardRandomIndividualFromBin(candidateBinCoordinates, score); //this will discard a random individual who is not the one just added
+					if(score.individual.getId() == candidateID) {
+
+						// Since the new individual is present, the Pareto front must have changed.
+						// The Map needs to be updated, and we return true to indicate the change.
+						archive.replace(candidateBinCoordinates, new Vector<>(front));
+						if((front.size() > maximumNumberOfIndividualsInSubPops) && (maximumNumberOfIndividualsInSubPops > 0)) {	//check the subpop size
+							discardRandomIndividualFromBin(candidateBinCoordinates, score); //this will discard a random individual who is not the one just added
+						}
+						return true;
 					}
-					return true;
 				}
+				return false;
 			}
-			return false;
 		} else {
 			// In some domains, a flawed genotype can emerge which cannot produce a behavior vector. Obviously cannot be added to archive.
 			return false; // nothing added
