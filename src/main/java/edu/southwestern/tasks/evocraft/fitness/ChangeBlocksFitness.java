@@ -53,7 +53,7 @@ public class ChangeBlocksFitness extends TimedEvaluationMinecraftFitnessFunction
 			int difference = shape1minusShape2.size();
 			//System.out.println("difference:" + difference);
 			if(Parameters.parameters.booleanParameter("minecraftChangeBlocksMomentum")) {
-				fitness += difference + MinecraftUtilClass.getCenterOfMass(originalShape).distance(MinecraftUtilClass.getCenterOfMass(shape2));
+				fitness += difference + Math.pow(MinecraftUtilClass.getCenterOfMass(originalShape).distance(MinecraftUtilClass.getCenterOfMass(shape2)), 2);
 			} else {
 				fitness += difference;
 			}
