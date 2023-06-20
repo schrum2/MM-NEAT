@@ -282,8 +282,8 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		Score<T> score = internalMinecraftShapeTask.evaluateOneShape(individual, middle);
 		try {
 			if(Parameters.parameters.integerParameter("minecraftXMovementBetweenEvals") != 0 && Parameters.parameters.integerParameter("minecraftMaxXShift") != 0) {
-			int shiftValue = (corner.x() + Parameters.parameters.integerParameter("minecraftXMovementBetweenEvals")) % Parameters.parameters.integerParameter("minecraftMaxXShift");
-			coordinateQueue.put(new MinecraftCoordinates(shiftValue, corner.y(), corner.z()));
+				int shiftValue = (corner.x() + Parameters.parameters.integerParameter("minecraftXMovementBetweenEvals")) % Parameters.parameters.integerParameter("minecraftMaxXShift");
+				coordinateQueue.put(new MinecraftCoordinates(shiftValue, corner.y(), corner.z()));
 			}else {
 				coordinateQueue.put(new MinecraftCoordinates(corner));
 			}
