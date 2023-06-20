@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -207,6 +209,7 @@ public class MOMEArchive<T> {
 	 */
 	public boolean discardRandomIndividualFromBin(Vector<Integer> binCoordinates) {
 		Score<T> candidateScore = getRandomIndividual(binCoordinates);
+		//MOME.this.setDiscardedIndividualCount();	//couldn't figure this out and needed to focus on other things
 		return archive.get(binCoordinates).remove(candidateScore);
 	}
 	
@@ -285,21 +288,52 @@ public class MOMEArchive<T> {
 	}
 	
 	/**
-	 * this function returns the total number of individuals currently in the archive
-	 * @return total number of individuals in the archive
-	 */
-	public int totalNumberOfIndividualsInArchive() {
-		//System.out.println("total number of individuals in archive:" + archive.values().size());
-		return archive.values().size();
-	}
-	
-	/**
 	 * returns all the scores for a specific bin
 	 * @param keyBinCoordinates	the key which is the coordinates of the bin
 	 * @return the scores for that bin
 	 */
 	public Vector<Score<T>> getScoresForBin(Vector<Integer> keyBinCoordinates){
 		return archive.get(keyBinCoordinates);
+	}
+	public Vector<Score<T>> getScoresForIndex(int index){
+		return archive.get(index);
+	}
+	//vector array of binlabels
+	public double[][] maxScorebyBinXObjective() {
+		double[][] maxScoresByBinXObjective = new double[getNumberOfOccupiedBins()][];
+		int iBin = 0;
+		for(Vector<Integer> key : archive.keySet()) {
+			double[] scores = maxFitnessInEachObjective(key);
+			for (int jObjective = 0; jObjective < scores.length; jObjective++) {
+				maxScoresByBinXObjective[iBin][jObjective] = Math.max(maxScoresByBinXObjective[iBin][jObjective], scores[jObjective]);
+			}
+			iBin++;
+		}
+		return maxScoresByBinXObjective;
+	}
+	public double[][] minScoreBinXObjective() {
+		double[][] minScoresByBinXObjective = new double[getNumberOfOccupiedBins()][];
+		int iBin = 0;
+		for(Vector<Integer> key : archive.keySet()) {
+			double[] scores = maxFitnessInEachObjective(key);
+			for (int jObjective = 0; jObjective < scores.length; jObjective++) {
+				minScoresByBinXObjective[iBin][jObjective] = Math.min(minScoresByBinXObjective[iBin][jObjective], scores[jObjective]);
+			}
+			iBin++;
+		}
+		return minScoresByBinXObjective;
+	}
+	//2d array new double i=bin labels, second left empty [j] array of null entrys for each bin
+	//loop through keyset for max (occupied bins)
+	//binlabels method to go from multi to one dimensional index
+	//call method for max scores for one bin
+	/**
+	 * this function returns the total number of individuals currently in the archive
+	 * @return total number of individuals in the archive
+	 */
+	public int totalNumberOfIndividualsInArchive() {
+		//System.out.println("total number of individuals in archive:" + archive.values().size());
+		return archive.values().size();
 	}
 	
 	/**
@@ -318,11 +352,62 @@ public class MOMEArchive<T> {
 	 */
 	public double[] maxFitnessInEachObjective(Vector<Integer> keyBinCoordinates) {
 		double[] maxFitnessScores = ArrayUtil.doubleSpecified(MMNEAT.task.numObjectives(), Double.NEGATIVE_INFINITY);
+		Vector<Score<T>> subPop = archive.get(keyBinCoordinates);
 		// get the sub-pop
+		for(Score<T> member : subPop) {
+			for (int i = 0; i < maxFitnessScores.length; i++) {
+				maxFitnessScores[i] = Math.max(maxFitnessScores[i], member.scores[i]);
+			}
+		}
 		// loop through each member
 		// Compare fitness scores to maxFitnessScores, keeping the larger values
+		
 		return maxFitnessScores;
 	}	
+	
+	/**
+	 * I need
+	 * for each objective
+	 * for each bin
+	 * max and min
+	 * for each bin max, for each bin min
+	 * 
+	 * @return
+	 */
+	
+//	public Vector<double[]> maxFitnessInEachObjectiveSubpopArray() {
+//		Vector<double[]> maxFitnessScores;
+//				//for max [i] ArrayUtil.doubleSpecified(MMNEAT.task.numObjectives(), Double.NEGATIVE_INFINITY);
+//		//the vector is the number of objectives
+//			//the double array is the max in 
+//		//Vector<Score<T>> subPop = archive.get(indexArchive[]);
+//		// get the sub-pop
+//		//for archive i
+//			//for objective i
+//				//add to array?
+////		for(Score<T> member : subPop) {
+////			for (int i = 0; i < maxFitnessScores.length; i++) {
+////				maxFitnessScores[i] = Math.max(maxFitnessScores[i], member.scores[i]);
+////			}
+////		}
+//		// loop through each member
+//		// Compare fitness scores to maxFitnessScores, keeping the larger values
+//		
+//		return maxFitnessScores;
+//	}
+	
+	
+	public void tryToPrintScores(Vector<Score<T>> allScores) {
+		
+		int numObjectives = MMNEAT.task.numObjectives();
+	
+		for(Score<T> score : allScores) {
+			for (int i = 0; i < numObjectives; i++) {
+				System.out.println(score.scores[i]);
+			}
+		}
+		
+	}
 	
 	/**
 	 * For the whole archive, get the max scores in each objective
@@ -332,23 +417,57 @@ public class MOMEArchive<T> {
 		double[] maxFitnessScores = ArrayUtil.doubleSpecified(MMNEAT.task.numObjectives(), Double.NEGATIVE_INFINITY);
 		// for each set of bin coordinates call maxFitnessInEachObjective(Vector<Integer> keyBinCoordinates)
 		// get max in each objective across those results
+		//for each bin
+		Vector<Score<T>> allScores = getWholeArchiveScores();
+//		for(int i = 0; i < archive.size(); i++) {
+//			
+			for(Score<T> member : allScores) {
+				for (int j = 0; j < maxFitnessScores.length; j++) {		//j is the objective
+					maxFitnessScores[j] = Math.max(maxFitnessScores[j], member.scores[j]);	//max for j objective compared with member j objective
+				}
+			}
+//		}
+		//call other method
 		return maxFitnessScores;
 	}
 	
+	public void maxFitnessVectorBinArrayObjectiveArrayScore() {
+		//for vector bin i
+			//for obective j
+				//max score
+	}
+	//ma in vector of scores
+	public void maxScoreForEachObjectiveInVector(Vector<Score<T>> scoresListOfOneBin, int numberOfObjectives) {
+		double[] maxScoresOfEachObjective = ArrayUtil.doubleSpecified(numberOfObjectives, Double.NEGATIVE_INFINITY);
+		for(Score<T> jScore : scoresListOfOneBin) {
+			//for objective find max, min
+			for (int i = 0; i < numberOfObjectives; i++) {
+				//member.score[i] find max
+				maxScoresOfEachObjective[i] = jScore.scores[i];	//this contains the max score of member j in objective i
+			}
+		}
+	}
 	//This should probably be passed maybe something else?
 	//Min fitness in each objective across all scores in the archive
 	
 	// HOLD OFF ON CALCULATING MIN SCORES. NOT AS IMPORTANT, AND CODE WILL BE DIFFERENT
 	
-//	public float[] minFitnessInEachObjective(int objectives) {
-//		float[] listOfMinFitnessForEachObjective = new float[objectives];
-//		Collection<Vector<Score<T>>> allVectorsOfScores = archive.values();	//this returns a collection of all the scores/values in the archive
-//
-//		//for all scores
-//			//for all objectives
-//				//add to min fitness for it
-//		return listOfMinFitnessForEachObjective;
-//	}
+	public double[] minFitnessInEachObjective() {
+		double[] minFitnessScores = ArrayUtil.doubleSpecified(MMNEAT.task.numObjectives(), Double.NEGATIVE_INFINITY);
+		// for each set of bin coordinates call maxFitnessInEachObjective(Vector<Integer> keyBinCoordinates)
+		// get max in each objective across those results
+		//for each bin
+		Vector<Score<T>> allScores = getWholeArchiveScores();
+//		for(int i = 0; i < archive.size(); i++) {
+//			
+			for(Score<T> member : allScores) {
+				for (int j = 0; j < minFitnessScores.length; j++) {
+					minFitnessScores[j] = Math.min(minFitnessScores[j], member.scores[j]);
+				}
+			}
+//		}
+		return minFitnessScores;
+	}
 	
 	//Max sub pop size across all bins
 	/**
@@ -407,7 +526,7 @@ public class MOMEArchive<T> {
 		Vector<Score<T>> wholeArchiveFront = new Vector<Score<T>>(getWholeArchiveScores());
 		ArrayList<NSGA2Score<T>> front = NSGA2.getParetoFront(NSGA2.staticNSGA2Scores(wholeArchiveFront));
 		//System.out.println("front:"+front+"\n whole archive:" + archive);
-		System.out.println("front size:"+front.size()+"\t whole archive size:" + archive.values().size());
+		//System.out.println("front size:"+front.size()+"\t whole archive size:" + archive.values().size());
 		return front.size();
 		//return front;
 	}
@@ -419,11 +538,18 @@ public class MOMEArchive<T> {
 	 * @return	a float array containing the score values
 	 */
 	// TODO: We may not need this, but if we do, it will be for logging purposes
+	//this doesn't work due to behavior index score being mapelites bin index specific
 	public float[] turnVectorScoresIntoFloatArray(Vector<Score<T>> scoresList) {
+		System.out.println("in vector to float");
 		float[] result = new float[scoresList.size()];
 		for(int i = 0; i < result.length; i++) {
 			Score<T> score = scoresList.get(i);
-			result[i] = score == null ? Float.NEGATIVE_INFINITY : new Double(score.behaviorIndexScore(i)).floatValue();
+			System.out.println("score:"+score);
+			System.out.println(" what is this? " + score.behaviorIndexScore());
+
+
+			//result[i] = score == null ? Float.NEGATIVE_INFINITY : new Double(score.behaviorIndexScore(i)).floatValue();
+			result[i] = new Double(score.behaviorIndexScore(2)).floatValue();
 		}
 		System.out.println("vector into FloatArray:"+result);
 
@@ -442,7 +568,7 @@ public class MOMEArchive<T> {
 //			MMNEAT.main(("runNumber:1 randomSeed:99 maximumMOMESubPopulationSize:2 numVectorIndexMutations:1 polynomialMutation:false minecraftXRange:5 minecraftYRange:5 minecraftZRange:5 minecraftRewardFastFlyingMachines:false minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.IntegersToVolumeGenerator minecraftChangeCenterOfMassFitness:false minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.RedstoneQuartzBlockSet trials:1 mu:10 maxGens:1 minecraftContainsWholeMAPElitesArchive:false forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:false mating:true fs:false ea:edu.southwestern.evolution.mome.MOME experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:10 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedIntegerValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:false parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:testing log:Testing-TESTING saveTo:TESTING mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesRedstoneVSQuartzBinLabels minecraftTypeCountFitness:true minecraftDesiredBlockType:"+BlockType.REDSTONE_BLOCK.ordinal()+" crossover:edu.southwestern.evolution.crossover.ArrayCrossover").split(" ")); 
 
 //			MMNEAT.main(("runNumber:105 randomSeed:99							   numVectorIndexMutations:1 polynomialMutation:false minecraftXRange:5 minecraftYRange:5 minecraftZRange:5 minecraftRewardFastFlyingMachines:false minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.IntegersToVolumeGenerator minecraftChangeCenterOfMassFitness:false minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.RedstoneQuartzBlockSet trials:1 mu:10 maxGens:1 minecraftContainsWholeMAPElitesArchive:false 											launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:true mating:true fs:false ea:edu.southwestern.evolution.mapelites.MAPElites experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:10 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.BoundedIntegerValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:false parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:testing
-			MMNEAT.main(("runNumber:2 randomSeed:99 maximumMOMESubPopulationSize:2 numVectorIndexMutations:1 polynomialMutation:false minecraftXRange:5 minecraftYRange:5 minecraftZRange:5 minecraftRewardFastFlyingMachines:false minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.IntegersToVolumeGenerator minecraftChangeCenterOfMassFitness:false minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.RedstoneQuartzBlockSet trials:1 mu:10 maxGens:1 minecraftContainsWholeMAPElitesArchive:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:false mating:true fs:false ea:edu.southwestern.evolution.mome.MOME experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:10 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedIntegerValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:false parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:testing log:Testing-TESTING saveTo:TESTING mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesRedstoneVSQuartzBinLabels minecraftTypeCountFitness:true minecraftDesiredBlockType:"+BlockType.REDSTONE_BLOCK.ordinal()+" crossover:edu.southwestern.evolution.crossover.ArrayCrossover").split(" ")); 
+			MMNEAT.main(("runNumber:2 randomSeed:99 minecraftOccupiedCountFitness:true maximumMOMESubPopulationSize:2 numVectorIndexMutations:1 polynomialMutation:false minecraftXRange:5 minecraftYRange:5 minecraftZRange:5 minecraftRewardFastFlyingMachines:false minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.IntegersToVolumeGenerator minecraftChangeCenterOfMassFitness:false minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.RedstoneQuartzBlockSet trials:1 mu:10 maxGens:1 minecraftContainsWholeMAPElitesArchive:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:false mating:true fs:false ea:edu.southwestern.evolution.mome.MOME experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:10 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedIntegerValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:false parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:testing log:Testing-TESTING saveTo:TESTING mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesRedstoneVSQuartzBinLabels minecraftTypeCountFitness:true minecraftDesiredBlockType:"+BlockType.REDSTONE_BLOCK.ordinal()+" crossover:edu.southwestern.evolution.crossover.ArrayCrossover").split(" ")); 
 
 	}
 
