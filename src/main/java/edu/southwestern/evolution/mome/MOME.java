@@ -108,10 +108,10 @@ public class MOME<T> implements SteadyStateEA<T>{
 		generationLog = new MMNEATLog("generation", false, false, false, true);
 		maxFitnessLog = new MMNEATLog("maxFitness", false, false, false, true);
 		minFitnessLog = new MMNEATLog("minFitness", false, false, false, true);
-		int numberOfObjectivesLogs = MMNEAT.task.numObjectives();
-		for (int i = 0; i < numberOfObjectivesLogs; i++) {
-			objectiveLogs[i] = new MMNEATLog(infix + i, false, false, false, true);
-		}
+//		int numberOfObjectivesLogs = MMNEAT.task.numObjectives();
+//		for (int i = 0; i < numberOfObjectivesLogs; i++) {
+//			objectiveLogs[i] = new MMNEATLog(infix + i, false, false, false, true);
+//		}
 		
 		//trying to create a file with the appropriate path name
 //		String testingStringName = "testing.txt";
@@ -384,7 +384,8 @@ public class MOME<T> implements SteadyStateEA<T>{
 			//vector/objective j bin/array i = max of bin i objective j
 			//vector 
 			//archive.getBinMapping();
-			
+			String[] objectiveStringsMax = new String[numberOfObjectives];	//objective[j] max string
+			String[] objectiveStringsMin = new String[numberOfObjectives];
 			double[][] maxScoresBinXObjective = archive.maxScorebyBinXObjective();
 			double[][] minScoresBinXObjective = archive.minScoreBinXObjective();
 			//2d array new double i=bin labels, second left empty [j] array of null entrys for each bin
@@ -392,48 +393,16 @@ public class MOME<T> implements SteadyStateEA<T>{
 				for (int jObjective = 0; jObjective < numberOfObjectives; jObjective++) {
 					//string[j objective (string for this objective)
 					//add max, add min
+					objectiveStringsMax[jObjective] = objectiveStringsMax[jObjective] + maxScoresBinXObjective[iBin][jObjective] + "\t";
+					objectiveStringsMin[jObjective] = objectiveStringsMin[jObjective] + minScoresBinXObjective[iBin][jObjective] + "\t";
 				}
-				//loop through the objectives logs
-				//objectiveLogs[i]//this is the log for i
-				//objectiveLog[i] = string max[i] 
 			}
+			for (int jObjective = 0; jObjective < objectiveStringsMax.length; jObjective++) {
+				System.out.println("max, objective:" + jObjective + "\n" +objectiveStringsMax[jObjective]);
+				System.out.println("min, objective:" + jObjective + "\n" +objectiveStringsMin[jObjective]);
+			}
+
 //			
-//			//double[archive.getNumberOfOccupiedBins()][] maxScoresBySomething = null;	//holds the max score of objective i for 
-//			for (int i = 0; i < archive.getNumberOfOccupiedBins(); i++) {
-//				Vector<Score<T>> binScores = archive.getScoresForIndex(i);
-//				//iterate through the scores and get the max for that bin's objectives
-//				for(Score<T> individualScore : binScores) {
-//					//now we are looking at the double array of this individuals scores
-//					//iterate through objectives
-//					for (int j = 0; j < numberOfObjectives; j++) {
-//						//going through the number of objectives
-//						//get max of this score vs that score
-////						maxScoresByObjective[j] = Math.max(individualScore.scores[j], maxScoresByObjective[j]);
-//						//max j holds the max score of j
-//						//just add each max to that objectives string, it will be bin max score
-//						//something j now holds this individuals score for objective j
-//					}
-//					//this would hold all the max scores for each objective for bin one
-//				}
-//			}
-			//for each bin, add max, then add min
-			//of objective ?maybe loops>?
-			
-			//string i = objective i, j equals bin
-			//array of bins, max in the objective
-			//for each bin, bin i
-				//for each objective, objective j
-			
-					//add its max,min for each objective bin i objective j min max
-//			for (int i = 0; i < archive.getNumberOfOccupiedBins(); i++) { //i iterates through archive bins	
-//				
-//				Vector<Score<T>> vectorOfAllTheScores = new Vector<Score<T>>(archive.values().size());
-//				for(Vector<Score<T>> bin : archive.va) {
-//				//something
-//			}
-//			}
-			//
-			//array = max fitness
 			double[] maxFitnessScoresArray = archive.maxFitnessInEachObjective();
 			String printString = pseudoGeneration+"\t"+archive.getNumberOfOccupiedBins()+"\t"+archive.totalNumberOfIndividualsInArchive()+"\t";
 			//numbers and tabs only
