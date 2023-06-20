@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Vector;
 import java.util.stream.Stream;
 
@@ -60,6 +61,11 @@ public class MOME<T> implements SteadyStateEA<T>{
 	private boolean archiveFileCreated = false;	//track if the archive file is made
 	private MMNEATLog archiveLog = null; // Archive elite scores
 	private MMNEATLog randomLog = null; //general random test logging for now
+	private MMNEATLog generationLog = null; //general random test logging for now
+	private MMNEATLog maxFitnessLog = null; //general random test logging for now
+	private MMNEATLog minFitnessLog = null; //general random test logging for now
+	private MMNEATLog[] objectiveLogs = null; //general random test logging for now
+	
 	
 
 	public MOME() {
@@ -99,21 +105,28 @@ public class MOME<T> implements SteadyStateEA<T>{
 		String infix = "MOMEArchive";
 		archiveLog = new MMNEATLog(infix, false, false, false, true);
 		randomLog = new MMNEATLog("random", false, false, false, true);
+		generationLog = new MMNEATLog("generation", false, false, false, true);
+		maxFitnessLog = new MMNEATLog("maxFitness", false, false, false, true);
+		minFitnessLog = new MMNEATLog("minFitness", false, false, false, true);
+		int numberOfObjectivesLogs = MMNEAT.task.numObjectives();
+		for (int i = 0; i < numberOfObjectivesLogs; i++) {
+			objectiveLogs[i] = new MMNEATLog(infix + i, false, false, false, true);
+		}
 		
 		//trying to create a file with the appropriate path name
-		String testingStringName = "testing.txt";
-		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
-		directory += (directory.equals("") ? "" : "/");
-		File testingFile = new File(directory+testingStringName);
-		try {
-			PrintStream ps = new PrintStream(testingFile);
-			ps.println("can I even print this? Yes I can!");
-			ps.close();
-		} catch (FileNotFoundException e) {
-			System.out.println("Could not create plot file: ");
-			e.printStackTrace();
-			System.exit(1);
-		}
+//		String testingStringName = "testing.txt";
+//		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
+//		directory += (directory.equals("") ? "" : "/");
+//		File testingFile = new File(directory+testingStringName);
+//		try {
+//			PrintStream ps = new PrintStream(testingFile);
+//			ps.println("can I even print this? Yes I can!");
+//			ps.close();
+//		} catch (FileNotFoundException e) {
+//			System.out.println("Could not create plot file: ");
+//			e.printStackTrace();
+//			System.exit(1);
+//		}
 		/**
 		 *  // below deals with writing logs and other lines that may be relevant later
 
@@ -362,9 +375,67 @@ public class MOME<T> implements SteadyStateEA<T>{
 			int pseudoGeneration = addedIndividualCount/individualsPerGeneration;
 
 			System.out.println("generation:"+pseudoGeneration+ " addedIndividualCount:" +addedIndividualCount);
+			
+			int numberOfObjectives = MMNEAT.task.numObjectives();
+			//for each objective
+			//go through each bin
+			//vector objective array bin?
+			//so vector j array i is objective j bin i
+			//vector/objective j bin/array i = max of bin i objective j
+			//vector 
+			//archive.getBinMapping();
+			
+			double[][] maxScoresBinXObjective = archive.maxScorebyBinXObjective();
+			double[][] minScoresBinXObjective = archive.minScoreBinXObjective();
+			//2d array new double i=bin labels, second left empty [j] array of null entrys for each bin
+			for (int iBin = 0; iBin < archive.getNumberOfOccupiedBins(); iBin++) {
+				for (int jObjective = 0; jObjective < numberOfObjectives; jObjective++) {
+					//string[j objective (string for this objective)
+					//add max, add min
+				}
+				//loop through the objectives logs
+				//objectiveLogs[i]//this is the log for i
+				//objectiveLog[i] = string max[i] 
+			}
+//			
+//			//double[archive.getNumberOfOccupiedBins()][] maxScoresBySomething = null;	//holds the max score of objective i for 
+//			for (int i = 0; i < archive.getNumberOfOccupiedBins(); i++) {
+//				Vector<Score<T>> binScores = archive.getScoresForIndex(i);
+//				//iterate through the scores and get the max for that bin's objectives
+//				for(Score<T> individualScore : binScores) {
+//					//now we are looking at the double array of this individuals scores
+//					//iterate through objectives
+//					for (int j = 0; j < numberOfObjectives; j++) {
+//						//going through the number of objectives
+//						//get max of this score vs that score
+////						maxScoresByObjective[j] = Math.max(individualScore.scores[j], maxScoresByObjective[j]);
+//						//max j holds the max score of j
+//						//just add each max to that objectives string, it will be bin max score
+//						//something j now holds this individuals score for objective j
+//					}
+//					//this would hold all the max scores for each objective for bin one
+//				}
+//			}
+			//for each bin, add max, then add min
+			//of objective ?maybe loops>?
+			
+			//string i = objective i, j equals bin
+			//array of bins, max in the objective
+			//for each bin, bin i
+				//for each objective, objective j
+			
+					//add its max,min for each objective bin i objective j min max
+//			for (int i = 0; i < archive.getNumberOfOccupiedBins(); i++) { //i iterates through archive bins	
+//				
+//				Vector<Score<T>> vectorOfAllTheScores = new Vector<Score<T>>(archive.values().size());
+//				for(Vector<Score<T>> bin : archive.va) {
+//				//something
+//			}
+//			}
+			//
 			//array = max fitness
 			double[] maxFitnessScoresArray = archive.maxFitnessInEachObjective();
-			String printString = pseudoGeneration+"\t";
+			String printString = pseudoGeneration+"\t"+archive.getNumberOfOccupiedBins()+"\t"+archive.totalNumberOfIndividualsInArchive()+"\t";
 			//numbers and tabs only
 			//string concat + loop through elements in array and concat and tab for index
 			for (int i = 0; i < maxFitnessScoresArray.length; i++) {
@@ -375,6 +446,20 @@ public class MOME<T> implements SteadyStateEA<T>{
 			for (int i = 0; i < minFitnessScoresArray.length; i++) {
 				printString = printString + minFitnessScoresArray[i] + "\t";
 			}
+			String[] allTheObjectivesThingsToLogStrings;
+			//for each string[i] i = the objective, append whatever you need to log
+				//for string[i] log all i in each objective (max[i], min[i] accross all bins, so each bin needs to return a max
+			
+			String objectiveString = "";		//string for everything being loged for that objective
+			for (int i = 0; i < MMNEAT.task.numObjectives(); i++) {
+				//here we go through things for that objective, should probably invert this somehow
+				//oh! go thorugh for each subpop. for subpop one print max
+				//after all max print min
+			}
+			//generation, max, min
+			//for all the objectives
+				//log each thing to it's particular objective
+			//maybe for number of things, log each objective
 			System.out.println(printString);
 
 			archiveLog.log(printString);

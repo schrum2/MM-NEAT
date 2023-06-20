@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
@@ -294,7 +295,38 @@ public class MOMEArchive<T> {
 	public Vector<Score<T>> getScoresForBin(Vector<Integer> keyBinCoordinates){
 		return archive.get(keyBinCoordinates);
 	}
-	
+	public Vector<Score<T>> getScoresForIndex(int index){
+		return archive.get(index);
+	}
+	//vector array of binlabels
+	public double[][] maxScorebyBinXObjective() {
+		double[][] maxScoresByBinXObjective = new double[getNumberOfOccupiedBins()][];
+		int iBin = 0;
+		for(Vector<Integer> key : archive.keySet()) {
+			double[] scores = maxFitnessInEachObjective(key);
+			for (int jObjective = 0; jObjective < scores.length; jObjective++) {
+				maxScoresByBinXObjective[iBin][jObjective] = Math.max(maxScoresByBinXObjective[iBin][jObjective], scores[jObjective]);
+			}
+			iBin++;
+		}
+		return maxScoresByBinXObjective;
+	}
+	public double[][] minScoreBinXObjective() {
+		double[][] minScoresByBinXObjective = new double[getNumberOfOccupiedBins()][];
+		int iBin = 0;
+		for(Vector<Integer> key : archive.keySet()) {
+			double[] scores = maxFitnessInEachObjective(key);
+			for (int jObjective = 0; jObjective < scores.length; jObjective++) {
+				minScoresByBinXObjective[iBin][jObjective] = Math.min(minScoresByBinXObjective[iBin][jObjective], scores[jObjective]);
+			}
+			iBin++;
+		}
+		return minScoresByBinXObjective;
+	}
+	//2d array new double i=bin labels, second left empty [j] array of null entrys for each bin
+	//loop through keyset for max (occupied bins)
+	//binlabels method to go from multi to one dimensional index
+	//call method for max scores for one bin
 	/**
 	 * this function returns the total number of individuals currently in the archive
 	 * @return total number of individuals in the archive
@@ -333,6 +365,37 @@ public class MOMEArchive<T> {
 		return maxFitnessScores;
 	}	
 	
+	/**
+	 * I need
+	 * for each objective
+	 * for each bin
+	 * max and min
+	 * for each bin max, for each bin min
+	 * 
+	 * @return
+	 */
+	
+//	public Vector<double[]> maxFitnessInEachObjectiveSubpopArray() {
+//		Vector<double[]> maxFitnessScores;
+//				//for max [i] ArrayUtil.doubleSpecified(MMNEAT.task.numObjectives(), Double.NEGATIVE_INFINITY);
+//		//the vector is the number of objectives
+//			//the double array is the max in 
+//		//Vector<Score<T>> subPop = archive.get(indexArchive[]);
+//		// get the sub-pop
+//		//for archive i
+//			//for objective i
+//				//add to array?
+////		for(Score<T> member : subPop) {
+////			for (int i = 0; i < maxFitnessScores.length; i++) {
+////				maxFitnessScores[i] = Math.max(maxFitnessScores[i], member.scores[i]);
+////			}
+////		}
+//		// loop through each member
+//		// Compare fitness scores to maxFitnessScores, keeping the larger values
+//		
+//		return maxFitnessScores;
+//	}
+	
 	
 	public void tryToPrintScores(Vector<Score<T>> allScores) {
 		
@@ -359,8 +422,8 @@ public class MOMEArchive<T> {
 //		for(int i = 0; i < archive.size(); i++) {
 //			
 			for(Score<T> member : allScores) {
-				for (int j = 0; j < maxFitnessScores.length; j++) {
-					maxFitnessScores[j] = Math.max(maxFitnessScores[j], member.scores[j]);
+				for (int j = 0; j < maxFitnessScores.length; j++) {		//j is the objective
+					maxFitnessScores[j] = Math.max(maxFitnessScores[j], member.scores[j]);	//max for j objective compared with member j objective
 				}
 			}
 //		}
@@ -368,6 +431,22 @@ public class MOMEArchive<T> {
 		return maxFitnessScores;
 	}
 	
+	public void maxFitnessVectorBinArrayObjectiveArrayScore() {
+		//for vector bin i
+			//for obective j
+				//max score
+	}
+	//ma in vector of scores
+	public void maxScoreForEachObjectiveInVector(Vector<Score<T>> scoresListOfOneBin, int numberOfObjectives) {
+		double[] maxScoresOfEachObjective = ArrayUtil.doubleSpecified(numberOfObjectives, Double.NEGATIVE_INFINITY);
+		for(Score<T> jScore : scoresListOfOneBin) {
+			//for objective find max, min
+			for (int i = 0; i < numberOfObjectives; i++) {
+				//member.score[i] find max
+				maxScoresOfEachObjective[i] = jScore.scores[i];	//this contains the max score of member j in objective i
+			}
+		}
+	}
 	//This should probably be passed maybe something else?
 	//Min fitness in each objective across all scores in the archive
 	
