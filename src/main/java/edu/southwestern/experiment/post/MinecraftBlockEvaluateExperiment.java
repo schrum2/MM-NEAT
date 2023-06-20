@@ -4,6 +4,7 @@ package edu.southwestern.experiment.post;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -47,6 +48,7 @@ public class MinecraftBlockEvaluateExperiment implements Experiment{
 	public void run() {
 //		try {
 			seen = new HashSet<>();
+			HashMap<List<Block>, String> fileNames = new HashMap<>();
 			File file = new File(dir);
 			if(file.isDirectory()) {
 				int count = 0;
@@ -58,6 +60,7 @@ public class MinecraftBlockEvaluateExperiment implements Experiment{
 						try {
 							List<Block> shiftedBlocks = MinecraftBlockRenderExperiment.shiftBlocks(new File(dir + File.separator + individual));
 							seen.add(shiftedBlocks); // Won't add duplicates
+							fileNames.put(shiftedBlocks, individual);
 						} catch(Exception e) {
 							System.out.println("Error adding/reading "+individual);
 							e.printStackTrace();
@@ -80,7 +83,7 @@ public class MinecraftBlockEvaluateExperiment implements Experiment{
 							System.out.print(fitnessFunctions.get(j).getClass().getSimpleName() + ": ");
 							System.out.println(fitnessScores[j]);
 						}
-						
+						System.out.println("Currently watching: "+fileNames.get(seenList[i]));
 						System.out.println("Press enter to continue, 'b' to go back, 'r' to repeat");
 						String input = MiscUtil.waitForReadStringAndEnterKeyPress();
 						if(input.equals("b")) i-=2;
