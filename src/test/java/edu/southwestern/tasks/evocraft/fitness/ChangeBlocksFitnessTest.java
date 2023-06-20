@@ -38,6 +38,7 @@ public class ChangeBlocksFitnessTest {
 
 	@Before
 	public void setUp() throws Exception {
+		CommonConstants.netio = false; // Don't save if shapeIsWorthSaving
 		testInstance = new ChangeBlocksFitness();
 		CommonConstants.watch = false; // TOO MUCH DEBUGGING INFO // Displays debugging info
 	}
