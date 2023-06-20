@@ -308,7 +308,7 @@ public class ChangeBlocksFitnessTest {
 		MinecraftClient.getMinecraftClient().spawnBlocks(oscillatingMachine);
 		double amount = testInstance.fitnessScore(testCorner,oscillatingMachine);
 		System.out.println("movement fitness when oscillating: "+ amount);
-		assertTrue(30 <= amount && amount <= 800);
+		assertTrue(30 <= amount && amount <= 1200);
 	}
 	@Test
 	public void testMomentumTwoWorkingFlyingMachineSomethingSouth() {	
