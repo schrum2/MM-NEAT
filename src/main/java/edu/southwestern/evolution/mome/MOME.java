@@ -24,6 +24,7 @@ import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.util.PopulationUtil;
 import edu.southwestern.util.PythonUtil;
+import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.stats.StatisticsUtilities;
@@ -386,20 +387,52 @@ public class MOME<T> implements SteadyStateEA<T>{
 			//archive.getBinMapping();
 			String[] objectiveStringsMax = new String[numberOfObjectives];	//objective[j] max string
 			String[] objectiveStringsMin = new String[numberOfObjectives];
-			double[][] maxScoresBinXObjective = archive.maxScorebyBinXObjective();
-			double[][] minScoresBinXObjective = archive.minScoreBinXObjective();
+			for (int jObjective = 0; jObjective < numberOfObjectives; jObjective++) {
+				objectiveStringsMax[jObjective] =  pseudoGeneration+"\t";
+				objectiveStringsMin[jObjective] =  pseudoGeneration+"\t";
+				//System.out.println("first objectiveStringsMax:"+objectiveStringsMax[jObjective]);
+			}
+			
+			
+			//
+			double[][] maxScoresByBinXObjective = new double[archive.oneDBinIndex().length][];
+			
+//			for(Vector<Integer> key : archive.keysetVectors()) {
+//				
+//				int oneDBinIndex = archive.mapping.oneDimensionalIndex(ArrayUtil.intArrayFromArrayList(key));
+//				maxScoresByBinXObjective[oneDBinIndex] = scores;
+//
+//			}
+//			double[][] maxScoresBinXObjective = archive.maxScorebyBinXObjective();
+			int[] oneDBinIndex = archive.oneDBinIndex();
+			//double[][] maxScoresBinXObjective = new double[archive.binLabelsSize()][];
+			double[][] maxScoresBinXObjective = new double[archive.binLabelsSize()][];
+			maxScoresBinXObjective = archive.maxScorebyBinXObjective();
+
+			double[][] minScoresBinXObjective = new double[archive.binLabelsSize()][];
+			minScoresBinXObjective = archive.minScoreBinXObjective();
+			//double[][] minScoresBinXObjective = archive.minScoreBinXObjective();
 			//2d array new double i=bin labels, second left empty [j] array of null entrys for each bin
-			for (int iBin = 0; iBin < archive.getNumberOfOccupiedBins(); iBin++) {
+			for (int iBin = 0; iBin < archive.binLabelsSize(); iBin++) {
+				
 				for (int jObjective = 0; jObjective < numberOfObjectives; jObjective++) {
 					//string[j objective (string for this objective)
 					//add max, add min
-					objectiveStringsMax[jObjective] = objectiveStringsMax[jObjective] + maxScoresBinXObjective[iBin][jObjective] + "\t";
-					objectiveStringsMin[jObjective] = objectiveStringsMin[jObjective] + minScoresBinXObjective[iBin][jObjective] + "\t";
+					//System.out.println("for loop");
+					System.out.println("objectiveStringsMax:"+objectiveStringsMax[jObjective]);
+					//System.out.println("objectiveStringsMin:"+objectiveStringsMin[jObjective]);
+					System.out.println("maxScore:"+maxScoresBinXObjective[oneDBinIndex[iBin]][jObjective]);
+					//System.out.println("minScore:"+minScoresBinXObjective[oneDBinIndex[iBin]][jObjective]);
+
+					//" addedIndividualCount:" +addedIndividualCount);
+
+					objectiveStringsMax[jObjective] = objectiveStringsMax[jObjective] + maxScoresBinXObjective[oneDBinIndex[iBin]][jObjective] + "\t";
+//					objectiveStringsMin[jObjective] = objectiveStringsMin[jObjective] + minScoresBinXObjective[iBin][jObjective] + "\t";
 				}
 			}
 			for (int jObjective = 0; jObjective < objectiveStringsMax.length; jObjective++) {
 				System.out.println("max, objective:" + jObjective + "\n" +objectiveStringsMax[jObjective]);
-				System.out.println("min, objective:" + jObjective + "\n" +objectiveStringsMin[jObjective]);
+				//System.out.println("min, objective:" + jObjective + "\n" +objectiveStringsMin[jObjective]);
 			}
 
 //			

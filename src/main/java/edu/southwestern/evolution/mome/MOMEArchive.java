@@ -8,6 +8,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentHashMap.KeySetView;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.mapelites.BinLabels;
@@ -309,33 +310,41 @@ public class MOMEArchive<T> {
 			
 			int oneDBinIndex = mapping.oneDimensionalIndex(ArrayUtil.intArrayFromArrayList(key));
 			maxScoresByBinXObjective[oneDBinIndex] = scores;
-			
-			//System.out.println("keyset loop key:" + key);
-//			for(int jObjective = 0; jObjective < numObjective; jObjective++) {
-//				System.out.println("in for loop");
-//				System.out.println("jObjective:" + jObjective);
-//				System.out.println("scores[j]:" + scores[jObjective]);
-//				//maxScoresByBinXObjective[iBin][jObjective] = 5;
-//				System.out.println("max:" + maxScoresByBinXObjective[iBin][jObjective]);
-//
-//
-//				System.out.println("object loop, objectivej:" + jObjective + " score" + scores[jObjective] + " max:" + maxScoresByBinXObjective[iBin][jObjective]);
-//
-//				maxScoresByBinXObjective[iBin][jObjective] = Math.max(maxScoresByBinXObjective[iBin][jObjective], scores[jObjective]);
-//			}
 
 		}
 		return maxScoresByBinXObjective;
 	}
-	public double[][] minScoreBinXObjective() {
-		double[][] minScoresByBinXObjective = new double[getNumberOfOccupiedBins()][];
-		int iBin = 0;
+	public Vector<Vector<Integer>> keysetVectors() {
+		Vector<Vector<Integer>> keysetVectors = null;
+		int i = 0;
 		for(Vector<Integer> key : archive.keySet()) {
-			double[] scores = maxFitnessInEachObjective(key);
-			for (int jObjective = 0; jObjective < scores.length; jObjective++) {
-				minScoresByBinXObjective[iBin][jObjective] = Math.min(minScoresByBinXObjective[iBin][jObjective], scores[jObjective]);
-			}
-			iBin++;
+			//add to something
+			keysetVectors.add(key);
+		}
+		return keysetVectors;
+	}
+	int binLabelsSize() {
+		return mapping.binLabels().size();
+	}
+	int[] oneDBinIndex() {
+		int[] oneDBinIndex = new int[mapping.binLabels().size()];
+		int i = 0;
+		for(Vector<Integer> key : archive.keySet()) {
+			//add to something
+			oneDBinIndex[i] = mapping.oneDimensionalIndex(ArrayUtil.intArrayFromArrayList(key));
+		}
+		return oneDBinIndex;
+	}
+	public double[][] minScoreBinXObjective() {
+		
+		double[][] minScoresByBinXObjective = new double[mapping.binLabels().size()][];
+		for(Vector<Integer> key : archive.keySet()) {
+
+			double[] scores = minFitnessInEachObjective(key);
+			
+			int oneDBinIndex = mapping.oneDimensionalIndex(ArrayUtil.intArrayFromArrayList(key));
+			minScoresByBinXObjective[oneDBinIndex] = scores;
+
 		}
 		return minScoresByBinXObjective;
 	}
@@ -380,6 +389,21 @@ public class MOMEArchive<T> {
 		
 		return maxFitnessScores;
 	}	
+	
+	public double[] minFitnessInEachObjective(Vector<Integer> keyBinCoordinates) {
+		double[] minFitnessScores = ArrayUtil.doubleSpecified(MMNEAT.task.numObjectives(), Double.NEGATIVE_INFINITY);
+		Vector<Score<T>> subPop = archive.get(keyBinCoordinates);
+		// get the sub-pop
+		for(Score<T> member : subPop) {
+			for (int i = 0; i < minFitnessScores.length; i++) {
+				minFitnessScores[i] = Math.min(minFitnessScores[i], member.scores[i]);
+			}
+		}
+		// loop through each member
+		// Compare fitness scores to maxFitnessScores, keeping the larger values
+		
+		return minFitnessScores;
+	}
 	
 	/**
 	 * I need
