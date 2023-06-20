@@ -165,7 +165,9 @@ public class ChangeBlocksFitnessTest {
 	}
 	@Test
 	public void testTwoWorkingFlyingMachineSomethingSouth() {	
+		assert !CommonConstants.netio;
 		Parameters.initializeParameterCollections(new String[] {"minecraftClearWithGlass:false","watch:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+		assert !CommonConstants.netio;
 
 		System.out.println("Unit test: testTwoWorkingFlyingMachineSomethingSouth");
 
@@ -197,7 +199,7 @@ public class ChangeBlocksFitnessTest {
 		testBlockSet = MinecraftUtilClass.shiftBlocksBetweenCorners(unidentifiedDirectionFlyingMachine, originalShapeCoordinates, augmentedCoordinates);
 
 		testBlockSet.addAll(southFlyingMachine);
-
+		assert !CommonConstants.netio;
 		assertEquals(800.0,testInstance.fitnessScore(testCorner,testBlockSet),100.0);
 	}
 	@Test
@@ -244,7 +246,9 @@ public class ChangeBlocksFitnessTest {
 	}
 	@Test
 	public void testMomentumOscillatingMachine() {
-		Parameters.initializeParameterCollections(new String[] {"watch:true", "minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:false","shortTimeBetweenMinecraftReads:" + 100L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet","minecraftChangeBlocksMomentum:" + true});
+		assert !CommonConstants.netio;
+		Parameters.initializeParameterCollections(new String[] {"watch:true", "netio:false", "minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:false","shortTimeBetweenMinecraftReads:" + 100L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet","minecraftChangeBlocksMomentum:" + true});
+		assert !CommonConstants.netio;
 		
 		System.out.println("testOscillatingMachine");
 
@@ -266,6 +270,7 @@ public class ChangeBlocksFitnessTest {
 
 		// When the time is small (50L) then the score becomes large
 		MinecraftClient.getMinecraftClient().spawnBlocks(oscillatingMachine);
+		assert !CommonConstants.netio;
 		double amount = testInstance.fitnessScore(testCorner,oscillatingMachine);
 		System.out.println("movement fitness when oscillating: "+ amount);
 		assertTrue(30 <= amount && amount <= 500);
