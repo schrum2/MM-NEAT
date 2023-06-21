@@ -18,7 +18,7 @@ import edu.southwestern.util.datastructures.Vertex;
  * then it will have a positive non-zero fitness score (which is
  * dependent on the mandatory wait time parameter). Otherwise, the
  * structure is stagnant, meaning it has a fitness of 0.
- * @author Melanie Richey
+ * @author Melanie Richey and substantial revisions by Joanna Lewis
  *
  */
 public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFunction {
@@ -83,35 +83,69 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 			return calculateFinalScore(history, shapeCorner, originalBlocks);
 		}
 
-		// Shape was not empty before, but it is now, so it must have flown away. Award max fitness
-		if(newShapeBlockList.isEmpty()) { // If list is empty now (but was not before) then shape has flown completely away
-			if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": Shape empty now: max fitness!");
-			// TODO: This is a problem if the whole shape explodes!
+		// Shape was not empty before, but it is now, so it may have flown away. However, with TNT, it may have simply exploded.
+		// Make sure the center of mass actually changed.
+		
+		Vertex initialCenterOfMass = MinecraftUtilClass.getCenterOfMass(originalBlocks);
+		Vertex farthestCenterOfMass = this.getFarthestCenterOfMass(history, initialCenterOfMass);
+		// check for sufficient movement from start point before awarding flying machine fitness
+		if(farthestCenterOfMass.distance(initialCenterOfMass) > sufficientDistanceForFlying()) {
+			if(newShapeBlockList.isEmpty()) { 
+				// If list is empty now (but was not before) then shape has flown completely away. 
+				if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": Shape empty now: max fitness!");
+				return maxFitness();
+			}
 
-			return maxFitness();
-		}
-		
-		List<Block> previousBlocks = history.get(history.size() - 2).t2; // the block list for the second to last 
-		Vertex lastCenterOfMass = MinecraftUtilClass.getCenterOfMass(previousBlocks);
-		Vertex nextCenterOfMass = MinecraftUtilClass.getCenterOfMass(newShapeBlockList);
-		
-		// Only consider the shape to not be moving if the center of mass is the same AND the entire block list is the same
-		if(Parameters.parameters.booleanParameter("minecraftEndEvalNoMovement") && lastCenterOfMass.equals(nextCenterOfMass) && previousBlocks.equals(newShapeBlockList)) {
-			// This means that it hasn't moved, so move on to the next.
-			// BUT What if it moves back and forth and returned to its original position?
-			if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": No movement.");
+			List<Block> previousBlocks = history.get(history.size() - 2).t2; // the block list for the second to last 
+			Vertex lastCenterOfMass = MinecraftUtilClass.getCenterOfMass(previousBlocks);
+			Vertex nextCenterOfMass = MinecraftUtilClass.getCenterOfMass(newShapeBlockList);
+
+			// Only consider the shape to not be moving if the center of mass is the same AND the entire block list is the same
+			if(Parameters.parameters.booleanParameter("minecraftEndEvalNoMovement") && lastCenterOfMass.equals(nextCenterOfMass) && previousBlocks.equals(newShapeBlockList)) {
+				// This means that it hasn't moved, so move on to the next.
+				// BUT What if it moves back and forth and returned to its original position?
+				if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": No movement.");
+
+				// check if it's missing any blocks from the original
+				Double result = ifSufficientBlocksDepartedThenMaximumFitnessWithPenalty(originalBlocks.size(), newShapeBlockList);
+				// A null result means the shape did not fly away
+				if(result != null) {
+					// Shape flew away (at leat mostly), so get a high fitness early
+					return result;
+				}		
+			}
+		} else {
+			if(CommonConstants.watch) System.out.println("Shape did not move far enough to count as a flying machine");
 			
-			// check if it's missing any blocks from the original
-			Double result = ifSufficientBlocksDepartedThenMaximumFitnessWithPenalty(originalBlocks.size(), newShapeBlockList);
-			// A null result means the shape did not fly away
-			if(result != null) {
-				// Shape flew away (at leat mostly), so get a high fitness early
-				return result;
-			}		
+			MinecraftCoordinates shapeCorner = MinecraftUtilClass.minCoordinates(originalBlocks);
+			if(newShapeBlockList.isEmpty()) { 
+				if(CommonConstants.watch) System.out.println("Shape completely gone. Blown up?");
+				return calculateFinalScore(history, shapeCorner, originalBlocks);
+			}
+
+			List<Block> previousBlocks = history.get(history.size() - 2).t2; // the block list for the second to last 
+			Vertex lastCenterOfMass = MinecraftUtilClass.getCenterOfMass(previousBlocks);
+			Vertex nextCenterOfMass = MinecraftUtilClass.getCenterOfMass(newShapeBlockList);
+
+			// Only consider the shape to not be moving if the center of mass is the same AND the entire block list is the same
+			if(Parameters.parameters.booleanParameter("minecraftEndEvalNoMovement") && lastCenterOfMass.equals(nextCenterOfMass) && previousBlocks.equals(newShapeBlockList)) {
+				if(CommonConstants.watch) System.out.println("Shape mostly gone. Partially blown up?");
+				return calculateFinalScore(history, shapeCorner, originalBlocks);
+			}
 		}
 		return null;
 	}
 	
+	/**
+	 * Minimum distance that center of mass must move to count a machine as flying
+	 * @return minimum flying distance
+	 */
+	private double sufficientDistanceForFlying() {
+		MinecraftCoordinates offsets = MinecraftUtilClass.emptySpaceOffsets();
+		// At least 3/4 of the distance to the edge of the evaluation area
+		return Math.min(offsets.x(), Math.min(offsets.y(), offsets.z()))*0.75;
+	}
+
 	/**
 	 * This checks that a shape is actually moving by going through its history.
 	 * returns false if the shape has the same center of mass consistently and same block list.
@@ -179,6 +213,10 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 		for(int i = 1; i < history.size(); i++) {
 			Vertex nextCenterOfMass = MinecraftUtilClass.getCenterOfMass(history.get(i).t2);
 			
+			// Vertex will have NaN components if the shape was empty, in which case we want the 
+			// lastCenterOfMass to remain the last value that had no NaN values in it.
+			if(nextCenterOfMass.anyNaN()) break;
+			
 			//if evaluating and rewarding fast flying machines
 			if(Parameters.parameters.booleanParameter("minecraftRewardFastFlyingMachines")) {
 				Double fitnessResult = definiteEarlyEvaluationTerminationResult(originalBlocks, history, history.get(i).t2);
@@ -194,8 +232,12 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 		}
 
 		// It is possible that blocks flew away, but some remaining component kept oscillating until the end. This is still a flying machine though.
-		Double result = ifSufficientBlocksDepartedThenMaximumFitnessWithPenalty(originalBlocks.size(), history.get(history.size() - 1).t2);
-		if(result != null) return result;	//if there are enough departed blocks to count as flying, return the resulting score
+		Vertex farthestCenterOfMass = this.getFarthestCenterOfMass(history, initialCenterOfMass);
+		// check for sufficient movement from start point before awarding flying machine fitness
+		if(farthestCenterOfMass.distance(initialCenterOfMass) > sufficientDistanceForFlying()) {
+			Double result = ifSufficientBlocksDepartedThenMaximumFitnessWithPenalty(originalBlocks.size(), history.get(history.size() - 1).t2);
+			if(result != null) return result;	//if there are enough departed blocks to count as flying, return the resulting score
+		}	
 		
 		// Machine did not fly away
 		double fitness = totalChangeDistance;		
@@ -213,7 +255,7 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 	 * @param history record of the shape
 	 * @param initialCenterOfMass initial center of mass
 	 * @param lastCenterOfMass center of mass at the last point
-	 * @return center of ,ass that was the farthest away from the initial
+	 * @return center of mass that was the farthest away from the initial
 	 */
 	public Vertex getFarthestCenterOfMass(ArrayList<Pair<Long,List<Block>>> history, Vertex initialCenterOfMass) {
 		Vertex farthestCenterOfMass = initialCenterOfMass;
