@@ -573,40 +573,42 @@ public class ChangeCenterOfMassFitnessTest {
 	// Passes
 	@Test
 	public void testChangeInPosition() {
-		Parameters.initializeParameterCollections(new String[] {"minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:false","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+		Parameters.initializeParameterCollections(new String[] {"watch:true", "minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:false","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
 		MinecraftCoordinates cornerBS2 = new MinecraftCoordinates(0,11,-5);
 
 		//check and clear coordinates
 		MinecraftCoordinates testCorner = MinecraftClient.getMinecraftClient().checkForYOutOfBoundsAndShiftUp(cornerBS2);
 		MinecraftClient.getMinecraftClient().clearEvaluationSpaceForJUnitTests(testCorner);
 		
+		System.out.println("corner = "+testCorner);
+		
 		// List of flying machine blocks that should move
 		// Not really sure what the fitness would be after 10 seconds
 		ArrayList<Block> blockSet2 = new ArrayList<>();
 		// Bottom layer
-		blockSet2.add(new Block(1,11,1,BlockType.PISTON,Orientation.NORTH));
-		blockSet2.add(new Block(1,11,0,BlockType.SLIME,Orientation.NORTH));
-		blockSet2.add(new Block(1,11,-1,BlockType.STICKY_PISTON,Orientation.SOUTH));
-		blockSet2.add(new Block(1,11,-2,BlockType.PISTON,Orientation.NORTH));
-		blockSet2.add(new Block(1,11,-4,BlockType.SLIME,Orientation.NORTH));
+		blockSet2.add(new Block(1,1,5,BlockType.PISTON,Orientation.NORTH));
+		blockSet2.add(new Block(1,1,4,BlockType.SLIME,Orientation.NORTH));
+		blockSet2.add(new Block(1,1,3,BlockType.STICKY_PISTON,Orientation.SOUTH));
+		blockSet2.add(new Block(1,1,2,BlockType.PISTON,Orientation.NORTH));
+		blockSet2.add(new Block(1,1,0,BlockType.SLIME,Orientation.NORTH));
 		// Top layer
-		blockSet2.add(new Block(1,12,0,BlockType.REDSTONE_BLOCK,Orientation.NORTH));
-		blockSet2.add(new Block(1,12,-4,BlockType.REDSTONE_BLOCK,Orientation.NORTH));
+		blockSet2.add(new Block(1,2,4,BlockType.REDSTONE_BLOCK,Orientation.NORTH));
+		blockSet2.add(new Block(1,2,0,BlockType.REDSTONE_BLOCK,Orientation.NORTH));
 		// Activate
-		blockSet2.add(new Block(1,12,-1,BlockType.QUARTZ_BLOCK,Orientation.NORTH));
+		blockSet2.add(new Block(1,2,3,BlockType.QUARTZ_BLOCK,Orientation.NORTH));
 
-		System.out.println("shortTimeBetweenMinecraftReads = " + Parameters.parameters.longParameter("shortTimeBetweenMinecraftReads") + "testChangeInPosition");
+		System.out.println("shortTimeBetweenMinecraftReads = " + Parameters.parameters.longParameter("shortTimeBetweenMinecraftReads") + " testChangeInPosition");
 		
 		//get the min coordinates of the shape to create the shifted shape block list
 		MinecraftCoordinates originalShapeCoordinates = MinecraftUtilClass.minCoordinates(blockSet2);
 		List<Block> listBlockSet = MinecraftUtilClass.shiftBlocksBetweenCorners(blockSet2, originalShapeCoordinates, testCorner);
 
 		
-		MinecraftClient.getMinecraftClient().spawnBlocks(listBlockSet);
+		//MinecraftClient.getMinecraftClient().spawnBlocks(listBlockSet);
 		// Machine flies away completely
 		System.out.println("Flying away should earn "+ff.maxFitness());
 		//System.out.println("Second flying machine fitness: " + ff.fitnessScore(cornerBS2));
-		assertEquals(ff.maxFitness(), ff.fitnessScore(cornerBS2,listBlockSet), 0.0);
+		assertEquals(ff.maxFitness(), ff.fitnessScore(testCorner,listBlockSet), 0.0);
 	}
 	
 	// Passes
