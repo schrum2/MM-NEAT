@@ -62,9 +62,9 @@ public class MOME<T> implements SteadyStateEA<T>{
 	private boolean archiveFileCreated = false;	//track if the archive file is made
 	private MMNEATLog archiveLog = null; // Archive elite scores
 	private MMNEATLog randomLog = null; //general random test logging for now
-	private MMNEATLog generationLog = null; //general random test logging for now
-	private MMNEATLog maxFitnessLog = null; //general random test logging for now
-	private MMNEATLog minFitnessLog = null; //general random test logging for now
+//	private MMNEATLog generationLog = null; //general random test logging for now
+//	private MMNEATLog maxFitnessLog = null; //general random test logging for now
+//	private MMNEATLog minFitnessLog = null; //general random test logging for now
 	private MMNEATLog[] objectiveLogs = null; //general random test logging for now
 	
 	
@@ -102,18 +102,35 @@ public class MOME<T> implements SteadyStateEA<T>{
 //		this.setDiscardedIndividualCount(0);		//broke this, need to investigate later
 		this.individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
 		
+		
 		//logging
 		String infix = "MOMEArchive";
 		archiveLog = new MMNEATLog(infix, false, false, false, true);
 		randomLog = new MMNEATLog("random", false, false, false, true);
-		generationLog = new MMNEATLog("generation", false, false, false, true);
-		maxFitnessLog = new MMNEATLog("maxFitness", false, false, false, true);
-		minFitnessLog = new MMNEATLog("minFitness", false, false, false, true);
-//		int numberOfObjectivesLogs = MMNEAT.task.numObjectives();
-//		for (int i = 0; i < numberOfObjectivesLogs; i++) {
-//			objectiveLogs[i] = new MMNEATLog(infix + i, false, false, false, true);
-//		}
-		
+//		generationLog = new MMNEATLog("generation", false, false, false, true);
+//		maxFitnessLog = new MMNEATLog("maxFitness", false, false, false, true);
+//		minFitnessLog = new MMNEATLog("minFitness", false, false, false, true);
+		int numberOfObjectivesLogs = MMNEAT.task.numObjectives();
+		objectiveLogs = new MMNEATLog[numberOfObjectivesLogs];
+		for (int i = 0; i < numberOfObjectivesLogs; i++) {
+			objectiveLogs[i] = new MMNEATLog(infix + i, false, false, false, true);
+		}
+		//for testing only
+		for (int i = 0; i < objectiveLogs.length; i++) {
+			objectiveLogs[i].log("gen \t");
+			String toPrintString = "";
+			for (int j = 0; j < archive.binLabelsSize(); j++) {
+				toPrintString = toPrintString +j+"\t";
+			}
+			objectiveLogs[i].log(toPrintString);
+		}
+		/**
+		 * for (int j = 0; j < maxScoresForOneObjective.length; j++) {
+					if(maxScoresForOneObjective[j] != Double.NEGATIVE_INFINITY) {
+						System.out.println("score#:"+j+ " :"+ maxScoresForOneObjective[j]);
+					}
+				}
+		 */
 		//trying to create a file with the appropriate path name
 //		String testingStringName = "testing.txt";
 //		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
@@ -371,125 +388,58 @@ public class MOME<T> implements SteadyStateEA<T>{
 			archiveFileCreated = true;
 		}
 
+		//System.out.println("individuals per generation:"+ individualsPerGeneration + " parameter:" + Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration"));
+
 		//if an individual was added and the population count is even with the steadyStateIndividualsPerGeneration
-		if(addedIndividualCount%individualsPerGeneration == 0 && populationChangeCheck) {
-			int pseudoGeneration = addedIndividualCount/individualsPerGeneration;
+		if((addedIndividualCount%individualsPerGeneration == 0) && populationChangeCheck) {
+			final int pseudoGeneration = addedIndividualCount/individualsPerGeneration;
 
 			System.out.println("generation:"+pseudoGeneration+ " addedIndividualCount:" +addedIndividualCount);
 			
 			int numberOfObjectives = MMNEAT.task.numObjectives();
-			//for each objective
-			//go through each bin
-			//vector objective array bin?
-			//so vector j array i is objective j bin i
-			//vector/objective j bin/array i = max of bin i objective j
-			//vector 
-			//archive.getBinMapping();
-			String[] objectiveStringsMax = new String[numberOfObjectives];	//objective[j] max string
-			String[] objectiveStringsMin = new String[numberOfObjectives];
-			for (int jObjective = 0; jObjective < numberOfObjectives; jObjective++) {
-				objectiveStringsMax[jObjective] =  pseudoGeneration+"\t";
-				objectiveStringsMin[jObjective] =  pseudoGeneration+"\t";
-				//System.out.println("first objectiveStringsMax:"+objectiveStringsMax[jObjective]);
-			}
-			
-			
-			//
-			double[][] maxScoresByBinXObjective = new double[archive.oneDBinIndex().length][];
-			
-//			for(Vector<Integer> key : archive.keysetVectors()) {
-//				
-//				int oneDBinIndex = archive.mapping.oneDimensionalIndex(ArrayUtil.intArrayFromArrayList(key));
-//				maxScoresByBinXObjective[oneDBinIndex] = scores;
-//
-//			}
-//			double[][] maxScoresBinXObjective = archive.maxScorebyBinXObjective();
-			int[] oneDBinIndex = archive.oneDBinIndex();
-			//double[][] maxScoresBinXObjective = new double[archive.binLabelsSize()][];
-			double[][] maxScoresBinXObjective = new double[archive.binLabelsSize()][];
-			maxScoresBinXObjective = archive.maxScorebyBinXObjective();
 
-			double[][] minScoresBinXObjective = new double[archive.binLabelsSize()][];
-			minScoresBinXObjective = archive.minScoreBinXObjective();
-			//double[][] minScoresBinXObjective = archive.minScoreBinXObjective();
-			//2d array new double i=bin labels, second left empty [j] array of null entrys for each bin
-			for (int iBin = 0; iBin < archive.binLabelsSize(); iBin++) {
-				
-				for (int jObjective = 0; jObjective < numberOfObjectives; jObjective++) {
-					//string[j objective (string for this objective)
-					//add max, add min
-					//System.out.println("for loop");
-					System.out.println("objectiveStringsMax:"+objectiveStringsMax[jObjective]);
-					//System.out.println("objectiveStringsMin:"+objectiveStringsMin[jObjective]);
-					System.out.println("maxScore:"+maxScoresBinXObjective[oneDBinIndex[iBin]][jObjective]);
-					//System.out.println("minScore:"+minScoresBinXObjective[oneDBinIndex[iBin]][jObjective]);
-
-					//" addedIndividualCount:" +addedIndividualCount);
-
-					objectiveStringsMax[jObjective] = objectiveStringsMax[jObjective] + maxScoresBinXObjective[oneDBinIndex[iBin]][jObjective] + "\t";
-//					objectiveStringsMin[jObjective] = objectiveStringsMin[jObjective] + minScoresBinXObjective[iBin][jObjective] + "\t";
+			//below is for objectives logging
+			double[][] maxScoresBinXObjective = archive.maxScorebyBinXObjective(); //maxScores[bin][objective]
+			double[][] minScoresBinXObjective = archive.minScorebyBinXObjective(); //minScores[bin][objective]
+	//initialize log with info labels
+			// For each objective log the max scores for all bins
+			for(int i = 0; i < maxScoresBinXObjective[0].length; i++) {
+				Double[] maxScoresForOneObjective = ArrayUtils.toObject(ArrayUtil.column(maxScoresBinXObjective, i));
+				objectiveLogs[i].log(pseudoGeneration + "\t" + StringUtils.join(maxScoresForOneObjective, " \t").replaceAll("-Infinity", "X"));
+				System.out.println("bin:"+i+ " maxScore:");
+				for (int j = 0; j < maxScoresForOneObjective.length; j++) {
+					if(maxScoresForOneObjective[j] != Double.NEGATIVE_INFINITY) {
+						System.out.println("score#:"+j+ " :"+ maxScoresForOneObjective[j]);
+					}
 				}
-			}
-			for (int jObjective = 0; jObjective < objectiveStringsMax.length; jObjective++) {
-				System.out.println("max, objective:" + jObjective + "\n" +objectiveStringsMax[jObjective]);
-				//System.out.println("min, objective:" + jObjective + "\n" +objectiveStringsMin[jObjective]);
-			}
 
-//			
-			double[] maxFitnessScoresArray = archive.maxFitnessInEachObjective();
+			}
+			for(int i = 0; i < minScoresBinXObjective[0].length; i++) {
+				Double[] minScoresForOneObjective = ArrayUtils.toObject(ArrayUtil.column(minScoresBinXObjective, i));
+				objectiveLogs[i].log(pseudoGeneration + "\t" + StringUtils.join(minScoresForOneObjective, "\t").replaceAll("-Infinity", "X"));
+			}
+			
+			//below is for archive logging
+//			////////////BELOW WORKS
+			double[] maxFitnessScoresArray = archive.maxFitnessInWholeArchiveXObjective();
 			String printString = pseudoGeneration+"\t"+archive.getNumberOfOccupiedBins()+"\t"+archive.totalNumberOfIndividualsInArchive()+"\t";
-			//numbers and tabs only
-			//string concat + loop through elements in array and concat and tab for index
+			
+			//adding max fitness scores to print
+			//since all bins are put together it simply gets the match fitness score from the array
 			for (int i = 0; i < maxFitnessScoresArray.length; i++) {
 				printString = printString + maxFitnessScoresArray[i] + "\t";
-				//printString.concat(maxFitnessScoresArray[i] + "/t");
 			}
-			double[] minFitnessScoresArray = archive.maxFitnessInEachObjective();
+			//adding min fitness scores to print
+			double[] minFitnessScoresArray = archive.maxFitnessInWholeArchiveXObjective();
 			for (int i = 0; i < minFitnessScoresArray.length; i++) {
 				printString = printString + minFitnessScoresArray[i] + "\t";
 			}
-			String[] allTheObjectivesThingsToLogStrings;
-			//for each string[i] i = the objective, append whatever you need to log
-				//for string[i] log all i in each objective (max[i], min[i] accross all bins, so each bin needs to return a max
+			////////////////ABOVE WORKS
 			
-			String objectiveString = "";		//string for everything being loged for that objective
-			for (int i = 0; i < MMNEAT.task.numObjectives(); i++) {
-				//here we go through things for that objective, should probably invert this somehow
-				//oh! go thorugh for each subpop. for subpop one print max
-				//after all max print min
-			}
-			//generation, max, min
-			//for all the objectives
-				//log each thing to it's particular objective
-			//maybe for number of things, log each objective
 			System.out.println(printString);
 
 			archiveLog.log(printString);
 
-			//archive.tryToPrintScores(archive.getWholeArchiveScores());
-			//System.out.println("printing archive log stuff archive size:"+archive.totalNumberOfIndividualsInArchive()+ "\n maxfitness thing:" );
-			//archive.maxFitnessInEachObjectivePrint(archive.maxFitnessInEachObjective());
-			//max fitness, min fitness, archive size
-
-		
-			
-			//get score of all individuals from all bins in float, float
-			//float[] allScoresFloat = archive.turnVectorScoresIntoFloatArray(archive.getWholeArchiveScores());
-//			Float[] elite = ArrayUtils.toObject(allScoresFloat);
-			//final int pseudoGenerationFromMapElites = addedIndividualCount/individualsPerGeneration;
-//			System.out.println("printing archive log stuff pseudo gen:"+pseudoGeneration+ "\t" + StringUtils.join(elite, "\t").replaceAll("-Infinity", "X"));
-
-			//archiveLog.log(pseudoGeneration + "\t" + StringUtils.join(elite, "\t").replaceAll("-Infinity", "X"));
-//			Float maximumFitness = StatisticsUtilities.maximum(elite);
-			//this creates a Float array of the scores of all individuals currently in the aarchive
-			//Float[] allCurrentIndividuals = ArrayUtils.toObject(archive.turnVectorScoresIntoFloatArray(archive.getWholeArchiveScores()));
-			//not sure about above line
-			//fillLog.log(pseudoGeneration + "\t" + numFilledBins   + "\t" + qdScore    + "\t" + maximumFitness + "\t" + iterationsWithoutEliteCounter + 
-            //"\t" + restrictedFilled+ "\t" +restrictedQD+ "\t" +restrictedMaxFitness);
-			
-			//Float[] elite = ArrayUtils.toObject(archive.turnVectorScoresIntoFloatArray(archive.getWholeArchiveScores()));
-			//archiveLog.log(pseudoGeneration + "\t" + StringUtils.join(elite, "\t").replaceAll("-Infinity", "X"));
-			
 //TODO: marker for file input
 			randomLog.log("pseudo generation" +pseudoGeneration + "\t occupiedBins:" + archive.getNumberOfOccupiedBins() + "\t number of current individuals in archive:" + archive.totalNumberOfIndividualsInArchive() + 
 					"\n maxSubPop in archive:" + archive.maxSubPopulationSizeInWholeArchive() + "\t minSubPop in archive:"+ archive.minSubPopulationSizeInWholeArchive()+
@@ -665,7 +615,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 			//had to have a server running first
 			//there is an issue with bin labels - MMNEAT.java method getArchiveBinLabelsClass & getArchive
 			//Attempted to get archive bin label class without using MAP Elites or a psuedo-archive
-			MMNEAT.main("runNumber:98 randomSeed:2 minecraftMaximizeVolumeFitness:true trackPseudoArchive:false minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftChangeCenterOfMassFitness:true minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet trials:1 mu:100 maxGens:60000 minecraftContainsWholeMAPElitesArchive:false forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:false mating:true fs:false ea:edu.southwestern.evolution.mome.MOME experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:mometest log:MOMETest-currentlyTesting saveTo:currentlyTesting mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5 crossover:edu.southwestern.evolution.crossover.ArrayCrossover".split(" "));
+			MMNEAT.main("runNumber:98 randomSeed:2 minecraftMaximizeVolumeFitness:true trackPseudoArchive:false minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftChangeCenterOfMassFitness:true minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet trials:1 mu:100 maxGens:60000 minecraftContainsWholeMAPElitesArchive:false forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:false mating:true fs:false ea:edu.southwestern.evolution.mome.MOME experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:1000 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:mometest log:MOMETest-currentlyTesting saveTo:currentlyTesting mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5 crossover:edu.southwestern.evolution.crossover.ArrayCrossover".split(" "));
 
 			//MMNEAT.main("runNumber:7 randomSeed:2 minecraftMaximizeVolumeFitness:true trackPseudoArchive:false minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftChangeCenterOfMassFitness:true minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet trials:1 mu:100 maxGens:60000 minecraftContainsWholeMAPElitesArchive:false forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:false mating:true fs:false ea:edu.southwestern.evolution.mome.MOME experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:mometest log:MOMETest-MEObserverVectorPistonOrientation saveTo:MEObserverVectorPistonOrientation mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5 crossover:edu.southwestern.evolution.crossover.ArrayCrossover".split(" "));
 			//MMNEAT.main("runNumber:5 randomSeed:1 minecraftMaximizeVolumeFitness:true minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftChangeCenterOfMassFitness:true minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet trials:1 mu:5 maxGens:1 minecraftContainsWholeMAPElitesArchive:false forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:false mating:true fs:false ea:edu.southwestern.evolution.mome.MOME experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:5 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:mometest log:MOMETest-MEObserverVectorPistonOrientation saveTo:MEObserverVectorPistonOrientation mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5 crossover:edu.southwestern.evolution.crossover.ArrayCrossover".split(" "));
