@@ -280,7 +280,44 @@ public class MOMEArchive<T> {
 		//System.out.println("total number of individuals in archive:" + archive.values().size());
 		return archive.values().size();
 	}
-	
+
+	//Max sub pop size across all bins
+	/**
+	 * this gets the maximum population for a single bin from the whole archive
+	 * @return the number of the most individuals present in one bin
+	 */
+	public int maxSubPopulationSizeInWholeArchive() {
+		//System.out.println("maxSubPop");
+		int maxSubPop = 0;
+		Collection<Vector<Score<T>>> allVectorsOfScores = archive.values();	//this returns a collection of all the scores/values in the archive
+		for(Vector<Score<T>> scoreVector : allVectorsOfScores) {	//for each bin
+			if(scoreVector.size() > maxSubPop) {					//check population size
+				maxSubPop = scoreVector.size();	
+			}	
+		}
+		//System.out.println("maxSubPop:"+maxSubPop);
+		return maxSubPop;
+	}
+
+	//Min sub pop size of all occupied bins in the archive
+	/**
+	 * this returns the least number of individuals in a subpopulation from the whole archive
+	 * this does not include empty bins
+	 * @return the least number of individuals in a single bin from all the bin in the archive
+	 */
+	public int minSubPopulationSizeInWholeArchive() {
+		//System.out.println("minSubPop");
+		int minSubPop = MAX_SUB_POP_ALLOWED;
+		Collection<Vector<Score<T>>> allVectorsOfScores = archive.values();	//this returns a collection of all the scores/values in the archive
+		for(Vector<Score<T>> scoreVector : allVectorsOfScores) {	//for each bin
+			if((scoreVector.size() < minSubPop) && (scoreVector.size() != 0)) {					//check population size
+				minSubPop = scoreVector.size();	
+			}	
+		}
+		//System.out.println("minSubPop:"+minSubPop);
+		return minSubPop;
+	}
+
 	/**
 	 * return the total number of bins in use in the archive
 	 * @return
@@ -288,7 +325,7 @@ public class MOMEArchive<T> {
 	public int getNumberOfOccupiedBins() {
 		return archive.size();
 	}
-	
+
 	//unsure if I even need this but made a stub
 	/**
 	 * this will return a Vector of all the Scores in the archive / basically the identifier of all individuals in the archive
@@ -372,14 +409,29 @@ public class MOMEArchive<T> {
 		return maxFitnessScores;
 	}
 	
+//	MIN FITNESS FUNCTIONS BELOW
+	//maxFitnessInWholeArchiveXObjective
+	public double[] minFitnessInWholeArchiveXObjective() {
+		double[] minFitnessScores = ArrayUtil.doubleSpecified(MMNEAT.task.numObjectives(), Double.NEGATIVE_INFINITY);
+
+		Vector<Score<T>> allScores = getWholeArchiveScores();	//all the scores in the archive in one vector
+
+		for(Score<T> member : allScores) {	//for each score check if that objective's min fitness is the min overall
+			for (int j = 0; j < minFitnessScores.length; j++) {
+				minFitnessScores[j] = Math.min(minFitnessScores[j], member.scores[j]);
+			}
+		}
+		return minFitnessScores;
+	}
+
 	/**
 	 * finds the min score for all bins in all objectives, sorted by bins with an array of objective scores
 	 * same as above but minimum scores
 	 * @return minScores[bin][objective] for the whole archive
 	 */
-	//min/////////////////////////////////////////////////////
+	//maxScorebyBinXObjective
 	public double[][] minScorebyBinXObjective() {
-		//System.out.println("in max score");
+		//System.out.println("in min score");
 
 		//initialize the result variable
 		double[][] minScoresByBinXObjective = new double[mapping.binLabels().size()][];
@@ -390,37 +442,19 @@ public class MOMEArchive<T> {
 		//go through bins to grab an array of max scores for each objective for that bin
 		for(Vector<Integer> key : archive.keySet()) {
 			int oneDBinIndex = mapping.oneDimensionalIndex(ArrayUtil.intArrayFromArrayList(key));
-			minScoresByBinXObjective[oneDBinIndex] = minFitnessInEachObjective(key);
+			minScoresByBinXObjective[oneDBinIndex] = minFitnessInSingleBinXObjectives(key);
 		}
 		return minScoresByBinXObjective;
 	}
 	
-	
-	
+
+	//maxFitnessInSingleBinXObjectives
 	/**
-	 * supposed to get a double array of min scores
-	 * @return
+	 * gets all the max scores for each objective from the given bin
+	 * @param keyBinCoordinates the coordinates identifying the bin to search
+	 * @return the max fitness score for each objective from this bin
 	 */
-	//min///////////////////////////////////////////////////
-	public double[][] minScoreBinXObjective() {
-		
-		double[][] minScoresByBinXObjective = new double[mapping.binLabels().size()][];
-		for(Vector<Integer> key : archive.keySet()) {
-
-			double[] scores = minFitnessInEachObjective(key);
-			
-			int oneDBinIndex = mapping.oneDimensionalIndex(ArrayUtil.intArrayFromArrayList(key));
-			minScoresByBinXObjective[oneDBinIndex] = scores;
-
-		}
-		return minScoresByBinXObjective;
-	}
-
-	
-
-	
-//min//////////////////////////////////////////////////////
-	public double[] minFitnessInEachObjective(Vector<Integer> keyBinCoordinates) {
+	public double[] minFitnessInSingleBinXObjectives(Vector<Integer> keyBinCoordinates) {
 		double[] minFitnessScores = ArrayUtil.doubleSpecified(MMNEAT.task.numObjectives(), Double.NEGATIVE_INFINITY);
 		Vector<Score<T>> subPop = archive.get(keyBinCoordinates);
 		// get the sub-pop
@@ -432,59 +466,6 @@ public class MOMEArchive<T> {
 		return minFitnessScores;
 	}
 	
-
-	// HOLD OFF ON CALCULATING MIN SCORES. NOT AS IMPORTANT, AND CODE WILL BE DIFFERENT
-//min///////////////////////////////////////////////////////
-	public double[] minFitnessInEachObjective() {
-		double[] minFitnessScores = ArrayUtil.doubleSpecified(MMNEAT.task.numObjectives(), Double.NEGATIVE_INFINITY);
-		
-		Vector<Score<T>> allScores = getWholeArchiveScores();	//all the scores in the archive in one vector
-	
-			for(Score<T> member : allScores) {	//for each score check if that objective's min fitness is the min overall
-				for (int j = 0; j < minFitnessScores.length; j++) {
-					minFitnessScores[j] = Math.min(minFitnessScores[j], member.scores[j]);
-				}
-			}
-//		}
-		return minFitnessScores;
-	}
-	
-	//Max sub pop size across all bins
-	/**
-	 * this gets the maximum population for a single bin from the whole archive
-	 * @return the number of the most individuals present in one bin
-	 */
-	public int maxSubPopulationSizeInWholeArchive() {
-		//System.out.println("maxSubPop");
-		int maxSubPop = 0;
-		Collection<Vector<Score<T>>> allVectorsOfScores = archive.values();	//this returns a collection of all the scores/values in the archive
-		for(Vector<Score<T>> scoreVector : allVectorsOfScores) {	//for each bin
-			if(scoreVector.size() > maxSubPop) {					//check population size
-				maxSubPop = scoreVector.size();	
-			}	
-		}
-		//System.out.println("maxSubPop:"+maxSubPop);
-		return maxSubPop;
-	}
-	
-	//Min sub pop size of all occupied bins in the archive
-	/**
-	 * this returns the least number of individuals in a subpopulation from the whole archive
-	 * this does not include empty bins
-	 * @return the least number of individuals in a single bin from all the bin in the archive
-	 */
-	public int minSubPopulationSizeInWholeArchive() {
-		//System.out.println("minSubPop");
-		int minSubPop = MAX_SUB_POP_ALLOWED;
-		Collection<Vector<Score<T>>> allVectorsOfScores = archive.values();	//this returns a collection of all the scores/values in the archive
-		for(Vector<Score<T>> scoreVector : allVectorsOfScores) {	//for each bin
-			if((scoreVector.size() < minSubPop) && (scoreVector.size() != 0)) {					//check population size
-				minSubPop = scoreVector.size();	
-			}	
-		}
-		//System.out.println("minSubPop:"+minSubPop);
-		return minSubPop;
-	}
 	
 	//do not know what this is
 	//Max hyper volume in one bin
