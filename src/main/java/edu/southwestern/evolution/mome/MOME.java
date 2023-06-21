@@ -62,10 +62,10 @@ public class MOME<T> implements SteadyStateEA<T>{
 	private boolean archiveFileCreated = false;	//track if the archive file is made
 	private MMNEATLog archiveLog = null; // Archive elite scores
 	private MMNEATLog randomLog = null; //general random test logging for now
-//	private MMNEATLog generationLog = null; //general random test logging for now
-//	private MMNEATLog maxFitnessLog = null; //general random test logging for now
-//	private MMNEATLog minFitnessLog = null; //general random test logging for now
-	private MMNEATLog[] objectiveLogs = null; //general random test logging for now
+	private MMNEATLog binPopulationSizeLog = null; //general random test logging for now
+	private MMNEATLog[] maxFitnessLogs = null; //general random test logging for now
+	private MMNEATLog[] minFitnessLogs = null; //general random test logging for now
+	private MMNEATLog[] objectiveRandomInfoLogs = null; //general random test logging for now
 	
 	
 
@@ -105,32 +105,33 @@ public class MOME<T> implements SteadyStateEA<T>{
 		
 		//logging
 		String infix = "MOMEArchive";
+		int numberOfObjectivesToLog = MMNEAT.task.numObjectives();
 		archiveLog = new MMNEATLog(infix, false, false, false, true);
 		randomLog = new MMNEATLog("random", false, false, false, true);
-//		generationLog = new MMNEATLog("generation", false, false, false, true);
-//		maxFitnessLog = new MMNEATLog("maxFitness", false, false, false, true);
-//		minFitnessLog = new MMNEATLog("minFitness", false, false, false, true);
-		int numberOfObjectivesLogs = MMNEAT.task.numObjectives();
-		objectiveLogs = new MMNEATLog[numberOfObjectivesLogs];
-		for (int i = 0; i < numberOfObjectivesLogs; i++) {
-			objectiveLogs[i] = new MMNEATLog(infix + i, false, false, false, true);
+		binPopulationSizeLog = new MMNEATLog("BinPopulation", false, false, false, true);
+		maxFitnessLogs = new MMNEATLog[numberOfObjectivesToLog];
+		minFitnessLogs = new MMNEATLog[numberOfObjectivesToLog];
+		objectiveRandomInfoLogs = new MMNEATLog[numberOfObjectivesToLog];
+		
+		String infixMin = infix + "min";
+		String infixMax = infix + "max";
+		
+		for (int i = 0; i < numberOfObjectivesToLog; i++) {
+			objectiveRandomInfoLogs[i] = new MMNEATLog(infix + i, false, false, false, true);
+			minFitnessLogs[i] = new MMNEATLog(infixMin + i, false, false, false, true);
+			maxFitnessLogs[i] = new MMNEATLog(infixMax +i, false, false, false, true);
+
 		}
 		//for testing only
-		for (int i = 0; i < objectiveLogs.length; i++) {
-			objectiveLogs[i].log("gen \t");
-			String toPrintString = "";
-			for (int j = 0; j < archive.binLabelsSize(); j++) {
-				toPrintString = toPrintString +j+"\t";
-			}
-			objectiveLogs[i].log(toPrintString);
-		}
-		/**
-		 * for (int j = 0; j < maxScoresForOneObjective.length; j++) {
-					if(maxScoresForOneObjective[j] != Double.NEGATIVE_INFINITY) {
-						System.out.println("score#:"+j+ " :"+ maxScoresForOneObjective[j]);
-					}
-				}
-		 */
+//		for (int i = 0; i < binPopulationSizeLog.length; i++) {
+//			binPopulationSizeLog[i].log("gen \t");
+//			String toPrintString = "";
+//			for (int j = 0; j < archive.binLabelsSize(); j++) {
+//				toPrintString = toPrintString +j+"\t";
+//			}
+//			binPopulationSizeLog[i].log(toPrintString);
+//		}
+		
 		//trying to create a file with the appropriate path name
 //		String testingStringName = "testing.txt";
 //		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
@@ -397,26 +398,64 @@ public class MOME<T> implements SteadyStateEA<T>{
 			System.out.println("generation:"+pseudoGeneration+ " addedIndividualCount:" +addedIndividualCount);
 			
 			int numberOfObjectives = MMNEAT.task.numObjectives();
+			
+			String popString = "";
+			int[] populationSizesForBins = archive.populationSizeForEveryBin();
+			for (int i = 0; i < populationSizesForBins.length; i++) {
+				popString = popString + populationSizesForBins[i] + "\t";
+//				System.out.println("popSizes only:" + populationSizesForBins[i]);
 
+			}
+			System.out.println("popSizes MOME:" + popString);
+			binPopulationSizeLog.log(popString);
+
+			//String populationSizeString = "";
 			//below is for objectives logging
+			
 			double[][] maxScoresBinXObjective = archive.maxScorebyBinXObjective(); //maxScores[bin][objective]
 			double[][] minScoresBinXObjective = archive.minScorebyBinXObjective(); //minScores[bin][objective]
 	//initialize log with info labels
-			// For each objective log the max scores for all bins
-			for(int i = 0; i < maxScoresBinXObjective[0].length; i++) {
+			
+//			String testPrintString = "";
+			for (int i = 0; i < numberOfObjectives; i++) {
+				
+				//MAX FITNESS SCORES LOG
 				Double[] maxScoresForOneObjective = ArrayUtils.toObject(ArrayUtil.column(maxScoresBinXObjective, i));
-				objectiveLogs[i].log(pseudoGeneration + "\t" + StringUtils.join(maxScoresForOneObjective, " \t").replaceAll("-Infinity", "X"));
-				System.out.println("bin:"+i+ " maxScore:");
-				for (int j = 0; j < maxScoresForOneObjective.length; j++) {
-					if(maxScoresForOneObjective[j] != Double.NEGATIVE_INFINITY) {
-						System.out.println("score#:"+j+ " :"+ maxScoresForOneObjective[j]);
-					}
-				}
+				maxFitnessLogs[i].log(pseudoGeneration + "\t" + StringUtils.join(maxScoresForOneObjective, " \t").replaceAll("-Infinity", "X"));
+//				//TESTING RELATED BELOW
+//				System.out.println("bin:"+i+ " maxScore:");
+//				for (int j = 0; j < maxScoresForOneObjective.length; j++) {
+//					if(maxScoresForOneObjective[j] != Double.NEGATIVE_INFINITY) {
+//						System.out.println("score#:"+j+ " :"+ maxScoresForOneObjective[j]);
+//					}
+//				}	//END OF TESTING CODE SECTION
+				
+				//MIN FITNESS SCORES LOG
+				Double[] minScoresForOneObjective = ArrayUtils.toObject(ArrayUtil.column(minScoresBinXObjective, i));
+				minFitnessLogs[i].log(pseudoGeneration + "\t" + StringUtils.join(minScoresForOneObjective, "\t").replaceAll("-Infinity", "X"));
+				
+				//POPULATION LOG
+				//populationSizeString = populationSizeString + populationSizesForBins[i] + "\t";
+				//System.out.println("popSizearray:" + populationSizesForBins[i]);
 
 			}
+//			System.out.println("populationString"+populationSizeString);
+
+//			// For each objective log the max scores for all bins
+//			for(int i = 0; i < maxScoresBinXObjective[0].length; i++) {
+//				Double[] maxScoresForOneObjective = ArrayUtils.toObject(ArrayUtil.column(maxScoresBinXObjective, i));
+//				maxFitnessLogs[i].log(pseudoGeneration + "\t" + StringUtils.join(maxScoresForOneObjective, " \t").replaceAll("-Infinity", "X"));
+//				System.out.println("bin:"+i+ " maxScore:");
+//				for (int j = 0; j < maxScoresForOneObjective.length; j++) {
+//					if(maxScoresForOneObjective[j] != Double.NEGATIVE_INFINITY) {
+//						System.out.println("score#:"+j+ " :"+ maxScoresForOneObjective[j]);
+//					}
+//				}
+//
+//			}
 			for(int i = 0; i < minScoresBinXObjective[0].length; i++) {
 				Double[] minScoresForOneObjective = ArrayUtils.toObject(ArrayUtil.column(minScoresBinXObjective, i));
-				objectiveLogs[i].log(pseudoGeneration + "\t" + StringUtils.join(minScoresForOneObjective, "\t").replaceAll("-Infinity", "X"));
+				minFitnessLogs[i].log(pseudoGeneration + "\t" + StringUtils.join(minScoresForOneObjective, "\t").replaceAll("-Infinity", "X"));
 			}
 			
 			//below is for archive logging
