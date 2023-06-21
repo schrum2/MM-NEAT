@@ -19,7 +19,8 @@ import edu.southwestern.util.datastructures.Pair;
  *
  */
 public class MissileFitness extends TimedEvaluationMinecraftFitnessFunction {
-
+	public static final double PERCENT_NEEDED_TO_SAVE = .9;
+	
 	private MinecraftCoordinates targetCornerOffset;
 	private BlockType targetBlockType;
 	private BlockType[] acceptedBlownUpBlockTypes;
@@ -78,6 +79,13 @@ public class MissileFitness extends TimedEvaluationMinecraftFitnessFunction {
 		List<Block> leftOverOfTargetBlocks = MinecraftUtilClass.getDesiredBlocks(leftOverBlocksFromTarget, acceptedBlownUpBlockTypes);
 		return -leftOverOfTargetBlocks.size();
 	}
-
+	@Override
+	public boolean shapeIsWorthSaving(double fitnessScore, ArrayList<Pair<Long, List<Block>>> history, MinecraftCoordinates shapeCorner, List<Block> originalBlocks) {
+		//change later
+		MinecraftCoordinates ranges = MinecraftUtilClass.getRanges();
+		double target = ranges.x() * ranges.z() * ranges.y();
+		if(fitnessScore > (target * PERCENT_NEEDED_TO_SAVE)) return true;
+		return false;
+	}
 
 }
