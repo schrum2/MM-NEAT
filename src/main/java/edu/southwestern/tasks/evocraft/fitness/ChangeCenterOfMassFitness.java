@@ -30,6 +30,8 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 	// Flying machines that leave blocks behind get a small fitness penalty proportional to the number of remaining blocks,
 	// but scaled down to 10% of that.
 	private static final double REMAINING_BLOCK_PUNISHMENT_SCALE = 0.1;
+	// There have to be at least this many entries in the history before a judgement about early termination can be made
+	private static final int MINIMUM_HISTORY_SIZE_FOR_JUDGEMENT = 5;
 		
 	@Override
 	public double maxFitness() {
@@ -56,24 +58,26 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 		//if using fast fitness return null, prevents early termination
 		if(Parameters.parameters.booleanParameter("minecraftRewardFastFlyingMachines")) return null;
 
-		return fitnessResultForFlyingMachine(originalBlocks, history, newShapeBlockList);
+		return definiteEarlyEvaluationTerminationResult(originalBlocks, history, newShapeBlockList);
 	}
 
 	/**
-	 * calculates the fitness for flying machines
+	 * calculates the fitness for flying machines, and for shapes that have stopped moving.
 	 * Uses the change in center of mass and block lists to determine if the shape has flown away. 
-	 * If it has it awards max fitness with penalties for leftover blocks
-	 * Otherwise it returns null
+	 * If it has it awards max fitness with penalties for leftover blocks.
+	 * Otherwise it returns null.
+	 * Shape that is not moving calculates final fitness early.
+	 * 
 	 * @param originalBlocks the list of original blocks
 	 * @param history a list of time stamps paired with a list of the blocks present at that time
 	 * @param newShapeBlockList the most recently recorded list of blocks in the evaluation area (last entry in history)
 	 * @return fitness after checking for departed blocks or null if shape has not flown away
 	 */
-	private Double fitnessResultForFlyingMachine(List<Block> originalBlocks, ArrayList<Pair<Long, List<Block>>> history,
+	private Double definiteEarlyEvaluationTerminationResult(List<Block> originalBlocks, ArrayList<Pair<Long, List<Block>>> history,
 			List<Block> newShapeBlockList) {
 		
 		//check if there has been any movement, if not, calculate final score now
-		if(!shapeMovedForMostOfHistory(history)) {
+		if(history.size() > MINIMUM_HISTORY_SIZE_FOR_JUDGEMENT && !shapeMovedForMostOfHistory(history)) {
 			if(CommonConstants.watch) System.out.println("shape not moving, calculate final score early");
 			MinecraftCoordinates shapeCorner = MinecraftUtilClass.minCoordinates(originalBlocks);
 			return calculateFinalScore(history, shapeCorner, originalBlocks);
@@ -98,14 +102,13 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 			if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": No movement.");
 			
 			// check if it's missing any blocks from the original
-			// TODO: Could this also have a problem when most of the shape explodes?
 			Double result = ifSufficientBlocksDepartedThenMaximumFitnessWithPenalty(originalBlocks.size(), newShapeBlockList);
+			// A null result means the shape did not fly away
 			if(result != null) {
-				//if(CommonConstants.watch) System.out.println("return result:"+result);
+				// Shape flew away (at leat mostly), so get a high fitness early
 				return result;
 			}		
 		}
-//		if(CommonConstants.watch) System.out.println("return null");
 		return null;
 	}
 	
@@ -123,9 +126,7 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 		int yesMovementCount = 0;
 		
 		if(CommonConstants.watch) System.out.println("history size: " + history.size());
-		if(CommonConstants.watch) System.out.println("oscillating? " + oscillatingOrFlying(history));
 
-		Vertex initialCenterOfMass = MinecraftUtilClass.getCenterOfMass(history.get(0).t2);
 		// First two entries are always duplicates of each other, but the first has orientation information
 		for(int i = 2; i < history.size(); i++) {
 			//if(CommonConstants.watch) System.out.println("noMovementCount: " + noMovementCount + " yesMovementCount: " + yesMovementCount + " i: " + i + " actual number of loops: " + (i-2));
@@ -146,90 +147,27 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 		
 		// If 3/4 of all moments in the evaluation history do not involve movement, then the shape is not moving
 		if(noMovementCount > 0.75*(history.size()-2)) {
+			if(CommonConstants.watch) System.out.println("noMovementCount="+noMovementCount+" > 0.75*(history.size()-2)="+(0.75*(history.size()-2)));
 			return false;
 		}
 		
-		Vertex farthestCenterOfMass = getFarthestCenterOfMass(history, initialCenterOfMass);
-		if(CommonConstants.watch) System.out.println("farthest center of mass : " + farthestCenterOfMass);
+		if(CommonConstants.watch) System.out.println("farthest center of mass : " + getFarthestCenterOfMass(history, MinecraftUtilClass.getCenterOfMass(history.get(0).t2)));
 		if(CommonConstants.watch) System.out.println("noMovementCount: " + noMovementCount + " yesMovementCount: " + yesMovementCount);
 
-		Double result = checkCreditForDepartedBlocks(history.get(0).t2.size(), initialCenterOfMass, farthestCenterOfMass, history.get(history.size()-2).t2);
-		if(CommonConstants.watch) System.out.println("result : " + result);
-		if(result == null) {
-			return false;
-		}
-		return true;
-	}
-	
-	private Double checkCreditForDepartedBlocks(int initialBlockCount, Vertex initialCenterOfMass, Vertex lastCenterOfMass, List<Block> newShapeBlockList) {
-		int remainingBlockCount = newShapeBlockList.size(); // Could be larger than initial due to extensions
-		int departedBlockCount = initialBlockCount - remainingBlockCount; // Could be negative due to extensions
-		Double result = null;
-		// It should be hard to archive credit for flying, so make sure that the number of departed blocks is sufficiently high
-		if(departedBlockCount > SUFFICIENT_DEPARTED_BLOCKS) {
-			if(CommonConstants.watch) System.out.println("Enough have departed. departedBlockCount is "+departedBlockCount+ " from initialBlockCount of "+initialBlockCount);					
-			// Ship flew so far away that we award max fitness, but penalize remaining blocks
-			System.out.println(remainingBlockCount +" remaining blocks: max = " + maxFitness());
-			result = maxFitness() - remainingBlockCount*REMAINING_BLOCK_PUNISHMENT_SCALE;
-		}
-		return result;
-	}
-	
-	//placeholder for now
-	//just checks if something is oscillating but if checked to soon just says it isn't
-	public boolean oscillatingOrFlying(ArrayList<Pair<Long, List<Block>>> history) {
-		//seting up relevant vertices
-		if(history.size() < 4) {
-			return false;
-		}
-		Vertex initialCenterOfMass = MinecraftUtilClass.getCenterOfMass(history.get(0).t2);		
-		Vertex farthestCenterOfMass = getFarthestCenterOfMass(history, initialCenterOfMass);
+//		int initialBlockCount = history.get(0).t2.size();
+//		List<Block> lastShape = history.get(history.size() - 1).t2;
+//		
+//		Double result = ifSufficientBlocksDepartedThenMaximumFitnessWithPenalty(initialBlockCount, lastShape);
+//		// null result means the shape did not fly away
+//		if(CommonConstants.watch) System.out.println("result : " + result);
+//		if(result == null) {
+//			return false;
+//		}
 		
-		Double result = checkCreditForDepartedBlocks(history.get(0).t2.size(), initialCenterOfMass, farthestCenterOfMass, history.get(history.size()-2).t2);
-		if(result != null) {
-			return false;
-		}
-
-		/**
-		 *check if I need all 3
-		Vertex initialCenterOfMass = MinecraftUtilClass.getCenterOfMass(history.get(0).t2);
-		//		Vertex initialCenterOfMass = MinecraftUtilClass.getCenterOfMass(history.get(0).t2);
-		Vertex lastCenterOfMass = MinecraftUtilClass.getCenterOfMass(history.get(history.size()-3).t2);
-		Vertex nextCenterOfMass = MinecraftUtilClass.getCenterOfMass(history.get(history.size()-2).t2);
-
-		Vertex farthestCenterOfMass = getFarthestCenterOfMass(history, initialCenterOfMass, lastCenterOfMass);
-
-		if(CommonConstants.watch) System.out.println("farthest center of mass : " + farthestCenterOfMass);
-		if(farthestCenterOfMass.equals(initialCenterOfMass)) {
-			if(CommonConstants.watch) System.out.println("first case farthest == initial : " + farthestCenterOfMass + " " + initialCenterOfMass);
-		}
-		if(lastCenterOfMass.equals(initialCenterOfMass)) {
-			if(CommonConstants.watch) System.out.println("farthest == initial : " + farthestCenterOfMass + " " + initialCenterOfMass);
-		} 
-		AND IN SHAPE HISTORY CHECK
-		Vertex REMOVElastCenterOfMass = MinecraftUtilClass.getCenterOfMass(history.get(i-1).t2);
-			Vertex REMOVEnextCenterOfMass = MinecraftUtilClass.getCenterOfMass(history.get(i).t2);
-			lastCenterOfMass = MinecraftUtilClass.getCenterOfMass(history.get(i-1).t2);
-			nextCenterOfMass = MinecraftUtilClass.getCenterOfMass(history.get(i).t2);
-
-			// Only consider the shape to not be moving if the center of mass is the same AND the entire block list is the same
-			if((REMOVElastCenterOfMass.equals(REMOVEnextCenterOfMass) && history.get(i-1).t2.equals(history.get(i).t2))) {		//this is no movement
-				if(CommonConstants.watch) System.out.println("TESTING FOR RETURN FALSE / center of mass i-1 == i, blocks i-1 == i");
-				//return true;
-				//return false;
-				 * 
-	* if(Parameters.parameters.booleanParameter("minecraftEndEvalNoMovement") && lastCenterOfMass.equals(nextCenterOfMass) && previousBlocks.equals(newShapeBlockList)) {
-if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": No movement.");
-			// Compute farthest center of mass from history
-			Vertex farthestCenterOfMass = getFarthestCenterOfMass(history, initialCenterOfMass, lastCenterOfMass);
-			Double result = checkCreditForDepartedBlocks(originalBlocks.size(), initialCenterOfMass, farthestCenterOfMass, newShapeBlockList);
-			if(result != null) {
-				return result;
-			}
-		 */
+		// Otherwise, the shape has moved enough to avoid early termination
 		return true;
 	}
-
+	
 	@Override
 	public double calculateFinalScore(ArrayList<Pair<Long,List<Block>>> history, MinecraftCoordinates shapeCorner, List<Block> originalBlocks) {
 		if(CommonConstants.watch) System.out.println("XX	CALC FINAL SCORE	");
@@ -243,7 +181,7 @@ if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": No mo
 			
 			//if evaluating and rewarding fast flying machines
 			if(Parameters.parameters.booleanParameter("minecraftRewardFastFlyingMachines")) {
-				Double fitnessResult = fitnessResultForFlyingMachine(originalBlocks, history, history.get(i).t2);
+				Double fitnessResult = definiteEarlyEvaluationTerminationResult(originalBlocks, history, history.get(i).t2);
 				if(fitnessResult != null) { // means machine was flying
 					totalChangeDistance += fitnessResult; // accumulate large fitness for each reading where the machine is a confirmed flying machine
 				} else { // emphasize getting away from starting point as fast as possible
