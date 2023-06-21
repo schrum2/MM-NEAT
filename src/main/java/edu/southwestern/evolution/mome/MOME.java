@@ -385,11 +385,18 @@ public class MOME<T> implements SteadyStateEA<T>{
 
 			//below is for objectives logging
 			double[][] maxScoresBinXObjective = archive.maxScorebyBinXObjective(); //maxScores[bin][objective]
-			
+			double[][] minScoresBinXObjective = archive.minScorebyBinXObjective(); //minScores[bin][objective]
+	
 			// For each objective log the max scores for all bins
 			for(int i = 0; i < maxScoresBinXObjective[0].length; i++) {
 				Double[] maxScoresForOneObjective = ArrayUtils.toObject(ArrayUtil.column(maxScoresBinXObjective, i));
 				objectiveLogs[i].log(pseudoGeneration + "\t" + StringUtils.join(maxScoresForOneObjective, "\t").replaceAll("-Infinity", "X"));
+				System.out.println("bin:"+i+ " maxScore:" +maxScoresForOneObjective);
+
+			}
+			for(int i = 0; i < minScoresBinXObjective[0].length; i++) {
+				Double[] minScoresForOneObjective = ArrayUtils.toObject(ArrayUtil.column(minScoresBinXObjective, i));
+				objectiveLogs[i].log(pseudoGeneration + "\t" + StringUtils.join(minScoresForOneObjective, "\t").replaceAll("-Infinity", "X"));
 			}
 			
 			//below is for archive logging
