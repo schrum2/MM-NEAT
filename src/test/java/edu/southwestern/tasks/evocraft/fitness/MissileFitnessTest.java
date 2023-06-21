@@ -53,14 +53,15 @@ public class MissileFitnessTest {
 	}
 	@Test
 	public void testNoTNTFitnessScore() {	
-		Parameters.initializeParameterCollections(new String[] {"minecraftClearWithGlass:false","watch:false","minecraftXRange:5","minecraftYRange:5","minecraftZRange:5","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.CannonBlockSet", "minecraftTargetDistancefromShapeY:0", "minecraftTargetDistancefromShapeX:-10", "minecraftTargetDistancefromShapeZ:0"});
+		Parameters.initializeParameterCollections(new String[] {"minecraftClearWithGlass:false","watch:true","minecraftXRange:5","minecraftYRange:5","minecraftZRange:5","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.CannonBlockSet", "minecraftTargetDistancefromShapeY:0", "minecraftTargetDistancefromShapeX:-10", "minecraftTargetDistancefromShapeZ:0"});
 		MissileFitness testInstance = new MissileFitness();
 		
 		System.out.println("Unit test: testNoTNTFitnessScore");
-
+		System.out.println("GO");
 		System.out.println("X:" + Parameters.parameters.integerParameter("minecraftTargetDistancefromShapeX") + " Y:" + Parameters.parameters.integerParameter("minecraftTargetDistancefromShapeY") + " Z:" + Parameters.parameters.integerParameter("minecraftTargetDistancefromShapeZ"));
-
+		System.out.println("1");
 		MinecraftCoordinates ranges = MinecraftUtilClass.getRanges();
+		System.out.println("2");
 		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,30,-35);
 		MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 50); // Larger buffer is important, but too large and it crashes!
 		ArrayList<Block> testBlockSet = new ArrayList<>();
