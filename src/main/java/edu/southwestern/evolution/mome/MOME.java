@@ -383,18 +383,18 @@ public class MOME<T> implements SteadyStateEA<T>{
 			
 			int numberOfObjectives = MMNEAT.task.numObjectives();
 
+			//below is for objectives logging
 			double[][] maxScoresBinXObjective = archive.maxScorebyBinXObjective(); //maxScores[bin][objective]
 			
-			// For each objective
+			// For each objective log the max scores for all bins
 			for(int i = 0; i < maxScoresBinXObjective[0].length; i++) {
 				Double[] maxScoresForOneObjective = ArrayUtils.toObject(ArrayUtil.column(maxScoresBinXObjective, i));
-				objectiveLogs[i].log("gen" + pseudoGeneration + "\t" + StringUtils.join(maxScoresForOneObjective, "\t").replaceAll("-Infinity", "X"));
-				//objectiveLogs[i].log("hello world");
+				objectiveLogs[i].log(pseudoGeneration + "\t" + StringUtils.join(maxScoresForOneObjective, "\t").replaceAll("-Infinity", "X"));
 			}
 			
-			
+			//below is for archive logging
 //			////////////BELOW WORKS
-			double[] maxFitnessScoresArray = archive.maxFitnessInEachObjective();
+			double[] maxFitnessScoresArray = archive.maxFitnessInWholeArchiveXObjective();
 			String printString = pseudoGeneration+"\t"+archive.getNumberOfOccupiedBins()+"\t"+archive.totalNumberOfIndividualsInArchive()+"\t";
 			
 			//adding max fitness scores to print
@@ -404,7 +404,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 				//printString.concat(maxFitnessScoresArray[i] + "/t");
 			}
 			//adding min fitness scores to print
-			double[] minFitnessScoresArray = archive.maxFitnessInEachObjective();
+			double[] minFitnessScoresArray = archive.maxFitnessInWholeArchiveXObjective();
 			for (int i = 0; i < minFitnessScoresArray.length; i++) {
 				printString = printString + minFitnessScoresArray[i] + "\t";
 			}
@@ -414,7 +414,6 @@ public class MOME<T> implements SteadyStateEA<T>{
 
 			archiveLog.log(printString);
 
-		
 //TODO: marker for file input
 			randomLog.log("pseudo generation" +pseudoGeneration + "\t occupiedBins:" + archive.getNumberOfOccupiedBins() + "\t number of current individuals in archive:" + archive.totalNumberOfIndividualsInArchive() + 
 					"\n maxSubPop in archive:" + archive.maxSubPopulationSizeInWholeArchive() + "\t minSubPop in archive:"+ archive.minSubPopulationSizeInWholeArchive()+
