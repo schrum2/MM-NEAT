@@ -115,7 +115,22 @@ public class MOME<T> implements SteadyStateEA<T>{
 		for (int i = 0; i < numberOfObjectivesLogs; i++) {
 			objectiveLogs[i] = new MMNEATLog(infix + i, false, false, false, true);
 		}
-		
+		//for testing only
+		for (int i = 0; i < objectiveLogs.length; i++) {
+			objectiveLogs[i].log("gen \t");
+			String toPrintString = "";
+			for (int j = 0; j < archive.binLabelsSize(); j++) {
+				toPrintString = toPrintString +j+"\t";
+			}
+			objectiveLogs[i].log(toPrintString);
+		}
+		/**
+		 * for (int j = 0; j < maxScoresForOneObjective.length; j++) {
+					if(maxScoresForOneObjective[j] != Double.NEGATIVE_INFINITY) {
+						System.out.println("score#:"+j+ " :"+ maxScoresForOneObjective[j]);
+					}
+				}
+		 */
 		//trying to create a file with the appropriate path name
 //		String testingStringName = "testing.txt";
 //		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
@@ -386,12 +401,17 @@ public class MOME<T> implements SteadyStateEA<T>{
 			//below is for objectives logging
 			double[][] maxScoresBinXObjective = archive.maxScorebyBinXObjective(); //maxScores[bin][objective]
 			double[][] minScoresBinXObjective = archive.minScorebyBinXObjective(); //minScores[bin][objective]
-	
+	//initialize log with info labels
 			// For each objective log the max scores for all bins
 			for(int i = 0; i < maxScoresBinXObjective[0].length; i++) {
 				Double[] maxScoresForOneObjective = ArrayUtils.toObject(ArrayUtil.column(maxScoresBinXObjective, i));
-				objectiveLogs[i].log(pseudoGeneration + "\t" + StringUtils.join(maxScoresForOneObjective, "\t").replaceAll("-Infinity", "X"));
-				System.out.println("bin:"+i+ " maxScore:" +maxScoresForOneObjective);
+				objectiveLogs[i].log(pseudoGeneration + "\t" + StringUtils.join(maxScoresForOneObjective, " \t").replaceAll("-Infinity", "X"));
+				System.out.println("bin:"+i+ " maxScore:");
+				for (int j = 0; j < maxScoresForOneObjective.length; j++) {
+					if(maxScoresForOneObjective[j] != Double.NEGATIVE_INFINITY) {
+						System.out.println("score#:"+j+ " :"+ maxScoresForOneObjective[j]);
+					}
+				}
 
 			}
 			for(int i = 0; i < minScoresBinXObjective[0].length; i++) {
@@ -408,7 +428,6 @@ public class MOME<T> implements SteadyStateEA<T>{
 			//since all bins are put together it simply gets the match fitness score from the array
 			for (int i = 0; i < maxFitnessScoresArray.length; i++) {
 				printString = printString + maxFitnessScoresArray[i] + "\t";
-				//printString.concat(maxFitnessScoresArray[i] + "/t");
 			}
 			//adding min fitness scores to print
 			double[] minFitnessScoresArray = archive.maxFitnessInWholeArchiveXObjective();
