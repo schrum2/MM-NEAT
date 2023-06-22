@@ -195,7 +195,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 		evaluateStream.forEach( (g) -> {
 			Score<T> s = task.evaluate(g);
 			evaluatedPopulation.add(s);
-			System.out.println("single evaluation done");
+			//System.out.println("single evaluation done");
 
 		});
 
