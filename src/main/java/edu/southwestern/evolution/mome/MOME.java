@@ -61,11 +61,11 @@ public class MOME<T> implements SteadyStateEA<T>{
 	public boolean io;
 	private boolean archiveFileCreated = false;	//track if the archive file is made
 	private MMNEATLog archiveLog = null; // Archive elite scores
-	private MMNEATLog randomLog = null; //general random test logging for now
-//	private MMNEATLog generationLog = null; //general random test logging for now
-//	private MMNEATLog maxFitnessLog = null; //general random test logging for now
-//	private MMNEATLog minFitnessLog = null; //general random test logging for now
-	private MMNEATLog[] objectiveLogs = null; //general random test logging for now
+//	private MMNEATLog randomLog = null; //general random test logging for now
+	private MMNEATLog binPopulationSizeLog = null; //general random test logging for now
+	private MMNEATLog[] maxFitnessLogs = null; //creates a log for each objective that contains the max fitness for each bin, logged every generation
+	private MMNEATLog[] minFitnessLogs = null; //creates a log for each objective that contains the min fitness for each bin, logged every generation
+	private MMNEATLog[] gnuLogs = null; //creates a log for each objective that contains ????? for each bin, logged every generation
 	
 	
 
@@ -102,49 +102,38 @@ public class MOME<T> implements SteadyStateEA<T>{
 //		this.setDiscardedIndividualCount(0);		//broke this, need to investigate later
 		this.individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
 		
-		
-		//logging
-		String infix = "MOMEArchive";
-		archiveLog = new MMNEATLog(infix, false, false, false, true);
-		randomLog = new MMNEATLog("random", false, false, false, true);
-//		generationLog = new MMNEATLog("generation", false, false, false, true);
-//		maxFitnessLog = new MMNEATLog("maxFitness", false, false, false, true);
-//		minFitnessLog = new MMNEATLog("minFitness", false, false, false, true);
-		int numberOfObjectivesLogs = MMNEAT.task.numObjectives();
-		objectiveLogs = new MMNEATLog[numberOfObjectivesLogs];
-		for (int i = 0; i < numberOfObjectivesLogs; i++) {
-			objectiveLogs[i] = new MMNEATLog(infix + i, false, false, false, true);
-		}
-		//for testing only
-		for (int i = 0; i < objectiveLogs.length; i++) {
-			objectiveLogs[i].log("gen \t");
-			String toPrintString = "";
-			for (int j = 0; j < archive.binLabelsSize(); j++) {
-				toPrintString = toPrintString +j+"\t";
+//		if(io && createLogs) {
+			//logging
+			String infix = "MOMEArchive";
+			int numberOfObjectivesToLog = MMNEAT.task.numObjectives();
+			int numberOfBinLabels = archive.getBinMapping().binLabels().size();
+			
+			// Logging in RAW mode so that can append to log file on experiment resume
+			archiveLog = new MMNEATLog(infix, false, false, false, true);
+//		randomLog = new MMNEATLog("random", false, false, false, true);
+			binPopulationSizeLog = new MMNEATLog("BinPopulation", false, false, false, true);
+			maxFitnessLogs = new MMNEATLog[numberOfObjectivesToLog];
+			minFitnessLogs = new MMNEATLog[numberOfObjectivesToLog];
+			gnuLogs = new MMNEATLog[2*numberOfObjectivesToLog];
+
+			String infixMin = infix + "min";
+			String infixMax = infix + "max";
+
+			for (int i = 0; i < numberOfObjectivesToLog; i++) {
+				gnuLogs[i] = new MMNEATLog(infix + i, false, false, false, true);
+				minFitnessLogs[i] = new MMNEATLog(infixMin + i, false, false, false, true);
+				maxFitnessLogs[i] = new MMNEATLog(infixMax +i, false, false, false, true);
 			}
-			objectiveLogs[i].log(toPrintString);
-		}
-		/**
-		 * for (int j = 0; j < maxScoresForOneObjective.length; j++) {
-					if(maxScoresForOneObjective[j] != Double.NEGATIVE_INFINITY) {
-						System.out.println("score#:"+j+ " :"+ maxScoresForOneObjective[j]);
-					}
-				}
-		 */
-		//trying to create a file with the appropriate path name
-//		String testingStringName = "testing.txt";
-//		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
-//		directory += (directory.equals("") ? "" : "/");
-//		File testingFile = new File(directory+testingStringName);
-//		try {
-//			PrintStream ps = new PrintStream(testingFile);
-//			ps.println("can I even print this? Yes I can!");
-//			ps.close();
-//		} catch (FileNotFoundException e) {
-//			System.out.println("Could not create plot file: ");
-//			e.printStackTrace();
-//			System.exit(1);
+
+			// Create gnuplot file for archive log
+			String experimentPrefix = Parameters.parameters.stringParameter("log")
+					+ Parameters.parameters.integerParameter("runNumber");
+//			individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
+			int yrange = Parameters.parameters.integerParameter("maxGens")/individualsPerGeneration;
+			setUpLogging(numberOfBinLabels, infix, experimentPrefix, yrange, individualsPerGeneration, archive.getBinMapping().binLabels().size());
+//TODO: does it need archive size to be the same as the number of bin labels? I don't understand why this is passed twice
 //		}
+		
 		/**
 		 *  // below deals with writing logs and other lines that may be relevant later
 
@@ -397,27 +386,46 @@ public class MOME<T> implements SteadyStateEA<T>{
 			System.out.println("generation:"+pseudoGeneration+ " addedIndividualCount:" +addedIndividualCount);
 			
 			int numberOfObjectives = MMNEAT.task.numObjectives();
+			
+			String popString = "";
+			int[] populationSizesForBins = archive.populationSizeForEveryBin();
+			for (int i = 0; i < populationSizesForBins.length; i++) {
+				popString = popString + populationSizesForBins[i] + "\t";
+//				System.out.println("popSizes only:" + populationSizesForBins[i]);
 
+			}
+			System.out.println("popSizes MOME:" + popString);
+			binPopulationSizeLog.log(popString);
+
+			//String populationSizeString = "";
 			//below is for objectives logging
+			
 			double[][] maxScoresBinXObjective = archive.maxScorebyBinXObjective(); //maxScores[bin][objective]
 			double[][] minScoresBinXObjective = archive.minScorebyBinXObjective(); //minScores[bin][objective]
 	//initialize log with info labels
-			// For each objective log the max scores for all bins
-			for(int i = 0; i < maxScoresBinXObjective[0].length; i++) {
+			
+//			String testPrintString = "";
+			for (int i = 0; i < numberOfObjectives; i++) {
+				
+				//MAX FITNESS SCORES LOG
 				Double[] maxScoresForOneObjective = ArrayUtils.toObject(ArrayUtil.column(maxScoresBinXObjective, i));
-				objectiveLogs[i].log(pseudoGeneration + "\t" + StringUtils.join(maxScoresForOneObjective, " \t").replaceAll("-Infinity", "X"));
-				System.out.println("bin:"+i+ " maxScore:");
-				for (int j = 0; j < maxScoresForOneObjective.length; j++) {
-					if(maxScoresForOneObjective[j] != Double.NEGATIVE_INFINITY) {
-						System.out.println("score#:"+j+ " :"+ maxScoresForOneObjective[j]);
-					}
-				}
+				maxFitnessLogs[i].log(pseudoGeneration + "\t" + StringUtils.join(maxScoresForOneObjective, " \t").replaceAll("-Infinity", "X"));
+				
+				//MIN FITNESS SCORES LOG
+				Double[] minScoresForOneObjective = ArrayUtils.toObject(ArrayUtil.column(minScoresBinXObjective, i));
+				minFitnessLogs[i].log(pseudoGeneration + "\t" + StringUtils.join(minScoresForOneObjective, "\t").replaceAll("-Infinity", "X"));
+				
+				//POPULATION LOG --- can probably move down
+				//populationSizeString = populationSizeString + populationSizesForBins[i] + "\t";
+				//System.out.println("popSizearray:" + populationSizesForBins[i]);
 
 			}
-			for(int i = 0; i < minScoresBinXObjective[0].length; i++) {
-				Double[] minScoresForOneObjective = ArrayUtils.toObject(ArrayUtil.column(minScoresBinXObjective, i));
-				objectiveLogs[i].log(pseudoGeneration + "\t" + StringUtils.join(minScoresForOneObjective, "\t").replaceAll("-Infinity", "X"));
-			}
+//			System.out.println("populationString"+populationSizeString);
+//
+//			for(int i = 0; i < minScoresBinXObjective[0].length; i++) {
+//				Double[] minScoresForOneObjective = ArrayUtils.toObject(ArrayUtil.column(minScoresBinXObjective, i));
+//				minFitnessLogs[i].log(pseudoGeneration + "\t" + StringUtils.join(minScoresForOneObjective, "\t").replaceAll("-Infinity", "X"));
+//			}
 			
 			//below is for archive logging
 //			////////////BELOW WORKS
@@ -441,9 +449,9 @@ public class MOME<T> implements SteadyStateEA<T>{
 			archiveLog.log(printString);
 
 //TODO: marker for file input
-			randomLog.log("pseudo generation" +pseudoGeneration + "\t occupiedBins:" + archive.getNumberOfOccupiedBins() + "\t number of current individuals in archive:" + archive.totalNumberOfIndividualsInArchive() + 
-					"\n maxSubPop in archive:" + archive.maxSubPopulationSizeInWholeArchive() + "\t minSubPop in archive:"+ archive.minSubPopulationSizeInWholeArchive()+
-					"\n pareto front size across whole archive:"+ archive.sizeOfCombinedParetoFrontAcrossAllBins() + "\n");
+//			randomLog.log("pseudo generation" +pseudoGeneration + "\t occupiedBins:" + archive.getNumberOfOccupiedBins() + "\t number of current individuals in archive:" + archive.totalNumberOfIndividualsInArchive() + 
+//					"\n maxSubPop in archive:" + archive.maxSubPopulationSizeInWholeArchive() + "\t minSubPop in archive:"+ archive.minSubPopulationSizeInWholeArchive()+
+//					"\n pareto front size across whole archive:"+ archive.sizeOfCombinedParetoFrontAcrossAllBins() + "\n");
 		}
 	}
 	
@@ -453,27 +461,84 @@ public class MOME<T> implements SteadyStateEA<T>{
 		//might need later
 	}
 	
-	public static void setUpLogging(int numLabels, String infix, String experimentPrefix, int yrange, boolean cppnDirLogging, int individualsPerGeneration, int archiveSize) {
+	public static void setUpLogging(int numLabels, String infix, String experimentPrefix, int yrange, int individualsPerGeneration, int archiveSize) {
 		//this is for logging, copied all the parameters but probably don't need it all
-		System.out.println("in setUpLogging");
-//		
-//		String prefix = experimentPrefix + "_" + infix;
+		
+//XXXXXX fullPDFName testing/TESTING106/Testing-TESTING106_MAPElites_pdf_log.plt
+////XXXXXX fullPDFName testing/TESTING106/Testing-TESTING106_MAPElites_log.plt
+//		XXXXXX DIRECTORY testing/TESTING106/
+//		XXXXXX PREFIX Testing-TESTING106_MAPElites
+		
+		
+//XXXXXX fullPDFName testing/TESTING8Testing-TESTING8_MOMEArchive_pdf_log.plt
+//XXXXXX fullPDFName testing/TESTING8Testing-TESTING8_MOMEArchive_log.plt
+		
+		//XXXXXX DIRECTORY testing/TESTING8
+//		XXXXXX PREFIX Testing-TESTING8_MOMEArchive
+		
+		String prefix = experimentPrefix + "_" + infix;
 //		String fillPrefix = experimentPrefix + "_" + "Fill";
 //		String fillDiscardedPrefix = experimentPrefix + "_" + "FillWithDiscarded";
 //		String fillPercentagePrefix = experimentPrefix + "_" + "FillPercentage";
-//		
+//		String qdPrefix = experimentPrefix + "_" + "QD";
 //		String maxPrefix = experimentPrefix + "_" + "Maximum";
 //		String lossPrefix = experimentPrefix + "_" + "ReconstructionLoss";
-//		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
+		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
 //		directory += (directory.equals("") ? "" : "/");
-//		String fullPDFName = directory + prefix + "_pdf_log.plt";
-//		String fullName = directory + prefix + "_log.plt";
+		String fullPDFName = directory + prefix + "_pdf_log.plt";
+		String fullName = directory + prefix + "_log.plt";
 //		String fullFillName = directory + fillPrefix + "_log.plt";
 //		String fullFillDiscardedName = directory + fillDiscardedPrefix + "_log.plt";
 //		String fullFillPercentageName = directory + fillPercentagePrefix + "_log.plt";
+//		String fullQDName = directory + qdPrefix + "_log.plt";
 //		String maxFitnessName = directory + maxPrefix + "_log.plt";
 //		String reconstructionLossName = directory + lossPrefix + "_log.plt";
+		File pdfPlot = new File(fullPDFName);
+		File plot = new File(fullName); // for archive log plot file
+//		File fillPlot = new File(fullFillName);
 		
+		// Write to file
+				try {
+					// Archive PDF plot
+					individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
+					PrintStream ps = new PrintStream(pdfPlot);
+					ps.println("set term pdf enhanced");
+					ps.println("unset key");
+					// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
+					ps.println("set yrange [0:"+ yrange +"]");
+					ps.println("set xrange [0:"+ archiveSize + "]");
+					ps.println("set title \"" + experimentPrefix + " Archive Performance\"");
+					ps.println("set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");
+					// The :1 is for skipping the "generation" number logged in the file
+					ps.println("plot \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt\" matrix every ::1 with image");
+					ps.close();
+					System.out.println("XXXXXX DIRECTORY "+ directory);
+					System.out.println("XXXXXX PREFIX "+ prefix);
+
+
+					System.out.println("XXXXXX fullPDFName "+ fullPDFName);
+
+					
+					// Archive plot: In default GNU Plot window
+					ps = new PrintStream(plot);
+					ps.println("unset key");
+					// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
+					ps.println("set yrange [0:"+ yrange +"]");
+					ps.println("set xrange [0:"+ archiveSize + "]");
+					ps.println("set title \"" + experimentPrefix + " Archive Performance\"");
+					//ps.println("set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");
+					// The :1 is for skipping the "generation" number logged in the file
+					ps.println("plot \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt\" matrix every ::1 with image");
+					ps.close();
+					
+					System.out.println("XXXXXX fullPDFName "+ fullName);
+
+					
+				} catch (FileNotFoundException e) {
+					System.out.println("Could not create plot file: " + plot.getName());
+					e.printStackTrace();
+					System.exit(1);
+				}
 		/**
 		 * String prefix = experimentPrefix + "_" + infix;
 		String fillPrefix = experimentPrefix + "_" + "Fill";
