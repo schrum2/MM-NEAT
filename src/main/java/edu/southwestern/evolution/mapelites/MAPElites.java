@@ -503,7 +503,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		}
 		if(io && iterations % individualsPerGeneration == 0) {
 			int numCPPN = 0;
-			int numDirect = 0;
+			int numDirect = 0;	//cppn related variable
 			// When all iterations were logged, the file got too large
 			//log.log(iterations + "\t" + iterationsWithoutElite + "\t" + StringUtils.join(ArrayUtils.toObject(archive.getEliteScores()), "\t"));
 			// Just log every "generation" instead

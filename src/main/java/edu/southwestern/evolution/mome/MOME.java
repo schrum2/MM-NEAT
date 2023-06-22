@@ -61,6 +61,14 @@ public class MOME<T> implements SteadyStateEA<T>{
 	//logging variables (might be sorted into tracking or other grouping
 	public boolean io;
 	private boolean archiveFileCreated = false;	//track if the archive file is made
+//	private String fileNameInfix = "MOMEArchive";
+//	private static String fileNameFullName;
+//	private static String fileNameInfixMax = "MOMEArchive_Max_Objective_";
+//	private static String fileNameInfixMin = "MOMEArchive_Min_Objective_";
+	private static String maxPrefix = "_Max_Objective_";
+	private static String minPrefix = "_Min_Objective_";
+	
+	//log files only
 	private MMNEATLog archiveLog = null; // Archive elite scores
 //	private MMNEATLog randomLog = null; //general random test logging for now
 	private MMNEATLog binPopulationSizeLog = null; //general random test logging for now
@@ -133,7 +141,6 @@ public class MOME<T> implements SteadyStateEA<T>{
 				maxFitnessLogs[i] = new MMNEATLog(infixMax +i, false, false, false, true);
 				gnuMaxLogs[i] = new MMNEATLog(infixMax +i, false, false, false, true);
 				gnuMinLogs[i] = new MMNEATLog(infixMin +i, false, false, false, true);
-
 			}
 //			for (int i = numberOfObjectivesToLog; i < gnuLogs.length; i++) {
 //				gnuLogs[i] = new MMNEATLog(infix + i, false, false, false, true);
@@ -142,10 +149,20 @@ public class MOME<T> implements SteadyStateEA<T>{
 			// Create gnuplot file for archive log
 			String experimentPrefix = Parameters.parameters.stringParameter("log")
 					+ Parameters.parameters.integerParameter("runNumber");
+//			String directory = FileUtilities.getSaveDirectory();
+//			directory += (directory.equals("") ? "" : "/");
+//			fileNameFullName = directory + Parameters.parameters.stringParameter("log") + Parameters.parameters.integerParameter("runNumber") + "_" + "MOMEArchive";
+					
 //			individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
 			int yrange = Parameters.parameters.integerParameter("maxGens")/individualsPerGeneration;
 			setUpLogging(numberOfBinLabels, infix, experimentPrefix, yrange, individualsPerGeneration);
+//			setUpLogging(numberOfBinLabels, experimentPrefix, yrange, individualsPerGeneration);
 		}
+		
+		
+		
+		//experiment prefix is used seperately
+		
 		
 		/**
 		 *  // below deals with writing logs and other lines that may be relevant later
@@ -475,21 +492,20 @@ public class MOME<T> implements SteadyStateEA<T>{
 	
 	
 	public static void setUpLogging(int numberOfBinLabels, String infix, String experimentPrefix, int yrange, int individualsPerGeneration) {
+//	public static void setUpLogging(int numberOfBinLabels, String experimentPrefix, int yrange, int individualsPerGeneration) {
 		//this is for logging, copied all the parameters but probably don't need it all
-		
-
 		
 		String prefix = experimentPrefix + "_" + infix;
 //		String fillPrefix = experimentPrefix + "_" + "Fill";
 //		String fillDiscardedPrefix = experimentPrefix + "_" + "FillWithDiscarded";
 //		String fillPercentagePrefix = experimentPrefix + "_" + "FillPercentage";
 //		String qdPrefix = experimentPrefix + "_" + "QD";
-		String maxPrefix = experimentPrefix + "_" + "Maximum_Objective_";
-		String minPrefix = experimentPrefix + "_" + "Minimum_Objective_";
+//		String maxPrefix = experimentPrefix + "_" + "Maximum_Objective_";
+//		String minPrefix = experimentPrefix + "_" + "Minimum_Objective_";
 //		String lossPrefix = experimentPrefix + "_" + "ReconstructionLoss";
 		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
 		directory += (directory.equals("") ? "" : "/");
-
+//
 		String fullName = directory + prefix + "_log.plt";
 //		String fullFillName = directory + fillPrefix + "_log.plt";
 //		String fullFillDiscardedName = directory + fillDiscardedPrefix + "_log.plt";
@@ -498,6 +514,13 @@ public class MOME<T> implements SteadyStateEA<T>{
 //		String maxFitnessName = directory + maxPrefix + "_log.plt";
 //		String reconstructionLossName = directory + lossPrefix + "_log.plt";
 		
+//		//	private String fileNameInfix = "MOMEArchive";
+//		private String fileNameFullName;
+//		private String fileNameInfixMax = "MOMEArchive_Max_Objective_";
+//		private String fileNameInfixMin = "MOMEArchive_Min_Objective_";
+//		//log files only
+
+		
 		individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
 
 		
@@ -505,8 +528,13 @@ public class MOME<T> implements SteadyStateEA<T>{
 			//private MMNEATLog[] maxFitnessLogs
 			//private MMNEATLog[] minFitnessLogs 
 			//private MMNEATLog[] gnuLogs = n
-			String fullPDFNameMax = directory + maxPrefix + i + "_pdf_log.plt";
-			String fullPDFNameMin = directory + minPrefix + i + "_pdf_log.plt";
+			String fullNameMaxHARDCODED = directory + prefix + maxPrefix + i;
+			String fullNameMinHARDCODED = directory + prefix + maxPrefix + i;
+			String fullPDFNameMax = directory + prefix + maxPrefix + i + "_pdf_log.plt";
+//			String fullPDFNameMax = fileNameFullName + fileNameInfixMax + i;
+//			String fullPDFNameMin = fileNameFullName + fileNameInfixMin + i;
+			String fullPDFNameMin = directory + prefix + minPrefix + i + "_pdf_log.plt";
+//			String fullPDFNameMax = 
 			File pdfPlotMax = new File(fullPDFNameMax);
 			File pdfPlotMin = new File(fullPDFNameMin);
 			PrintStream ps;
@@ -522,9 +550,15 @@ public class MOME<T> implements SteadyStateEA<T>{
 				ps.println("set xrange [0:"+ numberOfBinLabels + "]");
 				ps.println("set title \"" + experimentPrefix + " Archive Performance\"");
 				ps.println("set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");
+
+//				ps.println("set output \"" + fileNameFullName.substring(fileNameFullName.lastIndexOf('/')+1, fileNameFullName.lastIndexOf('.')) + ".pdf\"");
 				// The :1 is for skipping the "generation" number logged in the file
-				ps.println("plot \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt\" matrix every ::1 with image");
+//				ps.println("plot \"" + fileNameFullName.substring(fileNameFullName.lastIndexOf('/')+1, fileNameFullName.lastIndexOf('.')) + ".txt\" matrix every ::1 with image");
+				ps.println("plot \"" + "Testing-TESTING11_MOMEArchive_Min_Objective_" + i + "_log" + ".txt\" matrix every ::1 with image");
+
 				ps.close();
+				
+				//Testing-TESTING11_MOMEArchive_Min_Objective_0_log
 				
 
 				//I'm not sure what the below is
@@ -544,8 +578,14 @@ public class MOME<T> implements SteadyStateEA<T>{
 				ps.println("set xrange [0:"+ numberOfBinLabels + "]");
 				ps.println("set title \"" + experimentPrefix + " Archive Performance\"");
 				ps.println("set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");
+//				// The :1 is for skipping the "generation" number logged in the file
+//				ps.println("plot \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt\" matrix every ::1 with image");
+//				ps.println("set output \"" + fileNameFullName.substring(fileNameFullName.lastIndexOf('/')+1, fileNameFullName.lastIndexOf('.')) + ".pdf\"");
 				// The :1 is for skipping the "generation" number logged in the file
-				ps.println("plot \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt\" matrix every ::1 with image");
+//				ps.println("plot \"" + fullPDFNameMin + ".txt\" matrix every ::1 with image");
+				
+				ps.println("plot \"" + fullNameMinHARDCODED + ".txt\" matrix every ::1 with image");
+
 				ps.close();
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
@@ -554,6 +594,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 			
 		}
 //		File pdfPlot = new File(fullPDFName);
+//		File plot = new File(fileNameFullName); // for archive log plot file
 		File plot = new File(fullName); // for archive log plot file
 //		File fillPlot = new File(fullFillName);
 		
@@ -580,9 +621,11 @@ public class MOME<T> implements SteadyStateEA<T>{
 					ps.println("set yrange [0:"+ yrange +"]");
 					ps.println("set xrange [0:"+ numberOfBinLabels + "]");
 					ps.println("set title \"" + experimentPrefix + " Archive Performance\"");
-					//ps.println("set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");
+					ps.println("set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");
 					// The :1 is for skipping the "generation" number logged in the file
 					ps.println("plot \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt\" matrix every ::1 with image");
+//					ps.println("plot \"" + fileNameFullName.substring(fileNameFullName.lastIndexOf('/')+1, fileNameFullName.lastIndexOf('.')) + ".txt\" matrix every ::1 with image");
+
 					ps.close();
 
 					
