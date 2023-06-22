@@ -539,11 +539,16 @@ public class MOMEArchive<T> {
 //			}
 //		}
 //	}
-	//TODO: find out where we get binPath for this
+	/**
+	 * saves individual shapes to the archive. Currently saves all added shapes, will create space issue
+	 * TODO: figure out how to limit the number of saves and overwrite desired individuals
+	 * @param candidate	the score of the individual being saved
+	 * @param candidateBinCoordinates the bin identifier and key for finding score
+	 */
 	private void conditionalEliteSave(Score<T> candidate, Vector<Integer> candidateBinCoordinates) {	//int binIndex needed?
 		if (saveElites) {
 			int binIndex = getOneDBinIndex(candidateBinCoordinates);
-			String binPath = getArchiveDir() + File.separator + mapping.binLabels().get(binIndex);
+			String binPath = getArchiveDir() + File.separator + mapping.binLabels().get(binIndex) + candidate.individual.getId();
 			Serialization.save(candidate.individual, binPath + "-elite");
 			// Write scores as simple text file (less to write than xml)
 			try {
@@ -564,7 +569,6 @@ public class MOMEArchive<T> {
 //	 * @param scoresList the original scores
 //	 * @return	a float array containing the score values
 //	 */
-//	// TODO: We may not need this, but if we do, it will be for logging purposes
 //	//this doesn't work due to behavior index score being mapelites bin index specific
 //	public float[] turnVectorScoresIntoFloatArray(Vector<Score<T>> scoresList) {
 //		System.out.println("in vector to float");

@@ -52,7 +52,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 	//tracking variables
 	private int addedIndividualCount;
 	private int discardedIndividualCount;	//don't know if we will need this
-	private boolean populationChangeCheck;	//this keeps track of what happened to the most recent individual created (if it was added or not)
+//	private boolean populationChangeCheck;	//this keeps track of what happened to the most recent individual created (if it was added or not)
 						//false means the individual was not added and so the population hasn't changed
 						//true means an individual was added and the population changed
 	private int individualsPerGeneration;
@@ -208,7 +208,6 @@ public class MOME<T> implements SteadyStateEA<T>{
 		startingPopulation = PopulationUtil.initialPopulation(example, startSize);			
 		
 		assert startingPopulation.size() == 0 || !(startingPopulation.get(0) instanceof BoundedRealValuedGenotype) || ((BoundedRealValuedGenotype) startingPopulation.get(0)).isBounded() : "Initial individual not bounded: "+startingPopulation.get(0);
-	
 		
 		//add initial population to the archive
 		Vector<Score<T>> evaluatedPopulation = new Vector<Score<T>>(startingPopulation.size());
@@ -231,15 +230,11 @@ public class MOME<T> implements SteadyStateEA<T>{
 		
 		CommonConstants.netio = backupNetIO;
 	
-//ask later if this is a flag?
 		 // Add evaluated population to archive, if add is true
 		evaluatedPopulation.parallelStream().forEach( (s) -> {
 			archive.add(s); // Fill the archive with random starting individuals, only when this flag is true
 		});
 		
-		//want to check bin labels
-		getBinLabelsClass();
-		//if(CommonConstants.watch)
 		//initializing a variable
 		this.mating = Parameters.parameters.booleanParameter("mating");
 
@@ -284,8 +279,6 @@ public class MOME<T> implements SteadyStateEA<T>{
 			
 			//try and add new individual then check if successful and population has changed
 			afterIndividualCreationProcesses(archive.add(s2));			//this method will deal with anything that needs to be done after an individual is made
-			//some sort of logging should be placed here
-			//fileUpdates(child2WasElite); // Log for each individual produced
 		}
 		
 		childGenotype1.mutate(); // Was potentially modified by crossover
@@ -301,7 +294,6 @@ public class MOME<T> implements SteadyStateEA<T>{
 		Score<T> s1 = task.evaluate(childGenotype1);
 		
 		// Try and add newest individual and update population change variable on result
-		//this variable is relevant to logging
 		afterIndividualCreationProcesses(archive.add(s1));			//this will call anything we need to do after making a new individual
 		
 		//some sort of logging should be placed here
@@ -358,26 +350,27 @@ public class MOME<T> implements SteadyStateEA<T>{
 		System.out.println(iterations + "\t" + iterationsWithoutElite + "\t");
 	 */
 	/**
-	 * 
-	 * @param individualAddStatus
+	 * holds commands made after an individual is created
+	 * @param individualAddStatus	if an individual was added or not
 	 */
 	//@SuppressWarnings({ "rawtypes", "unchecked" })
 	public synchronized void afterIndividualCreationProcesses(boolean individualAddStatus) {
 		//System.out.println("in afterIndividualCreation: " +archive.totalNumberOfIndividualsInArchive());
 		individualCreationAttemptsCount++;
-		log();
+		log(individualAddStatus);
 		if(individualAddStatus) {	//the individual was added and the population changed
 			addedIndividualCount++;
-			populationChangeCheck = true;
+//			populationChangeCheck = true;
 		} else {
-			populationChangeCheck = false;
+//			populationChangeCheck = false;
 		}
 	}
 	
 
 	@Override
 	public boolean populationChanged() {
-		return populationChangeCheck; 
+//		return populationChangeCheck; TODO:
+		return false;
 	}
 
 	/**
@@ -401,7 +394,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 	 * Write one line of data to each of the active log files, but only periodically,
 	 * when number of iterations divisible by individualsPerGeneration. 
 	 */
-	protected void log() {
+	protected void log(boolean individualAddedStatus) {
 		//System.out.println("in log method");
 		if (!archiveFileCreated) {
 			try {
@@ -418,7 +411,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 
 		//if an individual was added and the population count is even with the steadyStateIndividualsPerGeneration
 		//this is all periodic logging to text files
-		if(io && (individualCreationAttemptsCount%individualsPerGeneration == 0)) {
+		if(io && (individualCreationAttemptsCount%individualsPerGeneration == 0) && individualAddedStatus) {
 			final int pseudoGeneration = individualCreationAttemptsCount/individualsPerGeneration;
 
 			System.out.println("generation:"+pseudoGeneration+ " addedIndividualCount:" +addedIndividualCount + " individualCreationAttemptsCount:" + individualCreationAttemptsCount);
