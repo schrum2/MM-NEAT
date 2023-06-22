@@ -1,8 +1,10 @@
 package edu.southwestern.tasks.evocraft.fitness;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
@@ -77,6 +79,12 @@ public class MissileFitness extends TimedEvaluationMinecraftFitnessFunction {
 
 		List<Block> leftOverBlocksFromTarget = MinecraftClient.getMinecraftClient().readCube(shapeCorner.add(targetCornerOffset), shapeCorner.add(targetCornerOffset).add(MinecraftUtilClass.getRanges().sub(1)));
 		List<Block> leftOverOfTargetBlocks = MinecraftUtilClass.getDesiredBlocks(leftOverBlocksFromTarget, acceptedBlownUpBlockTypes);
+		
+		// For troubleshooting successful shapes that destroy the target
+//		if(leftOverOfTargetBlocks.size() == 0) {
+//			throw new IllegalStateException(""+history+"\n"+shapeCorner+"\n"+originalBlocks);
+//		}
+		
 		return -leftOverOfTargetBlocks.size();
 	}
 	@Override
@@ -84,8 +92,20 @@ public class MissileFitness extends TimedEvaluationMinecraftFitnessFunction {
 		//change later
 		MinecraftCoordinates ranges = MinecraftUtilClass.getRanges();
 		double target = ranges.x() * ranges.z() * ranges.y();
-		if(fitnessScore > (target * PERCENT_NEEDED_TO_SAVE)) return true;
-		return false;
+		//System.out.println("target * PERCENT_NEEDED_TO_SAVE" + -(target * PERCENT_NEEDED_TO_SAVE) + "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		if(fitnessScore > (-(target * PERCENT_NEEDED_TO_SAVE))) { 
+			//System.out.println("target * PERCENT_NEEDED_TO_SAVE" + -(target * PERCENT_NEEDED_TO_SAVE) + "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+			return true;
+		}
+			return false;
 	}
+	public static void main(String[] args) {
 
+		try {
+			//MMNEAT.main("runNumber:665 randomSeed:665 useWoxSerialization:false minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.DirectRepresentationShapeGenerator minecraftChangeCenterOfMassFitness:true minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet trials:1 mu:20 maxGens:3005 launchMinecraftServerFromJava:false io:true netio:true mating:true fs:false spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.tasks.evocraft.genotype.MinecraftShapeGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:minecraftaccumulate log:MinecraftAccumulate-ESObserverVectorTEST saveTo:ESObserverVectorTEST minecraftContainsWholeMAPElitesArchive:false rememberParentScores:true".split(" ")); 
+			MMNEAT.main("runNumber:107 randomSeed:100 minecraftXRange:5 minecraftYRange:5 minecraftZRange:5 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftMissileFitness:true minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.ExplosiveBlockSet trials:1 mu:100 maxGens:100000 minecraftContainsWholeMAPElitesArchive:false forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:false mating:true fs:false ea:edu.southwestern.evolution.mapelites.MAPElites experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 spaceBetweenMinecraftShapes:20 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:true saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:missileminecraft log:MissileMinecraft-AboveDirectedBiggerVectorPistonOrientation saveTo:AboveDirectedBiggerVectorPistonOrientation mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5 startY:40 extraSpaceBetweenMinecraftShapes:100 minecraftTargetDistancefromShapeY:50 minecraftTargetDistancefromShapeX:0 minecraftTargetDistancefromShapeZ:0 crossover:edu.southwestern.evolution.crossover.ArrayCrossover".split(" "));
+		} catch (FileNotFoundException | NoSuchMethodException e) {
+			e.printStackTrace();
+		}
+	}
 }
