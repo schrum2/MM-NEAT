@@ -527,7 +527,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		MinecraftCoordinates clearEnd = startPosition.add(MinecraftUtilClass.reservedSpace());
 		// Sub 1 to not delete interactive blocks
 		clearEnd = clearEnd.sub(new MinecraftCoordinates(1));
-		if(MinecraftShapeTask.getNumTimedFitnessFunctions() > 0) {
+		if(MinecraftClient.clientRunning()) {
 			MinecraftClient.getMinecraftClient().clearCube(startPosition, clearEnd);
 		} 
 		return new Pair<MinecraftCoordinates,MinecraftCoordinates>(startPosition, clearEnd);

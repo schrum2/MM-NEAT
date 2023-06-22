@@ -47,6 +47,10 @@ public class MinecraftClient extends Comm {
 		super();
 	}
 
+	public static boolean clientRunning() {
+		return client != null;
+	}
+	
 	@Override
 	public void initBuffers() {
 		//Initialize input and output

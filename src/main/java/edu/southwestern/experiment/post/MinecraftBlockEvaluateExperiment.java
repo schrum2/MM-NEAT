@@ -40,7 +40,6 @@ public class MinecraftBlockEvaluateExperiment implements Experiment{
 	public void init() {
 		dir = Parameters.parameters.stringParameter("minecraftBlockListTextFile");
 		fitnessFunctions = MinecraftShapeTask.defineFitnessFromParameters();
-		MinecraftShapeTask.setNumTimedFitnessFunctions(fitnessFunctions.size());
 		System.out.println("Load: "+ dir);
 	}
 

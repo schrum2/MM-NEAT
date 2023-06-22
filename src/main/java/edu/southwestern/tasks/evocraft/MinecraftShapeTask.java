@@ -65,23 +65,12 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	private int startingY;
 	private int startingZ;
 
-	// It's kind of bad for this to be static, but there should only every be one task running at a time, so it should be ok
-	private static int numTimedFitnessFunctions;
-	
-	public static int getNumTimedFitnessFunctions() {
-		return numTimedFitnessFunctions;
-	}
-	
-	public static void setNumTimedFitnessFunctions(int num) {
-		numTimedFitnessFunctions = num;
-	}
-
 	// Makes sure tiebreaking is run in the same way as before
 	@SuppressWarnings("unchecked")
 	public MinecraftShapeTask() {
 		
 		fitnessFunctions = defineFitnessFromParameters();
-		numTimedFitnessFunctions = numTimedEvaluationMinecraftFitnessFunctions(fitnessFunctions);
+		int numTimedFitnessFunctions = numTimedEvaluationMinecraftFitnessFunctions(fitnessFunctions);
 		
 		// Cannot allow random tie breaking since some generated shapes would be different
 		Parameters.parameters.setBoolean("randomArgMaxTieBreak", false);
@@ -434,12 +423,14 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	 */
 	public static double[] calculateFitnessScores(MinecraftCoordinates shapeCorner, List<MinecraftFitnessFunction> fitnessFunctions, List<Block> originalBlocks) {
 		//create separate lists for the TimedEvaluationMinecraftFitnessFunctions and MinecraftFitnessFunctions
-		List<TimedEvaluationMinecraftFitnessFunction> timedEvaluationFitnessFunctionsList = new ArrayList<TimedEvaluationMinecraftFitnessFunction>(numTimedFitnessFunctions);
-		List<MinecraftFitnessFunction> notTimedFitnessFunctionsList = new ArrayList<MinecraftFitnessFunction>(fitnessFunctions.size()-numTimedFitnessFunctions);
+		int numTimedFitnessFunctions = 0;
+		List<TimedEvaluationMinecraftFitnessFunction> timedEvaluationFitnessFunctionsList = new ArrayList<TimedEvaluationMinecraftFitnessFunction>();
+		List<MinecraftFitnessFunction> notTimedFitnessFunctionsList = new ArrayList<MinecraftFitnessFunction>();
 		
 		//sort through the passed fitness functions to separate the TimedEvaluationMinecraftFitnessFunctions from the not timed fitness functions into two lists
 		for(MinecraftFitnessFunction mff : fitnessFunctions) {
 			if(mff instanceof TimedEvaluationMinecraftFitnessFunction) {
+				numTimedFitnessFunctions++;
 				timedEvaluationFitnessFunctionsList.add((TimedEvaluationMinecraftFitnessFunction) mff);
 			} else {
 				notTimedFitnessFunctionsList.add(mff);
