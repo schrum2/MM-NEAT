@@ -56,6 +56,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 						//false means the individual was not added and so the population hasn't changed
 						//true means an individual was added and the population changed
 	private int individualsPerGeneration;
+	private int individualCreationAttemptsCount;	//this is analogous to iterations and helps to keep track of how many actual times new individual is called
 	
 	//logging variables (might be sorted into tracking or other grouping
 	public boolean io;
@@ -103,6 +104,8 @@ public class MOME<T> implements SteadyStateEA<T>{
 		this.addedIndividualCount = 0;
 //		this.setDiscardedIndividualCount(0);		//broke this, need to investigate later
 		this.individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
+		this.individualCreationAttemptsCount = Parameters.parameters.integerParameter("lastSavedGeneration");
+		//TODO: the above might cause issues
 		
 		if(io && createLogs) {
 			//logging
@@ -121,8 +124,8 @@ public class MOME<T> implements SteadyStateEA<T>{
 			gnuMinLogs = new MMNEATLog[numberOfObjectivesToLog];
 
 
-			String infixMin = infix + "min";
-			String infixMax = infix + "max";
+			String infixMin = infix + "_Min_Objective_";
+			String infixMax = infix + "_Max_Objective_";
 //TODO: here is where to rename the gnu plots
 			for (int i = 0; i < numberOfObjectivesToLog; i++) {
 //				gnuLogs[i] = new MMNEATLog(infix + i, false, false, false, true);
@@ -286,6 +289,9 @@ public class MOME<T> implements SteadyStateEA<T>{
 		
 		//some sort of logging should be placed here
 		//fileUpdates(child1WasElite); // Log for each individual produced
+		//TODO: this is causing too frequent logging since all threads might read at the same time
+		//figure out synchronization
+//		individualCreationAttemptsCount++;
 	}
 
 	@Override
@@ -338,8 +344,10 @@ public class MOME<T> implements SteadyStateEA<T>{
 	 * 
 	 * @param individualAddStatus
 	 */
-	private void afterIndividualCreationProcesses(boolean individualAddStatus) {
+	//@SuppressWarnings({ "rawtypes", "unchecked" })
+	public synchronized void afterIndividualCreationProcesses(boolean individualAddStatus) {
 		//System.out.println("in afterIndividualCreation: " +archive.totalNumberOfIndividualsInArchive());
+		individualCreationAttemptsCount++;
 		log();
 		if(individualAddStatus) {	//the individual was added and the population changed
 			addedIndividualCount++;
@@ -347,13 +355,13 @@ public class MOME<T> implements SteadyStateEA<T>{
 		} else {
 			populationChangeCheck = false;
 		}
-	}	//why if else instead of just pop change check = add status? TODO:
+	}
 	
 
-//	@Override
-//	public boolean populationChanged() {
-//		return populationChangeCheck; 
-//	}
+	@Override
+	public boolean populationChanged() {
+		return populationChangeCheck; 
+	}
 
 	/**
 	 * retrieves bin labels, maybe I should see what this really is?
@@ -392,13 +400,15 @@ public class MOME<T> implements SteadyStateEA<T>{
 		//System.out.println("individuals per generation:"+ individualsPerGeneration + " parameter:" + Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration"));
 
 		//if an individual was added and the population count is even with the steadyStateIndividualsPerGeneration
-		if((addedIndividualCount%individualsPerGeneration == 0)) {
-			final int pseudoGeneration = addedIndividualCount/individualsPerGeneration;
+		//this is all periodic logging to text files
+		if(io && (individualCreationAttemptsCount%individualsPerGeneration == 0)) {
+			final int pseudoGeneration = individualCreationAttemptsCount/individualsPerGeneration;
 
-			System.out.println("generation:"+pseudoGeneration+ " addedIndividualCount:" +addedIndividualCount);
+			System.out.println("generation:"+pseudoGeneration+ " addedIndividualCount:" +addedIndividualCount + " individualCreationAttemptsCount:" + individualCreationAttemptsCount);
 			
 			int numberOfObjectives = MMNEAT.task.numObjectives();
 			
+			//LOGGING POPULATION INFORMATION
 			String popString = "";
 			int[] populationSizesForBins = archive.populationSizeForEveryBin();
 			for (int i = 0; i < populationSizesForBins.length; i++) {
@@ -406,17 +416,17 @@ public class MOME<T> implements SteadyStateEA<T>{
 //				System.out.println("popSizes only:" + populationSizesForBins[i]);
 
 			}
-			System.out.println("popSizes MOME:" + popString);
+			//System.out.println("popSizes MOME:" + popString);
 			binPopulationSizeLog.log(popString);
-
 			//String populationSizeString = "";
-			//below is for objectives logging
+
 			
+			//LOGGING OBJECTIVES MAX AND MIN
 			double[][] maxScoresBinXObjective = archive.maxScorebyBinXObjective(); //maxScores[bin][objective]
 			double[][] minScoresBinXObjective = archive.minScorebyBinXObjective(); //minScores[bin][objective]
 	//initialize log with info labels
 			
-//			String testPrintString = "";
+			//loop through objectives to log max and min for each objectives log
 			for (int i = 0; i < numberOfObjectives; i++) {
 				
 				//MAX FITNESS SCORES LOG
@@ -432,10 +442,9 @@ public class MOME<T> implements SteadyStateEA<T>{
 				//System.out.println("popSizearray:" + populationSizesForBins[i]);
 
 			}
-//			System.out.println("populationString"+populationSizeString);
 //
 			
-			//below is for archive logging
+			//below is for archive logging archive
 //			////////////BELOW WORKS
 			double[] maxFitnessScoresArray = archive.maxFitnessInWholeArchiveXObjective();
 			String printString = pseudoGeneration+"\t"+archive.getNumberOfOccupiedBins()+"\t"+archive.totalNumberOfIndividualsInArchive()+"\t";
@@ -464,6 +473,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 		//might need later
 	}
 	
+	
 	public static void setUpLogging(int numberOfBinLabels, String infix, String experimentPrefix, int yrange, int individualsPerGeneration) {
 		//this is for logging, copied all the parameters but probably don't need it all
 		
@@ -474,8 +484,8 @@ public class MOME<T> implements SteadyStateEA<T>{
 //		String fillDiscardedPrefix = experimentPrefix + "_" + "FillWithDiscarded";
 //		String fillPercentagePrefix = experimentPrefix + "_" + "FillPercentage";
 //		String qdPrefix = experimentPrefix + "_" + "QD";
-		String maxPrefix = experimentPrefix + "_" + "Maximum";
-		String minPrefix = experimentPrefix + "_" + "Minimum";
+		String maxPrefix = experimentPrefix + "_" + "Maximum_Objective_";
+		String minPrefix = experimentPrefix + "_" + "Minimum_Objective_";
 //		String lossPrefix = experimentPrefix + "_" + "ReconstructionLoss";
 		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
 		directory += (directory.equals("") ? "" : "/");
@@ -500,11 +510,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 			File pdfPlotMax = new File(fullPDFNameMax);
 			File pdfPlotMin = new File(fullPDFNameMin);
 			PrintStream ps;
-			//I separated the max and min because they each have their own set.
-			
-			
-//			String maxFitnessName = directory + maxPrefix + "_log.plt";
-			
+			//I separated the max and min because they each have their own set.			
 			
 			try {
 				//max pdf plots
@@ -521,6 +527,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 				ps.close();
 				
 
+				//I'm not sure what the below is
 //				ps.println("set title \"" + experimentPrefix + " Maximum individual fitness score");
 //				ps.println("set output \"" + maxFitnessName.substring(maxFitnessName.lastIndexOf('/')+1, maxFitnessName.lastIndexOf('.')) + ".pdf\"");
 //				ps.println("plot \"" + name + ".txt\" u 1:4 w linespoints t \"Maximum Fitness Score\", \\");
@@ -733,11 +740,6 @@ public class MOME<T> implements SteadyStateEA<T>{
 			// Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-	@Override
-	public boolean populationChanged() {
-		// TODO Auto-generated method stub
-		return populationChangeCheck;
 	}
 }
 //archive contains 125 bins

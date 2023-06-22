@@ -305,7 +305,7 @@ public class MOMEArchive<T> {
 			maxScoresByBinXObjective[oneDBinIndex] = maxFitnessInSingleBinXObjectives(key);
 		}
 		 */
-		System.out.println("popSizes Arch:" + popString);
+		//System.out.println("popSizes Arch:" + popString);
 
 		return populationSizes;
 	}
