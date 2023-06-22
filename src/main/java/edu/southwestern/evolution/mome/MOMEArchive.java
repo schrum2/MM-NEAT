@@ -42,17 +42,6 @@ public class MOMEArchive<T> {
 	private boolean saveElites;	//would like to know what this is exactly
 	private String archiveDir;
 	private int maximumNumberOfIndividualsInSubPops;
-	public static final int MAX_SUB_POP_ALLOWED = 255; //this is the maximum number of individuals that can occupy a bin
-		//could create a parameter to control it? use paramenter instead?  parameter: maximumMOMESubPopulationSize
-	//referenced in minSubPopulationSizeInWholeArchive
-	
-//	public int getOccupiedBins() {
-//		return occupiedBins;
-//	}
-//
-//	public void setOccupiedBins(int occupiedBins) {
-//		this.occupiedBins = occupiedBins;
-//	}
 
 	public BinLabels getBinMapping() {
 		return mapping;
@@ -100,10 +89,7 @@ public class MOMEArchive<T> {
 		archive = new ConcurrentHashMap<Vector<Integer>,Vector<Score<T>>>(numberOfBinLabels);
 //		occupiedBins = 0;
 		maximumNumberOfIndividualsInSubPops = Parameters.parameters.integerParameter("maximumMOMESubPopulationSize");
-
-		//set subPopulationMaximum size
-		//maxSubPopAllowed = Parameters.parameters.integerParameter("minecraftMaxSubPopAllowedInBins");
-		
+	
 		// Archive directory
 		String experimentDir = FileUtilities.getSaveDirectory();
 		archiveDir = experimentDir + File.separator + archiveDirectoryName;
@@ -167,7 +153,6 @@ public class MOMEArchive<T> {
 			throw new UnsupportedOperationException("This case is not supported");
 		} else if(candidate.usesMAPElitesMapSpecification() && !getBinMapping().discard(candidate.MAPElitesBehaviorMap())) {
 			//not discarded
-		//	maximumNumberOfIndividualsInSubPops = Parameters.parameters.integerParameter("maximumMOMESubPopulationSize");
 			//returns an integer array of coordinates for the candidates bin
 			int[] binIndex = getBinMapping().multiDimensionalIndices(candidate.MAPElitesBehaviorMap());	//grabs bin coordinates int array
 			Vector<Integer> candidateBinCoordinates = new Vector<Integer>();
@@ -306,19 +291,14 @@ public class MOMEArchive<T> {
 		for (int j = 0; j < populationSizes.length; j++) {
 			popString = popString + populationSizes[j] + "\t";
 		}
-		/**
-		 * for(Vector<Integer> key : archive.keySet()) {
-			int oneDBinIndex = mapping.oneDimensionalIndex(ArrayUtil.intArrayFromArrayList(key));
-			maxScoresByBinXObjective[oneDBinIndex] = maxFitnessInSingleBinXObjectives(key);
-		}
-		 */
+		
 		//System.out.println("popSizes Arch:" + popString);
 
 		return populationSizes;
 	}
 	//Max sub pop size across all bins
 	/**
-	 * this gets the maximum population for a single bin from the whole archive
+	 * this gets the largest population for a single bin from the whole archive
 	 * @return the number of the most individuals present in one bin
 	 */
 	public int maxSubPopulationSizeInWholeArchive() {
@@ -342,7 +322,7 @@ public class MOMEArchive<T> {
 	 */
 	public int minSubPopulationSizeInWholeArchive() {
 		//System.out.println("minSubPop");
-		int minSubPop = MAX_SUB_POP_ALLOWED;
+		int minSubPop = maximumNumberOfIndividualsInSubPops;
 		Collection<Vector<Score<T>>> allVectorsOfScores = archive.values();	//this returns a collection of all the scores/values in the archive
 		for(Vector<Score<T>> scoreVector : allVectorsOfScores) {	//for each bin
 			if((scoreVector.size() < minSubPop) && (scoreVector.size() != 0)) {					//check population size
@@ -562,7 +542,8 @@ public class MOMEArchive<T> {
 	//TODO: find out where we get binPath for this
 	private void conditionalEliteSave(Score<T> candidate, Vector<Integer> candidateBinCoordinates) {	//int binIndex needed?
 		if (saveElites) {
-			String binPath = getArchiveDir() + File.separator + "binLabel";
+			int binIndex = getOneDBinIndex(candidateBinCoordinates);
+			String binPath = getArchiveDir() + File.separator + mapping.binLabels().get(binIndex);
 			Serialization.save(candidate.individual, binPath + "-elite");
 			// Write scores as simple text file (less to write than xml)
 			try {
@@ -606,44 +587,26 @@ public class MOMEArchive<T> {
 //		return mapping.binLabels().size();
 //	}
 	
-//	//needed? - currently not used
-//	//supposed to get all the oneDBinIndex for each bin
-//	public int[] oneDBinIndex() {
-//		int[] oneDBinIndex = new int[mapping.binLabels().size()];
-//		int i = 0;
-//		for(Vector<Integer> key : archive.keySet()) {
-//			//add to something
-//			oneDBinIndex[i] = mapping.oneDimensionalIndex(ArrayUtil.intArrayFromArrayList(key));
-//		}
-//		return oneDBinIndex;
-//	}
+
+	public int getOneDBinIndex(Vector<Integer> keyVector) {
+		return mapping.oneDimensionalIndex(ArrayUtil.intArrayFromArrayList(keyVector));
+	}
 	
 	public int[] getBinIndexCoordinates(Score<T> candidate) {
 		return getBinMapping().multiDimensionalIndices(candidate.MAPElitesBehaviorMap());
 	}
-//	public static <T, E> T getKeyByValue(Map<T, E> map, E value) {
-//	    for (Entry<T, E> entry : map.entrySet()) {
-//	        if (Objects.equals(value, entry.getValue())) {
-//	            return entry.getKey();
-//	        }
-//	    }
-//	    return null;
-////	}
 
-//	public Vector<Integer> getKeyByValue(Score<T> individualScore){
-//		
-//		for ( Entry<Vector<Integer>, Vector<Score<T>>> entry : archive.entrySet()) {
-//			if(Objects.equals(individualScore, entry.getValue())) {
-//				return entry.getKey();
-//			}
-//		}
-//	}
+	public Vector<Integer> getBinCoordinatesFromScore(Score<T> individualScore){
+		int[] binIndex = getBinMapping().multiDimensionalIndices(individualScore.MAPElitesBehaviorMap());	//grabs bin coordinates int array
+		Vector<Integer> individualBinCoordinates = new Vector<Integer>();
+		for (int i = 0; i < binIndex.length; i++) {		//turns int array into vector
+			individualBinCoordinates.add(binIndex[i]);
+		}
+		return individualBinCoordinates;
+	}
 //	
 	//main for testing
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
-//		int maximumNumberOfIndividualsInSubPops = 3;
-//		MOMEArchive<Object> testArchive = new MOMEArchive<>(true, "testingRemoveIndividual", maximumNumberOfIndividualsInSubPops);
-//		int runNum = 50; 
 //		//MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" base:nsga2test log:NSG2Test-Test saveTo:Test trackPseudoArchive:true netio:true lambda:37 maxGens:200 task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.SphereFunction genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foBinDimension:500 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
 //		MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" mapElitesQDBaseOffset:525 io:true base:nsga2test log:NSG2Test-MAPElites saveTo:MAPElites netio:false maxGens:10000 ea:edu.southwestern.evolution.mapelites.MAPElites task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.SphereFunction steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foBinDimension:50 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
 //		//MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" mapElitesQDBaseOffset:525 base:nsga2test log:NSG2Test-CMAES saveTo:CMAES trackPseudoArchive:true netio:true mu:37 lambda:37 maxGens:200 ea:edu.southwestern.evolution.cmaes.CMAEvolutionStrategyEA task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.SphereFunction genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foBinDimension:500 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
