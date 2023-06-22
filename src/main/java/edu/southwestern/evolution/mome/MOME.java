@@ -65,8 +65,10 @@ public class MOME<T> implements SteadyStateEA<T>{
 	private MMNEATLog binPopulationSizeLog = null; //general random test logging for now
 	private MMNEATLog[] maxFitnessLogs = null; //creates a log for each objective that contains the max fitness for each bin, logged every generation
 	private MMNEATLog[] minFitnessLogs = null; //creates a log for each objective that contains the min fitness for each bin, logged every generation
-	private MMNEATLog[] gnuLogs = null; //creates a log for each objective that contains ????? for each bin, logged every generation
-	
+//	private MMNEATLog[] gnuLogs = null; //creates a log for each objective that contains ????? for each bin, logged every generation
+	private MMNEATLog[] gnuMaxLogs = null; //creates a log for each objective that contains ????? for each bin, logged every generation
+	private MMNEATLog[] gnuMinLogs = null; //creates a log for each objective that contains ????? for each bin, logged every generation
+
 	
 
 	public MOME() {
@@ -97,12 +99,12 @@ public class MOME<T> implements SteadyStateEA<T>{
 		//TODO: figure out how we get this number below
 		this.mating = Parameters.parameters.booleanParameter("mating");
 		this.crossoverRate = Parameters.parameters.doubleParameter("crossoverRate");
-		this.populationChangeCheck = false;
+//		this.populationChangeCheck = false;
 		this.addedIndividualCount = 0;
 //		this.setDiscardedIndividualCount(0);		//broke this, need to investigate later
 		this.individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
 		
-//		if(io && createLogs) {
+		if(io && createLogs) {
 			//logging
 			String infix = "MOMEArchive";
 			int numberOfObjectivesToLog = MMNEAT.task.numObjectives();
@@ -114,25 +116,33 @@ public class MOME<T> implements SteadyStateEA<T>{
 			binPopulationSizeLog = new MMNEATLog("BinPopulation", false, false, false, true);
 			maxFitnessLogs = new MMNEATLog[numberOfObjectivesToLog];
 			minFitnessLogs = new MMNEATLog[numberOfObjectivesToLog];
-			gnuLogs = new MMNEATLog[2*numberOfObjectivesToLog];
+//			gnuLogs = new MMNEATLog[2*numberOfObjectivesToLog];
+			gnuMaxLogs = new MMNEATLog[numberOfObjectivesToLog];
+			gnuMinLogs = new MMNEATLog[numberOfObjectivesToLog];
+
 
 			String infixMin = infix + "min";
 			String infixMax = infix + "max";
-
+//TODO: here is where to rename the gnu plots
 			for (int i = 0; i < numberOfObjectivesToLog; i++) {
-				gnuLogs[i] = new MMNEATLog(infix + i, false, false, false, true);
+//				gnuLogs[i] = new MMNEATLog(infix + i, false, false, false, true);
 				minFitnessLogs[i] = new MMNEATLog(infixMin + i, false, false, false, true);
 				maxFitnessLogs[i] = new MMNEATLog(infixMax +i, false, false, false, true);
+				gnuMaxLogs[i] = new MMNEATLog(infixMax +i, false, false, false, true);
+				gnuMinLogs[i] = new MMNEATLog(infixMin +i, false, false, false, true);
+
 			}
+//			for (int i = numberOfObjectivesToLog; i < gnuLogs.length; i++) {
+//				gnuLogs[i] = new MMNEATLog(infix + i, false, false, false, true);
+//			}
 
 			// Create gnuplot file for archive log
 			String experimentPrefix = Parameters.parameters.stringParameter("log")
 					+ Parameters.parameters.integerParameter("runNumber");
 //			individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
 			int yrange = Parameters.parameters.integerParameter("maxGens")/individualsPerGeneration;
-			setUpLogging(numberOfBinLabels, infix, experimentPrefix, yrange, individualsPerGeneration, archive.getBinMapping().binLabels().size());
-//TODO: does it need archive size to be the same as the number of bin labels? I don't understand why this is passed twice
-//		}
+			setUpLogging(numberOfBinLabels, infix, experimentPrefix, yrange, individualsPerGeneration);
+		}
 		
 		/**
 		 *  // below deals with writing logs and other lines that may be relevant later
@@ -196,7 +206,6 @@ public class MOME<T> implements SteadyStateEA<T>{
 			Score<T> s = task.evaluate(g);
 			evaluatedPopulation.add(s);
 			//System.out.println("single evaluation done");
-
 		});
 
 		
@@ -253,8 +262,8 @@ public class MOME<T> implements SteadyStateEA<T>{
 			// Evaluate and add child to archive
 			Score<T> s2 = task.evaluate(childGenotype2);
 			
-			populationChangeCheck= archive.add(s2);		//try and add new individual then check if successful and population has changed
-			afterIndividualCreationProcesses();			//this method will deal with anything that needs to be done after an individual is made
+			//try and add new individual then check if successful and population has changed
+			afterIndividualCreationProcesses(archive.add(s2));			//this method will deal with anything that needs to be done after an individual is made
 			//some sort of logging should be placed here
 			//fileUpdates(child2WasElite); // Log for each individual produced
 		}
@@ -272,8 +281,8 @@ public class MOME<T> implements SteadyStateEA<T>{
 		Score<T> s1 = task.evaluate(childGenotype1);
 		
 		// Try and add newest individual and update population change variable on result
-		populationChangeCheck = archive.add(s1);	//this variable is relevant to logging
-		afterIndividualCreationProcesses();			//this will call anything we need to do after making a new individual
+		//this variable is relevant to logging
+		afterIndividualCreationProcesses(archive.add(s1));			//this will call anything we need to do after making a new individual
 		
 		//some sort of logging should be placed here
 		//fileUpdates(child1WasElite); // Log for each individual produced
@@ -325,25 +334,26 @@ public class MOME<T> implements SteadyStateEA<T>{
 		}
 		System.out.println(iterations + "\t" + iterationsWithoutElite + "\t");
 	 */
-	private void afterIndividualCreationProcesses() {
+	/**
+	 * 
+	 * @param individualAddStatus
+	 */
+	private void afterIndividualCreationProcesses(boolean individualAddStatus) {
 		//System.out.println("in afterIndividualCreation: " +archive.totalNumberOfIndividualsInArchive());
-		//this is a method for any processes that happened
-
-		if(populationChangeCheck) {	//the individual was added and the population changed
-			addedIndividualCount++;
-		}
-
 		log();
-
-		//if false, no change to pop
-		//if true, newest individual was added
-	}
+		if(individualAddStatus) {	//the individual was added and the population changed
+			addedIndividualCount++;
+			populationChangeCheck = true;
+		} else {
+			populationChangeCheck = false;
+		}
+	}	//why if else instead of just pop change check = add status? TODO:
 	
 
-	@Override
-	public boolean populationChanged() {
-		return populationChangeCheck; 
-	}
+//	@Override
+//	public boolean populationChanged() {
+//		return populationChangeCheck; 
+//	}
 
 	/**
 	 * retrieves bin labels, maybe I should see what this really is?
@@ -382,7 +392,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 		//System.out.println("individuals per generation:"+ individualsPerGeneration + " parameter:" + Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration"));
 
 		//if an individual was added and the population count is even with the steadyStateIndividualsPerGeneration
-		if((addedIndividualCount%individualsPerGeneration == 0) && populationChangeCheck) {
+		if((addedIndividualCount%individualsPerGeneration == 0)) {
 			final int pseudoGeneration = addedIndividualCount/individualsPerGeneration;
 
 			System.out.println("generation:"+pseudoGeneration+ " addedIndividualCount:" +addedIndividualCount);
@@ -424,10 +434,6 @@ public class MOME<T> implements SteadyStateEA<T>{
 			}
 //			System.out.println("populationString"+populationSizeString);
 //
-//			for(int i = 0; i < minScoresBinXObjective[0].length; i++) {
-//				Double[] minScoresForOneObjective = ArrayUtils.toObject(ArrayUtil.column(minScoresBinXObjective, i));
-//				minFitnessLogs[i].log(pseudoGeneration + "\t" + StringUtils.join(minScoresForOneObjective, "\t").replaceAll("-Infinity", "X"));
-//			}
 			
 			//below is for archive logging
 //			////////////BELOW WORKS
@@ -449,11 +455,6 @@ public class MOME<T> implements SteadyStateEA<T>{
 			System.out.println(printString);
 
 			archiveLog.log(printString);
-
-//TODO: marker for file input
-//			randomLog.log("pseudo generation" +pseudoGeneration + "\t occupiedBins:" + archive.getNumberOfOccupiedBins() + "\t number of current individuals in archive:" + archive.totalNumberOfIndividualsInArchive() + 
-//					"\n maxSubPop in archive:" + archive.maxSubPopulationSizeInWholeArchive() + "\t minSubPop in archive:"+ archive.minSubPopulationSizeInWholeArchive()+
-//					"\n pareto front size across whole archive:"+ archive.sizeOfCombinedParetoFrontAcrossAllBins() + "\n");
 		}
 	}
 	
@@ -463,7 +464,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 		//might need later
 	}
 	
-	public static void setUpLogging(int numLabels, String infix, String experimentPrefix, int yrange, int individualsPerGeneration, int archiveSize) {
+	public static void setUpLogging(int numberOfBinLabels, String infix, String experimentPrefix, int yrange, int individualsPerGeneration) {
 		//this is for logging, copied all the parameters but probably don't need it all
 		
 
@@ -473,11 +474,12 @@ public class MOME<T> implements SteadyStateEA<T>{
 //		String fillDiscardedPrefix = experimentPrefix + "_" + "FillWithDiscarded";
 //		String fillPercentagePrefix = experimentPrefix + "_" + "FillPercentage";
 //		String qdPrefix = experimentPrefix + "_" + "QD";
-//		String maxPrefix = experimentPrefix + "_" + "Maximum";
+		String maxPrefix = experimentPrefix + "_" + "Maximum";
+		String minPrefix = experimentPrefix + "_" + "Minimum";
 //		String lossPrefix = experimentPrefix + "_" + "ReconstructionLoss";
 		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
 		directory += (directory.equals("") ? "" : "/");
-		String fullPDFName = directory + prefix + "_pdf_log.plt";
+
 		String fullName = directory + prefix + "_log.plt";
 //		String fullFillName = directory + fillPrefix + "_log.plt";
 //		String fullFillDiscardedName = directory + fillDiscardedPrefix + "_log.plt";
@@ -485,32 +487,91 @@ public class MOME<T> implements SteadyStateEA<T>{
 //		String fullQDName = directory + qdPrefix + "_log.plt";
 //		String maxFitnessName = directory + maxPrefix + "_log.plt";
 //		String reconstructionLossName = directory + lossPrefix + "_log.plt";
-		File pdfPlot = new File(fullPDFName);
+		
+		individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
+
+		
+		for (int i = 0; i < MMNEAT.task.numObjectives(); i++) {
+			//private MMNEATLog[] maxFitnessLogs
+			//private MMNEATLog[] minFitnessLogs 
+			//private MMNEATLog[] gnuLogs = n
+			String fullPDFNameMax = directory + maxPrefix + i + "_pdf_log.plt";
+			String fullPDFNameMin = directory + minPrefix + i + "_pdf_log.plt";
+			File pdfPlotMax = new File(fullPDFNameMax);
+			File pdfPlotMin = new File(fullPDFNameMin);
+			PrintStream ps;
+			//I separated the max and min because they each have their own set.
+			
+			
+//			String maxFitnessName = directory + maxPrefix + "_log.plt";
+			
+			
+			try {
+				//max pdf plots
+				ps = new PrintStream(pdfPlotMax);
+				ps.println("set term pdf enhanced");
+				ps.println("unset key");
+				// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
+				ps.println("set yrange [0:"+ yrange +"]");
+				ps.println("set xrange [0:"+ numberOfBinLabels + "]");
+				ps.println("set title \"" + experimentPrefix + " Archive Performance\"");
+				ps.println("set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");
+				// The :1 is for skipping the "generation" number logged in the file
+				ps.println("plot \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt\" matrix every ::1 with image");
+				ps.close();
+				
+
+//				ps.println("set title \"" + experimentPrefix + " Maximum individual fitness score");
+//				ps.println("set output \"" + maxFitnessName.substring(maxFitnessName.lastIndexOf('/')+1, maxFitnessName.lastIndexOf('.')) + ".pdf\"");
+//				ps.println("plot \"" + name + ".txt\" u 1:4 w linespoints t \"Maximum Fitness Score\", \\");
+//				ps.println("     \"" + name + ".txt\" u 1:8 w linespoints t \"Restricted Maximum Fitness Score\"");
+//				
+				
+				
+				//min pdf plots
+				ps = new PrintStream(pdfPlotMin);
+				ps.println("set term pdf enhanced");
+				ps.println("unset key");
+				// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
+				ps.println("set yrange [0:"+ yrange +"]");
+				ps.println("set xrange [0:"+ numberOfBinLabels + "]");
+				ps.println("set title \"" + experimentPrefix + " Archive Performance\"");
+				ps.println("set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");
+				// The :1 is for skipping the "generation" number logged in the file
+				ps.println("plot \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt\" matrix every ::1 with image");
+				ps.close();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+//		File pdfPlot = new File(fullPDFName);
 		File plot = new File(fullName); // for archive log plot file
 //		File fillPlot = new File(fullFillName);
 		
 		// Write to file
 				try {
 					// Archive PDF plot
-					individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
-					PrintStream ps = new PrintStream(pdfPlot);
-					ps.println("set term pdf enhanced");
-					ps.println("unset key");
-					// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
-					ps.println("set yrange [0:"+ yrange +"]");
-					ps.println("set xrange [0:"+ archiveSize + "]");
-					ps.println("set title \"" + experimentPrefix + " Archive Performance\"");
-					ps.println("set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");
-					// The :1 is for skipping the "generation" number logged in the file
-					ps.println("plot \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt\" matrix every ::1 with image");
-					ps.close();
+//					individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
+//					PrintStream ps = new PrintStream(pdfPlot);
+//					ps.println("set term pdf enhanced");
+//					ps.println("unset key");
+//					// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
+//					ps.println("set yrange [0:"+ yrange +"]");
+//					ps.println("set xrange [0:"+ numberOfBinLabels + "]");
+//					ps.println("set title \"" + experimentPrefix + " Archive Performance\"");
+//					ps.println("set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");
+//					// The :1 is for skipping the "generation" number logged in the file
+//					ps.println("plot \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt\" matrix every ::1 with image");
+//					ps.close();
 					
 					// Archive plot: In default GNU Plot window
-					ps = new PrintStream(plot);
+					PrintStream ps = new PrintStream(plot);
 					ps.println("unset key");
 					// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
 					ps.println("set yrange [0:"+ yrange +"]");
-					ps.println("set xrange [0:"+ archiveSize + "]");
+					ps.println("set xrange [0:"+ numberOfBinLabels + "]");
 					ps.println("set title \"" + experimentPrefix + " Archive Performance\"");
 					//ps.println("set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");
 					// The :1 is for skipping the "generation" number logged in the file
@@ -672,6 +733,11 @@ public class MOME<T> implements SteadyStateEA<T>{
 			// Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	@Override
+	public boolean populationChanged() {
+		// TODO Auto-generated method stub
+		return populationChangeCheck;
 	}
 }
 //archive contains 125 bins
