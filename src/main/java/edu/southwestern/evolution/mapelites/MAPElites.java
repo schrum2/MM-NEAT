@@ -116,7 +116,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 					+ Parameters.parameters.integerParameter("runNumber");
 			individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
 			int yrange = Parameters.parameters.integerParameter("maxGens")/individualsPerGeneration;
-			setUpLogging(numLabels, infix, experimentPrefix, yrange, cppnDirLogging, individualsPerGeneration, archive.getBinMapping().binLabels().size());
+			setUpLogging(numLabels, infix, experimentPrefix, yrange, cppnDirLogging, individualsPerGeneration);
 		}
 		this.mating = Parameters.parameters.booleanParameter("mating");
 		this.crossoverRate = Parameters.parameters.doubleParameter("crossoverRate");
@@ -136,7 +136,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	 * @param individualsPerGeneration
 	 * @param archiveSize
 	 */
-	public static void setUpLogging(int numLabels, String infix, String experimentPrefix, int yrange, boolean cppnDirLogging, int individualsPerGeneration, int archiveSize) {
+	public static void setUpLogging(int numLabels, String infix, String experimentPrefix, int yrange, boolean cppnDirLogging, int individualsPerGeneration) {
 		
 		String prefix = experimentPrefix + "_" + infix;
 		String fillPrefix = experimentPrefix + "_" + "Fill";
@@ -167,7 +167,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			ps.println("unset key");
 			// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
 			ps.println("set yrange [0:"+ yrange +"]");
-			ps.println("set xrange [0:"+ archiveSize + "]");
+			ps.println("set xrange [0:"+ numLabels + "]");
 			ps.println("set title \"" + experimentPrefix + " Archive Performance\"");
 			ps.println("set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");
 			// The :1 is for skipping the "generation" number logged in the file
@@ -179,7 +179,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			ps.println("unset key");
 			// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
 			ps.println("set yrange [0:"+ yrange +"]");
-			ps.println("set xrange [0:"+ archiveSize + "]");
+			ps.println("set xrange [0:"+ numLabels + "]");
 			ps.println("set title \"" + experimentPrefix + " Archive Performance\"");
 			//ps.println("set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");
 			// The :1 is for skipping the "generation" number logged in the file
