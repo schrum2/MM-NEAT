@@ -29,6 +29,14 @@ import edu.southwestern.util.file.Serialization;
 import edu.southwestern.util.random.RandomNumbers;
 
 // TODO: Put your header comment here too
+/**
+ * Archive class for MOME. This creates an archive that works with MOME. 
+ * The archive is a ConcurrentHashMap of the bin coordinates paired with the individuals in that bin.
+ * 
+ * @author lewisj
+ *
+ * @param <T>
+ */
 public class MOMEArchive<T> {
 
 	
@@ -41,7 +49,8 @@ public class MOMEArchive<T> {
 	private BinLabels mapping;
 	private boolean saveElites;	//would like to know what this is exactly
 	private String archiveDir;
-	private int maximumNumberOfIndividualsInSubPops;
+	private int maximumNumberOfIndividualsInSubPops;	//MOME allows for more than one individual to be in a bin, 
+														//this controls the maximum number of individuals in the bin.
 
 	public BinLabels getBinMapping() {
 		return mapping;
@@ -76,7 +85,7 @@ public class MOMEArchive<T> {
 		this.saveElites = saveElites;
 		// Initialize mapping
 		try {
-			mapping = (BinLabels) ClassCreation.createObject("mapElitesBinLabels"); // TODO: Change to what it was before: will simply use the MAP Elites labels parameter
+			mapping = (BinLabels) ClassCreation.createObject("mapElitesBinLabels");
 		} catch (NoSuchMethodException e) {
 			System.out.println("Failed to get Bin Mapping for MOME!");
 			e.printStackTrace();
@@ -93,7 +102,7 @@ public class MOMEArchive<T> {
 		// Archive directory
 		String experimentDir = FileUtilities.getSaveDirectory();
 		archiveDir = experimentDir + File.separator + archiveDirectoryName;
-		System.out.println("MOME ARCHIVE archiveDir: " + archiveDir);		//TODO: delete later
+//remove		System.out.println("MOME ARCHIVE archiveDir: " + archiveDir);		//: delete later
 		if(saveElites) {
 			new File(archiveDir).mkdirs(); // make directory
 		}
@@ -182,7 +191,6 @@ public class MOMEArchive<T> {
 						if((front.size() > maximumNumberOfIndividualsInSubPops) && (maximumNumberOfIndividualsInSubPops > 0)) {	//check the subpop size
 							discardRandomIndividualFromBin(candidateBinCoordinates, score); //this will discard a random individual who is not the one just added
 						}
-						//TODO: add save call
 						conditionalEliteSave(candidate, candidateBinCoordinates);
 						return true;
 					}
@@ -507,34 +515,11 @@ public class MOMEArchive<T> {
 		return front.size();
 		//return front;
 	}
-//	
-//	/**
-//	 * Save the candidate to disk since since it replaced the former bin occupant (or was first)
-//	 * @param candidate Score with information to save
-//	 * @param binIndex Index in bin
-//	 */
-//	private void conditionalEliteSave(Score<T> candidate, int binIndex) {
-//		// Need to save all elites so that re-load on resume works
-//		if(saveElites) {
-//			// Easier to reload on resume if file name is uniform. Will also save space by overwriting
-//			String binPath = getArchiveDir() + File.separator + mapping.binLabels().get(binIndex);
-//			Serialization.save(candidate.individual, binPath + "-elite");
-//			// Write scores as simple text file (less to write than xml)
-//			try {
-//				PrintStream ps = new PrintStream(new File(binPath + "-scores.txt"));
-//				for(Double score : candidate.getTraditionalDomainSpecificBehaviorVector()) {
-//					ps.println(score);
-//				}
-//			} catch (FileNotFoundException e) {
-//				System.out.println("Could not write scores for " + candidate.individual.getId() + ":" + candidate.getTraditionalDomainSpecificBehaviorVector());
-//				e.printStackTrace();
-//				System.exit(1);
-//			}
-//		}
-//	}
+
 	/**
 	 * saves individual shapes to the archive. Currently saves all added shapes, will create space issue
 	 * TODO: figure out how to limit the number of saves and overwrite desired individuals
+	 * MAYBE MOVE TO LOGGING CLASS?
 	 * @param candidate	the score of the individual being saved
 	 * @param candidateBinCoordinates the bin identifier and key for finding score
 	 */
