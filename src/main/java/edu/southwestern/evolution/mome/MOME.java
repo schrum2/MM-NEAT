@@ -195,6 +195,8 @@ public class MOME<T> implements SteadyStateEA<T>{
 		evaluateStream.forEach( (g) -> {
 			Score<T> s = task.evaluate(g);
 			evaluatedPopulation.add(s);
+			System.out.println("single evaluation done");
+
 		});
 
 		
@@ -464,17 +466,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 	public static void setUpLogging(int numLabels, String infix, String experimentPrefix, int yrange, int individualsPerGeneration, int archiveSize) {
 		//this is for logging, copied all the parameters but probably don't need it all
 		
-//XXXXXX fullPDFName testing/TESTING106/Testing-TESTING106_MAPElites_pdf_log.plt
-////XXXXXX fullPDFName testing/TESTING106/Testing-TESTING106_MAPElites_log.plt
-//		XXXXXX DIRECTORY testing/TESTING106/
-//		XXXXXX PREFIX Testing-TESTING106_MAPElites
-		
-		
-//XXXXXX fullPDFName testing/TESTING8Testing-TESTING8_MOMEArchive_pdf_log.plt
-//XXXXXX fullPDFName testing/TESTING8Testing-TESTING8_MOMEArchive_log.plt
-		
-		//XXXXXX DIRECTORY testing/TESTING8
-//		XXXXXX PREFIX Testing-TESTING8_MOMEArchive
+
 		
 		String prefix = experimentPrefix + "_" + infix;
 //		String fillPrefix = experimentPrefix + "_" + "Fill";
@@ -512,12 +504,6 @@ public class MOME<T> implements SteadyStateEA<T>{
 					// The :1 is for skipping the "generation" number logged in the file
 					ps.println("plot \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt\" matrix every ::1 with image");
 					ps.close();
-					System.out.println("XXXXXX DIRECTORY "+ directory);
-					System.out.println("XXXXXX PREFIX "+ prefix);
-
-
-					System.out.println("XXXXXX fullPDFName "+ fullPDFName);
-
 					
 					// Archive plot: In default GNU Plot window
 					ps = new PrintStream(plot);
@@ -530,8 +516,6 @@ public class MOME<T> implements SteadyStateEA<T>{
 					// The :1 is for skipping the "generation" number logged in the file
 					ps.println("plot \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt\" matrix every ::1 with image");
 					ps.close();
-					
-					System.out.println("XXXXXX fullPDFName "+ fullName);
 
 					
 				} catch (FileNotFoundException e) {
