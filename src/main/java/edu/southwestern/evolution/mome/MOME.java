@@ -130,10 +130,13 @@ public class MOME<T> implements SteadyStateEA<T>{
 //			gnuLogs = new MMNEATLog[2*numberOfObjectivesToLog];
 			gnuMaxLogs = new MMNEATLog[numberOfObjectivesToLog];
 			gnuMinLogs = new MMNEATLog[numberOfObjectivesToLog];
+			System.out.println("MOME creation infix: "+ infix);		//TODO: delete later
 
 
 			String infixMin = infix + "_Min_Objective_";
 			String infixMax = infix + "_Max_Objective_";
+			System.out.println("MOME creation-- Max: " + infixMax + " min: " + infixMin);		//TODO: remove later
+
 //TODO: here is where to rename the gnu plots
 			for (int i = 0; i < numberOfObjectivesToLog; i++) {
 //				gnuLogs[i] = new MMNEATLog(infix + i, false, false, false, true);
@@ -149,6 +152,9 @@ public class MOME<T> implements SteadyStateEA<T>{
 			// Create gnuplot file for archive log
 			String experimentPrefix = Parameters.parameters.stringParameter("log")
 					+ Parameters.parameters.integerParameter("runNumber");
+			
+			System.out.println("MOME creation-- experiment prefix: " + experimentPrefix);		//TODO: remove later
+
 //			String directory = FileUtilities.getSaveDirectory();
 //			directory += (directory.equals("") ? "" : "/");
 //			fileNameFullName = directory + Parameters.parameters.stringParameter("log") + Parameters.parameters.integerParameter("runNumber") + "_" + "MOMEArchive";
@@ -357,13 +363,10 @@ public class MOME<T> implements SteadyStateEA<T>{
 	public synchronized void afterIndividualCreationProcesses(boolean individualAddStatus) {
 		//System.out.println("in afterIndividualCreation: " +archive.totalNumberOfIndividualsInArchive());
 		individualCreationAttemptsCount++;
-		log(individualAddStatus);
+		log();
 		if(individualAddStatus) {	//the individual was added and the population changed
 			addedIndividualCount++;
-//			populationChangeCheck = true;
-		} else {
-//			populationChangeCheck = false;
-		}
+		} 
 	}
 	
 
@@ -394,7 +397,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 	 * Write one line of data to each of the active log files, but only periodically,
 	 * when number of iterations divisible by individualsPerGeneration. 
 	 */
-	protected void log(boolean individualAddedStatus) {
+	protected void log() {
 		//System.out.println("in log method");
 		if (!archiveFileCreated) {
 			try {
@@ -411,7 +414,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 
 		//if an individual was added and the population count is even with the steadyStateIndividualsPerGeneration
 		//this is all periodic logging to text files
-		if(io && (individualCreationAttemptsCount%individualsPerGeneration == 0) && individualAddedStatus) {
+		if(io && (individualCreationAttemptsCount%individualsPerGeneration == 0)) {
 			final int pseudoGeneration = individualCreationAttemptsCount/individualsPerGeneration;
 
 			System.out.println("generation:"+pseudoGeneration+ " addedIndividualCount:" +addedIndividualCount + " individualCreationAttemptsCount:" + individualCreationAttemptsCount);
@@ -489,6 +492,8 @@ public class MOME<T> implements SteadyStateEA<T>{
 		//this is for logging, copied all the parameters but probably don't need it all
 		
 		String prefix = experimentPrefix + "_" + infix;
+		System.out.println("A-setup logging-- prefix: " + prefix);		//TODO: remove later
+
 //		String fillPrefix = experimentPrefix + "_" + "Fill";
 //		String fillDiscardedPrefix = experimentPrefix + "_" + "FillWithDiscarded";
 //		String fillPercentagePrefix = experimentPrefix + "_" + "FillPercentage";
@@ -497,9 +502,15 @@ public class MOME<T> implements SteadyStateEA<T>{
 //		String minPrefix = experimentPrefix + "_" + "Minimum_Objective_";
 //		String lossPrefix = experimentPrefix + "_" + "ReconstructionLoss";
 		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
+		System.out.println("B-setup logging-- directory 1: " + directory);		//TODO: remove later
+
 		directory += (directory.equals("") ? "" : "/");
+		System.out.println("C-setup logging-- directory 2: " + directory);		//TODO: remove later
+
 //
 		String fullName = directory + prefix + "_log.plt";
+		System.out.println("D-setup logging-- fullName: " + fullName);		//TODO: remove later
+
 //		String fullFillName = directory + fillPrefix + "_log.plt";
 //		String fullFillDiscardedName = directory + fillDiscardedPrefix + "_log.plt";
 //		String fullFillPercentageName = directory + fillPercentagePrefix + "_log.plt";
@@ -521,13 +532,21 @@ public class MOME<T> implements SteadyStateEA<T>{
 			//private MMNEATLog[] maxFitnessLogs
 			//private MMNEATLog[] minFitnessLogs 
 			//private MMNEATLog[] gnuLogs = n
+			
+			
 			String fullNameMaxHARDCODED = directory + prefix + maxPrefix + i;
-			String fullNameMinHARDCODED = directory + prefix + maxPrefix + i;
+			String fullNameMinHARDCODED = directory + prefix + minPrefix + i;
+			System.out.println("H-setup logging-- fullNameMaxHARDCODED: " + fullNameMaxHARDCODED + " fullNameMinHARDCODED: " + fullNameMinHARDCODED);		//TODO: remove later
+
+			
 			String fullPDFNameMax = directory + prefix + maxPrefix + i + "_pdf_log.plt";
 //			String fullPDFNameMax = fileNameFullName + fileNameInfixMax + i;
 //			String fullPDFNameMin = fileNameFullName + fileNameInfixMin + i;
 			String fullPDFNameMin = directory + prefix + minPrefix + i + "_pdf_log.plt";
 //			String fullPDFNameMax = 
+			
+			System.out.println("I-setup logging-- fullPDFNameMax: " + fullPDFNameMax + " fullPDFNameMin: " + fullPDFNameMin);		//TODO: remove later
+
 			File pdfPlotMax = new File(fullPDFNameMax);
 			File pdfPlotMin = new File(fullPDFNameMin);
 			PrintStream ps;
@@ -543,6 +562,8 @@ public class MOME<T> implements SteadyStateEA<T>{
 				ps.println("set xrange [0:"+ numberOfBinLabels + "]");
 				ps.println("set title \"" + experimentPrefix + " Archive Performance\"");
 				ps.println("set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");
+				
+				System.out.println("J-setup logging-- " + "set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");		//TODO: remove later
 
 //				ps.println("set output \"" + fileNameFullName.substring(fileNameFullName.lastIndexOf('/')+1, fileNameFullName.lastIndexOf('.')) + ".pdf\"");
 				// The :1 is for skipping the "generation" number logged in the file
@@ -619,6 +640,8 @@ public class MOME<T> implements SteadyStateEA<T>{
 					ps.println("plot \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt\" matrix every ::1 with image");
 //					ps.println("plot \"" + fileNameFullName.substring(fileNameFullName.lastIndexOf('/')+1, fileNameFullName.lastIndexOf('.')) + ".txt\" matrix every ::1 with image");
 
+					System.out.println("J-setup logging -- " + "plot \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt\" matrix every ::1 with image"); //TODO: delete later
+					System.out.println("K-setup logging -- " + "set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");
 					ps.close();
 
 					
@@ -753,7 +776,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 		directory += (directory.equals("") ? "" : "/");
 		String prefix = Parameters.parameters.stringParameter("log") + Parameters.parameters.integerParameter("runNumber") + "_MOMEElites";
 		String fullName = directory + prefix + "_log.plt";
-		System.out.println(fullName);
+		System.out.println("archive vizualizer full name: " + fullName);
 		//fullname = mometest/MEObserverVectorPistonOrientation7/MOMETest-MEObserverVectorPistonOrientation7_MOMEElites_log.plt
 
 
