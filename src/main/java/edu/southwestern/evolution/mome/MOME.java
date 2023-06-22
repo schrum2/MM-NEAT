@@ -484,7 +484,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 //		String maxPrefix = experimentPrefix + "_" + "Maximum";
 //		String lossPrefix = experimentPrefix + "_" + "ReconstructionLoss";
 		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
-//		directory += (directory.equals("") ? "" : "/");
+		directory += (directory.equals("") ? "" : "/");
 		String fullPDFName = directory + prefix + "_pdf_log.plt";
 		String fullName = directory + prefix + "_log.plt";
 //		String fullFillName = directory + fillPrefix + "_log.plt";
