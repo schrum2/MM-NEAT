@@ -19,11 +19,10 @@ import edu.southwestern.evolution.mome.MOME;
 import edu.southwestern.experiment.Experiment;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.evocraft.MinecraftClient;
+import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask;
 import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
-import edu.southwestern.tasks.evocraft.MinecraftClient;
-import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
-import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.util.file.FileUtilities;
 
 /**
@@ -139,14 +138,16 @@ public class SteadyStateExperiment<T> implements Experiment {
 					MinecraftCoordinates corner = new MinecraftCoordinates(0, 0, 0);
 					for(int i = 0; archive.size() > i; i ++ ) {
 						Score<T> score = archive.get(i);
-						Genotype<T> individual = score.individual;
-						@SuppressWarnings("unchecked")
-						List<MinecraftClient.Block> blocks = MMNEAT.shapeGenerator.generateShape(individual, corner, MMNEAT.blockSet);
+						if(score != null) {
+							Genotype<T> individual = score.individual;
+							@SuppressWarnings("unchecked")
+							List<MinecraftClient.Block> blocks = MMNEAT.shapeGenerator.generateShape(individual, corner, MMNEAT.blockSet);
 
-						BinLabels archiveBinLabelsClass = MMNEAT.getArchiveBinLabelsClass();
-						String label = archiveBinLabelsClass.binLabels().get(archiveBinLabelsClass.oneDimensionalIndex(score.MAPElitesBehaviorMap()));
+							BinLabels archiveBinLabelsClass = MMNEAT.getArchiveBinLabelsClass();
+							String label = archiveBinLabelsClass.binLabels().get(archiveBinLabelsClass.oneDimensionalIndex(score.MAPElitesBehaviorMap()));
 
-						MinecraftUtilClass.writeBlockListFile(blocks, saveDir + File.separator + individual.getId(), "BC_"+label+"FITNESS_"+Arrays.toString(score.scores)+".txt");
+							MinecraftUtilClass.writeBlockListFile(blocks, saveDir + File.separator + individual.getId(), "BC_"+label+"FITNESS_"+Arrays.toString(score.scores)+".txt");
+						}
 					}
 				} else if(MMNEAT.ea instanceof MOME) {
 					throw new UnsupportedOperationException("MOME cannot save final archive yet");
@@ -162,40 +163,8 @@ public class SteadyStateExperiment<T> implements Experiment {
 
 	// Benchmark the parallelism using Minecraft
 	public static void main(String[] args) {
-		int seed = 1;
 		try {
-			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:50", "maxGens:5",
-					//"base:minecraft", "log:Minecraft-SingleTest", "saveTo:SingleTest",
-					"base:minecraft", "log:Minecraft-ParallelTest", "saveTo:ParallelTest",
-					"minecraftContainsWholeMAPElitesArchive:true","forceLinearArchiveLayoutInMinecraft:false",
-					"launchMinecraftServerFromJava:false",
-					"io:true", "netio:true",
-					"interactWithMapElitesInWorld:true",
-					//"io:false", "netio:false", 
-					"mating:true", "fs:false",
-					"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet",
-					"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesWidthHeightDepthBinLabels", 
-					"minecraftXRange:6", "minecraftYRange:6", "minecraftZRange:6", 
-					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGenerator", 
-					"minecraftChangeCenterOfMassFitness:true", 
-					"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet", 
-					"mating:true", "fs:false", 
-					"ea:edu.southwestern.evolution.mapelites.MAPElites", 
-					"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment", 
-					"steadyStateIndividualsPerGeneration:100", 
-					"spaceBetweenMinecraftShapes:5",
-					// Parallelism
-					"parallelEvaluations:true",
-					"threads:10", // Only matters if parallelEvaluations is true
-					"parallelMAPElitesInitialize:true", 
-					
-					"task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask", 
-					"allowMultipleFunctions:true", 
-					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1", "recurrency:false", "saveAllChampions:true", "cleanOldNetworks:false", 
-					"includeFullSigmoidFunction:true", "includeFullGaussFunction:true", "includeCosineFunction:true", "includeGaussFunction:false",
-					"includeIdFunction:true", "includeTriangleWaveFunction:false", "includeSquareWaveFunction:false", "includeFullSawtoothFunction:false", 
-					"includeSigmoidFunction:false", "includeAbsValFunction:false", "includeSawtoothFunction:false", 
-					"minecraftNorthSouthOnly:true", "crossover:edu.southwestern.evolution.crossover.ArrayCrossover"}); 
+			MMNEAT.main("runNumber:77 randomSeed:77 minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftChangeCenterOfMassFitness:true minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet trials:1 mu:10 maxGens:5 minecraftContainsWholeMAPElitesArchive:false forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:false mating:true fs:false ea:edu.southwestern.evolution.mapelites.MAPElites experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:testing log:TESTING-MEObserverVectorPistonOrientation saveTo:MEObserverVectorPistonOrientation mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5 crossover:edu.southwestern.evolution.crossover.ArrayCrossover".split(" ")); 
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
