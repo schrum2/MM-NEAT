@@ -115,6 +115,8 @@ public class MOME<T> implements SteadyStateEA<T>{
 		this.individualCreationAttemptsCount = Parameters.parameters.integerParameter("lastSavedGeneration");
 		//TODO: the above might cause issues
 		
+		
+//////TODO: logging below //////////////////////////////////////////////////////////////////////////////
 		if(io && createLogs) {
 			//logging
 			String infix = "MOMEArchive";
@@ -130,11 +132,14 @@ public class MOME<T> implements SteadyStateEA<T>{
 //			gnuLogs = new MMNEATLog[2*numberOfObjectivesToLog];
 			gnuMaxLogs = new MMNEATLog[numberOfObjectivesToLog];
 			gnuMinLogs = new MMNEATLog[numberOfObjectivesToLog];
+//remove			System.out.println("MOME creation infix: "+ infix);		// delete later
 
 
 			String infixMin = infix + "_Min_Objective_";
 			String infixMax = infix + "_Max_Objective_";
-//TODO: here is where to rename the gnu plots
+//remove			System.out.println("MOME creation-- Max: " + infixMax + " min: " + infixMin);		// remove later
+
+// here is where to rename the gnu plots
 			for (int i = 0; i < numberOfObjectivesToLog; i++) {
 //				gnuLogs[i] = new MMNEATLog(infix + i, false, false, false, true);
 				minFitnessLogs[i] = new MMNEATLog(infixMin + i, false, false, false, true);
@@ -149,6 +154,9 @@ public class MOME<T> implements SteadyStateEA<T>{
 			// Create gnuplot file for archive log
 			String experimentPrefix = Parameters.parameters.stringParameter("log")
 					+ Parameters.parameters.integerParameter("runNumber");
+			
+//remove later			System.out.println("MOME creation-- experiment prefix: " + experimentPrefix);		// remove later
+
 //			String directory = FileUtilities.getSaveDirectory();
 //			directory += (directory.equals("") ? "" : "/");
 //			fileNameFullName = directory + Parameters.parameters.stringParameter("log") + Parameters.parameters.integerParameter("runNumber") + "_" + "MOMEArchive";
@@ -158,40 +166,6 @@ public class MOME<T> implements SteadyStateEA<T>{
 			setUpLogging(numberOfBinLabels, infix, experimentPrefix, yrange, individualsPerGeneration);
 //			setUpLogging(numberOfBinLabels, experimentPrefix, yrange, individualsPerGeneration);
 		}
-		
-		
-		
-		//experiment prefix is used seperately
-		
-		
-		/**
-		 *  // below deals with writing logs and other lines that may be relevant later
-
-		if(io && createLogs) {
-			int numLabels = archive.getBinMapping().binLabels().size();
-			String infix = "MAPElites";
-			// Logging in RAW mode so that can append to log file on experiment resume
-			archiveLog = new MMNEATLog(infix, false, false, false, true); 
-			fillLog = new MMNEATLog("Fill", false, false, false, true);
-			// Can't check MMNEAT.genotype since MMNEAT.ea is initialized before MMNEAT.genotype
-			boolean cppnDirLogging = Parameters.parameters.classParameter("genotype").equals(CPPNOrDirectToGANGenotype.class) ||
-									 Parameters.parameters.classParameter("genotype").equals(CPPNOrBlockVectorGenotype.class);
-			if(cppnDirLogging) {
-				cppnThenDirectLog = new MMNEATLog("cppnToDirect", false, false, false, true);
-				cppnVsDirectFitnessLog = new MMNEATLog("cppnVsDirectFitness", false, false, false, true);
-			}
-			// Create gnuplot file for archive log
-			String experimentPrefix = Parameters.parameters.stringParameter("log")
-					+ Parameters.parameters.integerParameter("runNumber");
-			individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
-			int yrange = Parameters.parameters.integerParameter("maxGens")/individualsPerGeneration;
-			setUpLogging(numLabels, infix, experimentPrefix, yrange, cppnDirLogging, individualsPerGeneration, archive.getBinMapping().binLabels().size());
-		}
-		this.iterations = Parameters.parameters.integerParameter("lastSavedGeneration");
-		this.iterationsWithoutEliteCounter = 0;
-		this.iterationsWithoutElite = 0; // Not accurate on resume	
-		 */
-		
 	}
 	
 	
@@ -237,7 +211,6 @@ public class MOME<T> implements SteadyStateEA<T>{
 		
 		//initializing a variable
 		this.mating = Parameters.parameters.booleanParameter("mating");
-
 	}
 
 	@Override
@@ -295,12 +268,6 @@ public class MOME<T> implements SteadyStateEA<T>{
 		
 		// Try and add newest individual and update population change variable on result
 		afterIndividualCreationProcesses(archive.add(s1));			//this will call anything we need to do after making a new individual
-		
-		//some sort of logging should be placed here
-		//fileUpdates(child1WasElite); // Log for each individual produced
-		//TODO: this is causing too frequent logging since all threads might read at the same time
-		//figure out synchronization
-//		individualCreationAttemptsCount++;
 	}
 
 	@Override
@@ -357,13 +324,10 @@ public class MOME<T> implements SteadyStateEA<T>{
 	public synchronized void afterIndividualCreationProcesses(boolean individualAddStatus) {
 		//System.out.println("in afterIndividualCreation: " +archive.totalNumberOfIndividualsInArchive());
 		individualCreationAttemptsCount++;
-		log(individualAddStatus);
+		log();			////////////////TODO: call logging class potentially
 		if(individualAddStatus) {	//the individual was added and the population changed
 			addedIndividualCount++;
-//			populationChangeCheck = true;
-		} else {
-//			populationChangeCheck = false;
-		}
+		} 
 	}
 	
 
@@ -389,12 +353,12 @@ public class MOME<T> implements SteadyStateEA<T>{
 	public void setDiscardedIndividualCount() {
 		this.discardedIndividualCount = discardedIndividualCount++;
 	}
-
+//TODO: will probably move most of this out to logging class ////////////////////////////////////////////
 	/**
 	 * Write one line of data to each of the active log files, but only periodically,
 	 * when number of iterations divisible by individualsPerGeneration. 
 	 */
-	protected void log(boolean individualAddedStatus) {
+	protected void log() {
 		//System.out.println("in log method");
 		if (!archiveFileCreated) {
 			try {
@@ -411,7 +375,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 
 		//if an individual was added and the population count is even with the steadyStateIndividualsPerGeneration
 		//this is all periodic logging to text files
-		if(io && (individualCreationAttemptsCount%individualsPerGeneration == 0) && individualAddedStatus) {
+		if(io && (individualCreationAttemptsCount%individualsPerGeneration == 0)) {
 			final int pseudoGeneration = individualCreationAttemptsCount/individualsPerGeneration;
 
 			System.out.println("generation:"+pseudoGeneration+ " addedIndividualCount:" +addedIndividualCount + " individualCreationAttemptsCount:" + individualCreationAttemptsCount);
@@ -483,12 +447,14 @@ public class MOME<T> implements SteadyStateEA<T>{
 		//might need later
 	}
 	
-	
+//TODO: definitely remove all of this
 	public static void setUpLogging(int numberOfBinLabels, String infix, String experimentPrefix, int yrange, int individualsPerGeneration) {
 //	public static void setUpLogging(int numberOfBinLabels, String experimentPrefix, int yrange, int individualsPerGeneration) {
 		//this is for logging, copied all the parameters but probably don't need it all
 		
 		String prefix = experimentPrefix + "_" + infix;
+		System.out.println("A-setup logging-- prefix: " + prefix);		// remove later
+
 //		String fillPrefix = experimentPrefix + "_" + "Fill";
 //		String fillDiscardedPrefix = experimentPrefix + "_" + "FillWithDiscarded";
 //		String fillPercentagePrefix = experimentPrefix + "_" + "FillPercentage";
@@ -497,9 +463,15 @@ public class MOME<T> implements SteadyStateEA<T>{
 //		String minPrefix = experimentPrefix + "_" + "Minimum_Objective_";
 //		String lossPrefix = experimentPrefix + "_" + "ReconstructionLoss";
 		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
+//remove		System.out.println("B-setup logging-- directory 1: " + directory);		// remove later
+
 		directory += (directory.equals("") ? "" : "/");
+//remove		System.out.println("C-setup logging-- directory 2: " + directory);		// remove later
+
 //
 		String fullName = directory + prefix + "_log.plt";
+//remove		System.out.println("D-setup logging-- fullName: " + fullName);		// remove later
+
 //		String fullFillName = directory + fillPrefix + "_log.plt";
 //		String fullFillDiscardedName = directory + fillDiscardedPrefix + "_log.plt";
 //		String fullFillPercentageName = directory + fillPercentagePrefix + "_log.plt";
@@ -521,13 +493,21 @@ public class MOME<T> implements SteadyStateEA<T>{
 			//private MMNEATLog[] maxFitnessLogs
 			//private MMNEATLog[] minFitnessLogs 
 			//private MMNEATLog[] gnuLogs = n
+			
+			
 			String fullNameMaxHARDCODED = directory + prefix + maxPrefix + i;
-			String fullNameMinHARDCODED = directory + prefix + maxPrefix + i;
+			String fullNameMinHARDCODED = directory + prefix + minPrefix + i;
+//remove			System.out.println("H-setup logging-- fullNameMaxHARDCODED: " + fullNameMaxHARDCODED + " fullNameMinHARDCODED: " + fullNameMinHARDCODED);		//: remove later
+
+			
 			String fullPDFNameMax = directory + prefix + maxPrefix + i + "_pdf_log.plt";
 //			String fullPDFNameMax = fileNameFullName + fileNameInfixMax + i;
 //			String fullPDFNameMin = fileNameFullName + fileNameInfixMin + i;
 			String fullPDFNameMin = directory + prefix + minPrefix + i + "_pdf_log.plt";
 //			String fullPDFNameMax = 
+			
+//remove			System.out.println("I-setup logging-- fullPDFNameMax: " + fullPDFNameMax + " fullPDFNameMin: " + fullPDFNameMin);		//: remove later
+
 			File pdfPlotMax = new File(fullPDFNameMax);
 			File pdfPlotMin = new File(fullPDFNameMin);
 			PrintStream ps;
@@ -543,6 +523,8 @@ public class MOME<T> implements SteadyStateEA<T>{
 				ps.println("set xrange [0:"+ numberOfBinLabels + "]");
 				ps.println("set title \"" + experimentPrefix + " Archive Performance\"");
 				ps.println("set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");
+				
+//remove				System.out.println("J-setup logging-- " + "set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");		//: remove later
 
 //				ps.println("set output \"" + fileNameFullName.substring(fileNameFullName.lastIndexOf('/')+1, fileNameFullName.lastIndexOf('.')) + ".pdf\"");
 				// The :1 is for skipping the "generation" number logged in the file
@@ -619,6 +601,8 @@ public class MOME<T> implements SteadyStateEA<T>{
 					ps.println("plot \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt\" matrix every ::1 with image");
 //					ps.println("plot \"" + fileNameFullName.substring(fileNameFullName.lastIndexOf('/')+1, fileNameFullName.lastIndexOf('.')) + ".txt\" matrix every ::1 with image");
 
+//remove					System.out.println("J-setup logging -- " + "plot \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt\" matrix every ::1 with image"); //: delete later
+					System.out.println("K-setup logging -- " + "set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");
 					ps.close();
 
 					
@@ -753,7 +737,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 		directory += (directory.equals("") ? "" : "/");
 		String prefix = Parameters.parameters.stringParameter("log") + Parameters.parameters.integerParameter("runNumber") + "_MOMEElites";
 		String fullName = directory + prefix + "_log.plt";
-		System.out.println(fullName);
+		System.out.println("archive vizualizer full name: " + fullName);
 		//fullname = mometest/MEObserverVectorPistonOrientation7/MOMETest-MEObserverVectorPistonOrientation7_MOMEElites_log.plt
 
 
