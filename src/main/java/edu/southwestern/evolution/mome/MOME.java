@@ -34,7 +34,6 @@ import edu.southwestern.util.random.RandomNumbers;
  *
  * @param <T>
  */
-
 public class MOME<T> implements SteadyStateEA<T>{
 
 	protected MOMEArchive<T> archive;
@@ -59,45 +58,29 @@ public class MOME<T> implements SteadyStateEA<T>{
 	//logging variables (might be sorted into tracking or other grouping
 	public boolean io;
 	private boolean archiveFileCreated = false;	//track if the archive file is made
-//	private String fileNameInfix = "MOMEArchive";
-//	private static String fileNameFullName;
-//	private static String fileNameInfixMax = "MOMEArchive_Max_Objective_";
-//	private static String fileNameInfixMin = "MOMEArchive_Min_Objective_";
 	private static String maxPrefix = "_Max_Objective_";
 	private static String minPrefix = "_Min_Objective_";
 	
-	//log files only
-	private MMNEATLog archiveLog = null; // Archive elite scores
-//	private MMNEATLog randomLog = null; //general random test logging for now
-	private MMNEATLog binPopulationSizeLog = null; //general random test logging for now
+	// Not a MOMELog
+	private MMNEATLog archiveLog = null; // Log general archive information. Does not use matrix plot, logged every generation
+	
+	// TODO: Convert these to MOMELogs
+	private MMNEATLog binPopulationSizeLog = null; // contains sizes of subpops in each bin, logged every generation
 	private MMNEATLog[] maxFitnessLogs = null; //creates a log for each objective that contains the max fitness for each bin, logged every generation
 	private MMNEATLog[] minFitnessLogs = null; //creates a log for each objective that contains the min fitness for each bin, logged every generation
-//	private MMNEATLog[] gnuLogs = null; //creates a log for each objective that contains ????? for each bin, logged every generation
-	private MMNEATLog[] gnuMaxLogs = null; //creates a log for each objective that contains ????? for each bin, logged every generation
-	private MMNEATLog[] gnuMinLogs = null; //creates a log for each objective that contains ????? for each bin, logged every generation
-
-	
 
 	public MOME() {
-		this(Parameters.parameters.stringParameter("archiveSubDirectoryName"), Parameters.parameters.booleanParameter("io"), Parameters.parameters.booleanParameter("netio"), true);
+		this(Parameters.parameters.stringParameter("archiveSubDirectoryName"), Parameters.parameters.booleanParameter("io"), Parameters.parameters.booleanParameter("netio"));
 	}
-	/**
-	 * MMNEAT.usingDiversityBinningScheme = true;
-		this.task = (LonerTask<T>) MMNEAT.task;
-		this.io = ioOption; // write logs
-		this.archive = new Archive<>(netioOption, archiveSubDirectoryName);
-	 */
-	
+
 	/**
 	 * 
-	 * @param archiveSubDirectoryName
-	 * @param ioOption
-	 * @param netioOption
-	 * @param createLogs
+	 * @param archiveSubDirectoryName Name of the archive directory within the experiment directory
+	 * @param ioOption Whether to write to logs and do other IO
+	 * @param netioOption Whether to save xml genome files
 	 */
-	
 	@SuppressWarnings("unchecked")
-	public MOME(/*TODO*/String archiveSubDirectoryName, boolean ioOption, boolean netioOption, boolean createLogs) {
+	public MOME(String archiveSubDirectoryName, boolean ioOption, boolean netioOption) {
 		MMNEAT.usingDiversityBinningScheme = true;
 		this.task = (LonerTask<T>) MMNEAT.task;
 		this.archive = new MOMEArchive<>(netioOption, archiveSubDirectoryName);	//set up archive
@@ -115,54 +98,41 @@ public class MOME<T> implements SteadyStateEA<T>{
 		
 		
 //////TODO: logging below //////////////////////////////////////////////////////////////////////////////
-		if(io && createLogs) {
+		if(io) {
 			//logging
 			String infix = "MOMEArchive";
 			int numberOfObjectivesToLog = MMNEAT.task.numObjectives();
 			int numberOfBinLabels = archive.getBinMapping().binLabels().size();
+			// TODO: Contains MMNEATLogs for now, but later will be only those logs that are MOMELogs. Specifically, they have a column for each archive bin
+			ArrayList<MMNEATLog> momeLogs = new ArrayList<>();
 			
 			// Logging in RAW mode so that can append to log file on experiment resume
 			archiveLog = new MMNEATLog(infix, false, false, false, true);
-//		randomLog = new MMNEATLog("random", false, false, false, true);
-			binPopulationSizeLog = new MMNEATLog("BinPopulation", false, false, false, true);
+
+			// These are MOMELogs
+			binPopulationSizeLog = new MMNEATLog(infix+"_BinPopulation", false, false, false, true);
+			momeLogs.add(binPopulationSizeLog);
+			
 			maxFitnessLogs = new MMNEATLog[numberOfObjectivesToLog];
 			minFitnessLogs = new MMNEATLog[numberOfObjectivesToLog];
-//			gnuLogs = new MMNEATLog[2*numberOfObjectivesToLog];
-			gnuMaxLogs = new MMNEATLog[numberOfObjectivesToLog];
-			gnuMinLogs = new MMNEATLog[numberOfObjectivesToLog];
-//remove			System.out.println("MOME creation infix: "+ infix);		// delete later
-
 
 			String infixMin = infix + "_Min_Objective_";
 			String infixMax = infix + "_Max_Objective_";
-//remove			System.out.println("MOME creation-- Max: " + infixMax + " min: " + infixMin);		// remove later
-
-// here is where to rename the gnu plots
 			for (int i = 0; i < numberOfObjectivesToLog; i++) {
-//				gnuLogs[i] = new MMNEATLog(infix + i, false, false, false, true);
-				minFitnessLogs[i] = new MMNEATLog(infixMin + i, false, false, false, true);
-				maxFitnessLogs[i] = new MMNEATLog(infixMax +i, false, false, false, true);
-				gnuMaxLogs[i] = new MMNEATLog(infixMax +i, false, false, false, true);
-				gnuMinLogs[i] = new MMNEATLog(infixMin +i, false, false, false, true);
+				minFitnessLogs[i] = new MMNEATLog(infixMin+i, false, false, false, true);
+				maxFitnessLogs[i] = new MMNEATLog(infixMax+i, false, false, false, true);
+				
+				momeLogs.add(minFitnessLogs[i]);
+				momeLogs.add(maxFitnessLogs[i]);
 			}
-//			for (int i = numberOfObjectivesToLog; i < gnuLogs.length; i++) {
-//				gnuLogs[i] = new MMNEATLog(infix + i, false, false, false, true);
-//			}
 
 			// Create gnuplot file for archive log
-			String experimentPrefix = Parameters.parameters.stringParameter("log")
-					+ Parameters.parameters.integerParameter("runNumber");
-			
-//remove later			System.out.println("MOME creation-- experiment prefix: " + experimentPrefix);		// remove later
-
-//			String directory = FileUtilities.getSaveDirectory();
-//			directory += (directory.equals("") ? "" : "/");
-//			fileNameFullName = directory + Parameters.parameters.stringParameter("log") + Parameters.parameters.integerParameter("runNumber") + "_" + "MOMEArchive";
-					
-//			individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
+			String experimentPrefix = Parameters.parameters.stringParameter("log") + Parameters.parameters.integerParameter("runNumber");					
 			int yrange = Parameters.parameters.integerParameter("maxGens")/individualsPerGeneration;
-			setUpLogging(numberOfBinLabels, infix, experimentPrefix, yrange, individualsPerGeneration);
-//			setUpLogging(numberOfBinLabels, experimentPrefix, yrange, individualsPerGeneration);
+			
+			
+			
+			setUpLogging(numberOfBinLabels, infix, experimentPrefix, yrange, individualsPerGeneration, momeLogs);
 		}
 	}
 	
@@ -446,283 +416,70 @@ public class MOME<T> implements SteadyStateEA<T>{
 	}
 	
 //TODO: definitely remove all of this
-	public static void setUpLogging(int numberOfBinLabels, String infix, String experimentPrefix, int yrange, int individualsPerGeneration) {
-//	public static void setUpLogging(int numberOfBinLabels, String experimentPrefix, int yrange, int individualsPerGeneration) {
+	public static void setUpLogging(int numberOfBinLabels, String infix, String experimentPrefix, int yrange, int individualsPerGeneration, ArrayList<MMNEATLog> momeLogs) {
 		//this is for logging, copied all the parameters but probably don't need it all
 		
 		String prefix = experimentPrefix + "_" + infix;
-		System.out.println("A-setup logging-- prefix: " + prefix);		// remove later
-
-//		String fillPrefix = experimentPrefix + "_" + "Fill";
-//		String fillDiscardedPrefix = experimentPrefix + "_" + "FillWithDiscarded";
-//		String fillPercentagePrefix = experimentPrefix + "_" + "FillPercentage";
-//		String qdPrefix = experimentPrefix + "_" + "QD";
-//		String maxPrefix = experimentPrefix + "_" + "Maximum_Objective_";
-//		String minPrefix = experimentPrefix + "_" + "Minimum_Objective_";
-//		String lossPrefix = experimentPrefix + "_" + "ReconstructionLoss";
 		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
-//remove		System.out.println("B-setup logging-- directory 1: " + directory);		// remove later
-
 		directory += (directory.equals("") ? "" : "/");
-//remove		System.out.println("C-setup logging-- directory 2: " + directory);		// remove later
-
-//
+		
+		
 		String fullName = directory + prefix + "_log.plt";
-//remove		System.out.println("D-setup logging-- fullName: " + fullName);		// remove later
-
-//		String fullFillName = directory + fillPrefix + "_log.plt";
-//		String fullFillDiscardedName = directory + fillDiscardedPrefix + "_log.plt";
-//		String fullFillPercentageName = directory + fillPercentagePrefix + "_log.plt";
-//		String fullQDName = directory + qdPrefix + "_log.plt";
-//		String maxFitnessName = directory + maxPrefix + "_log.plt";
-//		String reconstructionLossName = directory + lossPrefix + "_log.plt";
+		// TODO: The .plt file for the log of general archive information will be very different than the numerous MOMELogs below
 		
-//		//	private String fileNameInfix = "MOMEArchive";
-//		private String fileNameFullName;
-//		private String fileNameInfixMax = "MOMEArchive_Max_Objective_";
-//		private String fileNameInfixMin = "MOMEArchive_Min_Objective_";
-//		//log files only
-
 		
-		individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
-
-		
-		for (int i = 0; i < MMNEAT.task.numObjectives(); i++) {
-			//private MMNEATLog[] maxFitnessLogs
-			//private MMNEATLog[] minFitnessLogs 
-			//private MMNEATLog[] gnuLogs = n
+		// All MOMELogs can be plotted in the same way, regardless of whether they correspond to individual objectives or not
+		for(MMNEATLog log :  momeLogs) {
+			String textLogFilename = log.getLogTextFilename();
+			String plotFilename = textLogFilename.replace(".txt", ".plt");
+			String plotPDFFilename = plotFilename.replace(".plt", "_PDF.plt");
+			String logTitle = textLogFilename.replace(".txt", "");
+			String pdfFilename = textLogFilename.replace(".txt", ".pdf");
 			
-			
-			String fullNameMaxHARDCODED = directory + prefix + maxPrefix + i;
-			String fullNameMinHARDCODED = directory + prefix + minPrefix + i;
-//remove			System.out.println("H-setup logging-- fullNameMaxHARDCODED: " + fullNameMaxHARDCODED + " fullNameMinHARDCODED: " + fullNameMinHARDCODED);		//: remove later
-
-			
-			String fullPDFNameMax = directory + prefix + maxPrefix + i + "_pdf_log.plt";
-//			String fullPDFNameMax = fileNameFullName + fileNameInfixMax + i;
-//			String fullPDFNameMin = fileNameFullName + fileNameInfixMin + i;
-			String fullPDFNameMin = directory + prefix + minPrefix + i + "_pdf_log.plt";
-//			String fullPDFNameMax = 
-			
-//remove			System.out.println("I-setup logging-- fullPDFNameMax: " + fullPDFNameMax + " fullPDFNameMin: " + fullPDFNameMin);		//: remove later
-
-			File pdfPlotMax = new File(fullPDFNameMax);
-			File pdfPlotMin = new File(fullPDFNameMin);
-			PrintStream ps;
-			//I separated the max and min because they each have their own set.			
+			File plotFile = new File(directory + plotFilename);
+			File plotPDFFile = new File(directory + plotPDFFilename);
 			
 			try {
-				//max pdf plots
-				ps = new PrintStream(pdfPlotMax);
+				// The PDF version
+				PrintStream ps = new PrintStream(plotPDFFile);
 				ps.println("set term pdf enhanced");
 				ps.println("unset key");
 				// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
 				ps.println("set yrange [0:"+ yrange +"]");
 				ps.println("set xrange [0:"+ numberOfBinLabels + "]");
-				ps.println("set title \"" + experimentPrefix + " Archive Performance\"");
-				ps.println("set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");
-				
-//remove				System.out.println("J-setup logging-- " + "set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");		//: remove later
-
-//				ps.println("set output \"" + fileNameFullName.substring(fileNameFullName.lastIndexOf('/')+1, fileNameFullName.lastIndexOf('.')) + ".pdf\"");
+				ps.println("set title \"" + logTitle + "\"");
+				ps.println("set output \"" + pdfFilename + "\"");				
 				// The :1 is for skipping the "generation" number logged in the file
-//				ps.println("plot \"" + fileNameFullName.substring(fileNameFullName.lastIndexOf('/')+1, fileNameFullName.lastIndexOf('.')) + ".txt\" matrix every ::1 with image");
-				ps.println("plot \"" + "Testing-TESTING11_MOMEArchive_Min_Objective_" + i + "_log" + ".txt\" matrix every ::1 with image");
-
+				ps.println("plot \"" + textLogFilename + "\" matrix every ::1 with image");
 				ps.close();
-				
-				//Testing-TESTING11_MOMEArchive_Min_Objective_0_log
-				
 
-				//I'm not sure what the below is
-//				ps.println("set title \"" + experimentPrefix + " Maximum individual fitness score");
-//				ps.println("set output \"" + maxFitnessName.substring(maxFitnessName.lastIndexOf('/')+1, maxFitnessName.lastIndexOf('.')) + ".pdf\"");
-//				ps.println("plot \"" + name + ".txt\" u 1:4 w linespoints t \"Maximum Fitness Score\", \\");
-//				ps.println("     \"" + name + ".txt\" u 1:8 w linespoints t \"Restricted Maximum Fitness Score\"");
-//				
-				
-				
-				//min pdf plots
-				ps = new PrintStream(pdfPlotMin);
-				ps.println("set term pdf enhanced");
+				// Non-PDF version
+				ps = new PrintStream(plotFile);
 				ps.println("unset key");
 				// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
 				ps.println("set yrange [0:"+ yrange +"]");
 				ps.println("set xrange [0:"+ numberOfBinLabels + "]");
-				ps.println("set title \"" + experimentPrefix + " Archive Performance\"");
-				ps.println("set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");
-//				// The :1 is for skipping the "generation" number logged in the file
-//				ps.println("plot \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt\" matrix every ::1 with image");
-//				ps.println("set output \"" + fileNameFullName.substring(fileNameFullName.lastIndexOf('/')+1, fileNameFullName.lastIndexOf('.')) + ".pdf\"");
+				ps.println("set title \"" + logTitle + "\"");
 				// The :1 is for skipping the "generation" number logged in the file
-//				ps.println("plot \"" + fullPDFNameMin + ".txt\" matrix every ::1 with image");
-				
-				ps.println("plot \"" + fullNameMinHARDCODED + ".txt\" matrix every ::1 with image");
-
+				ps.println("plot \"" + textLogFilename + "\" matrix every ::1 with image");
+				ps.println("pause -1");
 				ps.close();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-		}
-//		File pdfPlot = new File(fullPDFName);
-//		File plot = new File(fileNameFullName); // for archive log plot file
-		File plot = new File(fullName); // for archive log plot file
-//		File fillPlot = new File(fullFillName);
 		
-		// Write to file
-				try {
-					// Archive PDF plot
-//					individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
-//					PrintStream ps = new PrintStream(pdfPlot);
-//					ps.println("set term pdf enhanced");
-//					ps.println("unset key");
-//					// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
-//					ps.println("set yrange [0:"+ yrange +"]");
-//					ps.println("set xrange [0:"+ numberOfBinLabels + "]");
-//					ps.println("set title \"" + experimentPrefix + " Archive Performance\"");
-//					ps.println("set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");
-//					// The :1 is for skipping the "generation" number logged in the file
-//					ps.println("plot \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt\" matrix every ::1 with image");
-//					ps.close();
-					
-					// Archive plot: In default GNU Plot window
-					PrintStream ps = new PrintStream(plot);
-					ps.println("unset key");
-					// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
-					ps.println("set yrange [0:"+ yrange +"]");
-					ps.println("set xrange [0:"+ numberOfBinLabels + "]");
-					ps.println("set title \"" + experimentPrefix + " Archive Performance\"");
-					ps.println("set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");
-					// The :1 is for skipping the "generation" number logged in the file
-					ps.println("plot \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt\" matrix every ::1 with image");
-//					ps.println("plot \"" + fileNameFullName.substring(fileNameFullName.lastIndexOf('/')+1, fileNameFullName.lastIndexOf('.')) + ".txt\" matrix every ::1 with image");
-
-//remove					System.out.println("J-setup logging -- " + "plot \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt\" matrix every ::1 with image"); //: delete later
-					System.out.println("K-setup logging -- " + "set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");
-					ps.close();
-
-					
-				} catch (FileNotFoundException e) {
-					System.out.println("Could not create plot file: " + plot.getName());
-					e.printStackTrace();
-					System.exit(1);
-				}
-		/**
-		 * String prefix = experimentPrefix + "_" + infix;
-		String fillPrefix = experimentPrefix + "_" + "Fill";
-		String fillDiscardedPrefix = experimentPrefix + "_" + "FillWithDiscarded";
-		String fillPercentagePrefix = experimentPrefix + "_" + "FillPercentage";
-		String qdPrefix = experimentPrefix + "_" + "QD";
-		String maxPrefix = experimentPrefix + "_" + "Maximum";
-		String lossPrefix = experimentPrefix + "_" + "ReconstructionLoss";
-		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
-		directory += (directory.equals("") ? "" : "/");
-		String fullPDFName = directory + prefix + "_pdf_log.plt";
-		String fullName = directory + prefix + "_log.plt";
-		String fullFillName = directory + fillPrefix + "_log.plt";
-		String fullFillDiscardedName = directory + fillDiscardedPrefix + "_log.plt";
-		String fullFillPercentageName = directory + fillPercentagePrefix + "_log.plt";
-		String fullQDName = directory + qdPrefix + "_log.plt";
-		String maxFitnessName = directory + maxPrefix + "_log.plt";
-		String reconstructionLossName = directory + lossPrefix + "_log.plt";
-		File pdfPlot = new File(fullPDFName);
-		File plot = new File(fullName); // for archive log plot file
-		File fillPlot = new File(fullFillName);
-		// Write to file
-		try {
-			// Archive PDF plot
-			individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
-			PrintStream ps = new PrintStream(pdfPlot);
-			ps.println("set term pdf enhanced");
-			ps.println("unset key");
-			// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
-			ps.println("set yrange [0:"+ yrange +"]");
-			ps.println("set xrange [0:"+ archiveSize + "]");
-			ps.println("set title \"" + experimentPrefix + " Archive Performance\"");
-			ps.println("set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");
-			// The :1 is for skipping the "generation" number logged in the file
-			ps.println("plot \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt\" matrix every ::1 with image");
-			ps.close();
-			
-			// Archive plot: In default GNU Plot window
-			ps = new PrintStream(plot);
-			ps.println("unset key");
-			// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
-			ps.println("set yrange [0:"+ yrange +"]");
-			ps.println("set xrange [0:"+ archiveSize + "]");
-			ps.println("set title \"" + experimentPrefix + " Archive Performance\"");
-			//ps.println("set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");
-			// The :1 is for skipping the "generation" number logged in the file
-			ps.println("plot \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt\" matrix every ::1 with image");
-			ps.close();
-			
-			
-			// Fill percentage plot
-			ps = new PrintStream(fillPlot);
-			ps.println("set term pdf enhanced");
-			//ps.println("unset key");
-			ps.println("set key bottom right");
-			// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
-			ps.println("set xrange [0:"+ yrange +"]");
-			ps.println("set title \"" + experimentPrefix + " Archive Filled Bins\"");
-			ps.println("set output \"" + fullFillDiscardedName.substring(fullFillDiscardedName.lastIndexOf('/')+1, fullFillDiscardedName.lastIndexOf('.')) + ".pdf\"");
-			String name = fullFillName.substring(fullFillName.lastIndexOf('/')+1, fullFillName.lastIndexOf('.'));
-			ps.println("plot \"" + name + ".txt\" u 1:2 w linespoints t \"Total\", \\");
-			ps.println("     \"" + name + ".txt\" u 1:5 w linespoints t \"Discarded\"" + (cppnDirLogging ? ", \\" : ""));
-			if(cppnDirLogging) { // Print CPPN and direct counts on same plot
-				ps.println("     \"" + name.replace("Fill", "cppnToDirect") + ".txt\" u 1:2 w linespoints t \"CPPNs\", \\");
-				ps.println("     \"" + name.replace("Fill", "cppnToDirect") + ".txt\" u 1:3 w linespoints t \"Vectors\"");
+			} catch (FileNotFoundException e) {
+				System.out.println("Error creating MOME log files");
+				e.printStackTrace();
+				System.exit(1);
 			}
-			
-			ps.println("set title \"" + experimentPrefix + " Archive Filled Bins Percentage\"");
-			ps.println("set output \"" + fullFillPercentageName.substring(fullFillPercentageName.lastIndexOf('/')+1, fullFillPercentageName.lastIndexOf('.')) + ".pdf\"");
-			ps.println("plot \"" + name + ".txt\" u 1:($2 / "+numLabels+") w linespoints t \"Total\"" + (cppnDirLogging ? ", \\" : ""));
-			if(cppnDirLogging) { // Print CPPN and direct counts on same plot
-				ps.println("     \"" + name.replace("Fill", "cppnToDirect") + ".txt\" u 1:2 w linespoints t \"CPPNs\", \\");
-				ps.println("     \"" + name.replace("Fill", "cppnToDirect") + ".txt\" u 1:3 w linespoints t \"Vectors\"");
-			}
-			
-			ps.println("set title \"" + experimentPrefix + " Archive Filled Bins\"");
-			ps.println("set output \"" + fullFillName.substring(fullFillName.lastIndexOf('/')+1, fullFillName.lastIndexOf('.')) + ".pdf\"");
-			ps.println("plot \"" + name + ".txt\" u 1:2 w linespoints t \"Total\", \\");
-			ps.println("     \"" + name + ".txt\" u 1:6 w linespoints t \"Restricted\"" + (cppnDirLogging ? ", \\" : ""));
-			if(cppnDirLogging) { // Print CPPN and direct counts on same plot
-				ps.println("     \"" + name.replace("Fill", "cppnToDirect") + ".txt\" u 1:2 w linespoints t \"CPPNs\", \\");
-				ps.println("     \"" + name.replace("Fill", "cppnToDirect") + ".txt\" u 1:3 w linespoints t \"Vectors\"");
-			}
-			
-			ps.println("set title \"" + experimentPrefix + " Archive QD Scores\"");
-			ps.println("set output \"" + fullQDName.substring(fullQDName.lastIndexOf('/')+1, fullQDName.lastIndexOf('.')) + ".pdf\"");
-			ps.println("plot \"" + name + ".txt\" u 1:3 w linespoints t \"QD Score\", \\");
-			ps.println("     \"" + name + ".txt\" u 1:7 w linespoints t \"Restricted QD Score\"");
-			
-			ps.println("set title \"" + experimentPrefix + " Maximum individual fitness score");
-			ps.println("set output \"" + maxFitnessName.substring(maxFitnessName.lastIndexOf('/')+1, maxFitnessName.lastIndexOf('.')) + ".pdf\"");
-			ps.println("plot \"" + name + ".txt\" u 1:4 w linespoints t \"Maximum Fitness Score\", \\");
-			ps.println("     \"" + name + ".txt\" u 1:8 w linespoints t \"Restricted Maximum Fitness Score\"");
-			
-			if(Parameters.parameters.booleanParameter("dynamicAutoencoderIntervals")) {
-				ps.println("set title \"" + experimentPrefix + " Reconstruction Loss Range");
-				ps.println("set output \"" + reconstructionLossName.substring(reconstructionLossName.lastIndexOf('/')+1, reconstructionLossName.lastIndexOf('.')) + ".pdf\"");
-				ps.println("plot \"" + name.replace("_Fill_", "_autoencoderLossRange_") + ".txt\" u 1:2 w linespoints t \"Min Loss\", \\");
-				ps.println("     \"" + name.replace("_Fill_", "_autoencoderLossRange_") + ".txt\" u 1:3 w linespoints t \"Max Loss\"");
-			}
-			
-			ps.close();
-			
-		} catch (FileNotFoundException e) {
-			System.out.println("Could not create plot file: " + plot.getName());
-			e.printStackTrace();
-			System.exit(1);
 		}
-		 */
-
+		
 	}
 	
 	/**
-	 * TODO: I'm not too sure about this method.
+	 * TODO: The archive visualizer for MAP Elites created extra Python scripts that produce
+	 * 		 the 2D final archive visualizations using matplot lib. Accomplishing a similar
+	 * 	 	 feat using MOME will require a lot of thought and effort, but should happen
+	 * 		 after more basic logging. 
+	 *
 	 * @param bins
 	 * @throws FileNotFoundException
 	 */
