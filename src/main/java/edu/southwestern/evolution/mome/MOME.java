@@ -356,7 +356,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 			//LOGGING POPULATION INFORMATION
 			int[] populationSizesForBins = archive.populationSizeForEveryBin();
 			String popString = Arrays.toString(populationSizesForBins).replace(", ", "\t");
-			popString = popString.substring(1, popString.length() - 1); // Remove opening and closing [ ] brackets
+			popString = pseudoGeneration + "\t" + popString.substring(1, popString.length() - 1); // Remove opening and closing [ ] brackets
 			binPopulationSizeLog.log(popString);
 			
 			//LOGGING OBJECTIVES MAX AND MIN
@@ -464,7 +464,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 				ps.println("set title \"" + logTitle + "\"");
 				// The :1 is for skipping the "generation" number logged in the file
 				ps.println("plot \"" + textLogFilename + "\" matrix every ::1 with image");
-				ps.println("pause -1");
+				// ps.println("pause -1"); // Not needed when only one item is plotted?
 				ps.close();
 		
 			} catch (FileNotFoundException e) {
