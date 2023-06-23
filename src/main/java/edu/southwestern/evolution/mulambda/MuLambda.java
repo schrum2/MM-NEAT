@@ -1,7 +1,11 @@
 package edu.southwestern.evolution.mulambda;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Vector;
 import java.util.concurrent.TimeUnit;
+import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -15,9 +19,7 @@ import edu.southwestern.evolution.genotypes.OffsetHybrIDGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.mapelites.BinLabels;
 import edu.southwestern.evolution.mapelites.MAPElites;
-import edu.southwestern.experiment.evolution.List;
-import edu.southwestern.experiment.evolution.String;
-import edu.southwestern.experiment.evolution.SuppressWarnings;
+import edu.southwestern.evolution.mome.MOME;
 import edu.southwestern.log.FitnessLog;
 import edu.southwestern.log.MMNEATLog;
 import edu.southwestern.log.PlotLog;
@@ -40,6 +42,7 @@ import edu.southwestern.tasks.mspacman.multitask.DangerousAreaModeSelector;
 import edu.southwestern.tasks.mspacman.sensors.directional.scent.VariableDirectionKStepDeathScentBlock;
 import edu.southwestern.util.PopulationUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.stats.StatisticsUtilities;
 
 /**
@@ -477,25 +480,31 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 	public void close(ArrayList<Genotype<T>> population) {		
 		// Evaluate final parents (haven't technically been evaluated yet)
 		ArrayList<Score<T>> parentScores = task.evaluateAll(population);
-		
+
 		// For Minecraft, we want to save each genome as a block list for convenient loading later
 		if(task instanceof MinecraftShapeTask || task instanceof MinecraftLonerShapeTask) {
-			// TODO: Take the parentScores, get the Score.individual inside each one, convert each to a block list using the 
-			//       shape generator, and then save all the shapes. The file name for each saved shape should contain both
-			//       the getId of the individual, and also the scores in each objective.
-			
-			MinecraftCoordinates corner = new MinecraftCoordinates(0, 0, 0);
-			for(int i = 0; archive.size() > i; i ++ ) {
-				Score<T> score = archive.get(i);
-				if(score != null) {
-					Genotype<T> individual = score.individual;
-					@SuppressWarnings("unchecked")
-					List<MinecraftClient.Block> blocks = MMNEAT.shapeGenerator.generateShape(individual, corner, MMNEAT.blockSet);
+			// Take the parentScores, get the Score.individual inside each one, convert each to a block list using the 
+			// shape generator, and then save all the shapes. The file name for each saved shape should contain both
+			// the getId of the individual, and also the scores in each objective.
+			if(Parameters.parameters.booleanParameter("saveWholeMinecraftArchiveAtEnd")) {
 
-					BinLabels archiveBinLabelsClass = MMNEAT.getArchiveBinLabelsClass();
-					String label = archiveBinLabelsClass.binLabels().get(archiveBinLabelsClass.oneDimensionalIndex(score.MAPElitesBehaviorMap()));
 
-					MinecraftUtilClass.writeBlockListFile(blocks, saveDir + File.separator + individual.getId(), "BC_"+label+"FITNESS_"+Arrays.toString(score.scores)+".txt");
+				String saveDir = FileUtilities.getSaveDirectory() + "/finalArchiveOfShapes";
+				File dir = new File(saveDir);
+				// Create dir	-is this create directory or creating a text file?
+				if (!dir.exists()) {
+					dir.mkdir();
+				}
+
+				MinecraftCoordinates corner = new MinecraftCoordinates(0, 0, 0);
+				for(int i = 0; parentScores.size() > i; i ++ ) {
+					Score<T> score = parentScores.get(i);
+					if(score != null) {
+						Genotype<T> individual = score.individual;
+						@SuppressWarnings("unchecked")
+						List<MinecraftClient.Block> blocks = MMNEAT.shapeGenerator.generateShape(individual, corner, MMNEAT.blockSet);
+						MinecraftUtilClass.writeBlockListFile(blocks, saveDir + File.separator + individual.getId(), "FITNESS_"+Arrays.toString(score.scores)+".txt");
+					}
 				}
 			}
 		}
