@@ -186,7 +186,7 @@ public class MOMEArchive<T> {
 						if((front.size() > maximumNumberOfIndividualsInSubPops) && (maximumNumberOfIndividualsInSubPops > 0)) {	//check the subpop size
 							discardRandomIndividualFromBin(candidateBinCoordinates, score); //this will discard a random individual who is not the one just added
 						}
-						conditionalEliteSave(candidate, candidateBinCoordinates);
+//						conditionalEliteSave(candidate, candidateBinCoordinates);
 						return true;
 					}
 				}
