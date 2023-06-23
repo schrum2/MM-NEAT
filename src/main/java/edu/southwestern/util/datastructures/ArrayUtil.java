@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -726,15 +727,27 @@ public class ArrayUtil {
 	 * Given two equal length double arrays, create a new array whose elements
 	 * are the pair-wise sums of of the corresponding elements in a and b.
 	 *
-	 * @param a
-	 *            array of double
-	 * @param b
-	 *            array of double
+	 * @param a array of double
+	 * @param b array of double
 	 * @return array a[i]+b[i] for all i
 	 */
 	public static double[] zipAdd(double[] a, double[] b) {
 		assert(a.length == b.length);
 		return zipAdd(a,b,a.length);
+	}
+	
+	/**
+	 * Given two equal length double arrays, create a new array whose elements
+	 * are the pair-wise differences of of the corresponding elements in a and b.
+	 *
+	 * @param a array of double
+	 * @param b array of double
+	 * @return array a[i] - b[i] for all i
+	 */
+	public static double[] zipSubtract(double[] a, double[] b) {
+		assert(a.length == b.length);
+		IntStream indices = IntStream.range(0, a.length);
+		return indices.parallel().mapToDouble(i -> a[i] - b[i]).toArray();
 	}
 		
 	/**

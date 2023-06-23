@@ -11,7 +11,18 @@ import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNPlusParametersGenotype;
 import edu.southwestern.experiment.Experiment;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask;
 
+/**
+ * An experiment that involves a gradually changing state, such as a population
+ * that gets one individual added at a time as opposed to having the whole
+ * population replaced each generation. The main example of this experiment
+ * type is MAP Elites and its variants.
+ * 
+ * @author Jacob Schrum
+ *
+ * @param <T>
+ */
 public class SteadyStateExperiment<T> implements Experiment {
 
 	private SteadyStateEA<T> ea;
@@ -89,6 +100,11 @@ public class SteadyStateExperiment<T> implements Experiment {
 		}
 		System.out.println("Time for EA clean-up.");
 		ea.finalCleanup();
+		
+		// If we are evolving Minecraft shapes, then save each shape in the archive/population as a block list at the end
+		if(MMNEAT.task instanceof MinecraftLonerShapeTask) {
+			// TODO: https://github.com/schrum2/MM-NEAT/issues/911
+		}
 	}
 
 	@Override

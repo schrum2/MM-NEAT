@@ -19,6 +19,12 @@ import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.file.Serialization;
 import edu.southwestern.util.random.RandomNumbers;
 
+/**
+ * TODO: JavaDoc
+ * @author 
+ *
+ * @param <T>
+ */
 public class Archive<T> {
 	
 	Vector<Score<T>> archive; // Vector is used because it is thread-safe
