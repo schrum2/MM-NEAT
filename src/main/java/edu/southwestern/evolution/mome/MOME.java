@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Vector;
 import java.util.stream.Stream;
 
@@ -58,8 +59,6 @@ public class MOME<T> implements SteadyStateEA<T>{
 	//logging variables (might be sorted into tracking or other grouping
 	public boolean io;
 	private boolean archiveFileCreated = false;	//track if the archive file is made
-	private static String maxPrefix = "_Max_Objective_";
-	private static String minPrefix = "_Min_Objective_";
 	
 	// Not a MOMELog
 	private MMNEATLog archiveLog = null; // Log general archive information. Does not use matrix plot, logged every generation
@@ -68,6 +67,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 	private MMNEATLog binPopulationSizeLog = null; // contains sizes of subpops in each bin, logged every generation
 	private MMNEATLog[] maxFitnessLogs = null; //creates a log for each objective that contains the max fitness for each bin, logged every generation
 	private MMNEATLog[] minFitnessLogs = null; //creates a log for each objective that contains the min fitness for each bin, logged every generation
+	private MMNEATLog[] rangeFitnessLogs = null; //creates a log for each objective that contains the range from min to max for each bin, logged every generation
 
 	public MOME() {
 		this(Parameters.parameters.stringParameter("archiveSubDirectoryName"), Parameters.parameters.booleanParameter("io"), Parameters.parameters.booleanParameter("netio"));
@@ -86,7 +86,6 @@ public class MOME<T> implements SteadyStateEA<T>{
 		this.archive = new MOMEArchive<>(netioOption, archiveSubDirectoryName);	//set up archive
 
 		this.io = ioOption; // write logs
-		//TODO: figure out how we get this number below
 		this.mating = Parameters.parameters.booleanParameter("mating");
 		this.crossoverRate = Parameters.parameters.doubleParameter("crossoverRate");
 //		this.populationChangeCheck = false;
@@ -115,15 +114,19 @@ public class MOME<T> implements SteadyStateEA<T>{
 			
 			maxFitnessLogs = new MMNEATLog[numberOfObjectivesToLog];
 			minFitnessLogs = new MMNEATLog[numberOfObjectivesToLog];
-
+			rangeFitnessLogs = new MMNEATLog[numberOfObjectivesToLog];
+			
 			String infixMin = infix + "_Min_Objective_";
 			String infixMax = infix + "_Max_Objective_";
+			String infixRange = infix + "_Range_";
 			for (int i = 0; i < numberOfObjectivesToLog; i++) {
 				minFitnessLogs[i] = new MMNEATLog(infixMin+i, false, false, false, true);
 				maxFitnessLogs[i] = new MMNEATLog(infixMax+i, false, false, false, true);
+				rangeFitnessLogs[i] = new MMNEATLog(infixRange+i, false, false, false, true);
 				
 				momeLogs.add(minFitnessLogs[i]);
 				momeLogs.add(maxFitnessLogs[i]);
+				momeLogs.add(rangeFitnessLogs[i]);
 			}
 
 			// Create gnuplot file for archive log
@@ -351,38 +354,37 @@ public class MOME<T> implements SteadyStateEA<T>{
 			int numberOfObjectives = MMNEAT.task.numObjectives();
 			
 			//LOGGING POPULATION INFORMATION
-			String popString = "";
 			int[] populationSizesForBins = archive.populationSizeForEveryBin();
-			for (int i = 0; i < populationSizesForBins.length; i++) {
-				popString = popString + populationSizesForBins[i] + "\t";
-//				System.out.println("popSizes only:" + populationSizesForBins[i]);
-
-			}
-			//System.out.println("popSizes MOME:" + popString);
+			String popString = Arrays.toString(populationSizesForBins).replace(", ", "\t");
+			popString = popString.substring(1, popString.length() - 1); // Remove opening and closing [ ] brackets
 			binPopulationSizeLog.log(popString);
-			//String populationSizeString = "";
-
 			
 			//LOGGING OBJECTIVES MAX AND MIN
 			double[][] maxScoresBinXObjective = archive.maxScorebyBinXObjective(); //maxScores[bin][objective]
 			double[][] minScoresBinXObjective = archive.minScorebyBinXObjective(); //minScores[bin][objective]
-	//initialize log with info labels
+			//initialize log with info labels
 			
 			//loop through objectives to log max and min for each objectives log
 			for (int i = 0; i < numberOfObjectives; i++) {
 				
 				//MAX FITNESS SCORES LOG
-				Double[] maxScoresForOneObjective = ArrayUtils.toObject(ArrayUtil.column(maxScoresBinXObjective, i));
+				double[] maxColumn = ArrayUtil.column(maxScoresBinXObjective, i);
+				Double[] maxScoresForOneObjective = ArrayUtils.toObject(maxColumn);
 				maxFitnessLogs[i].log(pseudoGeneration + "\t" + StringUtils.join(maxScoresForOneObjective, " \t").replaceAll("-Infinity", "X"));
 				
 				//MIN FITNESS SCORES LOG
-				Double[] minScoresForOneObjective = ArrayUtils.toObject(ArrayUtil.column(minScoresBinXObjective, i));
+				double[] minColumn = ArrayUtil.column(minScoresBinXObjective, i);
+				Double[] minScoresForOneObjective = ArrayUtils.toObject(minColumn);
 				minFitnessLogs[i].log(pseudoGeneration + "\t" + StringUtils.join(minScoresForOneObjective, "\t").replaceAll("-Infinity", "X"));
 				
-				//POPULATION LOG --- can probably move down
-				//populationSizeString = populationSizeString + populationSizesForBins[i] + "\t";
-				//System.out.println("popSizearray:" + populationSizesForBins[i]);
-
+				//RANGE FITNESS SCORES LOG
+				// If a bin is empty, its min and max are negative infinity, but the range should be 0.
+				// With floating point, negative infinity minus itself is not 0. So, instead, we convert negative infinity to 0,
+				// which will lead to a result of 0 - 0 = 0.
+				Arrays.parallelSetAll(maxColumn, j -> (Double.isInfinite(maxColumn[j]) && maxColumn[j] < 0) ? 0.0 : maxColumn[j]);
+				Arrays.parallelSetAll(minColumn, j -> (Double.isInfinite(minColumn[j]) && minColumn[j] < 0) ? 0.0 : minColumn[j]);
+				Double[] scoreRangesForOneObjective = ArrayUtils.toObject(ArrayUtil.zipSubtract(maxColumn, minColumn));
+				rangeFitnessLogs[i].log(pseudoGeneration + "\t" + StringUtils.join(scoreRangesForOneObjective, "\t"));
 			}
 //
 			

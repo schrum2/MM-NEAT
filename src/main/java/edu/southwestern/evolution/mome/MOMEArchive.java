@@ -276,17 +276,11 @@ public class MOMEArchive<T> {
 	public int[] populationSizeForEveryBin() {
 		//System.out.println("popSizes: ");
 		int[] populationSizes = new int[mapping.binLabels().size()];
-		String popString = "";
 
 		for (Vector<Integer> keyVector : archive.keySet()) {
 			int oneDBinIndex = mapping.oneDimensionalIndex(ArrayUtil.intArrayFromArrayList(keyVector));
 			populationSizes[oneDBinIndex] = archive.get(keyVector).size();
 		}
-		for (int j = 0; j < populationSizes.length; j++) {
-			popString = popString + populationSizes[j] + "\t";
-		}
-		
-		//System.out.println("popSizes Arch:" + popString);
 
 		return populationSizes;
 	}
