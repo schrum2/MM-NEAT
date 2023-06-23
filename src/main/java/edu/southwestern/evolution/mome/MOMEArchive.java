@@ -435,7 +435,6 @@ public class MOMEArchive<T> {
 		return minFitnessScores;
 	}
 	
-	//maxFitnessInSingleBinXObjectives
 	/**
 	 * gets all the max scores for each objective from the given bin
 	 * MAX MIRROR: maxFitnessInSingleBinXObjectives

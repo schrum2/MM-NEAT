@@ -30,7 +30,11 @@ import edu.southwestern.util.random.RandomNumbers;
 
 /**
  * TODO: Explain a bit more, and also cite the paper whose algorithm we are implementing using ACM style
- * 
+ * Thomas Pierrot, Guillaume Richard, Karim Beguir, and Antoine Cully. 
+ * 2022. Multi-objective quality diversity optimization. 
+ * In Proceedings of the Genetic and Evolutionary Computation Conference (GECCO '22). 
+ * Association for Computing Machinery, New York, NY, USA, 139–147. 
+ * https://doi.org/10.1145/3512290.3528823
  * @author lewisj
  *
  * @param <T>
@@ -38,8 +42,7 @@ import edu.southwestern.util.random.RandomNumbers;
 public class MOME<T> implements SteadyStateEA<T>{
 
 	protected MOMEArchive<T> archive;
-								// TODO: Yes, iterations tracks the number of individuals generated. This needs to be incremented somewhere
-	//protected int iterations;	//might want to rename? what is it, just the number of individuals created so far?
+								
 	protected LonerTask<T> task; ///seems to be for cleanup, not sure what else
 	
 	//below deals with new individual creation
