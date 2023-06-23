@@ -1,7 +1,11 @@
 package edu.southwestern.experiment.evolution;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Vector;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.EvolutionaryHistory;
@@ -9,9 +13,18 @@ import edu.southwestern.evolution.SteadyStateEA;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNPlusParametersGenotype;
+import edu.southwestern.evolution.mapelites.BinLabels;
+import edu.southwestern.evolution.mapelites.MAPElites;
+import edu.southwestern.evolution.mome.MOME;
 import edu.southwestern.experiment.Experiment;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask;
+import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
+import edu.southwestern.tasks.evocraft.MinecraftClient;
+import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
+import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
+import edu.southwestern.util.file.FileUtilities;
 
 /**
  * An experiment that involves a gradually changing state, such as a population
@@ -30,6 +43,7 @@ public class SteadyStateExperiment<T> implements Experiment {
 	private boolean cleanArchetype;
 	private boolean plainTWEANNGenotype;
 
+	
 	@SuppressWarnings("unchecked")
 	public SteadyStateExperiment() {
 		this((SteadyStateEA<T>) MMNEAT.ea, MMNEAT.genotype);
@@ -104,6 +118,40 @@ public class SteadyStateExperiment<T> implements Experiment {
 		// If we are evolving Minecraft shapes, then save each shape in the archive/population as a block list at the end
 		if(MMNEAT.task instanceof MinecraftLonerShapeTask) {
 			// TODO: https://github.com/schrum2/MM-NEAT/issues/911
+			if(Parameters.parameters.booleanParameter("saveWholeMinecraftArchiveAtEnd")) {
+				
+				
+				String saveDir = FileUtilities.getSaveDirectory() + "/finalArchiveOfShapes";
+				File dir = new File(saveDir);
+				// Create dir	-is this create directory or creating a text file?
+				if (!dir.exists()) {
+					dir.mkdir();
+				}
+				
+				if(MMNEAT.ea instanceof MAPElites) {
+					@SuppressWarnings("unchecked")
+					Vector<Score<T>> archive = ((MAPElites<T>) MMNEAT.ea).getArchive().getArchive();
+					
+					// loop
+					//		Convert score.individual using MMNEAT.shapeGenerator
+					//		MinecraftUtilClass.writeBlockListFile(originalBlocks, saveDir + File.separator + "Shape"+(++savedShapes), "FITNESS_"+finalResults[i]+".txt");
+					//		Put score.scores and also 
+					MinecraftCoordinates corner = new MinecraftCoordinates(0, 0, 0);
+					for(int i = 0; archive.size() > i; i ++ ) {
+						Score<T> score = archive.get(i);
+						Genotype<T> individual = score.individual;
+						@SuppressWarnings("unchecked")
+						List<MinecraftClient.Block> blocks = MMNEAT.shapeGenerator.generateShape(individual, corner, MMNEAT.blockSet);
+
+						BinLabels archiveBinLabelsClass = MMNEAT.getArchiveBinLabelsClass();
+						String label = archiveBinLabelsClass.binLabels().get(archiveBinLabelsClass.oneDimensionalIndex(score.MAPElitesBehaviorMap()));
+
+						MinecraftUtilClass.writeBlockListFile(blocks, saveDir + File.separator + individual.getId(), "BC_"+label+"FITNESS_"+Arrays.toString(score.scores)+".txt");
+					}
+				} else if(MMNEAT.ea instanceof MOME) {
+					throw new UnsupportedOperationException("MOME cannot save final archive yet");
+				}
+			}
 		}
 	}
 
@@ -116,7 +164,7 @@ public class SteadyStateExperiment<T> implements Experiment {
 	public static void main(String[] args) {
 		int seed = 1;
 		try {
-			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:50", "maxGens:1000",
+			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:50", "maxGens:5",
 					//"base:minecraft", "log:Minecraft-SingleTest", "saveTo:SingleTest",
 					"base:minecraft", "log:Minecraft-ParallelTest", "saveTo:ParallelTest",
 					"minecraftContainsWholeMAPElitesArchive:true","forceLinearArchiveLayoutInMinecraft:false",
@@ -147,7 +195,7 @@ public class SteadyStateExperiment<T> implements Experiment {
 					"includeFullSigmoidFunction:true", "includeFullGaussFunction:true", "includeCosineFunction:true", "includeGaussFunction:false",
 					"includeIdFunction:true", "includeTriangleWaveFunction:false", "includeSquareWaveFunction:false", "includeFullSawtoothFunction:false", 
 					"includeSigmoidFunction:false", "includeAbsValFunction:false", "includeSawtoothFunction:false", 
-					"minecraftNorthSouthOnly:true"}); 
+					"minecraftNorthSouthOnly:true", "crossover:edu.southwestern.evolution.crossover.ArrayCrossover"}); 
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
