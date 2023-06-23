@@ -25,6 +25,8 @@ import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.tasks.SinglePopulationTask;
 import edu.southwestern.tasks.Task;
+import edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask;
+import edu.southwestern.tasks.evocraft.MinecraftShapeTask;
 import edu.southwestern.tasks.mspacman.MsPacManTask;
 import edu.southwestern.tasks.mspacman.init.MsPacManInitialization;
 import edu.southwestern.tasks.mspacman.multitask.DangerousAreaModeSelector;
@@ -465,9 +467,17 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 	 * @param population Final population
 	 */
 	@Override
-	public void close(ArrayList<Genotype<T>> population) {
+	public void close(ArrayList<Genotype<T>> population) {		
 		// Evaluate final parents (haven't technically been evaluated yet)
 		ArrayList<Score<T>> parentScores = task.evaluateAll(population);
+		
+		// For Minecraft, we want to save each genome as a block list for convenient loading later
+		if(task instanceof MinecraftShapeTask || task instanceof MinecraftLonerShapeTask) {
+			// TODO: Take the parentScores, get the Score.individual inside each one, convert each to a block list using the 
+			//       shape generator, and then save all the shapes. The file name for each saved shape should contain both
+			//       the getId of the individual, and also the scores in each objective.
+		}
+		
 		logParentInfo(parentScores);
 		if (writeOutput) {
 			parentLog.close();
