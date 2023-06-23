@@ -492,14 +492,13 @@ public class MOMEArchive<T> {
 	 * @return the hypervolume of every bin in the archive
 	 */
 	public double[] hyperVolumeOfAllBins() {
-		//loop through all scores
 		//I don't need to make them negative infinity, right?
 //		double[] hyperVolumeOfAllBins = ArrayUtil.doubleSpecified(MMNEAT.task.numObjectives(), Double.NEGATIVE_INFINITY);
-		double[] hyperVolumeOfAllBins = new double[archive.size()];
-		int i = 0;
+		double[] hyperVolumeOfAllBins = new double[mapping.binLabels().size()];
+
 		for(Vector<Integer> key : archive.keySet()) {
-			hyperVolumeOfAllBins[i] = maxHyperVolumeInBin(key);
-			i++;
+			int oneDBinIndex = mapping.oneDimensionalIndex(ArrayUtil.intArrayFromArrayList(key));
+			hyperVolumeOfAllBins[oneDBinIndex] = maxHyperVolumeInBin(key);
 		}
 		return hyperVolumeOfAllBins;
 	}
