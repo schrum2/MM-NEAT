@@ -13,7 +13,11 @@ import edu.southwestern.evolution.HybrIDUtil.HybrIDUtil;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.OffsetHybrIDGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.evolution.mapelites.BinLabels;
 import edu.southwestern.evolution.mapelites.MAPElites;
+import edu.southwestern.experiment.evolution.List;
+import edu.southwestern.experiment.evolution.String;
+import edu.southwestern.experiment.evolution.SuppressWarnings;
 import edu.southwestern.log.FitnessLog;
 import edu.southwestern.log.MMNEATLog;
 import edu.southwestern.log.PlotLog;
@@ -25,8 +29,11 @@ import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.tasks.SinglePopulationTask;
 import edu.southwestern.tasks.Task;
+import edu.southwestern.tasks.evocraft.MinecraftClient;
 import edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask;
 import edu.southwestern.tasks.evocraft.MinecraftShapeTask;
+import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
+import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.mspacman.MsPacManTask;
 import edu.southwestern.tasks.mspacman.init.MsPacManInitialization;
 import edu.southwestern.tasks.mspacman.multitask.DangerousAreaModeSelector;
@@ -476,6 +483,21 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 			// TODO: Take the parentScores, get the Score.individual inside each one, convert each to a block list using the 
 			//       shape generator, and then save all the shapes. The file name for each saved shape should contain both
 			//       the getId of the individual, and also the scores in each objective.
+			
+			MinecraftCoordinates corner = new MinecraftCoordinates(0, 0, 0);
+			for(int i = 0; archive.size() > i; i ++ ) {
+				Score<T> score = archive.get(i);
+				if(score != null) {
+					Genotype<T> individual = score.individual;
+					@SuppressWarnings("unchecked")
+					List<MinecraftClient.Block> blocks = MMNEAT.shapeGenerator.generateShape(individual, corner, MMNEAT.blockSet);
+
+					BinLabels archiveBinLabelsClass = MMNEAT.getArchiveBinLabelsClass();
+					String label = archiveBinLabelsClass.binLabels().get(archiveBinLabelsClass.oneDimensionalIndex(score.MAPElitesBehaviorMap()));
+
+					MinecraftUtilClass.writeBlockListFile(blocks, saveDir + File.separator + individual.getId(), "BC_"+label+"FITNESS_"+Arrays.toString(score.scores)+".txt");
+				}
+			}
 		}
 		
 		logParentInfo(parentScores);
