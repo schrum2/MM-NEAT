@@ -67,19 +67,19 @@ public class MetricsUtil {
 	} // readFront
 
 	/**
-	 * Gets the maximun values for each objectives in a given pareto front
+	 * Gets the maximum values for each objectives in a given pareto front
 	 *
 	 * @param front
 	 *            The pareto front
-	 * @param noObjectives
+	 * @param numberOfObjectives
 	 *            Number of objectives in the pareto front
-	 * @return double [] An array of noOjectives values whit the maximun values
+	 * @return double [] An array of noOjectives values with the maximun values
 	 *         for each objective
 	 *
 	 */
-	public double[] getMaximumValues(double[][] front, int noObjectives) {
-		double[] maximumValue = new double[noObjectives];
-		for (int i = 0; i < noObjectives; i++) {
+	public double[] getMaximumValues(double[][] front, int numberOfObjectives) {
+		double[] maximumValue = new double[numberOfObjectives];
+		for (int i = 0; i < numberOfObjectives; i++) {
 			maximumValue[i] = Double.NEGATIVE_INFINITY;
 		}
 
@@ -95,19 +95,19 @@ public class MetricsUtil {
 	} // getMaximumValues
 
 	/**
-	 * Gets the minimun values for each objectives in a given pareto front
+	 * Gets the minimum values for each objectives in a given pareto front
 	 *
 	 * @param front
 	 *            The pareto front
-	 * @param noObjectives
+	 * @param numberOfObjectives
 	 *            Number of objectives in the pareto front
 	 * @return double [] An array of noOjectives values whit the minimum values
 	 *         for each objective
 	 *
 	 */
-	public double[] getMinimumValues(double[][] front, int noObjectives) {
-		double[] minimumValue = new double[noObjectives];
-		for (int i = 0; i < noObjectives; i++) {
+	public double[] getMinimumValues(double[][] front, int numberOfObjectives) {
+		double[] minimumValue = new double[numberOfObjectives];
+		for (int i = 0; i < numberOfObjectives; i++) {
 			minimumValue[i] = Double.MAX_VALUE;
 		}
 
@@ -150,7 +150,7 @@ public class MetricsUtil {
 	 * @param front
 	 *            The front that contains the other points to calculate the
 	 *            distances
-	 * @return The minimun distance between the point and the front
+	 * @return The minimum distance between the point and the front
 	 *
 	 */
 	public double distanceToClosedPoint(double[] point, double[][] front) {
@@ -175,7 +175,7 @@ public class MetricsUtil {
 	 * @param front
 	 *            The front that contains the other points to calculate the
 	 *            distances
-	 * @return The minimun distances greater than zero between the point and the
+	 * @return The minimum distances greater than zero between the point and the
 	 *         front
 	 */
 	public double distanceToNearestPoint(double[] point, double[][] front) {
@@ -192,16 +192,16 @@ public class MetricsUtil {
 	} // distanceToNearestPoint
 
 	/**
-	 * This method receives a pareto front and two points, one whit maximun
-	 * values and the other with minimun values allowed, and returns a the
+	 * This method receives a pareto front and two points, one with maximum
+	 * values and the other with minimum values allowed, and returns the
 	 * normalized pareto front.
 	 *
 	 * @param front
 	 *            A pareto front.
 	 * @param maximumValue
-	 *            The maximun values allowed
+	 *            The maximum values allowed
 	 * @param minimumValue
-	 *            The mininum values allowed
+	 *            The minimum values allowed
 	 * @return the normalized pareto front
 	 *
 	 */

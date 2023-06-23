@@ -29,7 +29,8 @@ public class Hypervolume {
 
 	/**
 	 * This checks if point1 (an array of scores) is better in any given score to point2
-	 * If point1 scores higher in even one objective score then it returns true
+	 * If point2 has any objective score that is greater than point1 it returns false
+	 * only returns true if all of point1's scores are greater than or equal to point2's scores
 	 * 
 	 * returns true if 'point1' dominates 'points2' with respect to the 
 	 * first 'numberOfObjectives' objectives
@@ -44,6 +45,7 @@ public class Hypervolume {
 
 		betterInAnyObjective = 0;
 		for (i = 0; i < numberOfObjectives && point1[i] >= point2[i]; i++) {
+			//breaks loop early if point2[i] is greater than point1[i]
 			if (point1[i] > point2[i]) {
 				betterInAnyObjective = 1;
 			}
@@ -79,30 +81,29 @@ public class Hypervolume {
 	 * @param numberOfObjectives the number of objectives being considered front[][numberOfObjectives]
 	 * @return the new number of points in the front (n) such that n is front[0...n-1] TODO: fix this sentence
 	 */
-	//it seems like this filters out any point that has at least one score that is less than the other point?
 	public int filterNondominatedSet(double[][] front, int numberOfPoints, int numberOfObjectives) {
 		int i, j;
 		int n;
 
-		n = numberOfPoints;	//controls the looping of front comparisons
+		n = numberOfPoints;	//controls the looping of front comparisons front[0..n-1]
 		i = 0;
 		while (i < n) {	//outer loop
 			j = i + 1;
 			while (j < n) {	//inner loop
 				if (dominates(front[i], front[j], numberOfObjectives)) {
 					/* remove point 'j' */
-					n--;	//decrement the total number of front[]
-					swap(front, j, n);
+					n--;	//decrement the total number of front[nPoints], decrements before swap
+					swap(front, j, n);	//so that the last element in the front is moved to front[j]
 				} else if (dominates(front[j], front[i], numberOfObjectives)) {
 					/*
 					 * remove point 'i'; ensure that the point copied to index
 					 * 'i' is considered in the next outer loop (thus, decrement
 					 * i)
 					 */
-					n--;
+					n--;	//decrement the number of points so that it swaps the last point into spot i
 					swap(front, i, n);
-					i--;
-					break;
+					i--;	//so that it reevaluates the element that was swapped in
+					break;	//breaks to reevaluate all j elements to the newly swapped in i element
 				} else {
 					j++;
 				}
@@ -239,7 +240,7 @@ public class Hypervolume {
 
 	/**
 	 * Returns the hypevolume value of the paretoFront. This method call to the
-	 * calculate hipervolume one
+	 * calculate hypervolume one
 	 *
 	 * @param paretoFront The pareto front
 	 * @param paretoTrueFront The true pareto front

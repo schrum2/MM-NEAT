@@ -93,7 +93,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 		this.crossoverRate = Parameters.parameters.doubleParameter("crossoverRate");
 //		this.populationChangeCheck = false;
 		this.addedIndividualCount = 0;
-//		this.setDiscardedIndividualCount(0);		//broke this, need to investigate later
+		this.discardedIndividualCount = 0;
 		this.individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
 		this.individualCreationAttemptsCount = Parameters.parameters.integerParameter("lastSavedGeneration");
 		//TODO: the above might cause issues
