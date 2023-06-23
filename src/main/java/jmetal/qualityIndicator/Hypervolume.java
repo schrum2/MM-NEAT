@@ -70,7 +70,7 @@ public class Hypervolume {
 	} // Swap
 
 	/**
-	 * 
+	 * filters out any point whose scores are all < another point, returns the new number of points in the front.
 	 * 
 	 * all nondominated points regarding the first 'numberOfObjectives' dimensions are
 	 * collected; the points referenced by 'front[0..numberOfPoints-1]' are
@@ -92,8 +92,8 @@ public class Hypervolume {
 			while (j < n) {	//inner loop
 				if (dominates(front[i], front[j], numberOfObjectives)) {
 					/* remove point 'j' */
-					n--;	//decrement the total number of front[nPoints], decrements before swap
-					swap(front, j, n);	//so that the last element in the front is moved to front[j]
+					n--;	
+					swap(front, j, n);	//swaps the last element with j
 				} else if (dominates(front[j], front[i], numberOfObjectives)) {
 					/*
 					 * remove point 'i'; ensure that the point copied to index
@@ -117,16 +117,16 @@ public class Hypervolume {
 	 * calculate next value regarding dimension 'objective'; consider points
 	 * referenced in 'front[0..noPoints-1]'
 	 */
-	double surfaceUnchangedTo(double[][] front, int noPoints, int objective) {
+	double surfaceUnchangedTo(double[][] front, int numberOfPoints, int objective) {
 		int i;
 		double minValue, value;
 
-		if (noPoints < 1) {
+		if (numberOfPoints < 1) {
 			System.err.println("run-time error");
 		}
 
 		minValue = front[0][objective];
-		for (i = 1; i < noPoints; i++) {
+		for (i = 1; i < numberOfPoints; i++) {
 			value = front[i][objective];
 			if (value < minValue) {
 				minValue = value;
@@ -137,23 +137,23 @@ public class Hypervolume {
 
 	/*
 	 * remove all points which have a value <= 'threshold' regarding the
-	 * dimension 'objective'; the points referenced by 'front[0..noPoints-1]'
+	 * dimension 'objective'; the points referenced by 'front[0..numberOfPoints-1]'
 	 * are considered; 'front' is resorted, such that 'front[0..n-1]' contains
 	 * the remaining points; 'n' is returned
 	 */
 	/**
 	 * 
 	 * @param front
-	 * @param noPoints
+	 * @param numberOfPoints
 	 * @param objective
 	 * @param threshold
 	 * @return
 	 */
-	int reduceNondominatedSet(double[][] front, int noPoints, int objective, double threshold) {
+	int reduceNondominatedSet(double[][] front, int numberOfPoints, int objective, double threshold) {
 		int n;
 		int i;
 
-		n = noPoints;
+		n = numberOfPoints;
 		for (i = 0; i < n; i++) {
 			if (front[i][objective] <= threshold) {
 				n--;
@@ -286,7 +286,7 @@ public class Hypervolume {
 	}// hypervolume
 
 	/**
-	 * This class can be invoqued from the command line. Three params are
+	 * This class can be invoked from the command line. Three params are
 	 * required: 1) the name of the file containing the front, 2) the name of
 	 * the file containing the true Pareto front 3) the number of objectives
 	 */
