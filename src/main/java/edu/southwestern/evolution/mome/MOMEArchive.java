@@ -443,7 +443,7 @@ public class MOMEArchive<T> {
 	 * @return the max fitness score for each objective from this bin
 	 */
 	public double[] minFitnessInSingleBinXObjectives(Vector<Integer> keyBinCoordinates) {
-		double[] minFitnessScores = ArrayUtil.doubleSpecified(MMNEAT.task.numObjectives(), Double.NEGATIVE_INFINITY);
+		double[] minFitnessScores = ArrayUtil.doubleSpecified(MMNEAT.task.numObjectives(), Double.POSITIVE_INFINITY);
 		Vector<Score<T>> subPop = archive.get(keyBinCoordinates);
 		// get the sub-pop
 		for(Score<T> member : subPop) {
