@@ -39,8 +39,7 @@ import edu.southwestern.util.stats.StatisticsUtilities;
  * lambda) or (mu,lambda) strategy.
  * 
  * @author Jacob Schrum
- * @param <T>
- *            Type of phenotype evolved
+ * @param <T> Type of phenotype evolved
  */
 public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 

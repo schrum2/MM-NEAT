@@ -21,7 +21,10 @@ import java.util.List;
 
 /**
  * Implementation of Deb's NSGA2 multiobjective EA. NSGA2 stands for non-sorting
- * genetic algorithm 2
+ * genetic algorithm 2.
+ * 
+ * K. Deb, A. Pratap, S. Agarwal and T. Meyarivan, "A fast and elitist multiobjective genetic algorithm: NSGA-II," 
+ * in IEEE Transactions on Evolutionary Computation, vol. 6, no. 2, pp. 182-197, April 2002, doi: 10.1109/4235.996017.
  * 
  * @param <T> phenotype
  * @commented Lauren Gillespie
