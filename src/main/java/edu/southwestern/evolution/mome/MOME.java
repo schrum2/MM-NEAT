@@ -448,7 +448,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 				ps.println("unset key");
 				// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
 				ps.println("set yrange [0:"+ yrange +"]");
-				ps.println("set xrange [0:"+ numberOfBinLabels + "]");
+				ps.println("set xrange [1:"+ numberOfBinLabels + "]");
 				ps.println("set title \"" + logTitle + "\"");
 				ps.println("set output \"" + pdfFilename + "\"");				
 				// The :1 is for skipping the "generation" number logged in the file
@@ -460,7 +460,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 				ps.println("unset key");
 				// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
 				ps.println("set yrange [0:"+ yrange +"]");
-				ps.println("set xrange [0:"+ numberOfBinLabels + "]");
+				ps.println("set xrange [1:"+ numberOfBinLabels + "]");
 				ps.println("set title \"" + logTitle + "\"");
 				// The :1 is for skipping the "generation" number logged in the file
 				ps.println("plot \"" + textLogFilename + "\" matrix every ::1 with image");
