@@ -277,6 +277,19 @@ public class MOME<T> implements SteadyStateEA<T>{
 		 
 		return result;
 	}
+
+	// This and MAP Elites probably should have a common interface that specifies the need for this method
+	public ArrayList<Score<T>> getArchive() {
+		 ArrayList<Score<T>> result = new ArrayList<>(archive.archive.size());
+
+		 archive.archive.forEach( (coords, subpop) -> {	////goes through the archive
+			 for(Score<T> s : subpop) {		//goes through the scores of the subpop
+				 result.add(s);
+			 }
+		 });
+		 
+		return result;
+	}
 	
 	/**
 	 * within file update method

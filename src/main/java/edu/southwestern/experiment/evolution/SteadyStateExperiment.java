@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Vector;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.EvolutionaryHistory;
@@ -62,7 +61,7 @@ public class SteadyStateExperiment<T> implements Experiment {
 		// Init of EA was called in constructor instead
 	}
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void run() {
 		int numThreads = Parameters.parameters.booleanParameter("parallelEvaluations") ? Parameters.parameters.integerParameter("threads") : 1;
@@ -113,24 +112,30 @@ public class SteadyStateExperiment<T> implements Experiment {
 		}
 		System.out.println("Time for EA clean-up.");
 		ea.finalCleanup();
-		
+
 		// If we are evolving Minecraft shapes, then save each shape in the archive/population as a block list at the end
 		if(MMNEAT.task instanceof MinecraftLonerShapeTask) {
-			// TODO: https://github.com/schrum2/MM-NEAT/issues/911
+
 			if(Parameters.parameters.booleanParameter("saveWholeMinecraftArchiveAtEnd")) {
-				
-				
+
+
 				String saveDir = FileUtilities.getSaveDirectory() + "/finalArchiveOfShapes";
 				File dir = new File(saveDir);
 				// Create dir	-is this create directory or creating a text file?
 				if (!dir.exists()) {
 					dir.mkdir();
 				}
-				
-				if(MMNEAT.ea instanceof MAPElites) {
-					@SuppressWarnings("unchecked")
-					Vector<Score<T>> archive = ((MAPElites<T>) MMNEAT.ea).getArchive().getArchive();
-					
+
+				if(MMNEAT.ea instanceof MAPElites || MMNEAT.ea instanceof MOME) {
+					List<Score<T>> archive = null;
+
+					if(MMNEAT.ea instanceof MAPElites)
+						archive = ((MAPElites<T>) MMNEAT.ea).getArchive().getArchive();
+					else if(MMNEAT.ea instanceof MOME)
+						archive = ((MOME<T>) MMNEAT.ea).getArchive();
+					else
+						assert false : "Should have been either MAP Elites or MOME: " + MMNEAT.ea.getClass().getSimpleName();
+
 					// loop
 					//		Convert score.individual using MMNEAT.shapeGenerator
 					//		MinecraftUtilClass.writeBlockListFile(originalBlocks, saveDir + File.separator + "Shape"+(++savedShapes), "FITNESS_"+finalResults[i]+".txt");
@@ -140,7 +145,7 @@ public class SteadyStateExperiment<T> implements Experiment {
 						Score<T> score = archive.get(i);
 						if(score != null) {
 							Genotype<T> individual = score.individual;
-							@SuppressWarnings("unchecked")
+
 							List<MinecraftClient.Block> blocks = MMNEAT.shapeGenerator.generateShape(individual, corner, MMNEAT.blockSet);
 
 							BinLabels archiveBinLabelsClass = MMNEAT.getArchiveBinLabelsClass();
@@ -149,8 +154,6 @@ public class SteadyStateExperiment<T> implements Experiment {
 							MinecraftUtilClass.writeBlockListFile(blocks, saveDir + File.separator + individual.getId(), "BC_"+label+"FITNESS_"+Arrays.toString(score.scores)+".txt");
 						}
 					}
-				} else if(MMNEAT.ea instanceof MOME) {
-					throw new UnsupportedOperationException("MOME cannot save final archive yet");
 				}
 			}
 		}
