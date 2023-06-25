@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -17,6 +18,7 @@ import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.util.ClassCreation;
+import edu.southwestern.util.MultiobjectiveUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.file.Serialization;
@@ -184,7 +186,7 @@ public class MOMEArchive<T> {
 						if((front.size() > maximumNumberOfIndividualsInSubPops) && (maximumNumberOfIndividualsInSubPops > 0)) {	//check the subpop size
 							discardRandomIndividualFromBin(candidateBinCoordinates, score); //this will discard a random individual who is not the one just added
 						}
-						conditionalEliteSave(candidate, candidateBinCoordinates);
+//						conditionalEliteSave(candidate, candidateBinCoordinates);
 						return true;
 					}
 				}
@@ -413,7 +415,6 @@ public class MOMEArchive<T> {
 		return maxScoresByBinXObjective;
 	}
 	
-	
 
 //	MIN FITNESS FUNCTIONS BELOW
 
@@ -435,7 +436,6 @@ public class MOMEArchive<T> {
 		return minFitnessScores;
 	}
 	
-	//maxFitnessInSingleBinXObjectives
 	/**
 	 * gets all the max scores for each objective from the given bin
 	 * MAX MIRROR: maxFitnessInSingleBinXObjectives
@@ -461,15 +461,13 @@ public class MOMEArchive<T> {
 	 * @return minScores[bin][objective] for the whole archive
 	 */
 	public double[][] minScorebyBinXObjective() {
-		//System.out.println("in min score");
-
 		//initialize the result variable
 		double[][] minScoresByBinXObjective = new double[mapping.binLabels().size()][];
 		for(int i = 0; i < minScoresByBinXObjective.length; i++) {
 			// The unoccupied bins also need this initialization
 			minScoresByBinXObjective[i] = ArrayUtil.doubleSpecified(MMNEAT.task.numObjectives(), Double.NEGATIVE_INFINITY);
 		}
-		//go through bins to grab an array of max scores for each objective for that bin
+		//go through bins to grab an array of min scores for each objective for that bin
 		for(Vector<Integer> key : archive.keySet()) {
 			int oneDBinIndex = mapping.oneDimensionalIndex(ArrayUtil.intArrayFromArrayList(key));
 			minScoresByBinXObjective[oneDBinIndex] = minFitnessInSingleBinXObjectives(key);
@@ -477,30 +475,44 @@ public class MOMEArchive<T> {
 		return minScoresByBinXObjective;
 	}
 	
-	
-	//do not know what this is
-	//Max hyper volume in one bin
-	public int maxHyperVolumeInBin(Vector<Integer> keyBinCoordinates) {
-		return 0;
+	/**
+	 * Gets the hypervolume of the population of a given bin.
+	 * @param keyBinCoordinates the coordinates of the bin, used to get the subpop of Scores
+	 * @return the maxHypervolume of the given bin
+	 */
+	public double maxHyperVolumeInBin(Vector<Integer> keyBinCoordinates) {
+		List<Score<T>> listOfScores = archive.get(keyBinCoordinates);
+		return MultiobjectiveUtil.hypervolumeFromParetoFront(listOfScores);
 	}
 	
 	//do not know what this is
 	//hypervolume across all bins
-	public int[] hyperVolumeOfAllBins() {
-		int[] placeHolder = {0,0};
-		return placeHolder;
+	/**
+	 * Returns an array containing the hypervolume of every bin in the archive
+	 * @return the hypervolume of every bin in the archive
+	 */
+	public double[] hyperVolumeOfAllBins() {
+		//I don't need to make them negative infinity, right?
+//		double[] hyperVolumeOfAllBins = ArrayUtil.doubleSpecified(MMNEAT.task.numObjectives(), Double.NEGATIVE_INFINITY);
+		double[] hyperVolumeOfAllBins = new double[mapping.binLabels().size()];
+
+		for(Vector<Integer> key : archive.keySet()) {
+			int oneDBinIndex = mapping.oneDimensionalIndex(ArrayUtil.intArrayFromArrayList(key));
+			hyperVolumeOfAllBins[oneDBinIndex] = maxHyperVolumeInBin(key);
+		}
+		return hyperVolumeOfAllBins;
 	}
 	
-	//not sure I understand what this is
-	//ArrayList<NSGA2Score<T>> sizeOfCombinedParetoFrontAcrossAllBins() {
+
+	/**
+	 * Creates a pareto front using all the scores in the archive and then returns the size.
+	 * @return size of a parento front made from all the scores in the archive
+	 */
 	public int sizeOfCombinedParetoFrontAcrossAllBins() {
 		//create a result pareto front
 		Vector<Score<T>> wholeArchiveFront = new Vector<Score<T>>(getWholeArchiveScores());
 		ArrayList<NSGA2Score<T>> front = NSGA2.getParetoFront(NSGA2.staticNSGA2Scores(wholeArchiveFront));
-		//System.out.println("front:"+front+"\n whole archive:" + archive);
-		//System.out.println("front size:"+front.size()+"\t whole archive size:" + archive.values().size());
 		return front.size();
-		//return front;
 	}
 
 	/**

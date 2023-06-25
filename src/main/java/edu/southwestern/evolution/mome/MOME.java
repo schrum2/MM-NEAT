@@ -30,7 +30,11 @@ import edu.southwestern.util.random.RandomNumbers;
 
 /**
  * TODO: Explain a bit more, and also cite the paper whose algorithm we are implementing using ACM style
- * 
+ * Thomas Pierrot, Guillaume Richard, Karim Beguir, and Antoine Cully. 
+ * 2022. Multi-objective quality diversity optimization. 
+ * In Proceedings of the Genetic and Evolutionary Computation Conference (GECCO '22). 
+ * Association for Computing Machinery, New York, NY, USA, 139–147. 
+ * https://doi.org/10.1145/3512290.3528823
  * @author lewisj
  *
  * @param <T>
@@ -38,8 +42,7 @@ import edu.southwestern.util.random.RandomNumbers;
 public class MOME<T> implements SteadyStateEA<T>{
 
 	protected MOMEArchive<T> archive;
-								// TODO: Yes, iterations tracks the number of individuals generated. This needs to be incremented somewhere
-	//protected int iterations;	//might want to rename? what is it, just the number of individuals created so far?
+								
 	protected LonerTask<T> task; ///seems to be for cleanup, not sure what else
 	
 	//below deals with new individual creation
@@ -65,6 +68,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 	
 	// TODO: Convert these to MOMELogs
 	private MMNEATLog binPopulationSizeLog = null; // contains sizes of subpops in each bin, logged every generation
+	private MMNEATLog hypervolumeLog = null;	//contains the size of the hypervolume for each bin's subpop, logged every generation
 	private MMNEATLog[] maxFitnessLogs = null; //creates a log for each objective that contains the max fitness for each bin, logged every generation
 	private MMNEATLog[] minFitnessLogs = null; //creates a log for each objective that contains the min fitness for each bin, logged every generation
 	private MMNEATLog[] rangeFitnessLogs = null; //creates a log for each objective that contains the range from min to max for each bin, logged every generation
@@ -90,7 +94,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 		this.crossoverRate = Parameters.parameters.doubleParameter("crossoverRate");
 //		this.populationChangeCheck = false;
 		this.addedIndividualCount = 0;
-//		this.setDiscardedIndividualCount(0);		//broke this, need to investigate later
+		this.discardedIndividualCount = 0;
 		this.individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
 		this.individualCreationAttemptsCount = Parameters.parameters.integerParameter("lastSavedGeneration");
 		//TODO: the above might cause issues
@@ -111,6 +115,9 @@ public class MOME<T> implements SteadyStateEA<T>{
 			// These are MOMELogs
 			binPopulationSizeLog = new MMNEATLog(infix+"_BinPopulation", false, false, false, true);
 			momeLogs.add(binPopulationSizeLog);
+			
+			hypervolumeLog = new MMNEATLog(infix+"_Hypervolume", false, false, false, true);
+			momeLogs.add(hypervolumeLog);
 			
 			maxFitnessLogs = new MMNEATLog[numberOfObjectivesToLog];
 			minFitnessLogs = new MMNEATLog[numberOfObjectivesToLog];
@@ -359,6 +366,12 @@ public class MOME<T> implements SteadyStateEA<T>{
 			popString = pseudoGeneration + "\t" + popString.substring(1, popString.length() - 1); // Remove opening and closing [ ] brackets
 			binPopulationSizeLog.log(popString);
 			
+			//LOGGING HYPERVOLUME INFORMATION
+			double[] hypervolumeForBins = archive.hyperVolumeOfAllBins();
+			String hypervolumeString = Arrays.toString(hypervolumeForBins).replace(", ", "\t");
+			hypervolumeString = pseudoGeneration + "\t" + hypervolumeString.substring(1, hypervolumeString.length() - 1); // Remove opening and closing [ ] brackets
+			hypervolumeLog.log(hypervolumeString);
+			
 			//LOGGING OBJECTIVES MAX AND MIN
 			double[][] maxScoresBinXObjective = archive.maxScorebyBinXObjective(); //maxScores[bin][objective]
 			double[][] minScoresBinXObjective = archive.minScorebyBinXObjective(); //minScores[bin][objective]
@@ -417,9 +430,8 @@ public class MOME<T> implements SteadyStateEA<T>{
 		//might need later
 	}
 	
-//TODO: definitely remove all of this
+//TODO: definitely remove all of this if creating separate logging class
 	public static void setUpLogging(int numberOfBinLabels, String infix, String experimentPrefix, int yrange, int individualsPerGeneration, ArrayList<MMNEATLog> momeLogs) {
-		//this is for logging, copied all the parameters but probably don't need it all
 		
 		String prefix = experimentPrefix + "_" + infix;
 		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
