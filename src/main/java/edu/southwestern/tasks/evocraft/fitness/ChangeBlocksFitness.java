@@ -74,7 +74,7 @@ public class ChangeBlocksFitness extends TimedEvaluationMinecraftFitnessFunction
 	public boolean shapeIsWorthSaving(double fitnessScore, ArrayList<Pair<Long, List<Block>>> history, MinecraftCoordinates shapeCorner, List<Block> originalBlocks) {
 		//change later
 		
-		if(fitnessScore > 80) return true;
+		if(fitnessScore > 200) return true;
 		return false;
 	}
 }

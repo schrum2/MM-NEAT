@@ -21,7 +21,6 @@ import edu.southwestern.util.datastructures.Pair;
  *
  */
 public class MissileFitness extends TimedEvaluationMinecraftFitnessFunction {
-	public static final double PERCENT_NEEDED_TO_SAVE = .9;
 	
 	private MinecraftCoordinates targetCornerOffset;
 	private BlockType targetBlockType;
@@ -93,7 +92,7 @@ public class MissileFitness extends TimedEvaluationMinecraftFitnessFunction {
 		MinecraftCoordinates ranges = MinecraftUtilClass.getRanges();
 		double target = ranges.x() * ranges.z() * ranges.y();
 		//System.out.println("target * PERCENT_NEEDED_TO_SAVE" + -(target * PERCENT_NEEDED_TO_SAVE) + "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		if(fitnessScore > (-(target * PERCENT_NEEDED_TO_SAVE))) { 
+		if(fitnessScore > (-(target * Parameters.parameters.doubleParameter("minecraftPercentOfTarget")))) { 
 			//System.out.println("target * PERCENT_NEEDED_TO_SAVE" + -(target * PERCENT_NEEDED_TO_SAVE) + "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 			return true;
 		}
