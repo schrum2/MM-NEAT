@@ -778,4 +778,36 @@ public class ChangeCenterOfMassFitnessTest {
 		
 		assertEquals(0.0, ff.fitnessScore(testCorner,testBlockSet),1.0); 
 	}
+	
+	// Notes from Dr. Schrum:
+	// The shape here was taken from an evolutionary run.
+	// It was mistaken for a flying machine by an earlier version of
+	// the fitness function, but it is not. The shape blows up and leaves
+	// a block behind which is displaced from the center of the original
+	// shape, and therefore gives the impression that the shape has moved
+	// a lot (since the center of mass changes to focus on the one block)
+	@Test
+	public void testExplodingMachineShouldNotGetMaxFitness() {
+		Parameters.initializeParameterCollections(new String[] {"watch:false","minecraftClearWithGlass:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+
+		System.out.println( "testExplodingMachineShouldNotGetMaxFitness");
+
+		//set up test corner and clear area
+		MinecraftCoordinates tempTestCorner = new MinecraftCoordinates(-26,27,-35);
+		MinecraftCoordinates testCorner = MinecraftClient.getMinecraftClient().checkForYOutOfBoundsAndShiftUp(tempTestCorner);
+		MinecraftClient.getMinecraftClient().clearEvaluationSpaceForJUnitTests(testCorner);
+
+		//this string is for a machine that explodes, is large, and leaves a few blocks behind
+		String listString = "[TNT at (152,35,-198) oriented NORTH, STICKY_PISTON at (152,35,-197) oriented SOUTH, STICKY_PISTON at (152,35,-196) oriented NORTH, TNT at (152,36,-198) oriented EAST, SLIME at (152,36,-197) oriented WEST, REDSTONE_BLOCK at (152,36,-196) oriented EAST, QUARTZ_BLOCK at (152,37,-198) oriented EAST, QUARTZ_BLOCK at (152,37,-197) oriented EAST, STICKY_PISTON at (152,37,-196) oriented WEST, REDSTONE_BLOCK at (153,35,-197) oriented EAST, PISTON at (153,35,-196) oriented EAST, SLIME at (153,36,-197) oriented SOUTH, STICKY_PISTON at (153,36,-196) oriented NORTH, REDSTONE_BLOCK at (153,37,-197) oriented DOWN, TNT at (153,37,-196) oriented WEST, PISTON at (154,35,-197) oriented SOUTH, STICKY_PISTON at (154,35,-196) oriented NORTH, QUARTZ_BLOCK at (154,36,-198) oriented EAST, PISTON at (154,36,-196) oriented UP, PISTON at (154,37,-198) oriented DOWN, REDSTONE_BLOCK at (154,37,-197) oriented EAST, REDSTONE_BLOCK at (154,37,-196) oriented DOWN]";
+		List<Block> testBlockSet = MinecraftUtilClass.readMinecraftBlockListFromString(listString);
+
+		//System.out.println("blocklist: " + testBlockSet);
+
+		//shift coordinates based on the testCorner
+		MinecraftCoordinates originalShapeCoordinates = MinecraftUtilClass.minCoordinates(testBlockSet);
+		testBlockSet = MinecraftUtilClass.shiftBlocksBetweenCorners(testBlockSet, originalShapeCoordinates, testCorner);
+		
+		// 7.9 is for a bit of oscillation, but is not the max fitness
+		assertEquals(7.9, ff.fitnessScore(testCorner,testBlockSet),1.0); 
+	}
 }
