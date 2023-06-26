@@ -115,12 +115,14 @@ public class MultiobjectiveUtilTest {
 	@Test
 	public <T> void testHypervolumeFromPopulationThreeScoresThreeObjectivesNoneDominated() {
 		List<Score<T>> testList = new ArrayList<Score<T>>();
+		
 		//score 1
 		double[] scores = new double[3];
 		scores[0] = 5.0;
 		scores[1] = 3.0;
 		scores[2] = 1.0;
 		Score<T> testScore = new Score<T>(null, scores);
+		
 		//score 2
 		double[] scores2 = new double[3];
 		scores2[0] = 2.0;

@@ -65,6 +65,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 	
 	// Not a MOMELog
 	private MMNEATLog archiveLog = null; // Log general archive information. Does not use matrix plot, logged every generation
+	private MMNEATLog fillLog = null;	//MAYBE NEED
 	
 	// TODO: Convert these to MOMELogs
 	private MMNEATLog binPopulationSizeLog = null; // contains sizes of subpops in each bin, logged every generation
@@ -420,7 +421,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 			String printString = pseudoGeneration+"\t"+archive.getNumberOfOccupiedBins()+"\t"+archive.totalNumberOfIndividualsInArchive()+"\t";
 			
 			//adding max fitness scores to print
-			//since all bins are put together it simply gets the match fitness score from the array
+			//since all bins are put together it simply gets the max fitness score from the array
 			for (int i = 0; i < maxFitnessScoresArray.length; i++) {
 				printString = printString + maxFitnessScoresArray[i] + "\t";
 			}
@@ -450,9 +451,136 @@ public class MOME<T> implements SteadyStateEA<T>{
 		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
 		directory += (directory.equals("") ? "" : "/");
 		
-		
+		String basicName = directory + prefix;
 		String fullName = directory + prefix + "_log.plt";
+		String archivePlotPDFFilename = fullName.replace(".plt", "_PDF.plt");
+		String archiveLogTitle = fullName.replace(".plt", "");
+		String archivePDFFilename = fullName.replace(".plt", ".pdf");
+		File archivePlotFile = new File(fullName);
+		File archivePlotPDFFile = new File(archivePDFFilename);
 		// TODO: The .plt file for the log of general archive information will be very different than the numerous MOMELogs below
+		PrintStream ps;
+		try {
+			ps = new PrintStream(archivePlotFile);
+			ps.println("set term pdf enhanced");
+			ps.println("set key bottom right");
+//			ps.println("set xrange [0:"+ yrange +"]");
+			ps.println("set xrange [0:"+ (yrange + 20) +"]");
+
+			//occupied bins plot
+			ps.println("set title \"" + experimentPrefix + " Archive Number of Occupied Bins\"");
+			ps.println("set output \""+ prefix + "_OccupiedBins_log.pdf\"");
+			ps.println("plot \"" + prefix + "_log.txt\" u 1:2 w linespoints t \"Bins\"");
+			
+			//Total Individuals in Archive
+			ps.println("set title \"" + experimentPrefix + " Total Individuals in Archive\"");
+			ps.println("set output \""+ prefix + "_TotalIndividualsInArchive_log.pdf\"");
+			ps.println("plot \"" + prefix + "_log.txt\" u 1:3 w linespoints t \"Bins\"");
+			
+			//doing multiple max logs
+			for (int i = 0; i < MMNEAT.task.numObjectives(); i++) {
+				ps.println("set title \"" + experimentPrefix + " Max in objective " + i + "\"");
+				ps.println("set output \""+ prefix + "_MaxInEachObjective_" + i + "_log.pdf\"");
+				ps.println("plot \"" + prefix + "_log.txt\" u 1:" + (i+4) + " w linespoints t \"Bins\"");
+				
+				ps.println("set title \"" + experimentPrefix + " Min in objective " + i + "\"");
+				ps.println("set output \""+ prefix + "_MinInEachObjective_" + i + "_log.pdf\"");
+				ps.println("plot \"" + prefix + "_log.txt\" u 1:" + (i+4+MMNEAT.task.numObjectives()) + " w linespoints t \"Bins\"");
+			}
+			
+//			ps.println("     \"" + basicName + ".txt\" u 1:7 w linespoints t \"Restricted QD Score\"");
+			
+//			ps.println("set output \"" + fullQDName.substring(fullQDName.lastIndexOf('/')+1, fullQDName.lastIndexOf('.')) + ".pdf\"");
+//			ps.println("plot \"" + name + ".txt\" u 1:2 w linespoints t \"QD Score\", \\");
+//			ps.println("     \"" + name + ".txt\" u 1:7 w linespoints t \"Restricted QD Score\"");
+			
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+//		
+//		//below is for archive logging archive
+////		////////////BELOW WORKS
+//		double[] maxFitnessScoresArray = archive.maxFitnessInWholeArchiveXObjective();
+//		String printString = pseudoGeneration+"\t"+archive.getNumberOfOccupiedBins()+"\t"+archive.totalNumberOfIndividualsInArchive()+"\t";
+//		
+//		//adding max fitness scores to print
+//		//since all bins are put together it simply gets the max fitness score from the array
+//		for (int i = 0; i < maxFitnessScoresArray.length; i++) {
+//			printString = printString + maxFitnessScoresArray[i] + "\t";
+//		}
+//		//adding min fitness scores to print
+//		double[] minFitnessScoresArray = archive.maxFitnessInWholeArchiveXObjective();
+//		for (int i = 0; i < minFitnessScoresArray.length; i++) {
+//			printString = printString + minFitnessScoresArray[i] + "\t";
+//		}
+//		////////////////ABOVE WORKS
+		
+		
+//		String textLogFilename = log.getLogTextFilename();
+//		String plotFilename = textLogFilename.replace(".txt", ".plt");
+//		String plotPDFFilename = plotFilename.replace(".plt", "_PDF.plt");
+//		String logTitle = textLogFilename.replace(".txt", "");
+//		String pdfFilename = textLogFilename.replace(".txt", ".pdf");
+//		
+//		File plotFile = new File(directory + plotFilename);
+//		File plotPDFFile = new File(directory + plotPDFFilename);
+		
+		//fill plot stuff
+		// Fill percentage plot
+//					ps = new PrintStream(fillPlot);
+//					ps.println("set term pdf enhanced");
+//					//ps.println("unset key");
+//					ps.println("set key bottom right");
+//					// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
+//					ps.println("set xrange [0:"+ yrange +"]");
+//					ps.println("set title \"" + experimentPrefix + " Archive Filled Bins\"");
+//					ps.println("set output \"" + fullFillDiscardedName.substring(fullFillDiscardedName.lastIndexOf('/')+1, fullFillDiscardedName.lastIndexOf('.')) + ".pdf\"");
+//					String name = fullFillName.substring(fullFillName.lastIndexOf('/')+1, fullFillName.lastIndexOf('.'));
+//					ps.println("plot \"" + name + ".txt\" u 1:2 w linespoints t \"Total\", \\");
+//					ps.println("     \"" + name + ".txt\" u 1:5 w linespoints t \"Discarded\"" + (cppnDirLogging ? ", \\" : ""));
+//					if(cppnDirLogging) { // Print CPPN and direct counts on same plot
+//						ps.println("     \"" + name.replace("Fill", "cppnToDirect") + ".txt\" u 1:2 w linespoints t \"CPPNs\", \\");
+//						ps.println("     \"" + name.replace("Fill", "cppnToDirect") + ".txt\" u 1:3 w linespoints t \"Vectors\"");
+//					}
+//					
+//					ps.println("set title \"" + experimentPrefix + " Archive Filled Bins Percentage\"");
+//					ps.println("set output \"" + fullFillPercentageName.substring(fullFillPercentageName.lastIndexOf('/')+1, fullFillPercentageName.lastIndexOf('.')) + ".pdf\"");
+//					ps.println("plot \"" + name + ".txt\" u 1:($2 / "+numLabels+") w linespoints t \"Total\"" + (cppnDirLogging ? ", \\" : ""));
+//					if(cppnDirLogging) { // Print CPPN and direct counts on same plot
+//						ps.println("     \"" + name.replace("Fill", "cppnToDirect") + ".txt\" u 1:2 w linespoints t \"CPPNs\", \\");
+//						ps.println("     \"" + name.replace("Fill", "cppnToDirect") + ".txt\" u 1:3 w linespoints t \"Vectors\"");
+//					}
+//					
+//					ps.println("set title \"" + experimentPrefix + " Archive Filled Bins\"");
+//					ps.println("set output \"" + fullFillName.substring(fullFillName.lastIndexOf('/')+1, fullFillName.lastIndexOf('.')) + ".pdf\"");
+//					ps.println("plot \"" + name + ".txt\" u 1:2 w linespoints t \"Total\", \\");
+//					ps.println("     \"" + name + ".txt\" u 1:6 w linespoints t \"Restricted\"" + (cppnDirLogging ? ", \\" : ""));
+//					if(cppnDirLogging) { // Print CPPN and direct counts on same plot
+//						ps.println("     \"" + name.replace("Fill", "cppnToDirect") + ".txt\" u 1:2 w linespoints t \"CPPNs\", \\");
+//						ps.println("     \"" + name.replace("Fill", "cppnToDirect") + ".txt\" u 1:3 w linespoints t \"Vectors\"");
+//					}
+//					
+//					ps.println("set title \"" + experimentPrefix + " Archive QD Scores\"");
+//					ps.println("set output \"" + fullQDName.substring(fullQDName.lastIndexOf('/')+1, fullQDName.lastIndexOf('.')) + ".pdf\"");
+//					ps.println("plot \"" + name + ".txt\" u 1:3 w linespoints t \"QD Score\", \\");
+//					ps.println("     \"" + name + ".txt\" u 1:7 w linespoints t \"Restricted QD Score\"");
+//					
+//					ps.println("set title \"" + experimentPrefix + " Maximum individual fitness score");
+//					ps.println("set output \"" + maxFitnessName.substring(maxFitnessName.lastIndexOf('/')+1, maxFitnessName.lastIndexOf('.')) + ".pdf\"");
+//					ps.println("plot \"" + name + ".txt\" u 1:4 w linespoints t \"Maximum Fitness Score\", \\");
+//					ps.println("     \"" + name + ".txt\" u 1:8 w linespoints t \"Restricted Maximum Fitness Score\"");
+//					
+//					if(Parameters.parameters.booleanParameter("dynamicAutoencoderIntervals")) {
+//						ps.println("set title \"" + experimentPrefix + " Reconstruction Loss Range");
+//						ps.println("set output \"" + reconstructionLossName.substring(reconstructionLossName.lastIndexOf('/')+1, reconstructionLossName.lastIndexOf('.')) + ".pdf\"");
+//						ps.println("plot \"" + name.replace("_Fill_", "_autoencoderLossRange_") + ".txt\" u 1:2 w linespoints t \"Min Loss\", \\");
+//						ps.println("     \"" + name.replace("_Fill_", "_autoencoderLossRange_") + ".txt\" u 1:3 w linespoints t \"Max Loss\"");
+//					}
+//					
+//					ps.close();
+		
+		
 		
 		
 		// All MOMELogs can be plotted in the same way, regardless of whether they correspond to individual objectives or not
@@ -468,7 +596,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 			
 			try {
 				// The PDF version
-				PrintStream ps = new PrintStream(plotPDFFile);
+				ps = new PrintStream(plotPDFFile);
 				ps.println("set term pdf enhanced");
 				ps.println("unset key");
 				// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
