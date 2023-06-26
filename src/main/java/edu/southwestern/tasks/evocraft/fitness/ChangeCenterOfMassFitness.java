@@ -309,8 +309,9 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 		// It is possible that blocks flew away, but some remaining component kept oscillating until the end. This is still a flying machine though.
 		// check for sufficient movement from start point before awarding flying machine fitness
 		if(considerThisAFlyingMachine(originalBlocks, history)) {
-			// The machine is definitely flying, so force a return result by sending true as last parameter
-			Double result = ifSufficientBlocksDepartedThenMaximumFitnessWithPenalty(originalBlocks.size(), history.get(history.size() - 1).t2, true);
+			// The machine is definitely flying, so force a return result as long as minecraftRewardFastFlyingMachines is not being used
+			boolean forceFitness = !Parameters.parameters.booleanParameter("minecraftRewardFastFlyingMachines");
+			Double result = ifSufficientBlocksDepartedThenMaximumFitnessWithPenalty(originalBlocks.size(), history.get(history.size() - 1).t2, forceFitness);
 			if(result != null) return result;	//if there are enough departed blocks to count as flying, return the resulting score
 		}	
 		
