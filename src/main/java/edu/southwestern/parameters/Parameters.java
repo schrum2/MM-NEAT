@@ -871,7 +871,7 @@ public class Parameters {
 		booleanOptions.add("rememberParentScores", false, "Avoid repeated evaluation of parents");
 		booleanOptions.add("minecraftChangeBlocksMomentum", false, "Multiplies change blocks by change in center of madd fitness");
 		booleanOptions.add("minecraftClearAfterEvaluation", false, "If true clears and verifies the shapeCorner after evaluation");
-		
+		booleanOptions.add("saveWholeMinecraftArchiveAtEnd", true, "If true saves shape in the final archive to finalArchiveOfShapes");
 		
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
