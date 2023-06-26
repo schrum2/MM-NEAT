@@ -104,7 +104,8 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 		boolean stop = false;
 		List<Block> newShapeReadingBlockList = null;
 
-		if(CommonConstants.watch) System.out.println("Evaluate Blocks: " + originalBlocks);
+		//if(CommonConstants.watch) 
+			System.out.println("Evaluate Blocks: " + originalBlocks);
 	//////// Spawn the blocks!	////////////////////////////////////////////////////////////////////////////////////////////////
 		
 		for(TimedEvaluationMinecraftFitnessFunction ff : fitnessFunctions) {
