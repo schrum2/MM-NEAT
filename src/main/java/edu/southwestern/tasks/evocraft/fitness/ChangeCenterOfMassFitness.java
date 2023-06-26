@@ -35,6 +35,7 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 		
 	@Override
 	public double maxFitness() {
+		if(CommonConstants.watch) System.out.println("MAX FITNESS BEING APPLIED");
 		// Probably overshoots a bit
 		if(Parameters.parameters.booleanParameter("minecraftAccumulateChangeInCenterOfMass")) return (minNumberOfShapeReadings() + 1) * overestimatedDistanceToEdge();
 		else return overestimatedDistanceToEdge();
@@ -77,8 +78,8 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 			List<Block> newShapeBlockList) {
 		
 		//check if there has been any movement, if not, calculate final score now
-		if(history.size() > MINIMUM_HISTORY_SIZE_FOR_JUDGEMENT && !shapeMovedForMostOfHistory(history)) {
-			if(CommonConstants.watch) System.out.println("shape not moving, calculate final score early");
+		if(Parameters.parameters.booleanParameter("minecraftEndEvalNoMovement") && history.size() > MINIMUM_HISTORY_SIZE_FOR_JUDGEMENT && !shapeMovedForMostOfHistory(history)) {
+			if(CommonConstants.watch) System.out.println("NOT FLYING: shape not moving, calculate final score early");
 			MinecraftCoordinates shapeCorner = MinecraftUtilClass.minCoordinates(originalBlocks);
 			return calculateFinalScore(history, shapeCorner, originalBlocks);
 		}
@@ -86,16 +87,21 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 		// Shape was not empty before, but it is now, so it may have flown away. However, with TNT, it may have simply exploded.
 		// Make sure the center of mass actually changed.
 		
-		Vertex initialCenterOfMass = MinecraftUtilClass.getCenterOfMass(originalBlocks);
-		Vertex farthestCenterOfMass = this.getFarthestCenterOfMass(history, initialCenterOfMass);
+		boolean considerThisAFlyingMachine = considerThisAFlyingMachine(originalBlocks, history);
 		// check for sufficient movement from start point before awarding flying machine fitness
-		if(farthestCenterOfMass.distance(initialCenterOfMass) > sufficientDistanceForFlying()) {
+		if(considerThisAFlyingMachine) {
+			
+			//if(CommonConstants.watch) System.out.println("Moved distance of "+maxMovedDistance+" which is more than sufficient: "+sufficientDistanceForFlying());
+			
+			// Even if minecraftEndEvalNoMovement is false, an empty shape will still end evaluation 
 			if(newShapeBlockList.isEmpty()) { 
 				// If list is empty now (but was not before) then shape has flown completely away. 
 				if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": Shape empty now: max fitness!");
-				if(CommonConstants.watch) System.out.println("Distance: "+farthestCenterOfMass.distance(initialCenterOfMass)+" > sufficient distance = "+sufficientDistanceForFlying());
-				if(CommonConstants.watch) System.out.println("initial: "+initialCenterOfMass+", farthest:"+farthestCenterOfMass+", offsets:"+MinecraftUtilClass.emptySpaceOffsets());
+				//if(CommonConstants.watch) System.out.println("Distance: "+maxMovedDistance+" > sufficient distance = "+sufficientDistanceForFlying());
+				//if(CommonConstants.watch) System.out.println("initial: "+initialCenterOfMass+", farthest:"+farthestCenterOfMass+", offsets:"+MinecraftUtilClass.emptySpaceOffsets());
 				return maxFitness();
+			} else if(CommonConstants.watch) {
+				System.out.println("\tBlock list not empty");
 			}
 
 			List<Block> previousBlocks = history.get(history.size() - 2).t2; // the block list for the second to last 
@@ -115,13 +121,16 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 					// Shape flew away (at leat mostly), so get a high fitness early
 					return result;
 				}		
+			} else if(CommonConstants.watch) {
+				System.out.println("\tStill moving");
 			}
 		} else {
 			if(CommonConstants.watch) System.out.println("Shape did not move far enough to count as a flying machine");
 			
 			MinecraftCoordinates shapeCorner = MinecraftUtilClass.minCoordinates(originalBlocks);
+			// Even if minecraftEndEvalNoMovement is false, an empty shape will still end evaluation 
 			if(newShapeBlockList.isEmpty()) { 
-				if(CommonConstants.watch) System.out.println("Shape completely gone. Blown up?");
+				if(CommonConstants.watch) System.out.println("NOT FLYING: Shape completely gone. Blown up?");
 				return calculateFinalScore(history, shapeCorner, originalBlocks);
 			}
 
@@ -131,11 +140,66 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 
 			// Only consider the shape to not be moving if the center of mass is the same AND the entire block list is the same
 			if(Parameters.parameters.booleanParameter("minecraftEndEvalNoMovement") && lastCenterOfMass.equals(nextCenterOfMass) && previousBlocks.equals(newShapeBlockList)) {
-				if(CommonConstants.watch) System.out.println("Shape mostly gone. Partially blown up?");
+				if(CommonConstants.watch) System.out.println("NOT FLYING: Shape mostly gone. Partially blown up?");
 				return calculateFinalScore(history, shapeCorner, originalBlocks);
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Whether the original blocks and their history of movement indicates
+	 * that this is a flying machine.
+	 * 
+	 * @param originalBlocks Blocks from Shape Generator, including orientations
+	 * @param history History of block readings
+	 * @return is the shape a flying machine?
+	 */
+	private boolean considerThisAFlyingMachine(List<Block> originalBlocks, ArrayList<Pair<Long, List<Block>>> history) {
+		
+		// Calculation based on how much the center of mass changes.
+		// Is problematic. The sufficient distance can't be too big, since a flying machine that leaves blocks behind
+		// actually won't have a center of mass that moves that much. However, keeping the sufficient distance small
+		// is allowing some non-flying machines to sneak by, which is unacceptable.
+		Vertex initialCenterOfMass = MinecraftUtilClass.getCenterOfMass(originalBlocks);
+		Vertex farthestCenterOfMass = this.getFarthestCenterOfMass(history, initialCenterOfMass);
+		double maxMovedDistance = farthestCenterOfMass.distance(initialCenterOfMass);
+		if(CommonConstants.watch) System.out.println("Distance: "+maxMovedDistance+" > sufficient distance = "+sufficientDistanceForFlying());
+		if(CommonConstants.watch) System.out.println("initial: "+initialCenterOfMass+", farthest:"+farthestCenterOfMass+", offsets:"+MinecraftUtilClass.emptySpaceOffsets());
+		boolean considerThisAFlyingMachine1 = maxMovedDistance > sufficientDistanceForFlying();
+		//return considerThisAFlyingMachine1;
+		
+		// Calculation based on what the farthest block from the starting center of mass is
+		double farthestDistance = farthestBlockDistanceInHistory(originalBlocks, history);
+		if(CommonConstants.watch) System.out.println("Compare farthestDistance = "+farthestDistance+" to sufficient distance = "+sufficientBlockDistanceForFlying());
+		boolean considerThisAFlyingMachine2 = farthestDistance > sufficientBlockDistanceForFlying();
+		//return considerThisAFlyingMachine2;
+		
+		return considerThisAFlyingMachine1 && considerThisAFlyingMachine2;
+	}
+
+	/**
+	 * Distance of the farthest individual block from the original shape's center of mass
+	 * over the whole history.
+	 * 
+	 * @param originalBlocks Blocks from Shape Generator, including orientations
+	 * @param history History of block readings
+	 * @return distance of the farthest individual block
+	 */
+	private double farthestBlockDistanceInHistory(List<Block> originalBlocks,
+			ArrayList<Pair<Long, List<Block>>> history) {
+		Vertex initialCenterOfMass = MinecraftUtilClass.getCenterOfMass(originalBlocks);
+		double farthestDistance = 0;
+		for(Pair<Long, List<Block>> pair : history) {
+			for(Block b : pair.t2) {
+				Vertex blockLocation = new Vertex(b.x(),b.y(),b.z());
+				double blockDistance = initialCenterOfMass.distance(blockLocation);
+				if(blockDistance > farthestDistance) {
+					farthestDistance = blockDistance;
+				}
+			}
+		}
+		return farthestDistance;
 	}
 	
 	/**
@@ -148,6 +212,15 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 		return Math.min(offsets.x(), Math.min(offsets.y(), offsets.z()))*0.75;
 	}
 
+	/**
+	 * Minimum distance that center of mass must move to count a machine as flying
+	 * @return minimum flying distance
+	 */
+	private double sufficientBlockDistanceForFlying() {
+		MinecraftCoordinates offsets = MinecraftUtilClass.emptySpaceOffsets();
+		return Math.min(offsets.x(), Math.min(offsets.y(), offsets.z()))*0.9;
+	}
+		
 	/**
 	 * This checks that a shape is actually moving by going through its history.
 	 * returns false if the shape has the same center of mass consistently and same block list.
@@ -234,10 +307,11 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 		}
 
 		// It is possible that blocks flew away, but some remaining component kept oscillating until the end. This is still a flying machine though.
-		Vertex farthestCenterOfMass = this.getFarthestCenterOfMass(history, initialCenterOfMass);
 		// check for sufficient movement from start point before awarding flying machine fitness
-		if(farthestCenterOfMass.distance(initialCenterOfMass) > sufficientDistanceForFlying()) {
-			Double result = ifSufficientBlocksDepartedThenMaximumFitnessWithPenalty(originalBlocks.size(), history.get(history.size() - 1).t2);
+		if(considerThisAFlyingMachine(originalBlocks, history)) {
+			// The machine is definitely flying, so force a return result as long as minecraftRewardFastFlyingMachines is not being used
+			boolean forceFitness = !Parameters.parameters.booleanParameter("minecraftRewardFastFlyingMachines");
+			Double result = ifSufficientBlocksDepartedThenMaximumFitnessWithPenalty(originalBlocks.size(), history.get(history.size() - 1).t2, forceFitness);
 			if(result != null) return result;	//if there are enough departed blocks to count as flying, return the resulting score
 		}	
 		
@@ -248,7 +322,7 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 		if(!Parameters.parameters.booleanParameter("minecraftAccumulateChangeInCenterOfMass")) {
 			fitness = changeInPosition;		
 		}
-		if(CommonConstants.watch) System.out.println("RETURN result final score fitness: " + fitness);
+		if(CommonConstants.watch) System.out.println("NOT FLYING: RETURN result final score fitness: " + fitness);
 		return fitness;		//fitness is either the total distance in accumulated change or just the distance from start to 
 	}	
 
@@ -275,21 +349,36 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 	/**
 	 * method that recognizes and punishes flying machines with leftover blocks
 	 * @param initialBlockCount block count at origin
-	 * @param initialCenterOfMass initial center of mass
-	 * @param lastCenterOfMass center of mass at the last point
 	 * @param newShapeBlockList a list of blocks after a recent update
 	 * @return fitness after punishment for remaining blocks, or null if shape is deemed to not have flown away (not enough blocks leave)
 	 */
 	private Double ifSufficientBlocksDepartedThenMaximumFitnessWithPenalty(int initialBlockCount, List<Block> newShapeBlockList) {
+		return ifSufficientBlocksDepartedThenMaximumFitnessWithPenalty(initialBlockCount, newShapeBlockList, false);
+	}
+	
+	/**
+	 * Just like above, except if forceResult is true, then a fitness score will be calculated and returned even if
+	 * sufficient blocks have not left the evaluation area.
+	 * 
+	 * @param initialBlockCount block count at origin
+	 * @param newShapeBlockList a list of blocks after a recent update
+	 * @param forceResult if true, then do not return null
+	 * @return fitness after punishment for remaining blocks, or null if shape is deemed to not have flown away (not enough blocks leave)
+	 */
+	private Double ifSufficientBlocksDepartedThenMaximumFitnessWithPenalty(int initialBlockCount, List<Block> newShapeBlockList, boolean forceResult) {
 		int remainingBlockCount = newShapeBlockList.size(); // Could be larger than initial due to extensions
 		int departedBlockCount = initialBlockCount - remainingBlockCount; // Could be negative due to extensions
 		Double result = null;
 		// It should be hard to archive credit for flying, so make sure that the number of departed blocks is sufficiently high
-		if(departedBlockCount > SUFFICIENT_DEPARTED_BLOCKS) {
-			if(CommonConstants.watch) System.out.println("Enough have departed. departedBlockCount is "+departedBlockCount+ " from initialBlockCount of "+initialBlockCount);					
+		if(forceResult || departedBlockCount > SUFFICIENT_DEPARTED_BLOCKS) {
+			if(CommonConstants.watch) System.out.println("Force? "+forceResult+", or Enough have departed. departedBlockCount is "+departedBlockCount+ " from initialBlockCount of "+initialBlockCount);					
 			// Ship flew so far away that we award max fitness, but penalize remaining blocks
 			System.out.println(remainingBlockCount +" remaining blocks: max = " + maxFitness());
 			result = maxFitness() - remainingBlockCount*REMAINING_BLOCK_PUNISHMENT_SCALE;
+		} else if(CommonConstants.watch) {
+			System.out.println("departedBlockCount = "+departedBlockCount+" which is not greater than SUFFICIENT_DEPARTED_BLOCKS = "+SUFFICIENT_DEPARTED_BLOCKS);
+			System.out.println("initialBlockCount = "+initialBlockCount+", remainingBlockCount = "+remainingBlockCount);
+			System.out.println(newShapeBlockList);
 		}
 		return result;
 	}

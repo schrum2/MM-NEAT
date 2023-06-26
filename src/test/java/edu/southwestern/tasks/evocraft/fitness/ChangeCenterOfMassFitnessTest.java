@@ -270,47 +270,53 @@ public class ChangeCenterOfMassFitnessTest {
 		assertEquals(expected, ff.fitnessScore(cornerBS2,blockSet2),wiggleRoom);
 	}
 	
+	// Notes from Joanna:
 	// tests flying machine with changed space between shapes, expected fitness and wiggle room
 	// moved the y access for spawning the shape
-	//created while testing rewarding flying machine speed functionality
-	//passed
-	@Test
-	public void testFlyingWithoutMaxFitness() throws InterruptedException {
-		Parameters.initializeParameterCollections(new String[] { "minecraftClearWithGlass:false", "minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:30","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L, "minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
-		MinecraftCoordinates cornerBS2 = new MinecraftCoordinates(0,11,-5);	// what is this the corner of? - shape corner
-
-		//set up test corner and clear area
-		MinecraftCoordinates testCorner = MinecraftClient.getMinecraftClient().checkForYOutOfBoundsAndShiftUp(cornerBS2);
-		MinecraftClient.getMinecraftClient().clearEvaluationSpaceForJUnitTests(testCorner);	
-
-		System.out.println("testFlyingWithoutMaxFitness");
-
-		// List of flying machine blocks that should move
-		// Not really sure what the fitness would be after 10 seconds
-		List<Block> blockSet2 = new ArrayList<>();
-		// Bottom layer
-		blockSet2.add(new Block(1,11,1,BlockType.PISTON,Orientation.NORTH));
-		blockSet2.add(new Block(1,11,0,BlockType.SLIME,Orientation.NORTH));
-		blockSet2.add(new Block(1,11,-1,BlockType.STICKY_PISTON,Orientation.SOUTH));
-		blockSet2.add(new Block(1,11,-2,BlockType.PISTON,Orientation.NORTH));
-		blockSet2.add(new Block(1,11,-4,BlockType.SLIME,Orientation.NORTH));
-		// Top layer
-		blockSet2.add(new Block(1,12,0,BlockType.REDSTONE_BLOCK,Orientation.NORTH));
-		blockSet2.add(new Block(1,12,-4,BlockType.REDSTONE_BLOCK,Orientation.NORTH));
-		// Activate
-		blockSet2.add(new Block(1,12,-1,BlockType.QUARTZ_BLOCK,Orientation.NORTH));
-
-		//shift coordinates based on the testCorner
-		MinecraftCoordinates originalShapeCoordinates = MinecraftUtilClass.minCoordinates(blockSet2);
-		List<Block> newblockSet2 = MinecraftUtilClass.shiftBlocksBetweenCorners(blockSet2, originalShapeCoordinates, testCorner);
-		
-		System.out.println("shortTimeBetweenMinecraftReads = " + Parameters.parameters.longParameter("shortTimeBetweenMinecraftReads"));
-		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet2);
-		
-		double wiggleRoom = 2.0;
-		double expected = 17.0;
-		assertEquals(expected, ff.fitnessScore(testCorner,newblockSet2),wiggleRoom);
-	}
+	// created while testing rewarding flying machine speed functionality
+	// passed
+	//
+	// Notes from Dr. Schrum:
+	// Now we try to detect and reward flying machines with max fitness even if they do not leave
+	// the evaluation area (assuming it is made large enough), so this fitness calculation is invalid,
+	// as is the test.
+//	@Test
+//	public void testFlyingWithoutMaxFitness() throws InterruptedException {
+//		Parameters.initializeParameterCollections(new String[] { "minecraftClearWithGlass:false", "minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:30","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L, "minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+//		MinecraftCoordinates cornerBS2 = new MinecraftCoordinates(0,11,-5);	// what is this the corner of? - shape corner
+//
+//		//set up test corner and clear area
+//		MinecraftCoordinates testCorner = MinecraftClient.getMinecraftClient().checkForYOutOfBoundsAndShiftUp(cornerBS2);
+//		MinecraftClient.getMinecraftClient().clearEvaluationSpaceForJUnitTests(testCorner);	
+//
+//		System.out.println("testFlyingWithoutMaxFitness");
+//
+//		// List of flying machine blocks that should move
+//		// Not really sure what the fitness would be after 10 seconds
+//		List<Block> blockSet2 = new ArrayList<>();
+//		// Bottom layer
+//		blockSet2.add(new Block(1,11,1,BlockType.PISTON,Orientation.NORTH));
+//		blockSet2.add(new Block(1,11,0,BlockType.SLIME,Orientation.NORTH));
+//		blockSet2.add(new Block(1,11,-1,BlockType.STICKY_PISTON,Orientation.SOUTH));
+//		blockSet2.add(new Block(1,11,-2,BlockType.PISTON,Orientation.NORTH));
+//		blockSet2.add(new Block(1,11,-4,BlockType.SLIME,Orientation.NORTH));
+//		// Top layer
+//		blockSet2.add(new Block(1,12,0,BlockType.REDSTONE_BLOCK,Orientation.NORTH));
+//		blockSet2.add(new Block(1,12,-4,BlockType.REDSTONE_BLOCK,Orientation.NORTH));
+//		// Activate
+//		blockSet2.add(new Block(1,12,-1,BlockType.QUARTZ_BLOCK,Orientation.NORTH));
+//
+//		//shift coordinates based on the testCorner
+//		MinecraftCoordinates originalShapeCoordinates = MinecraftUtilClass.minCoordinates(blockSet2);
+//		List<Block> newblockSet2 = MinecraftUtilClass.shiftBlocksBetweenCorners(blockSet2, originalShapeCoordinates, testCorner);
+//		
+//		System.out.println("shortTimeBetweenMinecraftReads = " + Parameters.parameters.longParameter("shortTimeBetweenMinecraftReads"));
+//		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet2);
+//		
+//		double wiggleRoom = 2.0;
+//		double expected = 17.0;
+//		assertEquals(expected, ff.fitnessScore(testCorner,newblockSet2),wiggleRoom);
+//	}
 		
 	// Passes
 	@Test
@@ -771,5 +777,66 @@ public class ChangeCenterOfMassFitnessTest {
 		testBlockSet = MinecraftUtilClass.shiftBlocksBetweenCorners(testBlockSet, originalShapeCoordinates, testCorner);
 		
 		assertEquals(0.0, ff.fitnessScore(testCorner,testBlockSet),1.0); 
+	}
+	
+	// Notes from Dr. Schrum:
+	// The shape here was taken from an evolutionary run.
+	// It was mistaken for a flying machine by an earlier version of
+	// the fitness function, but it is not. The shape blows up and leaves
+	// a block behind which is displaced from the center of the original
+	// shape, and therefore gives the impression that the shape has moved
+	// a lot (since the center of mass changes to focus on the one block)
+	@Test
+	public void testExplodingMachineShouldNotGetMaxFitness() {
+		Parameters.initializeParameterCollections(new String[] {"watch:false","minecraftAccumulateChangeInCenterOfMass:true","minecraftClearWithGlass:false","minecraftXRange:5","minecraftYRange:5","minecraftZRange:5","spaceBetweenMinecraftShapes:10","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+
+		System.out.println( "testExplodingMachineShouldNotGetMaxFitness");
+
+		//set up test corner and clear area
+		MinecraftCoordinates tempTestCorner = new MinecraftCoordinates(-26,27,-35);
+		MinecraftCoordinates testCorner = MinecraftClient.getMinecraftClient().checkForYOutOfBoundsAndShiftUp(tempTestCorner);
+		MinecraftClient.getMinecraftClient().clearEvaluationSpaceForJUnitTests(testCorner);
+
+		//this string is for a machine that explodes, is large, and leaves a few blocks behind
+		String listString = "[TNT at (152,35,-198) oriented NORTH, STICKY_PISTON at (152,35,-197) oriented SOUTH, STICKY_PISTON at (152,35,-196) oriented NORTH, TNT at (152,36,-198) oriented EAST, SLIME at (152,36,-197) oriented WEST, REDSTONE_BLOCK at (152,36,-196) oriented EAST, QUARTZ_BLOCK at (152,37,-198) oriented EAST, QUARTZ_BLOCK at (152,37,-197) oriented EAST, STICKY_PISTON at (152,37,-196) oriented WEST, REDSTONE_BLOCK at (153,35,-197) oriented EAST, PISTON at (153,35,-196) oriented EAST, SLIME at (153,36,-197) oriented SOUTH, STICKY_PISTON at (153,36,-196) oriented NORTH, REDSTONE_BLOCK at (153,37,-197) oriented DOWN, TNT at (153,37,-196) oriented WEST, PISTON at (154,35,-197) oriented SOUTH, STICKY_PISTON at (154,35,-196) oriented NORTH, QUARTZ_BLOCK at (154,36,-198) oriented EAST, PISTON at (154,36,-196) oriented UP, PISTON at (154,37,-198) oriented DOWN, REDSTONE_BLOCK at (154,37,-197) oriented EAST, REDSTONE_BLOCK at (154,37,-196) oriented DOWN]";
+		List<Block> testBlockSet = MinecraftUtilClass.readMinecraftBlockListFromString(listString);
+
+		//System.out.println("blocklist: " + testBlockSet);
+
+		//shift coordinates based on the testCorner
+		MinecraftCoordinates originalShapeCoordinates = MinecraftUtilClass.minCoordinates(testBlockSet);
+		testBlockSet = MinecraftUtilClass.shiftBlocksBetweenCorners(testBlockSet, originalShapeCoordinates, testCorner);
+		
+		// 4.4 is for a bit of oscillation, but is not the max fitness
+		assertEquals(4.4, ff.fitnessScore(testCorner,testBlockSet),1.0); 
+	}
+	
+	// Notes from Dr. Schrum
+	// This is a flying machine, but it leaves some blocks behind that
+	// are destroyed by TNT, so that in the end there are no blocks left
+	// except for the flying machine that leaves the evaluation are.
+	@Test
+	public void testFlyingMachineBlowsUpLeftovers() {
+		Parameters.initializeParameterCollections(new String[] {"watch:true","minecraftAccumulateChangeInCenterOfMass:true","minecraftClearWithGlass:false","minecraftXRange:3","minecraftYRange:3","minecraftZRange:3","spaceBetweenMinecraftShapes:10","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+
+		System.out.println( "testFlyingMachineBlowsUpLeftovers");
+
+		//set up test corner and clear area
+		MinecraftCoordinates tempTestCorner = new MinecraftCoordinates(-26,27,-35);
+		MinecraftCoordinates testCorner = MinecraftClient.getMinecraftClient().checkForYOutOfBoundsAndShiftUp(tempTestCorner);
+		MinecraftClient.getMinecraftClient().clearEvaluationSpaceForJUnitTests(testCorner);
+
+		//this string is for a machine that explodes, is large, and leaves a few blocks behind
+		String listString = "[STICKY_PISTON at (0,0,2) oriented DOWN, PISTON at (0,1,0) oriented EAST, SLIME at (0,1,2) oriented EAST, PISTON at (0,2,1) oriented SOUTH, REDSTONE_BLOCK at (0,2,2) oriented SOUTH, REDSTONE_BLOCK at (1,1,0) oriented WEST, SLIME at (1,1,1) oriented SOUTH, OBSERVER at (1,1,2) oriented SOUTH, PISTON at (1,2,0) oriented SOUTH, SLIME at (1,2,1) oriented NORTH, OBSERVER at (1,2,2) oriented WEST, TNT at (2,0,2) oriented NORTH, OBSERVER at (2,1,0) oriented NORTH, TNT at (2,1,2) oriented WEST, SLIME at (2,2,1) oriented SOUTH, STICKY_PISTON at (2,2,2) oriented NORTH]";
+		List<Block> testBlockSet = MinecraftUtilClass.readMinecraftBlockListFromString(listString);
+
+		//System.out.println("blocklist: " + testBlockSet);
+
+		//shift coordinates based on the testCorner
+		MinecraftCoordinates originalShapeCoordinates = MinecraftUtilClass.minCoordinates(testBlockSet);
+		testBlockSet = MinecraftUtilClass.shiftBlocksBetweenCorners(testBlockSet, originalShapeCoordinates, testCorner);
+		
+		// Earns max fitness since remaining blocks blow up
+		assertEquals(ff.maxFitness(), ff.fitnessScore(testCorner,testBlockSet),1.0); 
 	}
 }

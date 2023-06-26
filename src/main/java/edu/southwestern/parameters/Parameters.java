@@ -864,7 +864,7 @@ public class Parameters {
 		booleanOptions.add("minecraftWaterLavaSecondaryCreationFitness", false, "uses water and lava block set to reward for the creation of secondary blocks");
 		booleanOptions.add("minecraftMaximizeVolumeFitness", false, "rewards shapes that spread out over larger areas");
 		booleanOptions.add("minecraftMissileFitness", false, "rewards a shape for blowing up a target");
-		booleanOptions.add("minecraftClearWithGlass", true, "determines if glass is used to clear a space before air");
+		booleanOptions.add("minecraftClearWithGlass", false, "determines if glass is used to clear a space before air");
 		booleanOptions.add("minecraftChangeBlocksFitness", false, "rewards a shape for changing its blocks position");
 		booleanOptions.add("minecraftRandomFitness", false, "this is a very basic test fitness that returns a random fitnessScore");
 		booleanOptions.add("minecraftNumAirFitness", false, "Fitness test for number of air blocks");
@@ -968,7 +968,6 @@ public class Parameters {
 		doubleOptions.add("minecraftChangeBlockTypeMutation", 0.2, "Rate of mutation to change a block type");
 		doubleOptions.add("minecraftChangeBlockOrientationMutation", 0.2, "Rate of mutation to change a block orientation");
 		doubleOptions.add("minecraftSwapBlocksMutation", 0.2, "Rate of mutation to swap two blocks");
-		doubleOptions.add("minecraftPercentOfTarget", 0.6, "Percent of target that needs to be blown up to be saved");
 		
 		// String parameters
 		stringOptions.add("marioTargetLevel", "data\\VGLC\\SuperMarioBrosNewEncoding\\overworld\\mario-1-1.txt", "Relative path to json file with Mario level to target");
