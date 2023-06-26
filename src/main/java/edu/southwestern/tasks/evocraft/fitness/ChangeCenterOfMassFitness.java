@@ -77,7 +77,7 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 			List<Block> newShapeBlockList) {
 		
 		//check if there has been any movement, if not, calculate final score now
-		if(history.size() > MINIMUM_HISTORY_SIZE_FOR_JUDGEMENT && !shapeMovedForMostOfHistory(history)) {
+		if(Parameters.parameters.booleanParameter("minecraftEndEvalNoMovement") && history.size() > MINIMUM_HISTORY_SIZE_FOR_JUDGEMENT && !shapeMovedForMostOfHistory(history)) {
 			if(CommonConstants.watch) System.out.println("shape not moving, calculate final score early");
 			MinecraftCoordinates shapeCorner = MinecraftUtilClass.minCoordinates(originalBlocks);
 			return calculateFinalScore(history, shapeCorner, originalBlocks);
@@ -90,6 +90,8 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 		Vertex farthestCenterOfMass = this.getFarthestCenterOfMass(history, initialCenterOfMass);
 		// check for sufficient movement from start point before awarding flying machine fitness
 		if(farthestCenterOfMass.distance(initialCenterOfMass) > sufficientDistanceForFlying()) {
+			
+			// Even if minecraftEndEvalNoMovement is false, an empty shape will still end evaluation 
 			if(newShapeBlockList.isEmpty()) { 
 				// If list is empty now (but was not before) then shape has flown completely away. 
 				if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": Shape empty now: max fitness!");
@@ -120,6 +122,7 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 			if(CommonConstants.watch) System.out.println("Shape did not move far enough to count as a flying machine");
 			
 			MinecraftCoordinates shapeCorner = MinecraftUtilClass.minCoordinates(originalBlocks);
+			// Even if minecraftEndEvalNoMovement is false, an empty shape will still end evaluation 
 			if(newShapeBlockList.isEmpty()) { 
 				if(CommonConstants.watch) System.out.println("Shape completely gone. Blown up?");
 				return calculateFinalScore(history, shapeCorner, originalBlocks);
