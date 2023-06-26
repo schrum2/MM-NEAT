@@ -109,8 +109,9 @@ public class MinecraftBlockEvaluateExperiment implements Experiment{
 	//used for testing purposes 
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main("minecraftEvaluate minecraftBlockListTextFile:minecraftaccumulate\\MEObserverVectorPistonOrientation0\\flyingMachines netio:false spaceBetweenMinecraftShapes:10 minecraftChangeCenterOfMassFitness:true minecraftAccumulateChangeInCenterOfMass:true watch:true minecraftClearSleepTimer:400".split(" "));
+			//MMNEAT.main("minecraftEvaluate minecraftBlockListTextFile:minecraftaccumulate\\MEObserverVectorPistonOrientation0\\flyingMachines netio:false spaceBetweenMinecraftShapes:10 minecraftChangeCenterOfMassFitness:true minecraftAccumulateChangeInCenterOfMass:true watch:true minecraftClearSleepTimer:400".split(" "));
 			//MMNEAT.main("minecraftEvaluate minecraftBlockListTextFile:CHEATER netio:false spaceBetweenMinecraftShapes:10 minecraftChangeCenterOfMassFitness:true minecraftAccumulateChangeInCenterOfMass:true watch:true minecraftClearSleepTimer:400".split(" "));
+			MMNEAT.main("minecraftEvaluate minecraftBlockListTextFile:WINNER netio:false spaceBetweenMinecraftShapes:10 minecraftChangeCenterOfMassFitness:true minecraftAccumulateChangeInCenterOfMass:true watch:true minecraftClearSleepTimer:400".split(" "));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
