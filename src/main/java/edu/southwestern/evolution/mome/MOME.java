@@ -471,20 +471,15 @@ public class MOME<T> implements SteadyStateEA<T>{
 		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
 		directory += (directory.equals("") ? "" : "/");
 		
-//		String basicName = directory + prefix;
 		String fullName = directory + prefix + "_log.plt";
-//		String archivePlotPDFFilename = fullName.replace(".plt", "_PDF.plt");
-//		String archiveLogTitle = fullName.replace(".plt", "");
-//		String archivePDFFilename = fullName.replace(".plt", ".pdf");
 		File archivePlotFile = new File(fullName);
-//		File archivePlotPDFFile = new File(archivePDFFilename);
-		// TODO: The .plt file for the log of general archive information will be very different than the numerous MOMELogs below
+
 		PrintStream ps;
 		
 		//PSEUDOGENERATION, NUMBER OF OCCUPIED BINS(2), PERCENTAGE OF BINS FILLED(3)
 //		//TOTAL NUMBER OF INDIVIDUALS CURRENTLY IN THE ARCHIVE(4), 
 //		 NUMBER OF ADDED(5) AND DISCARCARDED INDIVIDUALS(6)
-//		//HYPERVOLUME(7,8,9), INDIVIDUAL BIN MAX/MIN AND THE MEAN
+//		//HYPERVOLUME(7,8,9), INDIVIDUAL BIN MAX/MIN
 		
 		try {
 			ps = new PrintStream(archivePlotFile);
