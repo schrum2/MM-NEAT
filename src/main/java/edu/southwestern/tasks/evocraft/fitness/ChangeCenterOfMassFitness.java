@@ -88,14 +88,17 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 		
 		Vertex initialCenterOfMass = MinecraftUtilClass.getCenterOfMass(originalBlocks);
 		Vertex farthestCenterOfMass = this.getFarthestCenterOfMass(history, initialCenterOfMass);
+		double maxMovedDistance = farthestCenterOfMass.distance(initialCenterOfMass);
 		// check for sufficient movement from start point before awarding flying machine fitness
-		if(farthestCenterOfMass.distance(initialCenterOfMass) > sufficientDistanceForFlying()) {
+		if(maxMovedDistance > sufficientDistanceForFlying()) {
+			
+			if(CommonConstants.watch) System.out.println("Moved distance of "+maxMovedDistance+" which is more than sufficient: "+sufficientDistanceForFlying());
 			
 			// Even if minecraftEndEvalNoMovement is false, an empty shape will still end evaluation 
 			if(newShapeBlockList.isEmpty()) { 
 				// If list is empty now (but was not before) then shape has flown completely away. 
 				if(CommonConstants.watch) System.out.println(System.currentTimeMillis()+": Shape empty now: max fitness!");
-				if(CommonConstants.watch) System.out.println("Distance: "+farthestCenterOfMass.distance(initialCenterOfMass)+" > sufficient distance = "+sufficientDistanceForFlying());
+				if(CommonConstants.watch) System.out.println("Distance: "+maxMovedDistance+" > sufficient distance = "+sufficientDistanceForFlying());
 				if(CommonConstants.watch) System.out.println("initial: "+initialCenterOfMass+", farthest:"+farthestCenterOfMass+", offsets:"+MinecraftUtilClass.emptySpaceOffsets());
 				return maxFitness();
 			}
