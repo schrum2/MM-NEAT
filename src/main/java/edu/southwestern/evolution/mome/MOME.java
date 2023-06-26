@@ -27,6 +27,7 @@ import edu.southwestern.util.PythonUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.random.RandomNumbers;
+import edu.southwestern.util.stats.StatisticsUtilities;
 
 /**
  * TODO: Explain a bit more, and also cite the paper whose algorithm we are implementing using ACM style
@@ -65,6 +66,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 	
 	// Not a MOMELog
 	private MMNEATLog archiveLog = null; // Log general archive information. Does not use matrix plot, logged every generation
+	private MMNEATLog fillLog = null;	//MAYBE NEED
 	
 	// TODO: Convert these to MOMELogs
 	private MMNEATLog binPopulationSizeLog = null; // contains sizes of subpops in each bin, logged every generation
@@ -318,7 +320,9 @@ public class MOME<T> implements SteadyStateEA<T>{
 		log();			////////////////TODO: call logging class potentially
 		if(individualAddStatus) {	//the individual was added and the population changed
 			addedIndividualCount++;
-		} 
+		} else {
+			discardedIndividualCount++;
+		}
 	}
 	
 
@@ -340,10 +344,11 @@ public class MOME<T> implements SteadyStateEA<T>{
 	public int getDiscardedIndividualCount() {
 		return discardedIndividualCount;
 	}
-
-	public void setDiscardedIndividualCount() {
-		this.discardedIndividualCount = discardedIndividualCount++;
+	
+	public int getAddedIndividualCount() {
+		return addedIndividualCount;
 	}
+
 //TODO: will probably move most of this out to logging class ////////////////////////////////////////////
 	/**
 	 * Write one line of data to each of the active log files, but only periodically,
@@ -415,20 +420,36 @@ public class MOME<T> implements SteadyStateEA<T>{
 //
 			
 			//below is for archive logging archive
-//			////////////BELOW WORKS
-			double[] maxFitnessScoresArray = archive.maxFitnessInWholeArchiveXObjective();
-			String printString = pseudoGeneration+"\t"+archive.getNumberOfOccupiedBins()+"\t"+archive.totalNumberOfIndividualsInArchive()+"\t";
+//			////////////ARCHIVE LOGGING / GENERAL PLOT LOGGING
 			
+			//PSEUDOGENERATION, NUMBER OF OCCUPIED BINS, PERCENTAGE OF BINS FILLED
+			double percentageOfBinsFilled = (archive.getNumberOfOccupiedBins()*1.0)/archive.getBinMapping().binLabels().size();
+			String printString = pseudoGeneration+"\t"+archive.getNumberOfOccupiedBins()+"\t"+ percentageOfBinsFilled +"\t";
+			
+			//TOTAL NUMBER OF INDIVIDUALS CURRENTLY IN THE ARCHIVE, NUMBER OF ADDED AND DISCARCARDED INDIVIDUALS
+			printString = printString + archive.totalNumberOfIndividualsInArchive()+"\t" + addedIndividualCount + "\t" + discardedIndividualCount + "\t";
+			
+			//HYPERVOLUME, INDIVIDUAL BIN MAX/MIN AND THE MEAN
+			double maxHyperVolumeBin = StatisticsUtilities.maximum(hypervolumeForBins);
+			double minHyperVolumeBin = StatisticsUtilities.minimum(hypervolumeForBins);
+			double meanHyperVolumeOfBins = StatisticsUtilities.average(hypervolumeForBins);
+			
+			//add the max and min hypervolume before the max and min of other things
+			printString = printString + maxHyperVolumeBin + "\t" + minHyperVolumeBin + "\t" + meanHyperVolumeOfBins + "\t";
+			
+			//MAX/MIN FITNESS PER OBJECTIVE FOR WHOLE ARCHIVE
 			//adding max fitness scores to print
-			//since all bins are put together it simply gets the match fitness score from the array
+			//since all bins are put together it simply gets the max fitness score from the array
+			double[] maxFitnessScoresArray = archive.maxFitnessInWholeArchiveXObjective();
 			for (int i = 0; i < maxFitnessScoresArray.length; i++) {
 				printString = printString + maxFitnessScoresArray[i] + "\t";
 			}
 			//adding min fitness scores to print
-			double[] minFitnessScoresArray = archive.maxFitnessInWholeArchiveXObjective();
+			double[] minFitnessScoresArray = archive.minFitnessInWholeArchiveXObjective();
 			for (int i = 0; i < minFitnessScoresArray.length; i++) {
 				printString = printString + minFitnessScoresArray[i] + "\t";
 			}
+			
 			////////////////ABOVE WORKS
 			
 			System.out.println(printString);
@@ -450,10 +471,65 @@ public class MOME<T> implements SteadyStateEA<T>{
 		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
 		directory += (directory.equals("") ? "" : "/");
 		
-		
 		String fullName = directory + prefix + "_log.plt";
-		// TODO: The .plt file for the log of general archive information will be very different than the numerous MOMELogs below
+		File archivePlotFile = new File(fullName);
+
+		PrintStream ps;
 		
+		//PSEUDOGENERATION, NUMBER OF OCCUPIED BINS(2), PERCENTAGE OF BINS FILLED(3)
+//		//TOTAL NUMBER OF INDIVIDUALS CURRENTLY IN THE ARCHIVE(4), 
+//		 NUMBER OF ADDED(5) AND DISCARCARDED INDIVIDUALS(6)
+//		//HYPERVOLUME(7,8,9), INDIVIDUAL BIN MAX/MIN
+		
+		try {
+			ps = new PrintStream(archivePlotFile);
+			ps.println("set term pdf enhanced");
+			ps.println("set key bottom right");
+//			ps.println("set xrange [0:"+ yrange +"]");
+			ps.println("set xrange [0:"+ (yrange + 20) +"]");
+
+			//occupied bins plot
+			ps.println("set title \"" + experimentPrefix + " Archive Number of Occupied Bins\"");
+			ps.println("set output \""+ prefix + "_OccupiedBins_log.pdf\"");
+			ps.println("plot \"" + prefix + "_log.txt\" u 1:2 w linespoints t \"Number Of Occupied Bins\"");
+			
+			//percentage bins plot
+			ps.println("set title \"" + experimentPrefix + " Percentage Of Bins Occupied\"");
+			ps.println("set output \""+ prefix + "_OccupiedBinsPercentage_log.pdf\"");
+			ps.println("plot \"" + prefix + "_log.txt\" u 1:3 w linespoints t \"Percentage of Occupied Bins\"");
+			
+			//Total Individuals in Archive
+			ps.println("set title \"" + experimentPrefix + " Total Individuals in Archive\"");
+			ps.println("set output \""+ prefix + "_TotalIndividualsInArchive_log.pdf\"");
+			ps.println("plot \"" + prefix + "_log.txt\" u 1:4 w linespoints t \"Total Individuals\"");
+			
+			//Added/Discarded number of individuals
+			ps.println("set title \"" + experimentPrefix + " Total Individuals Added And Discarded\"");
+			ps.println("set output \""+ prefix + "_AddedAndDiscardedIndividualsInArchive_log.pdf\"");
+			ps.println("plot \"" + prefix + "_log.txt\" u 1:5 w linespoints t \"Added Individuals\", \\");
+			ps.println("     \"" + prefix + "_log.txt\" u 1:6 w linespoints t \"Discarded Individuals\"");
+
+			//hypervolume data bin
+			ps.println("set title \"" + experimentPrefix + " Max/Min/Mean Hypervolume in an Individual Bin\"");
+			ps.println("set output \""+ prefix + "_HypervolumeSingleBinData_log.pdf\"");
+			ps.println("plot \"" + prefix + "_log.txt\" u 1:7 w linespoints t \"Max Hypervolume\", \\");
+			ps.println("     \"" + prefix + "_log.txt\" u 1:8 w linespoints t \"Min Hypervolume\", \\");
+			ps.println("     \"" + prefix + "_log.txt\" u 1:9 w linespoints t \"Mean Hypervolume\"");
+						
+			//doing multiple max/min logs per objective
+			for (int i = 0; i < MMNEAT.task.numObjectives(); i++) {
+				ps.println("set title \"" + experimentPrefix + " Max/Min in objective " + i + "\"");
+				ps.println("set output \""+ prefix + "_MaxMinInEachObjective_" + i + "_log.pdf\"");
+				ps.println("plot \"" + prefix + "_log.txt\" u 1:" + (i+10) + " w linespoints t \"Max Fitness\", \\");
+				ps.println("     \"" + prefix + "_log.txt\" u 1:" + (i+10+MMNEAT.task.numObjectives()) + " w linespoints t \"Min Fitness\"");
+			}
+			
+			ps.close();
+			
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}	
 		
 		// All MOMELogs can be plotted in the same way, regardless of whether they correspond to individual objectives or not
 		for(MMNEATLog log :  momeLogs) {
@@ -468,7 +544,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 			
 			try {
 				// The PDF version
-				PrintStream ps = new PrintStream(plotPDFFile);
+				ps = new PrintStream(plotPDFFile);
 				ps.println("set term pdf enhanced");
 				ps.println("unset key");
 				// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
