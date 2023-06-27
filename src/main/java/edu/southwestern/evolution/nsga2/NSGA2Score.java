@@ -25,6 +25,8 @@ public class NSGA2Score<T> extends MultiObjectiveScore<T> {
 
 	public NSGA2Score(Score<T> s) {
 		this(s.individual, s.scores, s.usesTraditionalBehaviorVector() ? s.getTraditionalDomainSpecificBehaviorVector() : null, s.otherStats);
+		if(s.usesMAPElitesBinSpecification()) this.assignMAPElitesBinAndScore(s.MAPElitesBinIndex(), s.behaviorIndexScore());
+		else if(s.usesMAPElitesMapSpecification()) this.assignMAPElitesBehaviorMapAndScore(s.MAPElitesBehaviorMap());
 	}
 
 	@Override
