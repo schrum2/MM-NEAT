@@ -184,9 +184,7 @@ public class MOMEArchive<T> {
 						// Since the new individual is present, the Pareto front must have changed.
 						// Check that the front contains the correct max number of individuals and remove if not
 						if((front.size() > maximumNumberOfIndividualsInSubPops) && (maximumNumberOfIndividualsInSubPops > 0)) {	//check the subpop size
-							System.out.println("front size:" + front.size()+" max:"+maximumNumberOfIndividualsInSubPops);
 							front = discardRandomIndividualFromFront(candidate, front);
-							System.out.println("front size:" + front.size()+" max:"+maximumNumberOfIndividualsInSubPops);
 
 							assert (front.size() <= maximumNumberOfIndividualsInSubPops) : "the number of individuals in this subpop exceed the maximum number that is allowed";
 							assert (!front.contains(candidate)) : "deleted candidate instead of random individual";
@@ -194,12 +192,8 @@ public class MOMEArchive<T> {
 
 						//update map
 						archive.replace(candidateBinCoordinates, new Vector<>(front));
-						System.out.println("bin size after replacement with front:" + archive.get(candidateBinCoordinates).size());
-						//checking that all bin populations are under the max allowed
-//						int[] binSizes = populationSizeForEveryBin();
-//						for (int i = 0; i < binSizes.length; i++) {
-//							assert (binSizes[i] <= maximumNumberOfIndividualsInSubPops) : "a subpop is greater than max individuals "+binSizes[i]+" max:"+maximumNumberOfIndividualsInSubPops;
-//						}
+//						System.out.println("bin size after replacement with front:" + archive.get(candidateBinCoordinates).size());
+
 //						conditionalEliteSave(candidate, candidateBinCoordinates);
 						return true;	//candidate was added
 					}
