@@ -180,13 +180,17 @@ public class MOMEArchive<T> {
 				for (NSGA2Score<T> score : front) {
 
 					if(score.individual.getId() == candidateID) {
+						
+						if((front.size() > maximumNumberOfIndividualsInSubPops) && (maximumNumberOfIndividualsInSubPops > 0)) {	//check the subpop size
+							front = discardRandomIndividualFromFront(candidate, front);
+							assert (front.size() <= maximumNumberOfIndividualsInSubPops) : "the number of individuals in this subpop exceed the maximum number that is allowed";
+							assert (!front.contains(candidate)) : "deleted candidate instead of random individual";
+						}
 
 						// Since the new individual is present, the Pareto front must have changed.
 						// The Map needs to be updated, and we return true to indicate the change.
 						archive.replace(candidateBinCoordinates, new Vector<>(front));
-						if((front.size() > maximumNumberOfIndividualsInSubPops) && (maximumNumberOfIndividualsInSubPops > 0)) {	//check the subpop size
-							discardRandomIndividualFromBin(candidateBinCoordinates, score); //this will discard a random individual who is not the one just added
-						}
+						
 //						conditionalEliteSave(candidate, candidateBinCoordinates);
 						return true;
 					}
@@ -207,7 +211,6 @@ public class MOMEArchive<T> {
 	 */
 	public boolean discardRandomIndividualFromBin(Vector<Integer> binCoordinates) {
 		Score<T> candidateScore = getRandomIndividual(binCoordinates);
-		//MOME.this.setDiscardedIndividualCount();	//couldn't figure this out and needed to focus on other things
 		return archive.get(binCoordinates).remove(candidateScore);
 	}
 	
@@ -227,6 +230,24 @@ public class MOMEArchive<T> {
 		assert (individualToDiscard != individualYouDoNotWantRemoved) : "to discard and not discard are same based on score, something went wrong";
 		
 		return discardSpecificIndividualFromBin(individualToDiscard, binCoordinates);
+	}
+	
+	//cleaner version using front
+	public ArrayList<NSGA2Score<T>> discardRandomIndividualFromFront(Score<T> individualToKeep, ArrayList<NSGA2Score<T>> front) {
+		//discard individual that isn't the one that is set there
+		Score<T> individualToDiscard;
+		do {
+			individualToDiscard = getRandomIndividual(front);
+		} while (individualToKeep.individual.getId() == individualToDiscard.individual.getId());
+		
+		assert (individualToDiscard != individualToKeep) : "to discard and to keep individual scores are the same";
+		
+		boolean result = front.remove(individualToDiscard);
+		if (!result) {
+			System.out.println("discard failed");
+		}
+		assert (!front.contains(individualToDiscard)) : "individual to discard still in front";
+		return front;
 	}
 	
 	/**
@@ -254,6 +275,29 @@ public class MOMEArchive<T> {
 			return RandomNumbers.randomElement(allIndividuals);
 		}
 	}
+
+	/**
+	 * from the archive it retrieves a random individual from a given bin
+	 * @param binCoordinates Vector representing the multidimensional coordinates of a bin cell
+	 * @return random individual from archive (Score<T>) in specified bin
+	 */
+	public Score<T> getRandomIndividual(Vector<Integer> binCoordinates){
+		//grab a random individual from a specified bin
+		return RandomNumbers.randomElement(getScoresForBin(binCoordinates));
+	}
+	
+	public Score<T> getRandomIndividual(ArrayList<NSGA2Score<T>> nsga2scoreList){
+		return RandomNumbers.randomElement(nsga2scoreList);
+	}
+	/**
+	 * get's a random sub population from a random bin in the archive
+	 * @return the identifiers of all the individuals in a random sub population in the archive
+	 */
+	public Vector<Score<T>> getRandomPopulation(){
+		//grab a random bin
+		return RandomNumbers.randomElement(archive.values());
+	}
+	
 	/**
 	 * gets an ArrayList of the populations genotypes
 	 */
@@ -269,23 +313,6 @@ public class MOMEArchive<T> {
 		 });
 		 
 		return result;
-	}
-	/**
-	 * from the archive it retrieves a random individual from a given bin
-	 * @param binCoordinates Vector representing the multidimensional coordinates of a bin cell
-	 * @return random individual from archive (Score<T>) in specified bin
-	 */
-	public Score<T> getRandomIndividual(Vector<Integer> binCoordinates){
-		//grab a random individual from a specified bin
-		return RandomNumbers.randomElement(getScoresForBin(binCoordinates));
-	}
-	/**
-	 * get's a random sub population from a random bin in the archive
-	 * @return the identifiers of all the individuals in a random sub population in the archive
-	 */
-	public Vector<Score<T>> getRandomPopulation(){
-		//grab a random bin
-		return RandomNumbers.randomElement(archive.values());
 	}
 	
 	/**
