@@ -656,7 +656,16 @@ public class MOME<T> implements SteadyStateEA<T>{
 		paretoFrontAggregateLog = new MMNEATLog(fullInfix+"Aggragate_", false, false, false, true);
 		
 		///AGGREGATE LOGGING
-		Vector<Score<T>> archiveFinalParetoFront = archive.sizeOfCombinedParetoFrontAcrossAllBins()
+		Vector<Score<T>> archiveFinalParetoFront = archive.getCombinedParetoFrontWholeArchive();
+		//go through score for row
+		//column is objectives
+		for (Score<T> score : archiveFinalParetoFront) {
+			String scoreString = "";
+			for (int i = 0; i < numberOfObjectives; i++) {
+				scoreString = scoreString + score.scores[i] + "\t";
+			}
+			paretoFrontAggregateLog.log(scoreString);
+		}
 		
 		//bin label
 //									String label = archiveBinLabelsClass.binLabels().get(archiveBinLabelsClass.oneDimensionalIndex(score.MAPElitesBehaviorMap()));
@@ -690,40 +699,14 @@ public class MOME<T> implements SteadyStateEA<T>{
 					}
 					paretoFrontFinalLogs[iLogs].log(scoreString);	//single score row logged
 				}
-				
+				if(iLogs > paretoFrontFinalLogs.length) {
+					System.out.println("i logs greater than the number of logs " + iLogs + " number of logs:" + paretoFrontFinalLogs.length);
+				}
 			}else {
 				System.out.println("this is an empty bin, I don't think this happens though?");
 			}
 			
-		}
-
-		//archive logging
-//		String prefix = experimentPrefix + "_" + infix;
-//		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
-//		directory += (directory.equals("") ? "" : "/");
-//		
-//		String fullName = directory + prefix + "_log.plt";
-//		File archivePlotFile = new File(fullName);
-//
-//		PrintStream ps;
-		
-		
-
-		
-		//name of fitness functions/objectives
-		//located
-
-		//for all the bins?
-		//check if empty
-		//if not empty add to appropriate bin log
-		//make column = objective
-		//row = scores from the member of the pareto front in that bin
-
-//		for (int i = 0; i < numberOfOccupiedBins; i++) {
-//			
-//		}
-		
-		
+		}		
 		task.finalCleanup();
 	}
 	
