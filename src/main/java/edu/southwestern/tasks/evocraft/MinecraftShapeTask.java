@@ -31,6 +31,7 @@ import edu.southwestern.tasks.evocraft.fitness.DiversityBlockFitness;
 import edu.southwestern.tasks.evocraft.fitness.FakeTestFitness;
 import edu.southwestern.tasks.evocraft.fitness.MaximizeVolumeFitness;
 import edu.southwestern.tasks.evocraft.fitness.MinecraftFitnessFunction;
+import edu.southwestern.tasks.evocraft.fitness.MinecraftWeightedSumFitnessFunction;
 import edu.southwestern.tasks.evocraft.fitness.MissileFitness;
 import edu.southwestern.tasks.evocraft.fitness.NegativeSpaceCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.NumAirFitness;
@@ -71,13 +72,13 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	public MinecraftShapeTask() {
 		
 		fitnessFunctions = defineFitnessFromParameters();
-		int numTimedFitnessFunctions = numTimedEvaluationMinecraftFitnessFunctions(fitnessFunctions);
+		int numSimulatedFitnessFunctions = numSimulatedMinecraftFitnessFunctions(fitnessFunctions);
 		
 		// Cannot allow random tie breaking since some generated shapes would be different
 		Parameters.parameters.setBoolean("randomArgMaxTieBreak", false);
 		CommonConstants.randomArgMaxTieBreak = false;
 
-		if(numTimedFitnessFunctions != 0) {			//launch server if using timed fitness functions
+		if(numSimulatedFitnessFunctions != 0) {			//launch server if using timed fitness functions
 			if(Parameters.parameters.booleanParameter("launchMinecraftServerFromJava")) {
 				MinecraftServer.launchServer();
 			}
@@ -129,11 +130,15 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	 * @param fitnessFunctions list of fitness functions being used
 	 * @return number that extend TimedEvaluationMinecraftFitnessFunction
 	 */
-	private int numTimedEvaluationMinecraftFitnessFunctions(ArrayList<MinecraftFitnessFunction> fitnessFunctions) {
+	private int numSimulatedMinecraftFitnessFunctions(ArrayList<MinecraftFitnessFunction> fitnessFunctions) {
 		int total = 0;
 		for(MinecraftFitnessFunction mff : fitnessFunctions) {
 			if(mff instanceof TimedEvaluationMinecraftFitnessFunction) {
 				total++;
+			} else if(mff instanceof MinecraftWeightedSumFitnessFunction) {
+				if(((MinecraftWeightedSumFitnessFunction) mff).needsSimulation()) {
+					total++;
+				}
 			}
 		}
 		return total;
