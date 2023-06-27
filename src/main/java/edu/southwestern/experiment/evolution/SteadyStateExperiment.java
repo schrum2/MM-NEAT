@@ -141,16 +141,14 @@ public class SteadyStateExperiment<T> implements Experiment {
 					//		MinecraftUtilClass.writeBlockListFile(originalBlocks, saveDir + File.separator + "Shape"+(++savedShapes), "FITNESS_"+finalResults[i]+".txt");
 					//		Put score.scores and also 
 					MinecraftCoordinates corner = new MinecraftCoordinates(0, 0, 0);
+					BinLabels archiveBinLabelsClass = MMNEAT.getArchiveBinLabelsClass();
 					for(int i = 0; archive.size() > i; i ++ ) {
 						Score<T> score = archive.get(i);
 						if(score != null) {
 							Genotype<T> individual = score.individual;
-
 							List<MinecraftClient.Block> blocks = MMNEAT.shapeGenerator.generateShape(individual, corner, MMNEAT.blockSet);
-
-							BinLabels archiveBinLabelsClass = MMNEAT.getArchiveBinLabelsClass();
+							assert score.MAPElitesBehaviorMap() != null : score + ":" + score.usesMAPElitesBinSpecification() + ":" + score.usesMAPElitesMapSpecification();
 							String label = archiveBinLabelsClass.binLabels().get(archiveBinLabelsClass.oneDimensionalIndex(score.MAPElitesBehaviorMap()));
-
 							MinecraftUtilClass.writeBlockListFile(blocks, saveDir + File.separator + individual.getId(), "BC_"+label+"FITNESS_"+Arrays.toString(score.scores)+".txt");
 						}
 					}

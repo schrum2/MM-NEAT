@@ -380,8 +380,9 @@ public class MOME<T> implements SteadyStateEA<T>{
 		if(io && (individualCreationAttemptsCount%individualsPerGeneration == 0)) {
 			final int pseudoGeneration = individualCreationAttemptsCount/individualsPerGeneration;
 
-			System.out.println("generation:"+pseudoGeneration+ " addedIndividualCount:" +addedIndividualCount + " individualCreationAttemptsCount:" + individualCreationAttemptsCount);
-			
+			System.out.println("generation:"+pseudoGeneration+ " addedIndividualCount:" +addedIndividualCount + " individualCreationAttemptsCount:" + individualCreationAttemptsCount + " discarded individuals:" + discardedIndividualCount);
+			System.out.println("max bin size:" + archive.maxSubPopulationSizeInWholeArchive());
+
 			int numberOfObjectives = MMNEAT.task.numObjectives();
 			
 			//LOGGING POPULATION INFORMATION
@@ -458,7 +459,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 			
 			////////////////ABOVE WORKS
 			
-			System.out.println(printString);
+//			System.out.println(printString);
 
 			archiveLog.log(printString);
 		}
@@ -502,8 +503,8 @@ public class MOME<T> implements SteadyStateEA<T>{
 			ps = new PrintStream(archivePlotFile);
 			ps.println("set term pdf enhanced");
 			ps.println("set key bottom right");
-//			ps.println("set xrange [0:"+ yrange +"]");
-			ps.println("set xrange [0:"+ (yrange + 20) +"]");
+			ps.println("set xrange [0:"+ yrange +"]");
+//			ps.println("set xrange [0:"+ (yrange + 20) +"]");
 
 			//occupied bins plot
 			ps.println("set title \"" + experimentPrefix + " Archive Number of Occupied Bins\"");
