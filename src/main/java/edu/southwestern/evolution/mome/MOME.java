@@ -250,10 +250,10 @@ public class MOME<T> implements SteadyStateEA<T>{
 		afterIndividualCreationProcesses(archive.add(s1));			//this will call anything we need to do after making a new individual
 	}
 
+	//the current generation is the number of attempts to create individuals divided by the number of individuals in a generation
 	@Override
 	public int currentIteration() {
-		// TODO Auto-generated method stub
-		return 0;
+		return individualCreationAttemptsCount/individualsPerGeneration;
 	}
 
 	@Override
@@ -281,6 +281,11 @@ public class MOME<T> implements SteadyStateEA<T>{
 	}
 
 	// This and MAP Elites probably should have a common interface that specifies the need for this method
+	/**
+	 * a method that mirrors MAP Elites
+	 * same as getWholeArchiveScores in MOMEArchive, but returns ArrayList instead of Vector
+	 * @return every score for the archive
+	 */
 	public ArrayList<Score<T>> getArchive() {
 		 ArrayList<Score<T>> result = new ArrayList<>(archive.archive.size());
 

@@ -181,21 +181,27 @@ public class MOMEArchive<T> {
 
 					if(score.individual.getId() == candidateID) {
 						
+						// Since the new individual is present, the Pareto front must have changed.
+						// Check that the front contains the correct max number of individuals and remove if not
 						if((front.size() > maximumNumberOfIndividualsInSubPops) && (maximumNumberOfIndividualsInSubPops > 0)) {	//check the subpop size
 							front = discardRandomIndividualFromFront(candidate, front);
 							assert (front.size() <= maximumNumberOfIndividualsInSubPops) : "the number of individuals in this subpop exceed the maximum number that is allowed";
 							assert (!front.contains(candidate)) : "deleted candidate instead of random individual";
 						}
 
-						// Since the new individual is present, the Pareto front must have changed.
-						// The Map needs to be updated, and we return true to indicate the change.
+						//update map
 						archive.replace(candidateBinCoordinates, new Vector<>(front));
 						
+						//checking that all bin populations are under the max allowed
+						int[] binSizes = populationSizeForEveryBin();
+						for (int i = 0; i < binSizes.length; i++) {
+							assert (binSizes[i] < maximumNumberOfIndividualsInSubPops) : "a subpop is greater than max individuals";
+						}
 //						conditionalEliteSave(candidate, candidateBinCoordinates);
-						return true;
+						return true;	//candidate was added
 					}
 				}
-				return false;
+				return false;	//candidate wasn't added
 			}
 		} else {
 			// In some domains, a flawed genotype can emerge which cannot produce a behavior vector. Obviously cannot be added to archive.
@@ -300,7 +306,6 @@ public class MOMEArchive<T> {
 	 */
 	public ArrayList<Genotype<T>> getPopulation() {
 		//System.out.println("in get population");
-
 		 ArrayList<Genotype<T>> result = new ArrayList<Genotype<T>>(archive.size());
 
 		 archive.forEach( (coords, subpop) -> {	////goes through the archive
@@ -308,7 +313,6 @@ public class MOMEArchive<T> {
 				 result.add(s.individual);
 			 }
 		 });
-		 
 		return result;
 	}
 	
@@ -321,6 +325,11 @@ public class MOMEArchive<T> {
 		return archive.values().size();
 	}
 
+	/**
+	 * gets the population size of every bin in the archive
+	 * creates an array the size of all bin labels, initiated to 0, and adds the sizes of all occupied bins
+	 * @return the size of the population for every bin (used and unused)
+	 */
 	public int[] populationSizeForEveryBin() {
 		//System.out.println("popSizes: ");
 		int[] populationSizes = new int[mapping.binLabels().size()];
@@ -371,7 +380,7 @@ public class MOMEArchive<T> {
 
 	/**
 	 * return the total number of bins in use in the archive
-	 * @return
+	 * @return the total number of bins that currently have at least one individual
 	 */
 	public int getNumberOfOccupiedBins() {
 		return archive.size();
@@ -632,20 +641,20 @@ public class MOMEArchive<T> {
 	public int[] getBinIndexCoordinates(Score<T> candidate) {
 		return getBinMapping().multiDimensionalIndices(candidate.MAPElitesBehaviorMap());
 	}
-
-	/**
-	 * Gets the bin coordinates from a given individual and returns as a vector.
-	 * @param individualScore the given score to find the bin coordinates of
-	 * @return the bin coordinates as a vector for the given score.
-	 */
-	public Vector<Integer> getBinCoordinatesFromScore(Score<T> individualScore){
-		int[] binIndex = getBinMapping().multiDimensionalIndices(individualScore.MAPElitesBehaviorMap());	//grabs bin coordinates int array
-		Vector<Integer> individualBinCoordinates = new Vector<Integer>();
-		for (int i = 0; i < binIndex.length; i++) {		//turns int array into vector
-			individualBinCoordinates.add(binIndex[i]);
-		}
-		return individualBinCoordinates;
-	}
+//
+//	/**
+//	 * Gets the bin coordinates from a given individual and returns as a vector.
+//	 * @param individualScore the given score to find the bin coordinates of
+//	 * @return the bin coordinates as a vector for the given score.
+//	 */
+//	public Vector<Integer> getBinCoordinatesFromScore(Score<T> individualScore){
+//		int[] binIndex = getBinMapping().multiDimensionalIndices(individualScore.MAPElitesBehaviorMap());	//grabs bin coordinates int array
+//		Vector<Integer> individualBinCoordinates = new Vector<Integer>();
+//		for (int i = 0; i < binIndex.length; i++) {		//turns int array into vector
+//			individualBinCoordinates.add(binIndex[i]);
+//		}
+//		return individualBinCoordinates;
+//	}
 //	
 	//main for testing
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
