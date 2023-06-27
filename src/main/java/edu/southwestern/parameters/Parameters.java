@@ -874,7 +874,8 @@ public class Parameters {
 		booleanOptions.add("saveWholeMinecraftArchiveAtEnd", true, "If true saves shape in the final archive to finalArchiveOfShapes");
 		booleanOptions.add("momeSelectsUniformlyAcrossWholeArchive", false, "alternates the getRandomIndividual method to grab individual from whole archive instead of random bin");
 		booleanOptions.add("minecraftChangeBlockAndChangeCenterOfMassWeightedFitness", false, "uses the changeBlockAndChangeCenterOfMassWeightedFitness function");
-		
+		booleanOptions.add("minecraftAccumulateNewBlockPositionsFitness", false, "Fitness function that is scored based on how many unique block positions are added to a hashset");
+
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
 		doubleOptions.add("backpropLearningRate", 0.1, "Rate backprop learning for neural networks");
@@ -969,6 +970,7 @@ public class Parameters {
 		doubleOptions.add("minecraftChangeBlockTypeMutation", 0.2, "Rate of mutation to change a block type");
 		doubleOptions.add("minecraftChangeBlockOrientationMutation", 0.2, "Rate of mutation to change a block orientation");
 		doubleOptions.add("minecraftSwapBlocksMutation", 0.2, "Rate of mutation to swap two blocks");
+		doubleOptions.add("minecraftPercentOfTarget", 0.7, "Percent of the target that needs to be blown up");
 		
 		// String parameters
 		stringOptions.add("marioTargetLevel", "data\\VGLC\\SuperMarioBrosNewEncoding\\overworld\\mario-1-1.txt", "Relative path to json file with Mario level to target");

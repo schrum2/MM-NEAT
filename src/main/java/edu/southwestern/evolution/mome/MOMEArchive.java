@@ -180,18 +180,28 @@ public class MOMEArchive<T> {
 				for (NSGA2Score<T> score : front) {
 
 					if(score.individual.getId() == candidateID) {
-
+						
 						// Since the new individual is present, the Pareto front must have changed.
-						// The Map needs to be updated, and we return true to indicate the change.
-						archive.replace(candidateBinCoordinates, new Vector<>(front));
+						// Check that the front contains the correct max number of individuals and remove if not
 						if((front.size() > maximumNumberOfIndividualsInSubPops) && (maximumNumberOfIndividualsInSubPops > 0)) {	//check the subpop size
-							discardRandomIndividualFromBin(candidateBinCoordinates, score); //this will discard a random individual who is not the one just added
+							front = discardRandomIndividualFromFront(candidate, front);
+							assert (front.size() <= maximumNumberOfIndividualsInSubPops) : "the number of individuals in this subpop exceed the maximum number that is allowed";
+							assert (!front.contains(candidate)) : "deleted candidate instead of random individual";
+						}
+
+						//update map
+						archive.replace(candidateBinCoordinates, new Vector<>(front));
+						
+						//checking that all bin populations are under the max allowed
+						int[] binSizes = populationSizeForEveryBin();
+						for (int i = 0; i < binSizes.length; i++) {
+							assert (binSizes[i] < maximumNumberOfIndividualsInSubPops) : "a subpop is greater than max individuals";
 						}
 //						conditionalEliteSave(candidate, candidateBinCoordinates);
-						return true;
+						return true;	//candidate was added
 					}
 				}
-				return false;
+				return false;	//candidate wasn't added
 			}
 		} else {
 			// In some domains, a flawed genotype can emerge which cannot produce a behavior vector. Obviously cannot be added to archive.
@@ -200,44 +210,61 @@ public class MOMEArchive<T> {
 	}
 	
 
-	/**
-	 * removes a random individual from the specified bin
-	 * @param binCoordinates the vector coordinates of the bin you are looking at
-	 * @return true if individual was removed, false if they were not removed
-	 */
-	public boolean discardRandomIndividualFromBin(Vector<Integer> binCoordinates) {
-		Score<T> candidateScore = getRandomIndividual(binCoordinates);
-		//MOME.this.setDiscardedIndividualCount();	//couldn't figure this out and needed to focus on other things
-		return archive.get(binCoordinates).remove(candidateScore);
-	}
+//	/**
+//	 * removes a random individual from the specified bin
+//	 * @param binCoordinates the vector coordinates of the bin you are looking at
+//	 * @return true if individual was removed, false if they were not removed
+//	 */
+//	public boolean discardRandomIndividualFromBin(Vector<Integer> binCoordinates) {
+//		Score<T> candidateScore = getRandomIndividual(binCoordinates);
+//		return archive.get(binCoordinates).remove(candidateScore);
+//	}
 	
-	/**
-	 * removes a random individual from a bin but not the one specified
-	 * @param binCoordinates	the coordinates of the bin you are looking at
-	 * @param individualYouDoNotWantRemoved	the individual you do not want to remove from the bin
-	 * @return	true if successfully removed, false if not removed
-	 */
-	public boolean discardRandomIndividualFromBin(Vector<Integer> binCoordinates, Score<T> individualYouDoNotWantRemoved) {
+//	/**
+//	 * removes a random individual from a bin but not the one specified
+//	 * @param binCoordinates	the coordinates of the bin you are looking at
+//	 * @param individualYouDoNotWantRemoved	the individual you do not want to remove from the bin
+//	 * @return	true if successfully removed, false if not removed
+//	 */
+//	public boolean discardRandomIndividualFromBin(Vector<Integer> binCoordinates, Score<T> individualYouDoNotWantRemoved) {
+//		Score<T> individualToDiscard;
+//		//while candidate is individual you want to keep, get another random candidate to delete
+//		do {
+//			individualToDiscard = getRandomIndividual(binCoordinates);
+//		} while(individualToDiscard.individual.getId() == individualYouDoNotWantRemoved.individual.getId());	
+//
+//		assert (individualToDiscard != individualYouDoNotWantRemoved) : "to discard and not discard are same based on score, something went wrong";
+//		
+//		return discardSpecificIndividualFromBin(individualToDiscard, binCoordinates);
+//	}
+	
+	//cleaner version using front
+	public ArrayList<NSGA2Score<T>> discardRandomIndividualFromFront(Score<T> individualToKeep, ArrayList<NSGA2Score<T>> front) {
+		//discard individual that isn't the one that is set there
 		Score<T> individualToDiscard;
-		//while candidate is individual you want to keep, get another random candidate to delete
 		do {
-			individualToDiscard = getRandomIndividual(binCoordinates);
-		} while(individualToDiscard.individual.getId() == individualYouDoNotWantRemoved.individual.getId());	
-
-		assert (individualToDiscard != individualYouDoNotWantRemoved) : "to discard and not discard are same based on score, something went wrong";
+			individualToDiscard = RandomNumbers.randomElement(front);
+		} while (individualToKeep.individual.getId() == individualToDiscard.individual.getId());
 		
-		return discardSpecificIndividualFromBin(individualToDiscard, binCoordinates);
+		assert (individualToDiscard != individualToKeep) : "to discard and to keep individual scores are the same";
+		
+		boolean result = front.remove(individualToDiscard);
+		if (!result) {
+			System.out.println("discard failed");
+		}
+		assert (!front.contains(individualToDiscard)) : "individual to discard still in front";
+		return front;
 	}
 	
-	/**
-	 * This should remove the specified individual from the specified bin
-	 * @param individualToDiscard	the individual you plan to remove from the bin
-	 * @param binCoordinates	the coordinates of the bin you are removing the individual from
-	 * @return true if the individual was removed, false if the individual was not removed
-	 */
-	public boolean discardSpecificIndividualFromBin(Score<T> individualToDiscard, Vector<Integer> binCoordinates) {
-		return archive.get(binCoordinates).remove(individualToDiscard);		
-	}
+//	/**
+//	 * This should remove the specified individual from the specified bin
+//	 * @param individualToDiscard	the individual you plan to remove from the bin
+//	 * @param binCoordinates	the coordinates of the bin you are removing the individual from
+//	 * @return true if the individual was removed, false if the individual was not removed
+//	 */
+//	public boolean discardSpecificIndividualFromBin(Score<T> individualToDiscard, Vector<Integer> binCoordinates) {
+//		return archive.get(binCoordinates).remove(individualToDiscard);		
+//	}
 	
 //POPULATION RELATED METHODS
 	/**
@@ -254,22 +281,7 @@ public class MOMEArchive<T> {
 			return RandomNumbers.randomElement(allIndividuals);
 		}
 	}
-	/**
-	 * gets an ArrayList of the populations genotypes
-	 */
-	public ArrayList<Genotype<T>> getPopulation() {
-		//System.out.println("in get population");
 
-		 ArrayList<Genotype<T>> result = new ArrayList<Genotype<T>>(archive.size());
-
-		 archive.forEach( (coords, subpop) -> {	////goes through the archive
-			 for(Score<T> s : subpop) {		//goes through the scores of the subpop
-				 result.add(s.individual);
-			 }
-		 });
-		 
-		return result;
-	}
 	/**
 	 * from the archive it retrieves a random individual from a given bin
 	 * @param binCoordinates Vector representing the multidimensional coordinates of a bin cell
@@ -279,6 +291,7 @@ public class MOMEArchive<T> {
 		//grab a random individual from a specified bin
 		return RandomNumbers.randomElement(getScoresForBin(binCoordinates));
 	}
+	
 	/**
 	 * get's a random sub population from a random bin in the archive
 	 * @return the identifiers of all the individuals in a random sub population in the archive
@@ -286,6 +299,21 @@ public class MOMEArchive<T> {
 	public Vector<Score<T>> getRandomPopulation(){
 		//grab a random bin
 		return RandomNumbers.randomElement(archive.values());
+	}
+	
+	/**
+	 * gets an ArrayList of the populations genotypes
+	 */
+	public ArrayList<Genotype<T>> getPopulation() {
+		//System.out.println("in get population");
+		 ArrayList<Genotype<T>> result = new ArrayList<Genotype<T>>(archive.size());
+
+		 archive.forEach( (coords, subpop) -> {	////goes through the archive
+			 for(Score<T> s : subpop) {		//goes through the scores of the subpop
+				 result.add(s.individual);
+			 }
+		 });
+		return result;
 	}
 	
 	/**
@@ -297,6 +325,11 @@ public class MOMEArchive<T> {
 		return archive.values().size();
 	}
 
+	/**
+	 * gets the population size of every bin in the archive
+	 * creates an array the size of all bin labels, initiated to 0, and adds the sizes of all occupied bins
+	 * @return the size of the population for every bin (used and unused)
+	 */
 	public int[] populationSizeForEveryBin() {
 		//System.out.println("popSizes: ");
 		int[] populationSizes = new int[mapping.binLabels().size()];
@@ -347,7 +380,7 @@ public class MOMEArchive<T> {
 
 	/**
 	 * return the total number of bins in use in the archive
-	 * @return
+	 * @return the total number of bins that currently have at least one individual
 	 */
 	public int getNumberOfOccupiedBins() {
 		return archive.size();
@@ -390,7 +423,7 @@ public class MOMEArchive<T> {
 		Vector<Score<T>> allScores = getWholeArchiveScores();
 
 		for(Score<T> member : allScores) {	//for all the scores in the whole archive
-			for (int iObjective = 0; iObjective < maxFitnessScores.length; iObjective++) {		
+			for (int iObjective = 0; iObjective < maxFitnessScores.length; iObjective++) {	
 				maxFitnessScores[iObjective] = Math.max(maxFitnessScores[iObjective], member.scores[iObjective]);	//max for i objective compared with member i objective
 			}
 		}
@@ -622,7 +655,7 @@ public class MOMEArchive<T> {
 		}
 		return individualBinCoordinates;
 	}
-//	
+	
 	//main for testing
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 //		//MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" base:nsga2test log:NSG2Test-Test saveTo:Test trackPseudoArchive:true netio:true lambda:37 maxGens:200 task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.SphereFunction genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foBinDimension:500 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
