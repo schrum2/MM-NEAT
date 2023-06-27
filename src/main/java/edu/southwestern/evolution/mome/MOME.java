@@ -67,7 +67,8 @@ public class MOME<T> implements SteadyStateEA<T>{
 	
 	// Not a MOMELog
 	private MMNEATLog archiveLog = null; // Log general archive information. Does not use matrix plot, logged every generation
-	private MMNEATLog fillLog = null;	//MAYBE NEED
+	private MMNEATLog[] paretoFrontFinalLogs = null;	//logging for final cleanup, logs the paretoFront
+	private MMNEATLog paretoFrontAggregateLog = null;	//logging for final cleanup, logs the paretoFront aggregate data
 	
 	// TODO: Convert these to MOMELogs
 	private MMNEATLog binPopulationSizeLog = null; // contains sizes of subpops in each bin, logged every generation
@@ -257,11 +258,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 		return individualCreationAttemptsCount/individualsPerGeneration;
 	}
 
-	@Override
-	public void finalCleanup() {
-		// TODO Auto-generated method stub
-		task.finalCleanup();
-	}
+	
 
 	/**
 	 * gets an ArrayList of the populations genotypes
@@ -476,6 +473,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 	 * This sets up all logging files necessary for the experiment.
 	 * Creates: archive log, subpop size log, hypervolume log, max and min logs for every objective
 	 * momeLogs is an array for all logs that use the same setup.
+	 * this is all the GNU plot stuff
 	 * @param numberOfBinLabels	the number of bins being used that will need to be logged
 	 * @param infix	the intermediate string of all file names
 	 * @param experimentPrefix	the prefix string used for all logs
@@ -620,6 +618,105 @@ public class MOME<T> implements SteadyStateEA<T>{
 
 		PythonUtil.setPythonProgram();
 		PythonUtil.checkPython();
+	}
+	
+	@Override
+	public void finalCleanup() {
+		// TODO Auto-generated method stub
+		//save one text file for each occupied bin in the archive that contains one column per objective, 
+		//and each row represents the scores from a member of the Pareto front in that bin. 
+		//The name of each file can incorporate both "ParetoFront" and the bin label.
+		
+		//setup finalCleanup logging
+//		paretoFrontFinalLog = new MMNEATLog(infix+"_ParetoFront", false, false, false, true);
+		String infix = "MOMEArchive";
+		String fullInfix = infix+"_ParetoFront_";
+
+		// Create gnuplot file for archive log
+		String experimentPrefix = Parameters.parameters.stringParameter("log") + Parameters.parameters.integerParameter("runNumber");					
+		int yrange = Parameters.parameters.integerParameter("maxGens")/individualsPerGeneration;
+		System.out.println("yrange = " + yrange + ", from maxGens = "+Parameters.parameters.integerParameter("maxGens")+"/"+individualsPerGeneration+"=individualsPerGeneration");
+
+		
+		int numberOfObjectives = MMNEAT.task.numObjectives();
+		int numberOfBinLabels = archive.getBinMapping().binLabels().size();
+		int numberOfOccupiedBins = archive.getNumberOfOccupiedBins();
+		
+		//setup for logging the files
+		paretoFrontFinalLogs = new MMNEATLog[numberOfOccupiedBins];
+		paretoFrontAggregateLog = new MMNEATLog(fullInfix+"Aggragate_", false, false, false, true);
+		
+		//bin label
+//									String label = archiveBinLabelsClass.binLabels().get(archiveBinLabelsClass.oneDimensionalIndex(score.MAPElitesBehaviorMap()));
+		//necessary to go through all the bins since I can't just return the occupied bins
+		int iLogs = 0;	//anytime a log is created, increment and check that it's not out of bounds
+
+//		final int pseudoGeneration = individualCreationAttemptsCount/individualsPerGeneration;
+		
+		//goes though all occupied bins I think?
+		for (Vector<Integer> key : archive.archive.keySet()) {
+			if(archive.archive.get(key).size() > 0) {
+				//set up log
+				
+				//SET UP BIN LOG FILE
+				String binLabel = archive.getBinLabel(key);
+				paretoFrontFinalLogs[iLogs] = new MMNEATLog(fullInfix+"Bin_"+binLabel, false, false, false, true);
+				iLogs++;
+				//log that bin
+				Vector<Score<T>> scoresForBin = archive.getScoresForBin(key);
+				String scoreString = "";
+				
+				
+				//GET A SINGLE ROW LOGGED
+				//for each score in the bin, log that scores data on one row
+				for (Score<T> score : scoresForBin) {
+					//log this score in the bin for each objective, or create string
+					for (int i = 0; i < numberOfObjectives; i++) {
+						//this is objective i ----- adds objective column score to that scores row
+						scoreString = scoreString + score.scores[i] + "\t";
+						//string + score for objective i + tab
+					}
+					paretoFrontFinalLogs[iLogs].log(scoreString);	//single score row logged
+				}
+				
+				
+				
+				
+			}else {
+				System.out.println("this is an empty bin, I don't think this happens though?");
+			}
+			
+		}
+
+		//name of fitness functions/objectives
+		//located
+//
+//		//loop through objectives to log max and min for each objectives log
+//		for (int i = 0; i < numberOfObjectives; i++) {
+//			
+//			//MAX FITNESS SCORES LOG
+//			double[] maxColumn = ArrayUtil.column(maxScoresBinXObjective, i);
+//			Double[] maxScoresForOneObjective = ArrayUtils.toObject(maxColumn);
+//			maxFitnessLogs[i].log(pseudoGeneration + "\t" + StringUtils.join(maxScoresForOneObjective, " \t").replaceAll("-Infinity", "X"));
+//			
+//			//MIN FITNESS SCORES LOG
+//			double[] minColumn = ArrayUtil.column(minScoresBinXObjective, i);
+//			Double[] minScoresForOneObjective = ArrayUtils.toObject(minColumn);
+//			minFitnessLogs[i].log(pseudoGeneration + "\t" + StringUtils.join(minScoresForOneObjective, "\t").replaceAll("-Infinity", "X"));
+			
+
+		//for all the bins?
+		//check if empty
+		//if not empty add to appropriate bin log
+		//make column = objective
+		//row = scores from the member of the pareto front in that bin
+
+//		for (int i = 0; i < numberOfOccupiedBins; i++) {
+//			
+//		}
+		
+		
+		task.finalCleanup();
 	}
 	
 

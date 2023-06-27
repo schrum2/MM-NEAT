@@ -638,6 +638,21 @@ public class MOMEArchive<T> {
 	public int[] getBinIndexCoordinates(Score<T> candidate) {
 		return getBinMapping().multiDimensionalIndices(candidate.MAPElitesBehaviorMap());
 	}
+	
+	public String getIndividualBinLabel(Score<T> score) {
+		BinLabels archiveBinLabelsClass = MMNEAT.getArchiveBinLabelsClass();
+		return archiveBinLabelsClass.binLabels().get(archiveBinLabelsClass.oneDimensionalIndex(score.MAPElitesBehaviorMap()));
+	}
+	/**
+	 * only works for occupied bins
+	 * @param binCoordinates
+	 * @return
+	 */
+	public String getBinLabel(Vector<Integer> binCoordinates) {
+		//get the bin label using a single individual?
+		assert archive.get(binCoordinates).size() != 0 : "bin is empty";
+		return getIndividualBinLabel(archive.get(binCoordinates).elementAt(0));
+	}
 
 	/**
 	 * Gets the bin coordinates from a given individual and returns as a vector.
