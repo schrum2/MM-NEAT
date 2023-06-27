@@ -10,6 +10,7 @@ import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
 import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.mapelites.BinLabels;
 import edu.southwestern.evolution.nsga2.NSGA2;
 import edu.southwestern.evolution.nsga2.NSGA2Score;
@@ -246,7 +247,28 @@ public class MOMEArchive<T> {
 	 */
 	public Score<T> getRandomIndividual(){
 		//grab a random individual from a random bin
-		return RandomNumbers.randomElement(getRandomPopulation());
+		if(!Parameters.parameters.booleanParameter("momeSelectsUniformlyAcrossWholeArchive")) {
+			return RandomNumbers.randomElement(getRandomPopulation());
+		} else {
+			Vector<Score<T>> allIndividuals = getWholeArchiveScores();
+			return RandomNumbers.randomElement(allIndividuals);
+		}
+	}
+	/**
+	 * gets an ArrayList of the populations genotypes
+	 */
+	public ArrayList<Genotype<T>> getPopulation() {
+		//System.out.println("in get population");
+
+		 ArrayList<Genotype<T>> result = new ArrayList<Genotype<T>>(archive.size());
+
+		 archive.forEach( (coords, subpop) -> {	////goes through the archive
+			 for(Score<T> s : subpop) {		//goes through the scores of the subpop
+				 result.add(s.individual);
+			 }
+		 });
+		 
+		return result;
 	}
 	/**
 	 * from the archive it retrieves a random individual from a given bin
