@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Vector;
 import java.util.stream.Stream;
 
@@ -23,6 +24,7 @@ import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
+import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.util.PopulationUtil;
 import edu.southwestern.util.PythonUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
@@ -630,7 +632,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 //		paretoFrontFinalLog = new MMNEATLog(infix+"_ParetoFront", false, false, false, true);
 		String infix = "MOMEArchive";
 		String fullInfix = infix+"_ParetoFront_";
-
+		
 		// Create gnuplot file for archive log
 		String experimentPrefix = Parameters.parameters.stringParameter("log") + Parameters.parameters.integerParameter("runNumber");					
 		int yrange = Parameters.parameters.integerParameter("maxGens")/individualsPerGeneration;
@@ -641,19 +643,55 @@ public class MOME<T> implements SteadyStateEA<T>{
 		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
 		directory += (directory.equals("") ? "" : "/");
 		
-		String fullName = directory + prefix + "_log.plt";
-		File archivePlotFile = new File(fullName);
+		//make a new directory for these files
+		//// Archive directory
+		String experimentDir = FileUtilities.getSaveDirectory();
+		String endParetoFrontsDirectoryName;
+		endParetoFrontsDirectoryName = experimentDir + File.separator + "ParetoFronts";
+//		//remove		System.out.println("MOME ARCHIVE archiveDir: " + archiveDir);		//: delete later
+//		if(saveElites) {
+//			new File(archiveDir).mkdirs(); // make directory
+//		}
+//		String saveDir = FileUtilities.getSaveDirectory() + "/" + fitnessFunctions.get(i).getClass().getSimpleName();
+		File dir = new File(endParetoFrontsDirectoryName);
+		// Create dir	-is this create directory or creating a text file?
+		if (!dir.exists()) {
+			dir.mkdir();
+		}
+		directory+=endParetoFrontsDirectoryName;
+		directory += (directory.equals("") ? "" : "/");
+		fullInfix = File.separator + "ParetoFronts" + File.separator + fullInfix;
+//		
+//		File plotFile = new File(directory + plotFilename);
+//		File plotPDFFile = new File(directory + plotPDFFilename);
+		
+		
 
-		PrintStream ps;
+//		public static void writeBlockListFile(List<Block> blocks, String pathAndPrefix, String fileSuffix) {
+//			String fullName = pathAndPrefix + "_" + fileSuffix;
+//			System.out.println(fullName);
+//			try {
+//				PrintStream outputFile = new PrintStream(new File(fullName));
+//				outputFile.println(blocks);
+//				outputFile.close();
+//			} catch (FileNotFoundException e) {
+//				System.out.println("Error writing file "+fullName);
+//				e.printStackTrace();
+//				System.exit(1);
+//			}
+//		
 		
 		
 		int numberOfObjectives = MMNEAT.task.numObjectives();
-		int numberOfBinLabels = archive.getBinMapping().binLabels().size();
+//		int numberOfBinLabels = archive.getBinMapping().binLabels().size();
 		int numberOfOccupiedBins = archive.getNumberOfOccupiedBins();
 		
 		//setup for logging the files
 		paretoFrontFinalLogs = new MMNEATLog[numberOfOccupiedBins];
 		paretoFrontAggregateLog = new MMNEATLog(fullInfix+"Aggragate_", false, false, false, true);
+		
+		//need to put these in their own folder
+		
 		
 		///AGGREGATE LOGGING
 		Vector<Score<T>> archiveFinalParetoFront = archive.getCombinedParetoFrontWholeArchive();
@@ -682,7 +720,6 @@ public class MOME<T> implements SteadyStateEA<T>{
 				//SET UP BIN LOG FILE
 				String binLabel = archive.getBinLabel(key);
 				paretoFrontFinalLogs[iLogs] = new MMNEATLog(fullInfix+"Bin_"+binLabel, false, false, false, true);
-				iLogs++;
 				
 				//log that bin
 				Vector<Score<T>> scoresForBin = archive.getScoresForBin(key);
@@ -699,6 +736,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 					}
 					paretoFrontFinalLogs[iLogs].log(scoreString);	//single score row logged
 				}
+				iLogs++;
 				if(iLogs > paretoFrontFinalLogs.length) {
 					System.out.println("i logs greater than the number of logs " + iLogs + " number of logs:" + paretoFrontFinalLogs.length);
 				}
