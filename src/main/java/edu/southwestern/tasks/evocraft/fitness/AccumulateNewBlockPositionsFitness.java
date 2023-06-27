@@ -35,11 +35,12 @@ public class AccumulateNewBlockPositionsFitness extends TimedEvaluationMinecraft
 	@Override
 	public double calculateFinalScore(ArrayList<Pair<Long, List<Block>>> history, MinecraftCoordinates corner,
 			List<Block> originalBlocks) {
-		HashSet<MinecraftCoordinates> fitness = null;
-		List<Block> originalShape = history.get(0).t2;
+		// Set will not store duplicate points, only one copy of each point visited
+		HashSet<MinecraftCoordinates> fitness = new HashSet<MinecraftCoordinates>();
 		for(int i = 0; i < history.size(); i++) {
-			for(int j = 0; j < history.get(i).t2.size(); j++) {
-				 fitness.add(history.get(i).t2.get(j).blockPosition());
+			List<Block> shape = history.get(i).t2;
+			for(int j = 0; j < shape.size(); j++) {
+				 fitness.add(shape.get(j).blockPosition());
 			}
 		}
 		
@@ -50,6 +51,7 @@ public class AccumulateNewBlockPositionsFitness extends TimedEvaluationMinecraft
 	public double maxFitness() {
 		MinecraftCoordinates ranges = MinecraftUtilClass.getRanges();
 		int volume = ranges.x() * ranges.z() * ranges.y();
+		// Assumes all blocks move to new positions on every reading, which is unreasonably fast
 		return ((minNumberOfShapeReadings()+1) * volume);
 	}
 	
