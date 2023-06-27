@@ -204,40 +204,40 @@ public class MOMEArchive<T> {
 	}
 	
 
-	/**
-	 * removes a random individual from the specified bin
-	 * @param binCoordinates the vector coordinates of the bin you are looking at
-	 * @return true if individual was removed, false if they were not removed
-	 */
-	public boolean discardRandomIndividualFromBin(Vector<Integer> binCoordinates) {
-		Score<T> candidateScore = getRandomIndividual(binCoordinates);
-		return archive.get(binCoordinates).remove(candidateScore);
-	}
+//	/**
+//	 * removes a random individual from the specified bin
+//	 * @param binCoordinates the vector coordinates of the bin you are looking at
+//	 * @return true if individual was removed, false if they were not removed
+//	 */
+//	public boolean discardRandomIndividualFromBin(Vector<Integer> binCoordinates) {
+//		Score<T> candidateScore = getRandomIndividual(binCoordinates);
+//		return archive.get(binCoordinates).remove(candidateScore);
+//	}
 	
-	/**
-	 * removes a random individual from a bin but not the one specified
-	 * @param binCoordinates	the coordinates of the bin you are looking at
-	 * @param individualYouDoNotWantRemoved	the individual you do not want to remove from the bin
-	 * @return	true if successfully removed, false if not removed
-	 */
-	public boolean discardRandomIndividualFromBin(Vector<Integer> binCoordinates, Score<T> individualYouDoNotWantRemoved) {
-		Score<T> individualToDiscard;
-		//while candidate is individual you want to keep, get another random candidate to delete
-		do {
-			individualToDiscard = getRandomIndividual(binCoordinates);
-		} while(individualToDiscard.individual.getId() == individualYouDoNotWantRemoved.individual.getId());	
-
-		assert (individualToDiscard != individualYouDoNotWantRemoved) : "to discard and not discard are same based on score, something went wrong";
-		
-		return discardSpecificIndividualFromBin(individualToDiscard, binCoordinates);
-	}
+//	/**
+//	 * removes a random individual from a bin but not the one specified
+//	 * @param binCoordinates	the coordinates of the bin you are looking at
+//	 * @param individualYouDoNotWantRemoved	the individual you do not want to remove from the bin
+//	 * @return	true if successfully removed, false if not removed
+//	 */
+//	public boolean discardRandomIndividualFromBin(Vector<Integer> binCoordinates, Score<T> individualYouDoNotWantRemoved) {
+//		Score<T> individualToDiscard;
+//		//while candidate is individual you want to keep, get another random candidate to delete
+//		do {
+//			individualToDiscard = getRandomIndividual(binCoordinates);
+//		} while(individualToDiscard.individual.getId() == individualYouDoNotWantRemoved.individual.getId());	
+//
+//		assert (individualToDiscard != individualYouDoNotWantRemoved) : "to discard and not discard are same based on score, something went wrong";
+//		
+//		return discardSpecificIndividualFromBin(individualToDiscard, binCoordinates);
+//	}
 	
 	//cleaner version using front
 	public ArrayList<NSGA2Score<T>> discardRandomIndividualFromFront(Score<T> individualToKeep, ArrayList<NSGA2Score<T>> front) {
 		//discard individual that isn't the one that is set there
 		Score<T> individualToDiscard;
 		do {
-			individualToDiscard = getRandomIndividual(front);
+			individualToDiscard = RandomNumbers.randomElement(front);
 		} while (individualToKeep.individual.getId() == individualToDiscard.individual.getId());
 		
 		assert (individualToDiscard != individualToKeep) : "to discard and to keep individual scores are the same";
@@ -250,15 +250,15 @@ public class MOMEArchive<T> {
 		return front;
 	}
 	
-	/**
-	 * This should remove the specified individual from the specified bin
-	 * @param individualToDiscard	the individual you plan to remove from the bin
-	 * @param binCoordinates	the coordinates of the bin you are removing the individual from
-	 * @return true if the individual was removed, false if the individual was not removed
-	 */
-	public boolean discardSpecificIndividualFromBin(Score<T> individualToDiscard, Vector<Integer> binCoordinates) {
-		return archive.get(binCoordinates).remove(individualToDiscard);		
-	}
+//	/**
+//	 * This should remove the specified individual from the specified bin
+//	 * @param individualToDiscard	the individual you plan to remove from the bin
+//	 * @param binCoordinates	the coordinates of the bin you are removing the individual from
+//	 * @return true if the individual was removed, false if the individual was not removed
+//	 */
+//	public boolean discardSpecificIndividualFromBin(Score<T> individualToDiscard, Vector<Integer> binCoordinates) {
+//		return archive.get(binCoordinates).remove(individualToDiscard);		
+//	}
 	
 //POPULATION RELATED METHODS
 	/**
@@ -286,9 +286,6 @@ public class MOMEArchive<T> {
 		return RandomNumbers.randomElement(getScoresForBin(binCoordinates));
 	}
 	
-	public Score<T> getRandomIndividual(ArrayList<NSGA2Score<T>> nsga2scoreList){
-		return RandomNumbers.randomElement(nsga2scoreList);
-	}
 	/**
 	 * get's a random sub population from a random bin in the archive
 	 * @return the identifiers of all the individuals in a random sub population in the archive
