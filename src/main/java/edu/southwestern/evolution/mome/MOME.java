@@ -465,6 +465,17 @@ public class MOME<T> implements SteadyStateEA<T>{
 	}
 	
 //TODO: definitely remove all of this if creating separate logging class
+	/**
+	 * This sets up all logging files necessary for the experiment.
+	 * Creates: archive log, subpop size log, hypervolume log, max and min logs for every objective
+	 * momeLogs is an array for all logs that use the same setup.
+	 * @param numberOfBinLabels	the number of bins being used that will need to be logged
+	 * @param infix	the intermediate string of all file names
+	 * @param experimentPrefix	the prefix string used for all logs
+	 * @param yrange
+	 * @param individualsPerGeneration the number of individuals that counts as a generation
+	 * @param momeLogs the collection of logs that use the same setup
+	 */
 	public static void setUpLogging(int numberOfBinLabels, String infix, String experimentPrefix, int yrange, int individualsPerGeneration, ArrayList<MMNEATLog> momeLogs) {
 		
 		String prefix = experimentPrefix + "_" + infix;

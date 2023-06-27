@@ -167,7 +167,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			ps.println("unset key");
 			// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
 			ps.println("set yrange [0:"+ yrange +"]");
-			ps.println("set xrange [0:"+ numLabels + "]");
+			ps.println("set xrange [1:"+ numLabels + "]");
 			ps.println("set title \"" + experimentPrefix + " Archive Performance\"");
 			ps.println("set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");
 			// The :1 is for skipping the "generation" number logged in the file
@@ -179,7 +179,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			ps.println("unset key");
 			// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
 			ps.println("set yrange [0:"+ yrange +"]");
-			ps.println("set xrange [0:"+ numLabels + "]");
+			ps.println("set xrange [1:"+ numLabels + "]");
 			ps.println("set title \"" + experimentPrefix + " Archive Performance\"");
 			//ps.println("set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");
 			// The :1 is for skipping the "generation" number logged in the file

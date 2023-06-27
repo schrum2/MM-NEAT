@@ -75,4 +75,12 @@ public abstract class MinecraftWeightedSumFitnessFunction extends MinecraftFitne
 		return weightedSum;
 	}
 
+	/**
+	 * Whether or not evaluating this function requires a Minecraft server
+	 * to be instantiated. This is typically true if at least one of the
+	 * fitness functions is a TimedEvaluationMinecraftFitnessFunction.
+	 * 
+	 * @return true of server needed for evaluation
+	 */
+	public abstract boolean needsSimulation();
 }

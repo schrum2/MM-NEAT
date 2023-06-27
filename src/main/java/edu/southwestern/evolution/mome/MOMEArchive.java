@@ -590,15 +590,30 @@ public class MOMEArchive<T> {
 //		return mapping.binLabels().size();
 //	}
 	
-
+	/**
+	 * Gets the oneDBinIndex for a bin using a bin coordinates vector.
+	 * @param keyVector the bin coordinates for the bin whose index you need
+	 * @return an index for the bin that was given
+	 */
 	public int getOneDBinIndex(Vector<Integer> keyVector) {
 		return mapping.oneDimensionalIndex(ArrayUtil.intArrayFromArrayList(keyVector));
 	}
 	
+	/**
+	 * The bin coordinates of the given individual score as an index.
+	 * Uses a score (value) to find it's bin coordinates
+	 * @param individualScore the score being used to look up the bin coordinates
+	 * @return the bin coordinates of the given score
+	 */
 	public int[] getBinIndexCoordinates(Score<T> candidate) {
 		return getBinMapping().multiDimensionalIndices(candidate.MAPElitesBehaviorMap());
 	}
 
+	/**
+	 * Gets the bin coordinates from a given individual and returns as a vector.
+	 * @param individualScore the given score to find the bin coordinates of
+	 * @return the bin coordinates as a vector for the given score.
+	 */
 	public Vector<Integer> getBinCoordinatesFromScore(Score<T> individualScore){
 		int[] binIndex = getBinMapping().multiDimensionalIndices(individualScore.MAPElitesBehaviorMap());	//grabs bin coordinates int array
 		Vector<Integer> individualBinCoordinates = new Vector<Integer>();
