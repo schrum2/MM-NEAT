@@ -566,6 +566,16 @@ public class MOMEArchive<T> {
 		ArrayList<NSGA2Score<T>> front = NSGA2.getParetoFront(NSGA2.staticNSGA2Scores(wholeArchiveFront));
 		return front.size();
 	}
+	
+	/**
+	 * create pareto front for whole archive and convert to vector
+	 * @return vector pareto front of whole arechive
+	 */
+	public Vector<Score<T>> getCombinedParetoFrontWholeArchive(){
+		Vector<Score<T>> wholeArchiveFront = new Vector<Score<T>>(getWholeArchiveScores());
+		ArrayList<NSGA2Score<T>> front = NSGA2.getParetoFront(NSGA2.staticNSGA2Scores(wholeArchiveFront));
+		return new Vector<>(front);
+	}
 
 	/**
 	 * saves individual shapes to the archive. Currently saves all added shapes, will create space issue

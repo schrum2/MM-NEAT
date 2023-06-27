@@ -655,6 +655,9 @@ public class MOME<T> implements SteadyStateEA<T>{
 		paretoFrontFinalLogs = new MMNEATLog[numberOfOccupiedBins];
 		paretoFrontAggregateLog = new MMNEATLog(fullInfix+"Aggragate_", false, false, false, true);
 		
+		///AGGREGATE LOGGING
+		Vector<Score<T>> archiveFinalParetoFront = archive.sizeOfCombinedParetoFrontAcrossAllBins()
+		
 		//bin label
 //									String label = archiveBinLabelsClass.binLabels().get(archiveBinLabelsClass.oneDimensionalIndex(score.MAPElitesBehaviorMap()));
 		//necessary to go through all the bins since I can't just return the occupied bins
@@ -664,18 +667,17 @@ public class MOME<T> implements SteadyStateEA<T>{
 		
 		//goes though all occupied bins I think?
 		for (Vector<Integer> key : archive.archive.keySet()) {
-			if(archive.archive.get(key).size() > 0) {
+			if(key.size() > 0) {
 				//set up log
 				
 				//SET UP BIN LOG FILE
 				String binLabel = archive.getBinLabel(key);
 				paretoFrontFinalLogs[iLogs] = new MMNEATLog(fullInfix+"Bin_"+binLabel, false, false, false, true);
 				iLogs++;
+				
 				//log that bin
 				Vector<Score<T>> scoresForBin = archive.getScoresForBin(key);
 				String scoreString = "";
-				
-				//gnu logs
 				
 				//GET A SINGLE ROW LOGGED
 				//for each score in the bin, log that scores data on one row
@@ -689,15 +691,12 @@ public class MOME<T> implements SteadyStateEA<T>{
 					paretoFrontFinalLogs[iLogs].log(scoreString);	//single score row logged
 				}
 				
-				
-				
-				
 			}else {
 				System.out.println("this is an empty bin, I don't think this happens though?");
 			}
 			
 		}
-		
+
 		//archive logging
 //		String prefix = experimentPrefix + "_" + infix;
 //		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
@@ -709,48 +708,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 //		PrintStream ps;
 		
 		
-		//mome logs
 
-//		String textLogFilename = log.getLogTextFilename();
-//		String plotFilename = textLogFilename.replace(".txt", ".plt");
-//		String plotPDFFilename = plotFilename.replace(".plt", "_PDF.plt");
-//		String logTitle = textLogFilename.replace(".txt", "");
-//		String pdfFilename = textLogFilename.replace(".txt", ".pdf");
-//		
-//		File plotFile = new File(directory + plotFilename);
-//		File plotPDFFile = new File(directory + plotPDFFilename);
-//		
-//		try {
-//			// The PDF version
-//			ps = new PrintStream(plotPDFFile);
-//			ps.println("set term pdf enhanced");
-//			ps.println("unset key");
-//			// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
-//			ps.println("set yrange [0:"+ yrange +"]");
-//			ps.println("set xrange [1:"+ numberOfBinLabels + "]");
-//			ps.println("set title \"" + logTitle + "\"");
-//			ps.println("set output \"" + pdfFilename + "\"");				
-//			// The :1 is for skipping the "generation" number logged in the file
-//			ps.println("plot \"" + textLogFilename + "\" matrix every ::1 with image");
-//			ps.close();
-//
-//			// Non-PDF version
-//			ps = new PrintStream(plotFile);
-//			ps.println("unset key");
-//			// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
-//			ps.println("set yrange [0:"+ yrange +"]");
-//			ps.println("set xrange [1:"+ numberOfBinLabels + "]");
-//			ps.println("set title \"" + logTitle + "\"");
-//			// The :1 is for skipping the "generation" number logged in the file
-//			ps.println("plot \"" + textLogFilename + "\" matrix every ::1 with image");
-//			// ps.println("pause -1"); // Not needed when only one item is plotted?
-//			ps.close();
-//	
-//		} catch (FileNotFoundException e) {
-//			System.out.println("Error creating MOME log files");
-//			e.printStackTrace();
-//			System.exit(1);
-//		}
 		
 		//name of fitness functions/objectives
 		//located
