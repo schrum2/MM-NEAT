@@ -108,7 +108,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 		if(io) {
 			//logging
 			String infix = "MOMEArchive";
-			int numberOfObjectivesToLog = MMNEAT.task.numObjectives();
+			int numberOfObjectives = MMNEAT.task.numObjectives();
 			int numberOfBinLabels = archive.getBinMapping().binLabels().size();
 			// TODO: Contains MMNEATLogs for now, but later will be only those logs that are MOMELogs. Specifically, they have a column for each archive bin
 			ArrayList<MMNEATLog> momeLogs = new ArrayList<>();
@@ -123,17 +123,17 @@ public class MOME<T> implements SteadyStateEA<T>{
 			hypervolumeLog = new MMNEATLog(infix+"_Hypervolume", false, false, false, true);
 			momeLogs.add(hypervolumeLog);
 			
-			maxFitnessLogs = new MMNEATLog[numberOfObjectivesToLog];
-			minFitnessLogs = new MMNEATLog[numberOfObjectivesToLog];
-			rangeFitnessLogs = new MMNEATLog[numberOfObjectivesToLog];
+			maxFitnessLogs = new MMNEATLog[numberOfObjectives];
+			minFitnessLogs = new MMNEATLog[numberOfObjectives];
+			rangeFitnessLogs = new MMNEATLog[numberOfObjectives];
 			
 			String infixMin = infix + "_Min_Objective_";
 			String infixMax = infix + "_Max_Objective_";
 			String infixRange = infix + "_Range_";
-			for (int i = 0; i < numberOfObjectivesToLog; i++) {
-				minFitnessLogs[i] = new MMNEATLog(infixMin+i, false, false, false, true);
-				maxFitnessLogs[i] = new MMNEATLog(infixMax+i, false, false, false, true);
-				rangeFitnessLogs[i] = new MMNEATLog(infixRange+i, false, false, false, true);
+			for (int i = 0; i < numberOfObjectives; i++) {
+				minFitnessLogs[i] = new MMNEATLog(infixMin+MMNEAT.getFitnessFunctionName(i), false, false, false, true);
+				maxFitnessLogs[i] = new MMNEATLog(infixMax+MMNEAT.getFitnessFunctionName(i), false, false, false, true);
+				rangeFitnessLogs[i] = new MMNEATLog(infixRange+MMNEAT.getFitnessFunctionName(i), false, false, false, true);
 				
 				momeLogs.add(minFitnessLogs[i]);
 				momeLogs.add(maxFitnessLogs[i]);
@@ -533,10 +533,9 @@ public class MOME<T> implements SteadyStateEA<T>{
 			ps.println("     \"" + prefix + "_log.txt\" u 1:9 w linespoints t \"Mean Hypervolume\"");
 						
 			//doing multiple max/min logs per objective
-			//TODO: way to print the actual objectives name?
 			for (int i = 0; i < MMNEAT.task.numObjectives(); i++) {
-				ps.println("set title \"" + experimentPrefix + " Max/Min in objective " + i + "\"");
-				ps.println("set output \""+ prefix + "_MaxMinInEachObjective_" + i + "_log.pdf\"");
+				ps.println("set title \"" + experimentPrefix + " Max/Min in objective " + MMNEAT.getFitnessFunctionName(i) + "\"");
+				ps.println("set output \""+ prefix + "_MaxMinInEachObjective_" + MMNEAT.getFitnessFunctionName(i) + "_log.pdf\"");
 				ps.println("plot \"" + prefix + "_log.txt\" u 1:" + (i+10) + " w linespoints t \"Max Fitness\", \\");
 				ps.println("     \"" + prefix + "_log.txt\" u 1:" + (i+10+MMNEAT.task.numObjectives()) + " w linespoints t \"Min Fitness\"");
 			}
@@ -637,6 +636,16 @@ public class MOME<T> implements SteadyStateEA<T>{
 		int yrange = Parameters.parameters.integerParameter("maxGens")/individualsPerGeneration;
 		System.out.println("yrange = " + yrange + ", from maxGens = "+Parameters.parameters.integerParameter("maxGens")+"/"+individualsPerGeneration+"=individualsPerGeneration");
 
+		//more string creation
+		String prefix = experimentPrefix + "_" + infix;
+		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
+		directory += (directory.equals("") ? "" : "/");
+		
+		String fullName = directory + prefix + "_log.plt";
+		File archivePlotFile = new File(fullName);
+
+		PrintStream ps;
+		
 		
 		int numberOfObjectives = MMNEAT.task.numObjectives();
 		int numberOfBinLabels = archive.getBinMapping().binLabels().size();
@@ -666,6 +675,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 				Vector<Score<T>> scoresForBin = archive.getScoresForBin(key);
 				String scoreString = "";
 				
+				//gnu logs
 				
 				//GET A SINGLE ROW LOGGED
 				//for each score in the bin, log that scores data on one row
@@ -687,23 +697,63 @@ public class MOME<T> implements SteadyStateEA<T>{
 			}
 			
 		}
+		
+		//archive logging
+//		String prefix = experimentPrefix + "_" + infix;
+//		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
+//		directory += (directory.equals("") ? "" : "/");
+//		
+//		String fullName = directory + prefix + "_log.plt";
+//		File archivePlotFile = new File(fullName);
+//
+//		PrintStream ps;
+		
+		
+		//mome logs
 
+//		String textLogFilename = log.getLogTextFilename();
+//		String plotFilename = textLogFilename.replace(".txt", ".plt");
+//		String plotPDFFilename = plotFilename.replace(".plt", "_PDF.plt");
+//		String logTitle = textLogFilename.replace(".txt", "");
+//		String pdfFilename = textLogFilename.replace(".txt", ".pdf");
+//		
+//		File plotFile = new File(directory + plotFilename);
+//		File plotPDFFile = new File(directory + plotPDFFilename);
+//		
+//		try {
+//			// The PDF version
+//			ps = new PrintStream(plotPDFFile);
+//			ps.println("set term pdf enhanced");
+//			ps.println("unset key");
+//			// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
+//			ps.println("set yrange [0:"+ yrange +"]");
+//			ps.println("set xrange [1:"+ numberOfBinLabels + "]");
+//			ps.println("set title \"" + logTitle + "\"");
+//			ps.println("set output \"" + pdfFilename + "\"");				
+//			// The :1 is for skipping the "generation" number logged in the file
+//			ps.println("plot \"" + textLogFilename + "\" matrix every ::1 with image");
+//			ps.close();
+//
+//			// Non-PDF version
+//			ps = new PrintStream(plotFile);
+//			ps.println("unset key");
+//			// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
+//			ps.println("set yrange [0:"+ yrange +"]");
+//			ps.println("set xrange [1:"+ numberOfBinLabels + "]");
+//			ps.println("set title \"" + logTitle + "\"");
+//			// The :1 is for skipping the "generation" number logged in the file
+//			ps.println("plot \"" + textLogFilename + "\" matrix every ::1 with image");
+//			// ps.println("pause -1"); // Not needed when only one item is plotted?
+//			ps.close();
+//	
+//		} catch (FileNotFoundException e) {
+//			System.out.println("Error creating MOME log files");
+//			e.printStackTrace();
+//			System.exit(1);
+//		}
+		
 		//name of fitness functions/objectives
 		//located
-//
-//		//loop through objectives to log max and min for each objectives log
-//		for (int i = 0; i < numberOfObjectives; i++) {
-//			
-//			//MAX FITNESS SCORES LOG
-//			double[] maxColumn = ArrayUtil.column(maxScoresBinXObjective, i);
-//			Double[] maxScoresForOneObjective = ArrayUtils.toObject(maxColumn);
-//			maxFitnessLogs[i].log(pseudoGeneration + "\t" + StringUtils.join(maxScoresForOneObjective, " \t").replaceAll("-Infinity", "X"));
-//			
-//			//MIN FITNESS SCORES LOG
-//			double[] minColumn = ArrayUtil.column(minScoresBinXObjective, i);
-//			Double[] minScoresForOneObjective = ArrayUtils.toObject(minColumn);
-//			minFitnessLogs[i].log(pseudoGeneration + "\t" + StringUtils.join(minScoresForOneObjective, "\t").replaceAll("-Infinity", "X"));
-			
 
 		//for all the bins?
 		//check if empty
