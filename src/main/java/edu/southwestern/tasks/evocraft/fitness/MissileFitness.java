@@ -68,6 +68,16 @@ public class MissileFitness extends TimedEvaluationMinecraftFitnessFunction {
 		// Create structure to be blown up
 		//changing the last add to a sub might fix the slight target offset from it intended position
 		MinecraftClient.getMinecraftClient().fillCube(shapeCorner.add(targetCornerOffset), shapeCorner.add(targetCornerOffset).add(MinecraftUtilClass.getRanges().sub(1)), targetBlockType);
+		if(Parameters.parameters.booleanParameter("minecraftCompassMissleTargets")) {
+			//Target opposite the original
+			MinecraftClient.getMinecraftClient().fillCube(shapeCorner.sub(targetCornerOffset), shapeCorner.sub(targetCornerOffset).sub(MinecraftUtilClass.getRanges().sub(1)), targetBlockType);
+			//
+			MinecraftClient.getMinecraftClient().fillCube(new MinecraftCoordinates(shapeCorner.x() * (-1), 0, 0), new MinecraftCoordinates(shapeCorner.x() * (-1), 0, 0).add(MinecraftUtilClass.getRanges().sub(1)), targetBlockType);
+			//
+			
+			MinecraftClient.getMinecraftClient().fillCube(new MinecraftCoordinates(0, 0, shapeCorner.x() * (-1)), new MinecraftCoordinates(0, 0, shapeCorner.x() * (-1)).add(MinecraftUtilClass.getRanges().sub(1)), targetBlockType);
+		}
+		
 		//System.out.println("targetCornerOffset" + targetCornerOffset);
 		//System.out.println("TARGET!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 	}
