@@ -16,6 +16,7 @@ import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.SteadyStateEA;
 import edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.mapelites.Archive;
 import edu.southwestern.evolution.mapelites.BinLabels;
 import edu.southwestern.log.MMNEATLog;
 import edu.southwestern.parameters.CommonConstants;
@@ -533,6 +534,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 			ps.println("     \"" + prefix + "_log.txt\" u 1:9 w linespoints t \"Mean Hypervolume\"");
 						
 			//doing multiple max/min logs per objective
+			//TODO: way to print the actual objectives name?
 			for (int i = 0; i < MMNEAT.task.numObjectives(); i++) {
 				ps.println("set title \"" + experimentPrefix + " Max/Min in objective " + i + "\"");
 				ps.println("set output \""+ prefix + "_MaxMinInEachObjective_" + i + "_log.pdf\"");

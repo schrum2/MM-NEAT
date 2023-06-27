@@ -423,7 +423,7 @@ public class MOMEArchive<T> {
 		Vector<Score<T>> allScores = getWholeArchiveScores();
 
 		for(Score<T> member : allScores) {	//for all the scores in the whole archive
-			for (int iObjective = 0; iObjective < maxFitnessScores.length; iObjective++) {		
+			for (int iObjective = 0; iObjective < maxFitnessScores.length; iObjective++) {	
 				maxFitnessScores[iObjective] = Math.max(maxFitnessScores[iObjective], member.scores[iObjective]);	//max for i objective compared with member i objective
 			}
 		}
@@ -641,21 +641,21 @@ public class MOMEArchive<T> {
 	public int[] getBinIndexCoordinates(Score<T> candidate) {
 		return getBinMapping().multiDimensionalIndices(candidate.MAPElitesBehaviorMap());
 	}
-//
-//	/**
-//	 * Gets the bin coordinates from a given individual and returns as a vector.
-//	 * @param individualScore the given score to find the bin coordinates of
-//	 * @return the bin coordinates as a vector for the given score.
-//	 */
-//	public Vector<Integer> getBinCoordinatesFromScore(Score<T> individualScore){
-//		int[] binIndex = getBinMapping().multiDimensionalIndices(individualScore.MAPElitesBehaviorMap());	//grabs bin coordinates int array
-//		Vector<Integer> individualBinCoordinates = new Vector<Integer>();
-//		for (int i = 0; i < binIndex.length; i++) {		//turns int array into vector
-//			individualBinCoordinates.add(binIndex[i]);
-//		}
-//		return individualBinCoordinates;
-//	}
-//	
+
+	/**
+	 * Gets the bin coordinates from a given individual and returns as a vector.
+	 * @param individualScore the given score to find the bin coordinates of
+	 * @return the bin coordinates as a vector for the given score.
+	 */
+	public Vector<Integer> getBinCoordinatesFromScore(Score<T> individualScore){
+		int[] binIndex = getBinMapping().multiDimensionalIndices(individualScore.MAPElitesBehaviorMap());	//grabs bin coordinates int array
+		Vector<Integer> individualBinCoordinates = new Vector<Integer>();
+		for (int i = 0; i < binIndex.length; i++) {		//turns int array into vector
+			individualBinCoordinates.add(binIndex[i]);
+		}
+		return individualBinCoordinates;
+	}
+	
 	//main for testing
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 //		//MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" base:nsga2test log:NSG2Test-Test saveTo:Test trackPseudoArchive:true netio:true lambda:37 maxGens:200 task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.SphereFunction genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foBinDimension:500 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
