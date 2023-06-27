@@ -16,6 +16,7 @@ import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.SteadyStateEA;
 import edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.mapelites.Archive;
 import edu.southwestern.evolution.mapelites.BinLabels;
 import edu.southwestern.log.MMNEATLog;
 import edu.southwestern.parameters.CommonConstants;
@@ -250,10 +251,10 @@ public class MOME<T> implements SteadyStateEA<T>{
 		afterIndividualCreationProcesses(archive.add(s1));			//this will call anything we need to do after making a new individual
 	}
 
+	//the current generation is the number of attempts to create individuals divided by the number of individuals in a generation
 	@Override
 	public int currentIteration() {
-		// TODO Auto-generated method stub
-		return 0;
+		return individualCreationAttemptsCount/individualsPerGeneration;
 	}
 
 	@Override
@@ -281,6 +282,11 @@ public class MOME<T> implements SteadyStateEA<T>{
 	}
 
 	// This and MAP Elites probably should have a common interface that specifies the need for this method
+	/**
+	 * a method that mirrors MAP Elites
+	 * same as getWholeArchiveScores in MOMEArchive, but returns ArrayList instead of Vector
+	 * @return every score for the archive
+	 */
 	public ArrayList<Score<T>> getArchive() {
 		 ArrayList<Score<T>> result = new ArrayList<>(archive.archive.size());
 
@@ -528,6 +534,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 			ps.println("     \"" + prefix + "_log.txt\" u 1:9 w linespoints t \"Mean Hypervolume\"");
 						
 			//doing multiple max/min logs per objective
+			//TODO: way to print the actual objectives name?
 			for (int i = 0; i < MMNEAT.task.numObjectives(); i++) {
 				ps.println("set title \"" + experimentPrefix + " Max/Min in objective " + i + "\"");
 				ps.println("set output \""+ prefix + "_MaxMinInEachObjective_" + i + "_log.pdf\"");
