@@ -873,6 +873,7 @@ public class Parameters {
 		booleanOptions.add("minecraftClearAfterEvaluation", false, "If true clears and verifies the shapeCorner after evaluation");
 		booleanOptions.add("saveWholeMinecraftArchiveAtEnd", true, "If true saves shape in the final archive to finalArchiveOfShapes");
 		booleanOptions.add("momeSelectsUniformlyAcrossWholeArchive", false, "alternates the getRandomIndividual method to grab individual from whole archive instead of random bin");
+		booleanOptions.add("minecraftChangeBlockAndChangeCenterOfMassWeightedFitness", false, "uses the changeBlockAndChangeCenterOfMassWeightedFitness function");
 		
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");

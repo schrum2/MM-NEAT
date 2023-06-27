@@ -24,6 +24,7 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.blocks.BlockSet;
 import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBinLabels;
 import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBlockCountBinLabels;
+import edu.southwestern.tasks.evocraft.fitness.ChangeBlockAndChangeCenterOfMassWeightedFitness;
 import edu.southwestern.tasks.evocraft.fitness.ChangeBlocksFitness;
 import edu.southwestern.tasks.evocraft.fitness.ChangeCenterOfMassFitness;
 import edu.southwestern.tasks.evocraft.fitness.DiversityBlockFitness;
@@ -190,6 +191,9 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		}
 		if(Parameters.parameters.booleanParameter("minecraftNumAirFitness")) {
 			fitness.add(new NumAirFitness());
+		}
+		if(Parameters.parameters.booleanParameter("minecraftChangeBlockAndChangeCenterOfMassWeightedFitness")) {
+			fitness.add(new ChangeBlockAndChangeCenterOfMassWeightedFitness());
 		}
 		System.out.println(fitness);
 		
