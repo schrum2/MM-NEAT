@@ -68,7 +68,25 @@ public class MissileFitness extends TimedEvaluationMinecraftFitnessFunction {
 		// Create structure to be blown up
 		//changing the last add to a sub might fix the slight target offset from it intended position
 		MinecraftClient.getMinecraftClient().fillCube(shapeCorner.add(targetCornerOffset), shapeCorner.add(targetCornerOffset).add(MinecraftUtilClass.getRanges().sub(1)), targetBlockType);
+		
+		//
+		if(Parameters.parameters.booleanParameter("minecraftCompassMissileTargets")) {
+			//Target opposite the original
+			MinecraftClient.getMinecraftClient().fillCube(shapeCorner.sub(targetCornerOffset), shapeCorner.sub(targetCornerOffset).add(MinecraftUtilClass.getRanges().sub(1)), targetBlockType);
+			//new coordinate that changes targetCornerOffset
+			MinecraftCoordinates modifiedCoordinates = new MinecraftCoordinates(targetCornerOffset.z(), targetCornerOffset.y(), -targetCornerOffset.x()); 
+			//Target to the side of the shape
+			MinecraftClient.getMinecraftClient().fillCube(shapeCorner.add(modifiedCoordinates), shapeCorner.add(modifiedCoordinates.add(MinecraftUtilClass.getRanges().sub(1))), targetBlockType);
+			//modifies it again so it will offset it to the other side
+			modifiedCoordinates = new MinecraftCoordinates(-targetCornerOffset.z(), targetCornerOffset.y(), targetCornerOffset.x());
+			//Target to the other side of the shape
+			MinecraftClient.getMinecraftClient().fillCube(shapeCorner.add(modifiedCoordinates), shapeCorner.add(modifiedCoordinates.add(MinecraftUtilClass.getRanges().sub(1))), targetBlockType);
+		
+	
+		}
+		
 		//System.out.println("targetCornerOffset" + targetCornerOffset);
+		//System.out.println("modifiedCoordinates" + modifiedCoordinates);
 		//System.out.println("TARGET!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 	}
 
@@ -102,7 +120,7 @@ public class MissileFitness extends TimedEvaluationMinecraftFitnessFunction {
 
 		try {
 			//MMNEAT.main("runNumber:665 randomSeed:665 useWoxSerialization:false minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.DirectRepresentationShapeGenerator minecraftChangeCenterOfMassFitness:true minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet trials:1 mu:20 maxGens:3005 launchMinecraftServerFromJava:false io:true netio:true mating:true fs:false spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.tasks.evocraft.genotype.MinecraftShapeGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:minecraftaccumulate log:MinecraftAccumulate-ESObserverVectorTEST saveTo:ESObserverVectorTEST minecraftContainsWholeMAPElitesArchive:false rememberParentScores:true".split(" ")); 
-			MMNEAT.main("runNumber:108 randomSeed:100 minecraftXRange:5 minecraftYRange:5 minecraftZRange:5 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftMissileFitness:true minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.ExplosiveBlockSet trials:1 mu:10 maxGens:100000 minecraftContainsWholeMAPElitesArchive:false forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:false netio:false interactWithMapElitesInWorld:false mating:true fs:false ea:edu.southwestern.evolution.mapelites.MAPElites experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 spaceBetweenMinecraftShapes:20 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:true saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:1 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5 startY:40 extraSpaceBetweenMinecraftShapes:100 minecraftTargetDistancefromShapeY:50 minecraftTargetDistancefromShapeX:0 minecraftTargetDistancefromShapeZ:0 crossover:edu.southwestern.evolution.crossover.ArrayCrossover".split(" "));
+			MMNEAT.main("runNumber:108 randomSeed:100 minecraftXRange:5 minecraftYRange:5 minecraftZRange:5 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftMissileFitness:true minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.ExplosiveBlockSet trials:1 mu:100 maxGens:100000 minecraftContainsWholeMAPElitesArchive:false forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:false mating:true fs:false ea:edu.southwestern.evolution.mapelites.MAPElites experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 spaceBetweenMinecraftShapes:20 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:1 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:missileminecraft log:MissileMinecraft-DirectedBiggerVectorPistonOrientation saveTo:DirectedBiggerVectorPistonOrientation mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5 startY:40 extraSpaceBetweenMinecraftShapes:100 minecraftTargetDistancefromShapeY:0 minecraftTargetDistancefromShapeX:50 minecraftTargetDistancefromShapeZ:0 minecraftCompassMissileTargets:true".split(" "));
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
