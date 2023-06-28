@@ -352,6 +352,14 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void initialize(Genotype<T> example) {	
+		
+		if(MMNEAT.fitnessFunctions.get(0).size() > 1) {
+			throw new IllegalStateException("MAP Elites is not equipped to handle multiple fitness functions: "+MMNEAT.fitnessFunctions.get(0)+
+						". If you want multiple fitness functions, consider using MOME or NSGA2.");
+		} else if(MMNEAT.fitnessFunctions.get(0).size() == 0) {
+			throw new IllegalStateException("MAP Elites still needs an objective/fitness to work.");
+		}
+		
 		if (this instanceof CMAME && MMNEAT.genotype instanceof RealValuedGenotype) {
 			emitterMeanLog = new MMNEATLog("EmitterMeans", false, false, false, true);
 		}
