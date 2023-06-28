@@ -109,8 +109,7 @@ public class ArrayUtil {
 	/**
 	 * Return primitive double array of given size containing all ones
 	 *
-	 * @param size 
-	 * 			desired size of array
+	 * @param size desired size of array
 	 * @return array of doubles of size 'size', all of which are 1
 	 */
 	public static double[] doubleOnes(int size) {
@@ -268,8 +267,7 @@ public class ArrayUtil {
 	/**
 	 * Returns an array of doubles from an ArrayList of numbers
 	 * 
-	 * @param values 
-	 * 			ArrayList of numbers (any numeric type) 
+	 * @param values ArrayList of numbers (any numeric type) 
 	 * @return an array of doubles with the same length and contents as the list
 	 */
 	public static double[] doubleArrayFromList(List<? extends Number> values) {
@@ -322,10 +320,8 @@ public class ArrayUtil {
 	 * Combine two String arrays into one array starting with the elements of the
 	 * first array and ending with the elements of the second array
 	 *
-	 * @param a
-	 *            starting elements
-	 * @param b
-	 *            ending elements
+	 * @param a starting elements
+	 * @param b ending elements
 	 * @return combined array
 	 */
 	public static String[] combineArrays(String[] a, String[] b) {
@@ -921,10 +917,8 @@ public class ArrayUtil {
 	 * Determines if two arrays of longs representing sets are equal by seeing
 	 * if each is a subset of the other.
 	 * 
-	 * @param lhs
-	 *            set 1
-	 * @param rhs
-	 *            set 2
+	 * @param lhs set 1
+	 * @param rhs set 2
 	 * @return Whether the sets are equal in contents (not necessarily order)
 	 */
 	public static boolean setEquality(long[] lhs, long[] rhs) {
@@ -949,10 +943,8 @@ public class ArrayUtil {
 	 * Return an ArrayList containing all of the elements of lhs that are not
 	 * members of rhs
 	 * 
-	 * @param lhs
-	 *            ArrayList of type T
-	 * @param rhs
-	 *            Another ArrayList of type T
+	 * @param lhs ArrayList of type T
+	 * @param rhs Another ArrayList of type T
 	 * @return Set difference of two arrays
 	 */
 	public static <T> ArrayList<T> setDifference(List<T> lhs, List<T> rhs) {
@@ -969,10 +961,8 @@ public class ArrayUtil {
 	 * Return an ArrayList containing all of the elements of lhs that are not
 	 * members of rhs
 	 * 
-	 * @param lhs
-	 *            Array of primitive int
-	 * @param rhs
-	 *            Another Array of primitive int
+	 * @param lhs Array of primitive int
+	 * @param rhs Another Array of primitive int
 	 * @return Set difference of two arrays
 	 */
 	public static int[] setDifference(int[] lhs, int[] rhs) {
@@ -983,10 +973,8 @@ public class ArrayUtil {
 	 * Return an ArrayList containing all of the elements of lhs that are not
 	 * members of rhs
 	 * 
-	 * @param lhs
-	 *            Array of primitive int
-	 * @param rhs
-	 *            ArrayList of type T
+	 * @param lhs Array of primitive int
+	 * @param rhs ArrayList of type T
 	 * @return Set difference of two arrays
 	 */
 	public static int[] setDifference(int[] lhs, ArrayList<Integer> rhs) {
@@ -1110,6 +1098,25 @@ public class ArrayUtil {
 			for(double[] row: slice) {
 				System.arraycopy(row, 0, result, index, row.length);
 				index += row.length;
+			}
+		}
+		return result;
+	}
+	
+	/**
+	 * replace all occurrences of an old value with a new value
+	 * @param input the array to look through
+	 * @param oldValue the value that is going to be removed, replaced by new value
+	 * @param newValue the value that will be added, replacing the old value
+	 * @return a new array with the old value replaced by the new value
+	 */
+	public static double[] replace(double[] input, double oldValue, double newValue) {
+		double[] result = new double[input.length];
+		for (int i = 0; i < result.length; i++) {
+			if(input[i] == oldValue) {
+				result[i] = newValue;
+			}else {
+				result[i] = input[i];
 			}
 		}
 		return result;

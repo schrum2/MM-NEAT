@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.math3.stat.descriptive.summary.Sum;
+
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.mapelites.BinLabels;
@@ -28,6 +30,7 @@ import edu.southwestern.util.random.RandomNumbers;
 /**
  * Archive class for MOME. This creates an archive that works with MOME. 
  * The archive is a ConcurrentHashMap of the bin coordinates paired with the individuals in that bin.
+ * 
  * 
  * @author lewisj
  *
@@ -94,6 +97,7 @@ public class MOMEArchive<T> {
 		archive = new ConcurrentHashMap<Vector<Integer>,Vector<Score<T>>>(numberOfBinLabels);
 //		occupiedBins = 0;
 		maximumNumberOfIndividualsInSubPops = Parameters.parameters.integerParameter("maximumMOMESubPopulationSize");
+		System.out.println("max number of individuals in subpop set to: "+ maximumNumberOfIndividualsInSubPops + " parameter: "+ Parameters.parameters.integerParameter("maximumMOMESubPopulationSize"));
 	
 		// Archive directory
 		String experimentDir = FileUtilities.getSaveDirectory();
@@ -184,17 +188,23 @@ public class MOMEArchive<T> {
 						// Since the new individual is present, the Pareto front must have changed.
 						// Check that the front contains the correct max number of individuals and remove if not
 						if((front.size() > maximumNumberOfIndividualsInSubPops) && (maximumNumberOfIndividualsInSubPops > 0)) {	//check the subpop size
-							front = discardRandomIndividualFromFront(candidate, front);
+//							System.out.println("max subpop set to: "+ maximumNumberOfIndividualsInSubPops + " currently: "+ front.size());
 
-							assert (front.size() <= maximumNumberOfIndividualsInSubPops) : "the number of individuals in this subpop exceed the maximum number that is allowed";
+							front = discardRandomIndividualFromFront(candidate, front);
+//							System.out.println(" after discard: "+ front.size());
+
+							assert (front.size() <= maximumNumberOfIndividualsInSubPops) : "subpop size exceeds max size that is allowed. front:" + front.size();
 							assert (!front.contains(candidate)) : "deleted candidate instead of random individual";
+//							System.out.println("archive bin size: "+ archive.get(candidateBinCoordinates).size() + " front: "+ front.size());
 						}
 
 						//update map
 						archive.replace(candidateBinCoordinates, new Vector<>(front));
 //						System.out.println("bin size after replacement with front:" + archive.get(candidateBinCoordinates).size());
+						assert (archive.get(candidateBinCoordinates).size() <= maximumNumberOfIndividualsInSubPops) : "the number of individuals in this subpop exceed the maximum number that is allowed after replacing with front";
+						assert (archive.get(candidateBinCoordinates).size() == front.size()) : "subpop size != front size";
 
-//						conditionalEliteSave(candidate, candidateBinCoordinates);
+//						conditionalEliteSave(candidate, candidateBinCoordinates);	//this saves a condidate, but currently saves all created individuals which is too many
 						return true;	//candidate was added
 					}
 				}
@@ -206,36 +216,13 @@ public class MOMEArchive<T> {
 		}
 	}
 	
-
-//	/**
-//	 * removes a random individual from the specified bin
-//	 * @param binCoordinates the vector coordinates of the bin you are looking at
-//	 * @return true if individual was removed, false if they were not removed
-//	 */
-//	public boolean discardRandomIndividualFromBin(Vector<Integer> binCoordinates) {
-//		Score<T> candidateScore = getRandomIndividual(binCoordinates);
-//		return archive.get(binCoordinates).remove(candidateScore);
-//	}
 	
-//	/**
-//	 * removes a random individual from a bin but not the one specified
-//	 * @param binCoordinates	the coordinates of the bin you are looking at
-//	 * @param individualYouDoNotWantRemoved	the individual you do not want to remove from the bin
-//	 * @return	true if successfully removed, false if not removed
-//	 */
-//	public boolean discardRandomIndividualFromBin(Vector<Integer> binCoordinates, Score<T> individualYouDoNotWantRemoved) {
-//		Score<T> individualToDiscard;
-//		//while candidate is individual you want to keep, get another random candidate to delete
-//		do {
-//			individualToDiscard = getRandomIndividual(binCoordinates);
-//		} while(individualToDiscard.individual.getId() == individualYouDoNotWantRemoved.individual.getId());	
-//
-//		assert (individualToDiscard != individualYouDoNotWantRemoved) : "to discard and not discard are same based on score, something went wrong";
-//		
-//		return discardSpecificIndividualFromBin(individualToDiscard, binCoordinates);
-//	}
-	
-	//cleaner version using front
+	/**
+	 * This takes a front and discards a random individual that is not the one just added to the front
+	 * @param individualToKeep the individual you can not discard
+	 * @param front the front that you are modifying
+	 * @return a front with the new population (the original front minus one individual that was not the newest one added)
+	 */
 	public ArrayList<NSGA2Score<T>> discardRandomIndividualFromFront(Score<T> individualToKeep, ArrayList<NSGA2Score<T>> front) {
 		//discard individual that isn't the one that is set there
 		Score<T> individualToDiscard;
@@ -250,18 +237,12 @@ public class MOMEArchive<T> {
 			System.out.println("discard failed");
 		}
 		assert (!front.contains(individualToDiscard)) : "individual to discard still in front";
+		assert (front.size() <= maximumNumberOfIndividualsInSubPops) : "size of front exceeds max allowed in discard method after discard, front size:" + front.size();
+
 		return front;
 	}
 	
-//	/**
-//	 * This should remove the specified individual from the specified bin
-//	 * @param individualToDiscard	the individual you plan to remove from the bin
-//	 * @param binCoordinates	the coordinates of the bin you are removing the individual from
-//	 * @return true if the individual was removed, false if the individual was not removed
-//	 */
-//	public boolean discardSpecificIndividualFromBin(Score<T> individualToDiscard, Vector<Integer> binCoordinates) {
-//		return archive.get(binCoordinates).remove(individualToDiscard);		
-//	}
+
 	
 //POPULATION RELATED METHODS
 	/**
@@ -555,6 +536,18 @@ public class MOMEArchive<T> {
 		return hyperVolumeOfAllBins;
 	}
 	
+	/**
+	 * calculates the hypervolume of all bins added together
+	 * @return the total hypervolume of all bin's hypervolumes added together
+	 */
+	public double totalHyperVolumeOfAllBinsCombined() {
+		double[] hypervolumeOfEveryBin = hyperVolumeOfAllBins();
+		double totalHypervolume = 0;
+		for (int i = 0; i < hypervolumeOfEveryBin.length; i++) {
+			totalHypervolume += hypervolumeOfEveryBin[i];
+		}
+		return totalHypervolume;
+	}
 
 	/**
 	 * Creates a pareto front using all the scores in the archive and then returns the size.
@@ -687,7 +680,7 @@ public class MOMEArchive<T> {
 //			MMNEAT.main(("runNumber:1 randomSeed:99 maximumMOMESubPopulationSize:2 numVectorIndexMutations:1 polynomialMutation:false minecraftXRange:5 minecraftYRange:5 minecraftZRange:5 minecraftRewardFastFlyingMachines:false minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.IntegersToVolumeGenerator minecraftChangeCenterOfMassFitness:false minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.RedstoneQuartzBlockSet trials:1 mu:10 maxGens:1 minecraftContainsWholeMAPElitesArchive:false forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:false mating:true fs:false ea:edu.southwestern.evolution.mome.MOME experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:10 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedIntegerValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:false parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:testing log:Testing-TESTING saveTo:TESTING mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesRedstoneVSQuartzBinLabels minecraftTypeCountFitness:true minecraftDesiredBlockType:"+BlockType.REDSTONE_BLOCK.ordinal()+" crossover:edu.southwestern.evolution.crossover.ArrayCrossover").split(" ")); 
 
 //			MMNEAT.main(("runNumber:105 randomSeed:99							   									   numVectorIndexMutations:1 polynomialMutation:false minecraftXRange:5 minecraftYRange:5 minecraftZRange:5 minecraftRewardFastFlyingMachines:false minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.IntegersToVolumeGenerator minecraftChangeCenterOfMassFitness:false minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.RedstoneQuartzBlockSet trials:1 mu:10 maxGens:1 minecraftContainsWholeMAPElitesArchive:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:true mating:true fs:false ea:edu.southwestern.evolution.mapelites.MAPElites experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:10 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.BoundedIntegerValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:false parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:testing
-			MMNEAT.main(("runNumber:20 randomSeed:99 minecraftOccupiedCountFitness:true maximumMOMESubPopulationSize:10 numVectorIndexMutations:1 polynomialMutation:false minecraftXRange:5 minecraftYRange:5 minecraftZRange:5 minecraftRewardFastFlyingMachines:false minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.IntegersToVolumeGenerator minecraftChangeCenterOfMassFitness:false minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.RedstoneQuartzBlockSet trials:1 mu:10 maxGens:10 minecraftContainsWholeMAPElitesArchive:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:false mating:true fs:false ea:edu.southwestern.evolution.mome.MOME experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:5 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedIntegerValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:false parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:testing log:Testing-TESTING saveTo:TESTING mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesRedstoneVSQuartzBinLabels minecraftTypeCountFitness:true minecraftDesiredBlockType:"+BlockType.REDSTONE_BLOCK.ordinal()+" crossover:edu.southwestern.evolution.crossover.ArrayCrossover").split(" ")); 
+			MMNEAT.main(("runNumber:3 randomSeed:99 saveWholeMinecraftArchiveAtEnd:false minecraftOccupiedCountFitness:true maximumMOMESubPopulationSize:5 numVectorIndexMutations:1 polynomialMutation:false minecraftXRange:5 minecraftYRange:5 minecraftZRange:5 minecraftRewardFastFlyingMachines:false minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.IntegersToVolumeGenerator minecraftChangeCenterOfMassFitness:false minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.RedstoneQuartzBlockSet trials:1 mu:10 maxGens:15 minecraftContainsWholeMAPElitesArchive:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:false mating:true fs:false ea:edu.southwestern.evolution.mome.MOME experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedIntegerValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:false parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:testing log:Testing-TESTING saveTo:TESTING mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesRedstoneVSQuartzBinLabels minecraftTypeCountFitness:true minecraftDesiredBlockType:"+BlockType.REDSTONE_BLOCK.ordinal()+" crossover:edu.southwestern.evolution.crossover.ArrayCrossover").split(" ")); 
 
 	}
 

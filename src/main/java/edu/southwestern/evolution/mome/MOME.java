@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 import java.util.stream.Stream;
@@ -24,6 +25,7 @@ import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
+import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.util.PopulationUtil;
 import edu.southwestern.util.PythonUtil;
@@ -69,8 +71,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 	
 	// Not a MOMELog
 	private MMNEATLog archiveLog = null; // Log general archive information. Does not use matrix plot, logged every generation
-	private MMNEATLog[] paretoFrontFinalLogs = null;	//logging for final cleanup, logs the paretoFront
-	private MMNEATLog paretoFrontAggregateLog = null;	//logging for final cleanup, logs the paretoFront aggregate data
+//	private MMNEATLog[] paretoFrontFinalLogs = null;	//logging for final cleanup, logs the paretoFront
 	
 	// TODO: Convert these to MOMELogs
 	private MMNEATLog binPopulationSizeLog = null; // contains sizes of subpops in each bin, logged every generation
@@ -105,8 +106,6 @@ public class MOME<T> implements SteadyStateEA<T>{
 		this.individualCreationAttemptsCount = Parameters.parameters.integerParameter("lastSavedGeneration");
 		//TODO: the above might cause issues
 		
-		
-//////TODO: logging below //////////////////////////////////////////////////////////////////////////////
 		if(io) {
 			//logging
 			String infix = "MOMEArchive";
@@ -255,12 +254,16 @@ public class MOME<T> implements SteadyStateEA<T>{
 	}
 
 	//the current generation is the number of attempts to create individuals divided by the number of individuals in a generation
+	/**
+	 * the current generation is the number of attempts to create individuals 
+	 * divided by the number of individuals in a generation
+	 * 
+	 * This is required to end the experiment! Otherwise it never ends
+	 */
 	@Override
 	public int currentIteration() {
 		return individualCreationAttemptsCount/individualsPerGeneration;
 	}
-
-	
 
 	/**
 	 * gets an ArrayList of the populations genotypes
@@ -322,7 +325,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 	public synchronized void afterIndividualCreationProcesses(boolean individualAddStatus) {
 		//System.out.println("in afterIndividualCreation: " +archive.totalNumberOfIndividualsInArchive());
 		individualCreationAttemptsCount++;
-		log();			////////////////TODO: call logging class potentially
+		log();			////////////////
 		if(individualAddStatus) {	//the individual was added and the population changed
 			addedIndividualCount++;
 		} else {
@@ -354,7 +357,6 @@ public class MOME<T> implements SteadyStateEA<T>{
 		return addedIndividualCount;
 	}
 
-//TODO: will probably move most of this out to logging class ////////////////////////////////////////////
 	/**
 	 * Write one line of data to each of the active log files, but only periodically,
 	 * when number of iterations divisible by individualsPerGeneration. 
@@ -379,11 +381,12 @@ public class MOME<T> implements SteadyStateEA<T>{
 		if(io && (individualCreationAttemptsCount%individualsPerGeneration == 0)) {
 			final int pseudoGeneration = individualCreationAttemptsCount/individualsPerGeneration;
 
-			System.out.println("generation:"+pseudoGeneration+ " addedIndividualCount:" +addedIndividualCount + " individualCreationAttemptsCount:" + individualCreationAttemptsCount + " discarded individuals:" + discardedIndividualCount);
-			System.out.println("max bin size:" + archive.maxSubPopulationSizeInWholeArchive());
+//			System.out.println("generation:"+pseudoGeneration+ " addedIndividualCount:" +addedIndividualCount + " individualCreationAttemptsCount:" + individualCreationAttemptsCount + " discarded individuals:" + discardedIndividualCount);
+			System.out.println("generation:"+pseudoGeneration);
+			System.out.println("max bin size:" + archive.maxSubPopulationSizeInWholeArchive() + " max allowed: " + Parameters.parameters.integerParameter("maximumMOMESubPopulationSize"));
 
 			int numberOfObjectives = MMNEAT.task.numObjectives();
-			
+
 			//LOGGING POPULATION INFORMATION
 			int[] populationSizesForBins = archive.populationSizeForEveryBin();
 			String popString = Arrays.toString(populationSizesForBins).replace(", ", "\t");
@@ -394,8 +397,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 			double[] hypervolumeForBins = archive.hyperVolumeOfAllBins();
 			String hypervolumeString = Arrays.toString(hypervolumeForBins).replace(", ", "\t");
 			hypervolumeString = pseudoGeneration + "\t" + hypervolumeString.substring(1, hypervolumeString.length() - 1); // Remove opening and closing [ ] brackets
-			hypervolumeLog.log(hypervolumeString);
-			
+
 			//LOGGING OBJECTIVES MAX AND MIN
 			double[][] maxScoresBinXObjective = archive.maxScorebyBinXObjective(); //maxScores[bin][objective]
 			double[][] minScoresBinXObjective = archive.minScorebyBinXObjective(); //minScores[bin][objective]
@@ -423,11 +425,13 @@ public class MOME<T> implements SteadyStateEA<T>{
 				Double[] scoreRangesForOneObjective = ArrayUtils.toObject(ArrayUtil.zipSubtract(maxColumn, minColumn));
 				rangeFitnessLogs[i].log(pseudoGeneration + "\t" + StringUtils.join(scoreRangesForOneObjective, "\t"));
 			}
-//
-			
+
 			//below is for archive logging archive
 //			////////////ARCHIVE LOGGING / GENERAL PLOT LOGGING
-			
+			/**
+			 * when logging for the archive make sure when you add a variable here
+			 * you also add it to setUpLogging to keep consistency
+			 */
 			//PSEUDOGENERATION, NUMBER OF OCCUPIED BINS, PERCENTAGE OF BINS FILLED
 			double percentageOfBinsFilled = (archive.getNumberOfOccupiedBins()*1.0)/archive.getBinMapping().binLabels().size();
 			String printString = pseudoGeneration+"\t"+archive.getNumberOfOccupiedBins()+"\t"+ percentageOfBinsFilled +"\t";
@@ -435,13 +439,14 @@ public class MOME<T> implements SteadyStateEA<T>{
 			//TOTAL NUMBER OF INDIVIDUALS CURRENTLY IN THE ARCHIVE, NUMBER OF ADDED AND DISCARCARDED INDIVIDUALS
 			printString = printString + archive.totalNumberOfIndividualsInArchive()+"\t" + addedIndividualCount + "\t" + discardedIndividualCount + "\t";
 			
-			//HYPERVOLUME, INDIVIDUAL BIN MAX/MIN AND THE MEAN
+			//HYPERVOLUME, INDIVIDUAL BIN MAX,MIN,MEAN
 			double maxHyperVolumeBin = StatisticsUtilities.maximum(hypervolumeForBins);
-			double minHyperVolumeBin = StatisticsUtilities.minimum(hypervolumeForBins);
+			double minHyperVolumeBin = StatisticsUtilities.minimum(ArrayUtil.replace(hypervolumeForBins, 0, Double.POSITIVE_INFINITY));
 			double meanHyperVolumeOfBins = StatisticsUtilities.average(hypervolumeForBins);
-			
+			double totalHypervolume = archive.totalHyperVolumeOfAllBinsCombined();
+			System.out.println("max:"+maxHyperVolumeBin+" min:"+minHyperVolumeBin+" mean:"+meanHyperVolumeOfBins+" total:"+totalHypervolume);
 			//add the max and min hypervolume before the max and min of other things
-			printString = printString + maxHyperVolumeBin + "\t" + minHyperVolumeBin + "\t" + meanHyperVolumeOfBins + "\t";
+			printString = printString + maxHyperVolumeBin + "\t" + minHyperVolumeBin + "\t" + meanHyperVolumeOfBins + "\t" + totalHypervolume + "\t";
 			
 			//MAX/MIN FITNESS PER OBJECTIVE FOR WHOLE ARCHIVE
 			//adding max fitness scores to print
@@ -455,7 +460,6 @@ public class MOME<T> implements SteadyStateEA<T>{
 			for (int i = 0; i < minFitnessScoresArray.length; i++) {
 				printString = printString + minFitnessScoresArray[i] + "\t";
 			}
-			
 			////////////////ABOVE WORKS
 			
 //			System.out.println(printString);
@@ -494,54 +498,67 @@ public class MOME<T> implements SteadyStateEA<T>{
 
 		PrintStream ps;
 		
-		//PSEUDOGENERATION, NUMBER OF OCCUPIED BINS(2), PERCENTAGE OF BINS FILLED(3)
-//		//TOTAL NUMBER OF INDIVIDUALS CURRENTLY IN THE ARCHIVE(4), 
-//		 NUMBER OF ADDED(5) AND DISCARCARDED INDIVIDUALS(6)
-//		//HYPERVOLUME(7,8,9), INDIVIDUAL BIN MAX/MIN
+		//tracks placement based on things
+		int columnIndex = 1;	//keeps track of where the item is in the archive log
+		HashMap<String, Integer> logIndex = new HashMap<>(); //tracks the column placement of data in the archive log
+
+
+		logIndex.put("pseudoGeneration", columnIndex++); logIndex.put("occupiedBins", columnIndex++); logIndex.put("percentageBins", columnIndex++);
+		logIndex.put("totalIndividuals", columnIndex++); logIndex.put("addedIndividuals", columnIndex++); logIndex.put("discardedIndividuals", columnIndex++);
+		logIndex.put("hypervolumeMax", columnIndex++); logIndex.put("hypervolumeMin", columnIndex++); logIndex.put("hypervolumeMean", columnIndex++); logIndex.put("hypervolumeTotal", columnIndex++);
+		logIndex.put("maxFitnessByObjectiveStart", columnIndex++);
+//		System.out.println("hypervolumeMax test:"+logIndex.get("hypervolumeMax")+ " Inside logging thehypervolume, before fitness");
+//		System.out.println("Max fitness starts:"+logIndex.get("maxFitnessByObjectiveStart")+ " Inside logging the max fitness scores");
+
 		
 		try {
 			ps = new PrintStream(archivePlotFile);
 			ps.println("set term pdf enhanced");
 			ps.println("set key bottom right");
-			ps.println("set xrange [0:"+ yrange +"]");
-//			ps.println("set xrange [0:"+ (yrange + 20) +"]");
+//			ps.println("set xrange [0:"+ yrange +"]");
+			ps.println("set xrange [0:"+ (yrange + 20) +"]");
 
 			//occupied bins plot
 			ps.println("set title \"" + experimentPrefix + " Archive Number of Occupied Bins\"");
 			ps.println("set output \""+ prefix + "_OccupiedBins_log.pdf\"");
-			ps.println("plot \"" + prefix + "_log.txt\" u 1:2 w linespoints t \"Number Of Occupied Bins\"");
+			ps.println("plot \"" + prefix + "_log.txt\" u 1:" + logIndex.get("occupiedBins") + " w linespoints t \"Number Of Occupied Bins\"");
 			
 			//percentage bins plot
 			ps.println("set title \"" + experimentPrefix + " Percentage Of Bins Occupied\"");
 			ps.println("set output \""+ prefix + "_OccupiedBinsPercentage_log.pdf\"");
-			ps.println("plot \"" + prefix + "_log.txt\" u 1:3 w linespoints t \"Percentage of Occupied Bins\"");
+			ps.println("plot \"" + prefix + "_log.txt\" u 1:" + logIndex.get("percentageBins") + " w linespoints t \"Percentage of Occupied Bins\"");
 			
 			//Total Individuals in Archive
 			ps.println("set title \"" + experimentPrefix + " Total Individuals in Archive\"");
 			ps.println("set output \""+ prefix + "_TotalIndividualsInArchive_log.pdf\"");
-			ps.println("plot \"" + prefix + "_log.txt\" u 1:4 w linespoints t \"Total Individuals\"");
+			ps.println("plot \"" + prefix + "_log.txt\" u 1:" + logIndex.get("totalIndividuals") + " w linespoints t \"Total Individuals\"");
 			
 			//Added/Discarded number of individuals
 			ps.println("set title \"" + experimentPrefix + " Total Individuals Added And Discarded\"");
 			ps.println("set output \""+ prefix + "_AddedAndDiscardedIndividualsInArchive_log.pdf\"");
-			ps.println("plot \"" + prefix + "_log.txt\" u 1:5 w linespoints t \"Added Individuals\", \\");
-			ps.println("     \"" + prefix + "_log.txt\" u 1:6 w linespoints t \"Discarded Individuals\"");
+			ps.println("plot \"" + prefix + "_log.txt\" u 1:" + logIndex.get("addedIndividuals") + " w linespoints t \"Added Individuals\", \\");
+			ps.println("     \"" + prefix + "_log.txt\" u 1:" + logIndex.get("discardedIndividuals") + " w linespoints t \"Discarded Individuals\"");
 
+			System.out.println("before hypervolume, max:"+logIndex.get("hypervolumeMax"));
+
+			
 			//hypervolume data bin
-			ps.println("set title \"" + experimentPrefix + " Max/Min/Mean Hypervolume in an Individual Bin\"");
+			ps.println("set title \"" + experimentPrefix + " Max/Min/Mean/Total Hypervolume in an Individual Bin\"");
 			ps.println("set output \""+ prefix + "_HypervolumeSingleBinData_log.pdf\"");
-			ps.println("plot \"" + prefix + "_log.txt\" u 1:7 w linespoints t \"Max Hypervolume\", \\");
-			ps.println("     \"" + prefix + "_log.txt\" u 1:8 w linespoints t \"Min Hypervolume\", \\");
-			ps.println("     \"" + prefix + "_log.txt\" u 1:9 w linespoints t \"Mean Hypervolume\"");
-						
+			ps.println("plot \"" + prefix + "_log.txt\" u 1:" + logIndex.get("hypervolumeMax") + " w linespoints t \"Max Hypervolume\", \\");
+			ps.println("     \"" + prefix + "_log.txt\" u 1:" + logIndex.get("hypervolumeMin") + " w linespoints t \"Min Hypervolume\", \\");
+			ps.println("     \"" + prefix + "_log.txt\" u 1:" + logIndex.get("hypervolumeMean") + " w linespoints t \"Mean Hypervolume\", \\");
+			ps.println("     \"" + prefix + "_log.txt\" u 1:" + logIndex.get("hypervolumeTotal") + " w linespoints t \"Total Hypervolume\"");
+			
+			System.out.println("Max fitness starts:"+logIndex.get("maxFitnessByObjectiveStart"));
 			//doing multiple max/min logs per objective
 			for (int i = 0; i < MMNEAT.task.numObjectives(); i++) {
 				ps.println("set title \"" + experimentPrefix + " Max/Min in objective " + MMNEAT.getFitnessFunctionName(i) + "\"");
 				ps.println("set output \""+ prefix + "_MaxMinInEachObjective_" + MMNEAT.getFitnessFunctionName(i) + "_log.pdf\"");
-				ps.println("plot \"" + prefix + "_log.txt\" u 1:" + (i+10) + " w linespoints t \"Max Fitness\", \\");
-				ps.println("     \"" + prefix + "_log.txt\" u 1:" + (i+10+MMNEAT.task.numObjectives()) + " w linespoints t \"Min Fitness\"");
+				ps.println("plot \"" + prefix + "_log.txt\" u 1:" + (i+logIndex.get("maxFitnessByObjectiveStart")) + " w linespoints t \"Max Fitness\", \\");
+				ps.println("     \"" + prefix + "_log.txt\" u 1:" + (i+logIndex.get("maxFitnessByObjectiveStart")+MMNEAT.task.numObjectives()) + " w linespoints t \"Min Fitness\"");
 			}
-			
+			// maxFitnessByObjectiveStart minFitnessByObjectiveStart
 			ps.close();
 			
 		} catch (FileNotFoundException e1) {
@@ -623,128 +640,105 @@ public class MOME<T> implements SteadyStateEA<T>{
 	
 	@Override
 	public void finalCleanup() {
-		// TODO Auto-generated method stub
 		//save one text file for each occupied bin in the archive that contains one column per objective, 
 		//and each row represents the scores from a member of the Pareto front in that bin. 
 		//The name of each file can incorporate both "ParetoFront" and the bin label.
 		
 		//setup finalCleanup logging
-//		paretoFrontFinalLog = new MMNEATLog(infix+"_ParetoFront", false, false, false, true);
 		String infix = "MOMEArchive";
-		String fullInfix = infix+"_ParetoFront_";
-		
-		// Create gnuplot file for archive log
-		String experimentPrefix = Parameters.parameters.stringParameter("log") + Parameters.parameters.integerParameter("runNumber");					
-		int yrange = Parameters.parameters.integerParameter("maxGens")/individualsPerGeneration;
-		System.out.println("yrange = " + yrange + ", from maxGens = "+Parameters.parameters.integerParameter("maxGens")+"/"+individualsPerGeneration+"=individualsPerGeneration");
+//		String fullInfix = infix+"_ParetoFront_";
 
-		//more string creation
-		String prefix = experimentPrefix + "_" + infix;
+
 		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
-		directory += (directory.equals("") ? "" : "/");
 		
-		//make a new directory for these files
-		//// Archive directory
-		String experimentDir = FileUtilities.getSaveDirectory();
-		String endParetoFrontsDirectoryName;
-		endParetoFrontsDirectoryName = experimentDir + File.separator + "ParetoFronts";
-//		//remove		System.out.println("MOME ARCHIVE archiveDir: " + archiveDir);		//: delete later
-//		if(saveElites) {
-//			new File(archiveDir).mkdirs(); // make directory
-//		}
-//		String saveDir = FileUtilities.getSaveDirectory() + "/" + fitnessFunctions.get(i).getClass().getSimpleName();
-		File dir = new File(endParetoFrontsDirectoryName);
-		// Create dir	-is this create directory or creating a text file?
-		if (!dir.exists()) {
-			dir.mkdir();
+		//this makes the directory folder for pareto fronts
+		String saveDirectoryParetoFronts = directory + "/ParetoFronts";
+		File directoryParetoFile = new File(saveDirectoryParetoFronts);
+		if(!directoryParetoFile.exists()) {
+			directoryParetoFile.mkdir();
 		}
-		directory+=endParetoFrontsDirectoryName;
-		directory += (directory.equals("") ? "" : "/");
-		fullInfix = File.separator + "ParetoFronts" + File.separator + fullInfix;
-//		
-//		File plotFile = new File(directory + plotFilename);
-//		File plotPDFFile = new File(directory + plotPDFFilename);
-		
-		
+		System.out.println("pareto front directory name: "+saveDirectoryParetoFronts);
 
-//		public static void writeBlockListFile(List<Block> blocks, String pathAndPrefix, String fileSuffix) {
-//			String fullName = pathAndPrefix + "_" + fileSuffix;
-//			System.out.println(fullName);
-//			try {
-//				PrintStream outputFile = new PrintStream(new File(fullName));
-//				outputFile.println(blocks);
-//				outputFile.close();
-//			} catch (FileNotFoundException e) {
-//				System.out.println("Error writing file "+fullName);
-//				e.printStackTrace();
-//				System.exit(1);
-//			}
-//		
-		
 		
 		int numberOfObjectives = MMNEAT.task.numObjectives();
 //		int numberOfBinLabels = archive.getBinMapping().binLabels().size();
 		int numberOfOccupiedBins = archive.getNumberOfOccupiedBins();
 		
-		//setup for logging the files
-		paretoFrontFinalLogs = new MMNEATLog[numberOfOccupiedBins];
-		paretoFrontAggregateLog = new MMNEATLog(fullInfix+"Aggragate_", false, false, false, true);
-		
-		//need to put these in their own folder
-		
-		
-		///AGGREGATE LOGGING
-		Vector<Score<T>> archiveFinalParetoFront = archive.getCombinedParetoFrontWholeArchive();
-		//go through score for row
-		//column is objectives
-		for (Score<T> score : archiveFinalParetoFront) {
-			String scoreString = "";
-			for (int i = 0; i < numberOfObjectives; i++) {
-				scoreString = scoreString + score.scores[i] + "\t";
+		//logging aggregate file
+		File paretoFrontAggregateOutput = new File(saveDirectoryParetoFronts + "/AggregateFront.txt");
+		PrintStream ps;
+		try {
+			ps = new PrintStream(paretoFrontAggregateOutput);
+			//need to put these in their own folder
+
+
+			///AGGREGATE LOGGING
+			Vector<Score<T>> archiveFinalParetoFront = archive.getCombinedParetoFrontWholeArchive();
+			//go through score for row
+			//column is objectives
+			for (Score<T> score : archiveFinalParetoFront) {
+				String scoreString = "";
+				for (int i = 0; i < numberOfObjectives; i++) {
+					scoreString = scoreString + score.scores[i] + "\t";
+				}
+				ps.println(scoreString);
 			}
-			paretoFrontAggregateLog.log(scoreString);
+			ps.close();
+			
+			int iLogs = 0;	//anytime a log is created, increment and check that it's not out of bounds
+			
+			//LOGGING FOR BINS
+			//goes though all occupied bins I think?
+			for (Vector<Integer> key : archive.archive.keySet()) {
+				if(key.size() > 0) {			//for a bin that has individuals
+
+					//SET UP BIN LOG FILE
+					String binLabel = archive.getBinLabel(key);
+
+					File paretoFrontSingleBinFile = new File(saveDirectoryParetoFronts + "/"+ binLabel+ ".txt");
+
+					ps = new PrintStream(paretoFrontSingleBinFile);
+					
+					Vector<Score<T>> scoresForBin = archive.getScoresForBin(key);
+					
+//					
+					//GET A SINGLE ROW LOGGED
+					//for each score in the bin, log that scores data on one row
+					for (Score<T> score : scoresForBin) {
+						//log this score in the bin for each objective, or create string
+						String scoreString = "";
+						for (int i = 0; i < numberOfObjectives; i++) {
+							//this is objective i ----- adds objective column score to that scores row
+							scoreString = scoreString + score.scores[i] + "\t";
+							//string + score for objective i + tab
+						}
+						ps.println(scoreString);
+					}
+					ps.close();
+					
+				}else {
+					System.out.println("this is an empty bin, I don't think this happens though?");
+				}
+				iLogs++;
+				if(iLogs > numberOfOccupiedBins) {
+					System.out.println("i logs greater than the number of logs " + iLogs + " number of occupied bins:" + numberOfOccupiedBins);
+				}
+			}
+			
+			
+		} catch (FileNotFoundException e) {
+			System.out.println("Logging of AggregateFront.txt failed");
+			e.printStackTrace();
 		}
 		
 		//bin label
 //									String label = archiveBinLabelsClass.binLabels().get(archiveBinLabelsClass.oneDimensionalIndex(score.MAPElitesBehaviorMap()));
 		//necessary to go through all the bins since I can't just return the occupied bins
-		int iLogs = 0;	//anytime a log is created, increment and check that it's not out of bounds
+		
 
 //		final int pseudoGeneration = individualCreationAttemptsCount/individualsPerGeneration;
 		
-		//goes though all occupied bins I think?
-		for (Vector<Integer> key : archive.archive.keySet()) {
-			if(key.size() > 0) {
-				//set up log
 				
-				//SET UP BIN LOG FILE
-				String binLabel = archive.getBinLabel(key);
-				paretoFrontFinalLogs[iLogs] = new MMNEATLog(fullInfix+"Bin_"+binLabel, false, false, false, true);
-				
-				//log that bin
-				Vector<Score<T>> scoresForBin = archive.getScoresForBin(key);
-				String scoreString = "";
-				
-				//GET A SINGLE ROW LOGGED
-				//for each score in the bin, log that scores data on one row
-				for (Score<T> score : scoresForBin) {
-					//log this score in the bin for each objective, or create string
-					for (int i = 0; i < numberOfObjectives; i++) {
-						//this is objective i ----- adds objective column score to that scores row
-						scoreString = scoreString + score.scores[i] + "\t";
-						//string + score for objective i + tab
-					}
-					paretoFrontFinalLogs[iLogs].log(scoreString);	//single score row logged
-				}
-				iLogs++;
-				if(iLogs > paretoFrontFinalLogs.length) {
-					System.out.println("i logs greater than the number of logs " + iLogs + " number of logs:" + paretoFrontFinalLogs.length);
-				}
-			}else {
-				System.out.println("this is an empty bin, I don't think this happens though?");
-			}
-			
-		}		
 		task.finalCleanup();
 	}
 	
@@ -755,7 +749,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 			//had to have a server running first
 			//there is an issue with bin labels - MMNEAT.java method getArchiveBinLabelsClass & getArchive
 			//Attempted to get archive bin label class without using MAP Elites or a psuedo-archive
-			MMNEAT.main("runNumber:98 randomSeed:2 minecraftMaximizeVolumeFitness:true trackPseudoArchive:false minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftChangeCenterOfMassFitness:true minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet trials:1 mu:100 maxGens:60000 minecraftContainsWholeMAPElitesArchive:false forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:false mating:true fs:false ea:edu.southwestern.evolution.mome.MOME experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:mometest log:MOMETest-currentlyTesting saveTo:currentlyTesting mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5 crossover:edu.southwestern.evolution.crossover.ArrayCrossover".split(" "));
+			MMNEAT.main("runNumber:99 randomSeed:2 minecraftMaximizeVolumeFitness:true trackPseudoArchive:false minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftChangeCenterOfMassFitness:true minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet trials:1 mu:100 maxGens:60000 minecraftContainsWholeMAPElitesArchive:false forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:false mating:true fs:false ea:edu.southwestern.evolution.mome.MOME experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:mometest log:MOMETest-currentlyTesting saveTo:currentlyTesting mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5 crossover:edu.southwestern.evolution.crossover.ArrayCrossover".split(" "));
 
 			//MMNEAT.main("runNumber:7 randomSeed:2 minecraftMaximizeVolumeFitness:true trackPseudoArchive:false minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftChangeCenterOfMassFitness:true minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet trials:1 mu:100 maxGens:60000 minecraftContainsWholeMAPElitesArchive:false forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:false mating:true fs:false ea:edu.southwestern.evolution.mome.MOME experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:mometest log:MOMETest-MEObserverVectorPistonOrientation saveTo:MEObserverVectorPistonOrientation mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5 crossover:edu.southwestern.evolution.crossover.ArrayCrossover".split(" "));
 			//MMNEAT.main("runNumber:5 randomSeed:1 minecraftMaximizeVolumeFitness:true minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftChangeCenterOfMassFitness:true minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet trials:1 mu:5 maxGens:1 minecraftContainsWholeMAPElitesArchive:false forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:false mating:true fs:false ea:edu.southwestern.evolution.mome.MOME experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:5 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:mometest log:MOMETest-MEObserverVectorPistonOrientation saveTo:MEObserverVectorPistonOrientation mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5 crossover:edu.southwestern.evolution.crossover.ArrayCrossover".split(" "));

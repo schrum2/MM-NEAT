@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.mapelites.Archive;
 import edu.southwestern.evolution.nsga2.NSGA2;
 import edu.southwestern.evolution.nsga2.NSGA2Score;
 import edu.southwestern.scores.Score;
@@ -30,10 +32,16 @@ public class MultiobjectiveUtil {
 		int numberOfPoints = scores.size();
 		double[][] scoresArrayForHypervolume = new double[numberOfPoints][numberOfObjectives];
 		int i = 0;
+		double[] minScoreForEachObjective = MMNEAT.task.minScores();
+		
 		for (Score<T> individualScore : scores) {		//adds the scores to the double array of scores
 			scoresArrayForHypervolume[i] = individualScore.scores;
+			for (int j = 0; j < scoresArrayForHypervolume[i].length; j++) {		//this should subtract the minimum score value for each objective from its score
+				scoresArrayForHypervolume[i][j] -= minScoreForEachObjective[j];
+			}
 			i++;
 		}
+		//before passing to hypervolume, adjust scores for the minimum so that they are properly situated (-10 score should add 10 and 10 score should minus 10 so score-min
 		Hypervolume hv = new Hypervolume();	//instantiates an instance of the class for access to the calculateHypervolume method
 		return hv.calculateHypervolume(scoresArrayForHypervolume, numberOfPoints, numberOfObjectives);
 		//doubleScores[numberOfIndividualScoresInList][numberOfObjectives]
