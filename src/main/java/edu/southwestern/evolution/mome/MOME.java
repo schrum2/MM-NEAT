@@ -258,6 +258,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 		
 		// Try and add newest individual and update population change variable on result
 		afterIndividualCreationProcesses(archive.add(s1));			//this will call anything we need to do after making a new individual
+		assert archive.checkLargestSubpopNotGreaterThanMaxLimit() : "largest subpop is greater than max allowed-END OF NEW INDIVIDUAL";
 	}
 
 	//the current generation is the number of attempts to create individuals divided by the number of individuals in a generation
@@ -365,6 +366,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 			archiveFileCreated = true;
 		}
 
+		assert archive.checkLargestSubpopNotGreaterThanMaxLimit() : "largest subpop is greater than max allowed-INSIDE LOG";
 		//System.out.println("individuals per generation:"+ individualsPerGeneration + " parameter:" + Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration"));
 
 		//if an individual was added and the population count is even with the steadyStateIndividualsPerGeneration
@@ -379,7 +381,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 			int numberOfObjectives = MMNEAT.task.numObjectives();
 
 			//LOGGING POPULATION INFORMATION
-			assert archive.checkLargestSubpopNotGreaterThanMaxLimit() : "largest subpop is greater than max allowed";
+			assert archive.checkLargestSubpopNotGreaterThanMaxLimit() : "largest subpop is greater than max allowed -LOGGING POP INFO";
 			int[] populationSizesForBins = archive.populationSizeForEveryBin();
 			assert archive.checkIfNotGreaterThanMaxSubpop(populationSizesForBins) : "this array of subpop sizes contains one that is bigger than the max allowed";
 			String popString = Arrays.toString(populationSizesForBins).replace(", ", "\t");
