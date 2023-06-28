@@ -36,6 +36,13 @@ import edu.southwestern.util.stats.StatisticsUtilities;
 
 /**
  * TODO: Explain a bit more, and also cite the paper whose algorithm we are implementing using ACM style
+ * This class implements MOME instead of MAP Elites
+ * It creates an archive where bins can house multiple individuals, it keeps track of generations
+ * and does statistical data logging in files.
+ * 
+ *  My version of Multi-dimensional Archive of Phenotypic Elites (MAP-Elites), the quality diversity (QD)
+ * algorithms that illuminates a search space. This is an unusual implementation, but it gets the job done.
+ * 
  * Thomas Pierrot, Guillaume Richard, Karim Beguir, and Antoine Cully. 
  * 2022. Multi-objective quality diversity optimization. 
  * In Proceedings of the Genetic and Evolutionary Computation Conference (GECCO '22). 
@@ -300,23 +307,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 		 
 		return result;
 	}
-	
-	/**
-	 * within file update method
-	 * 	// Log to file
-		log();
-		Parameters.parameters.setInteger("lastSavedGeneration", iterations);
-		// Track total iterations
-		iterations++;
-		// Track how long we have gone without producing a new elite individual
-		if(newEliteProduced) {
-			iterationsWithoutElite = 0;
-		} else {
-			iterationsWithoutEliteCounter++;
-			iterationsWithoutElite++;
-		}
-		System.out.println(iterations + "\t" + iterationsWithoutElite + "\t");
-	 */
+
 	/**
 	 * holds commands made after an individual is created
 	 * @param individualAddStatus	if an individual was added or not

@@ -5,6 +5,15 @@ import java.util.Arrays;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 
+/**
+ * this class extends the weighted sum fitness function to use 
+ * change block fitness and change center of mass fitness
+ * in a 50/50 weighted split
+ * 
+ * the main method runs this fitness function and saves to testing\WeightedSum 
+ * @author lewisj
+ *
+ */
 public class ChangeBlockAndChangeCenterOfMassWeightedFitness extends MinecraftWeightedSumFitnessFunction{
 
 	public ChangeBlockAndChangeCenterOfMassWeightedFitness() {
