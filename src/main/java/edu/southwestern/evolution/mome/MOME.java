@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Vector;
 import java.util.stream.Stream;
 
@@ -23,6 +24,7 @@ import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
+import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.util.PopulationUtil;
 import edu.southwestern.util.PythonUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
@@ -67,7 +69,8 @@ public class MOME<T> implements SteadyStateEA<T>{
 	
 	// Not a MOMELog
 	private MMNEATLog archiveLog = null; // Log general archive information. Does not use matrix plot, logged every generation
-	private MMNEATLog fillLog = null;	//MAYBE NEED
+	private MMNEATLog[] paretoFrontFinalLogs = null;	//logging for final cleanup, logs the paretoFront
+	private MMNEATLog paretoFrontAggregateLog = null;	//logging for final cleanup, logs the paretoFront aggregate data
 	
 	// TODO: Convert these to MOMELogs
 	private MMNEATLog binPopulationSizeLog = null; // contains sizes of subpops in each bin, logged every generation
@@ -107,7 +110,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 		if(io) {
 			//logging
 			String infix = "MOMEArchive";
-			int numberOfObjectivesToLog = MMNEAT.task.numObjectives();
+			int numberOfObjectives = MMNEAT.task.numObjectives();
 			int numberOfBinLabels = archive.getBinMapping().binLabels().size();
 			// TODO: Contains MMNEATLogs for now, but later will be only those logs that are MOMELogs. Specifically, they have a column for each archive bin
 			ArrayList<MMNEATLog> momeLogs = new ArrayList<>();
@@ -122,17 +125,17 @@ public class MOME<T> implements SteadyStateEA<T>{
 			hypervolumeLog = new MMNEATLog(infix+"_Hypervolume", false, false, false, true);
 			momeLogs.add(hypervolumeLog);
 			
-			maxFitnessLogs = new MMNEATLog[numberOfObjectivesToLog];
-			minFitnessLogs = new MMNEATLog[numberOfObjectivesToLog];
-			rangeFitnessLogs = new MMNEATLog[numberOfObjectivesToLog];
+			maxFitnessLogs = new MMNEATLog[numberOfObjectives];
+			minFitnessLogs = new MMNEATLog[numberOfObjectives];
+			rangeFitnessLogs = new MMNEATLog[numberOfObjectives];
 			
 			String infixMin = infix + "_Min_Objective_";
 			String infixMax = infix + "_Max_Objective_";
 			String infixRange = infix + "_Range_";
-			for (int i = 0; i < numberOfObjectivesToLog; i++) {
-				minFitnessLogs[i] = new MMNEATLog(infixMin+i, false, false, false, true);
-				maxFitnessLogs[i] = new MMNEATLog(infixMax+i, false, false, false, true);
-				rangeFitnessLogs[i] = new MMNEATLog(infixRange+i, false, false, false, true);
+			for (int i = 0; i < numberOfObjectives; i++) {
+				minFitnessLogs[i] = new MMNEATLog(infixMin+MMNEAT.getFitnessFunctionName(i), false, false, false, true);
+				maxFitnessLogs[i] = new MMNEATLog(infixMax+MMNEAT.getFitnessFunctionName(i), false, false, false, true);
+				rangeFitnessLogs[i] = new MMNEATLog(infixRange+MMNEAT.getFitnessFunctionName(i), false, false, false, true);
 				
 				momeLogs.add(minFitnessLogs[i]);
 				momeLogs.add(maxFitnessLogs[i]);
@@ -257,11 +260,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 		return individualCreationAttemptsCount/individualsPerGeneration;
 	}
 
-	@Override
-	public void finalCleanup() {
-		// TODO Auto-generated method stub
-		task.finalCleanup();
-	}
+	
 
 	/**
 	 * gets an ArrayList of the populations genotypes
@@ -476,6 +475,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 	 * This sets up all logging files necessary for the experiment.
 	 * Creates: archive log, subpop size log, hypervolume log, max and min logs for every objective
 	 * momeLogs is an array for all logs that use the same setup.
+	 * this is all the GNU plot stuff
 	 * @param numberOfBinLabels	the number of bins being used that will need to be logged
 	 * @param infix	the intermediate string of all file names
 	 * @param experimentPrefix	the prefix string used for all logs
@@ -535,10 +535,9 @@ public class MOME<T> implements SteadyStateEA<T>{
 			ps.println("     \"" + prefix + "_log.txt\" u 1:9 w linespoints t \"Mean Hypervolume\"");
 						
 			//doing multiple max/min logs per objective
-			//TODO: way to print the actual objectives name?
 			for (int i = 0; i < MMNEAT.task.numObjectives(); i++) {
-				ps.println("set title \"" + experimentPrefix + " Max/Min in objective " + i + "\"");
-				ps.println("set output \""+ prefix + "_MaxMinInEachObjective_" + i + "_log.pdf\"");
+				ps.println("set title \"" + experimentPrefix + " Max/Min in objective " + MMNEAT.getFitnessFunctionName(i) + "\"");
+				ps.println("set output \""+ prefix + "_MaxMinInEachObjective_" + MMNEAT.getFitnessFunctionName(i) + "_log.pdf\"");
 				ps.println("plot \"" + prefix + "_log.txt\" u 1:" + (i+10) + " w linespoints t \"Max Fitness\", \\");
 				ps.println("     \"" + prefix + "_log.txt\" u 1:" + (i+10+MMNEAT.task.numObjectives()) + " w linespoints t \"Min Fitness\"");
 			}
@@ -620,6 +619,133 @@ public class MOME<T> implements SteadyStateEA<T>{
 
 		PythonUtil.setPythonProgram();
 		PythonUtil.checkPython();
+	}
+	
+	@Override
+	public void finalCleanup() {
+		// TODO Auto-generated method stub
+		//save one text file for each occupied bin in the archive that contains one column per objective, 
+		//and each row represents the scores from a member of the Pareto front in that bin. 
+		//The name of each file can incorporate both "ParetoFront" and the bin label.
+		
+		//setup finalCleanup logging
+//		paretoFrontFinalLog = new MMNEATLog(infix+"_ParetoFront", false, false, false, true);
+		String infix = "MOMEArchive";
+		String fullInfix = infix+"_ParetoFront_";
+		
+		// Create gnuplot file for archive log
+		String experimentPrefix = Parameters.parameters.stringParameter("log") + Parameters.parameters.integerParameter("runNumber");					
+		int yrange = Parameters.parameters.integerParameter("maxGens")/individualsPerGeneration;
+		System.out.println("yrange = " + yrange + ", from maxGens = "+Parameters.parameters.integerParameter("maxGens")+"/"+individualsPerGeneration+"=individualsPerGeneration");
+
+		//more string creation
+		String prefix = experimentPrefix + "_" + infix;
+		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
+		directory += (directory.equals("") ? "" : "/");
+		
+		//make a new directory for these files
+		//// Archive directory
+		String experimentDir = FileUtilities.getSaveDirectory();
+		String endParetoFrontsDirectoryName;
+		endParetoFrontsDirectoryName = experimentDir + File.separator + "ParetoFronts";
+//		//remove		System.out.println("MOME ARCHIVE archiveDir: " + archiveDir);		//: delete later
+//		if(saveElites) {
+//			new File(archiveDir).mkdirs(); // make directory
+//		}
+//		String saveDir = FileUtilities.getSaveDirectory() + "/" + fitnessFunctions.get(i).getClass().getSimpleName();
+		File dir = new File(endParetoFrontsDirectoryName);
+		// Create dir	-is this create directory or creating a text file?
+		if (!dir.exists()) {
+			dir.mkdir();
+		}
+		directory+=endParetoFrontsDirectoryName;
+		directory += (directory.equals("") ? "" : "/");
+		fullInfix = File.separator + "ParetoFronts" + File.separator + fullInfix;
+//		
+//		File plotFile = new File(directory + plotFilename);
+//		File plotPDFFile = new File(directory + plotPDFFilename);
+		
+		
+
+//		public static void writeBlockListFile(List<Block> blocks, String pathAndPrefix, String fileSuffix) {
+//			String fullName = pathAndPrefix + "_" + fileSuffix;
+//			System.out.println(fullName);
+//			try {
+//				PrintStream outputFile = new PrintStream(new File(fullName));
+//				outputFile.println(blocks);
+//				outputFile.close();
+//			} catch (FileNotFoundException e) {
+//				System.out.println("Error writing file "+fullName);
+//				e.printStackTrace();
+//				System.exit(1);
+//			}
+//		
+		
+		
+		int numberOfObjectives = MMNEAT.task.numObjectives();
+//		int numberOfBinLabels = archive.getBinMapping().binLabels().size();
+		int numberOfOccupiedBins = archive.getNumberOfOccupiedBins();
+		
+		//setup for logging the files
+		paretoFrontFinalLogs = new MMNEATLog[numberOfOccupiedBins];
+		paretoFrontAggregateLog = new MMNEATLog(fullInfix+"Aggragate_", false, false, false, true);
+		
+		//need to put these in their own folder
+		
+		
+		///AGGREGATE LOGGING
+		Vector<Score<T>> archiveFinalParetoFront = archive.getCombinedParetoFrontWholeArchive();
+		//go through score for row
+		//column is objectives
+		for (Score<T> score : archiveFinalParetoFront) {
+			String scoreString = "";
+			for (int i = 0; i < numberOfObjectives; i++) {
+				scoreString = scoreString + score.scores[i] + "\t";
+			}
+			paretoFrontAggregateLog.log(scoreString);
+		}
+		
+		//bin label
+//									String label = archiveBinLabelsClass.binLabels().get(archiveBinLabelsClass.oneDimensionalIndex(score.MAPElitesBehaviorMap()));
+		//necessary to go through all the bins since I can't just return the occupied bins
+		int iLogs = 0;	//anytime a log is created, increment and check that it's not out of bounds
+
+//		final int pseudoGeneration = individualCreationAttemptsCount/individualsPerGeneration;
+		
+		//goes though all occupied bins I think?
+		for (Vector<Integer> key : archive.archive.keySet()) {
+			if(key.size() > 0) {
+				//set up log
+				
+				//SET UP BIN LOG FILE
+				String binLabel = archive.getBinLabel(key);
+				paretoFrontFinalLogs[iLogs] = new MMNEATLog(fullInfix+"Bin_"+binLabel, false, false, false, true);
+				
+				//log that bin
+				Vector<Score<T>> scoresForBin = archive.getScoresForBin(key);
+				String scoreString = "";
+				
+				//GET A SINGLE ROW LOGGED
+				//for each score in the bin, log that scores data on one row
+				for (Score<T> score : scoresForBin) {
+					//log this score in the bin for each objective, or create string
+					for (int i = 0; i < numberOfObjectives; i++) {
+						//this is objective i ----- adds objective column score to that scores row
+						scoreString = scoreString + score.scores[i] + "\t";
+						//string + score for objective i + tab
+					}
+					paretoFrontFinalLogs[iLogs].log(scoreString);	//single score row logged
+				}
+				iLogs++;
+				if(iLogs > paretoFrontFinalLogs.length) {
+					System.out.println("i logs greater than the number of logs " + iLogs + " number of logs:" + paretoFrontFinalLogs.length);
+				}
+			}else {
+				System.out.println("this is an empty bin, I don't think this happens though?");
+			}
+			
+		}		
+		task.finalCleanup();
 	}
 	
 

@@ -279,8 +279,23 @@ public class MMNEAT {
 		Parameters.initializeParameterCollections(parameterFile);
 	}
 
+	/**
+	 * Add the name of a fitness function to the list used by the main (possibly only) population.
+	 * @param name Name of fitness function
+	 */
 	public static void registerFitnessFunction(String name) {
 		registerFitnessFunction(name, 0);
+	}
+	
+	/**
+	 * When only one population is being used (no co-evolution), get the
+	 * name of the fitness function at the designated index.
+	 * 
+	 * @param index of fitness function
+	 * @return name of fitness function
+	 */
+	public static String getFitnessFunctionName(int index) {
+		return fitnessFunctions.get(0).get(index);
 	}
 
 	/**

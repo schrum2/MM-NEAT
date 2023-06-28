@@ -189,8 +189,7 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 	 * NSGA2Score array
 	 * 
 	 * @param <T> phenotype
-	 * @param scores
-	 *            scores to convert
+	 * @param scores scores to convert
 	 * @return array of NSGA2Scores
 	 */
 	public static <T> NSGA2Score<T>[] staticNSGA2Scores(List<Score<T>> scores) {
@@ -205,10 +204,8 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 	/**
 	 * non-static version of selection method
 	 * 
-	 * @param numParents
-	 *            number of parents to select from
-	 * @param scores
-	 *            scores of parents
+	 * @param numParents number of parents to select from
+	 * @param scores scores of parents
 	 * @return list of selected genotypes
 	 */
 	@Override
@@ -220,10 +217,8 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 	 * static version of NSGA2 selection method
 	 * 
 	 * @param <T> phenotype
-	 * @param numParents
-	 *            number of parents to select from
-	 * @param scoresArray
-	 *            array of scores from parents
+	 * @param numParents number of parents to select from
+	 * @param scoresArray array of scores from parents
 	 * @return array list of selected genotypes
 	 */
 	public static <T> ArrayList<Genotype<T>> staticSelection(int numParents, NSGA2Score<T>[] scoresArray) {
