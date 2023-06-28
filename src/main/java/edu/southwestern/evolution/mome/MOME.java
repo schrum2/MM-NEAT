@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 import java.util.stream.Stream;
@@ -70,7 +71,8 @@ public class MOME<T> implements SteadyStateEA<T>{
 	
 	// Not a MOMELog
 	private MMNEATLog archiveLog = null; // Log general archive information. Does not use matrix plot, logged every generation
-	private MMNEATLog[] paretoFrontFinalLogs = null;	//logging for final cleanup, logs the paretoFront
+//	private MMNEATLog[] paretoFrontFinalLogs = null;	//logging for final cleanup, logs the paretoFront
+	private static HashMap<String, Integer> archiveLogIndexing = new HashMap<>(); //tracks the column placement of data in the archive log
 	
 	// TODO: Convert these to MOMELogs
 	private MMNEATLog binPopulationSizeLog = null; // contains sizes of subpops in each bin, logged every generation
@@ -389,7 +391,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 			System.out.println("max bin size:" + archive.maxSubPopulationSizeInWholeArchive() + " max allowed: " + Parameters.parameters.integerParameter("maximumMOMESubPopulationSize"));
 
 			int numberOfObjectives = MMNEAT.task.numObjectives();
-			
+
 			//LOGGING POPULATION INFORMATION
 			int[] populationSizesForBins = archive.populationSizeForEveryBin();
 			String popString = Arrays.toString(populationSizesForBins).replace(", ", "\t");
@@ -400,8 +402,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 			double[] hypervolumeForBins = archive.hyperVolumeOfAllBins();
 			String hypervolumeString = Arrays.toString(hypervolumeForBins).replace(", ", "\t");
 			hypervolumeString = pseudoGeneration + "\t" + hypervolumeString.substring(1, hypervolumeString.length() - 1); // Remove opening and closing [ ] brackets
-			hypervolumeLog.log(hypervolumeString);
-			
+
 			//LOGGING OBJECTIVES MAX AND MIN
 			double[][] maxScoresBinXObjective = archive.maxScorebyBinXObjective(); //maxScores[bin][objective]
 			double[][] minScoresBinXObjective = archive.minScorebyBinXObjective(); //minScores[bin][objective]
@@ -429,37 +430,44 @@ public class MOME<T> implements SteadyStateEA<T>{
 				Double[] scoreRangesForOneObjective = ArrayUtils.toObject(ArrayUtil.zipSubtract(maxColumn, minColumn));
 				rangeFitnessLogs[i].log(pseudoGeneration + "\t" + StringUtils.join(scoreRangesForOneObjective, "\t"));
 			}
-//
-			
+
 			//below is for archive logging archive
 //			////////////ARCHIVE LOGGING / GENERAL PLOT LOGGING
-			
+			int columnIndex = 1;	//keeps track of where the item is in the archive log
 			//PSEUDOGENERATION, NUMBER OF OCCUPIED BINS, PERCENTAGE OF BINS FILLED
+			archiveLogIndexing.put("pseudoGeneration", columnIndex++); archiveLogIndexing.put("occupiedBins", columnIndex++); archiveLogIndexing.put("percentageBins", columnIndex++);
 			double percentageOfBinsFilled = (archive.getNumberOfOccupiedBins()*1.0)/archive.getBinMapping().binLabels().size();
 			String printString = pseudoGeneration+"\t"+archive.getNumberOfOccupiedBins()+"\t"+ percentageOfBinsFilled +"\t";
 			
 			//TOTAL NUMBER OF INDIVIDUALS CURRENTLY IN THE ARCHIVE, NUMBER OF ADDED AND DISCARCARDED INDIVIDUALS
+			archiveLogIndexing.put("totalIndividuals", columnIndex++); archiveLogIndexing.put("addedIndividuals", columnIndex++); archiveLogIndexing.put("discardedIndividuals", columnIndex++);
 			printString = printString + archive.totalNumberOfIndividualsInArchive()+"\t" + addedIndividualCount + "\t" + discardedIndividualCount + "\t";
 			
-			//HYPERVOLUME, INDIVIDUAL BIN MAX/MIN AND THE MEAN
+			//HYPERVOLUME, INDIVIDUAL BIN MAX,MIN,MEAN
 			double maxHyperVolumeBin = StatisticsUtilities.maximum(hypervolumeForBins);
 			double minHyperVolumeBin = StatisticsUtilities.minimum(hypervolumeForBins);
 			double meanHyperVolumeOfBins = StatisticsUtilities.average(hypervolumeForBins);
+			double totalHypervolume = archive.totalHyperVolumeOfAllBinsCombined();
 			
 			//add the max and min hypervolume before the max and min of other things
-			printString = printString + maxHyperVolumeBin + "\t" + minHyperVolumeBin + "\t" + meanHyperVolumeOfBins + "\t";
+			printString = printString + maxHyperVolumeBin + "\t" + minHyperVolumeBin + "\t" + meanHyperVolumeOfBins + "\t" + totalHypervolume + "\t";
+			archiveLogIndexing.put("hypervolumeMax", columnIndex++); archiveLogIndexing.put("hypervolumeMin", columnIndex++); archiveLogIndexing.put("hypervolumeMean", columnIndex++); archiveLogIndexing.put("hypervolumeTotal", columnIndex++);
 			
 			//MAX/MIN FITNESS PER OBJECTIVE FOR WHOLE ARCHIVE
 			//adding max fitness scores to print
 			//since all bins are put together it simply gets the max fitness score from the array
+			archiveLogIndexing.put("maxFitnessByObjectiveStart", columnIndex++);
 			double[] maxFitnessScoresArray = archive.maxFitnessInWholeArchiveXObjective();
 			for (int i = 0; i < maxFitnessScoresArray.length; i++) {
 				printString = printString + maxFitnessScoresArray[i] + "\t";
+				columnIndex++;
 			}
 			//adding min fitness scores to print
+			archiveLogIndexing.put("minFitnessByObjectiveStart", columnIndex++);
 			double[] minFitnessScoresArray = archive.minFitnessInWholeArchiveXObjective();
 			for (int i = 0; i < minFitnessScoresArray.length; i++) {
 				printString = printString + minFitnessScoresArray[i] + "\t";
+				columnIndex++;
 			}
 			
 			////////////////ABOVE WORKS
@@ -500,11 +508,6 @@ public class MOME<T> implements SteadyStateEA<T>{
 
 		PrintStream ps;
 		
-		//PSEUDOGENERATION, NUMBER OF OCCUPIED BINS(2), PERCENTAGE OF BINS FILLED(3)
-//		//TOTAL NUMBER OF INDIVIDUALS CURRENTLY IN THE ARCHIVE(4), 
-//		 NUMBER OF ADDED(5) AND DISCARCARDED INDIVIDUALS(6)
-//		//HYPERVOLUME(7,8,9), INDIVIDUAL BIN MAX/MIN
-		
 		try {
 			ps = new PrintStream(archivePlotFile);
 			ps.println("set term pdf enhanced");
@@ -515,37 +518,38 @@ public class MOME<T> implements SteadyStateEA<T>{
 			//occupied bins plot
 			ps.println("set title \"" + experimentPrefix + " Archive Number of Occupied Bins\"");
 			ps.println("set output \""+ prefix + "_OccupiedBins_log.pdf\"");
-			ps.println("plot \"" + prefix + "_log.txt\" u 1:2 w linespoints t \"Number Of Occupied Bins\"");
+			ps.println("plot \"" + prefix + "_log.txt\" u 1:" + archiveLogIndexing.get("occupiedBins") + " w linespoints t \"Number Of Occupied Bins\"");
 			
 			//percentage bins plot
 			ps.println("set title \"" + experimentPrefix + " Percentage Of Bins Occupied\"");
 			ps.println("set output \""+ prefix + "_OccupiedBinsPercentage_log.pdf\"");
-			ps.println("plot \"" + prefix + "_log.txt\" u 1:3 w linespoints t \"Percentage of Occupied Bins\"");
+			ps.println("plot \"" + prefix + "_log.txt\" u 1:" + archiveLogIndexing.get("percentageBins") + " w linespoints t \"Percentage of Occupied Bins\"");
 			
 			//Total Individuals in Archive
 			ps.println("set title \"" + experimentPrefix + " Total Individuals in Archive\"");
 			ps.println("set output \""+ prefix + "_TotalIndividualsInArchive_log.pdf\"");
-			ps.println("plot \"" + prefix + "_log.txt\" u 1:4 w linespoints t \"Total Individuals\"");
+			ps.println("plot \"" + prefix + "_log.txt\" u 1:" + archiveLogIndexing.get("totalIndividuals") + " w linespoints t \"Total Individuals\"");
 			
 			//Added/Discarded number of individuals
 			ps.println("set title \"" + experimentPrefix + " Total Individuals Added And Discarded\"");
 			ps.println("set output \""+ prefix + "_AddedAndDiscardedIndividualsInArchive_log.pdf\"");
-			ps.println("plot \"" + prefix + "_log.txt\" u 1:5 w linespoints t \"Added Individuals\", \\");
-			ps.println("     \"" + prefix + "_log.txt\" u 1:6 w linespoints t \"Discarded Individuals\"");
+			ps.println("plot \"" + prefix + "_log.txt\" u 1:" + archiveLogIndexing.get("addedIndividuals") + " w linespoints t \"Added Individuals\", \\");
+			ps.println("     \"" + prefix + "_log.txt\" u 1:" + archiveLogIndexing.get("discardedIndividuals") + " w linespoints t \"Discarded Individuals\"");
 
 			//hypervolume data bin
-			ps.println("set title \"" + experimentPrefix + " Max/Min/Mean Hypervolume in an Individual Bin\"");
+			ps.println("set title \"" + experimentPrefix + " Max/Min/Mean/Total Hypervolume in an Individual Bin\"");
 			ps.println("set output \""+ prefix + "_HypervolumeSingleBinData_log.pdf\"");
-			ps.println("plot \"" + prefix + "_log.txt\" u 1:7 w linespoints t \"Max Hypervolume\", \\");
-			ps.println("     \"" + prefix + "_log.txt\" u 1:8 w linespoints t \"Min Hypervolume\", \\");
-			ps.println("     \"" + prefix + "_log.txt\" u 1:9 w linespoints t \"Mean Hypervolume\"");
-						
+			ps.println("plot \"" + prefix + "_log.txt\" u 1:" + archiveLogIndexing.get("hypervolumeMax") + " w linespoints t \"Max Hypervolume\", \\");
+			ps.println("     \"" + prefix + "_log.txt\" u 1:" + archiveLogIndexing.get("hypervolumeMin") + " w linespoints t \"Min Hypervolume\", \\");
+			ps.println("     \"" + prefix + "_log.txt\" u 1:" + archiveLogIndexing.get("hypervolumeMean") + " w linespoints t \"Mean Hypervolume\"");
+			ps.println("     \"" + prefix + "_log.txt\" u 1:" + archiveLogIndexing.get("hypervolumeTotal") + " w linespoints t \"Total Hypervolume\"");
+			
 			//doing multiple max/min logs per objective
 			for (int i = 0; i < MMNEAT.task.numObjectives(); i++) {
 				ps.println("set title \"" + experimentPrefix + " Max/Min in objective " + MMNEAT.getFitnessFunctionName(i) + "\"");
 				ps.println("set output \""+ prefix + "_MaxMinInEachObjective_" + MMNEAT.getFitnessFunctionName(i) + "_log.pdf\"");
-				ps.println("plot \"" + prefix + "_log.txt\" u 1:" + (i+10) + " w linespoints t \"Max Fitness\", \\");
-				ps.println("     \"" + prefix + "_log.txt\" u 1:" + (i+10+MMNEAT.task.numObjectives()) + " w linespoints t \"Min Fitness\"");
+				ps.println("plot \"" + prefix + "_log.txt\" u 1:" + (i+archiveLogIndexing.get("maxFitnessByObjectiveStart")) + " w linespoints t \"Max Fitness\", \\");
+				ps.println("     \"" + prefix + "_log.txt\" u 1:" + (i+archiveLogIndexing.get("minFitnessByObjectiveStart")) + " w linespoints t \"Min Fitness\"");
 			}
 			
 			ps.close();
@@ -710,7 +714,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 				}
 				iLogs++;
 				if(iLogs > numberOfOccupiedBins) {
-					System.out.println("i logs greater than the number of logs " + iLogs + " number of logs:" + paretoFrontFinalLogs.length);
+					System.out.println("i logs greater than the number of logs " + iLogs + " number of occupied bins:" + numberOfOccupiedBins);
 				}
 			}
 			
