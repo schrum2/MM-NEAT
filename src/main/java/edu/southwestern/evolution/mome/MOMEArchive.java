@@ -636,6 +636,7 @@ public class MOMEArchive<T> {
 
 	/**
 	 * calculates the hypervolume of all bins added together
+	 * Sum of all bins hypervolume
 	 * @return the total hypervolume of all bin's hypervolumes added together
 	 */
 	public double totalHypervolumeMOQDScore() {
@@ -649,10 +650,11 @@ public class MOMEArchive<T> {
 	
 	/**
 	 * this calculates the hypervolume of the whole archive combined pareto front
+	 * gets the combined pareto front of the whole archive and returns that pareto front's hypervolume
+	 * in gnuplot it should be global hypervolume
 	 * @return hypervolume of the pareto front from all archive points
 	 */
 	public double combinedParetoFrontWholeArchiveHypervolume() {
-		//in gnuplot it should be global hypervolume
 		Vector<Score<T>> wholeArchiveCombinedParetoFront = getCombinedParetoFrontWholeArchive();
 		return MultiobjectiveUtil.hypervolumeFromParetoFront(wholeArchiveCombinedParetoFront);
 	}
