@@ -19,6 +19,7 @@ import edu.southwestern.evolution.nsga2.NSGA2Score;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
+import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.MultiobjectiveUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
@@ -167,14 +168,22 @@ public class MOMEArchive<T> {
 			for (int i = 0; i < binIndex.length; i++) {		//turns int array into vector
 				candidateBinCoordinates.add(binIndex[i]);
 			}
+			synchronized(this) {
 			// If the bin has never been filled before, then initialize as empty vector
 			if(!archive.containsKey(candidateBinCoordinates)) {
+//				synchronized(this) {
 				System.out.println("New bin uncovered: "+candidateBinCoordinates);
 				archive.put(candidateBinCoordinates, new Vector<Score<T>>());
+//				}
 			}
+			//TODO: this is causing synchronization issues
 			//add the candidate (Score) to the vector of scores for that bin
+			
 			Vector<Score<T>> subpopInBin = archive.get(candidateBinCoordinates);
-			synchronized(subpopInBin) {
+//			synchronized(subpopInBin) {
+//			synchronized(this) {
+//				System.out.println("subpopInBin synchronization, add");
+
 				// We don't want any other thread accessing our modified subpop before we are done with it
 				Vector<Score<T>> subpopCopy = new Vector<>(subpopInBin);
 				subpopCopy.add(candidate);	
@@ -193,7 +202,7 @@ public class MOMEArchive<T> {
 							//							System.out.println("max subpop set to: "+ maximumNumberOfIndividualsInSubPops + " currently: "+ front.size());
 							int sizeBefore = front.size();
 							front = discardRandomIndividualFromFront(candidate, front);
-							//							System.out.println(" after discard: "+ front.size());
+//					System.out.println(" after discard: "+ front.size());
 							assert front.size() == sizeBefore - 1 : "Should have removed one individual: "+front;
 
 							assert (front.size() <= maximumNumberOfIndividualsInSubPops) : "subpop size exceeds max size that is allowed. front:" + front.size();
@@ -203,21 +212,27 @@ public class MOMEArchive<T> {
 						assert maximumNumberOfIndividualsInSubPops >= front.size() : "after if statement in add, front larger than max, front:" + front.size();
 						//update map
 						Vector<Score<T>> newBinContents = new Vector<>(front);
-						synchronized(this) { // Lock the whole archive when replacing something
-							archive.replace(candidateBinCoordinates, newBinContents);
-							System.out.println("bin size after replacement with front:" + archive.get(candidateBinCoordinates).size());
-							assert (archive.get(candidateBinCoordinates).size() <= maximumNumberOfIndividualsInSubPops) : "the number of individuals in this subpop exceed the maximum number that is allowed after replacing with front";
-							assert (archive.get(candidateBinCoordinates).size() == front.size()) : archive.get(candidateBinCoordinates).size()+" = subpop size != front size = "+front.size() + ",\nfront="+front+"\nbin="+archive.get(candidateBinCoordinates);
+						//						System.out.println(" after discard, before synchronization");
 
-							// I think the code from this assert was freezing the execution somehow
-							//assert checkLargestSubpopNotGreaterThanMaxLimit() : "after adding and going through other asserts the largest subpop is greater than the limit"
-							// + " largest subpop:" + maxSubPopulationSizeInWholeArchive() + " size of current subpop:" + archive.get(candidateBinCoordinates).size();
-							//conditionalEliteSave(candidate, candidateBinCoordinates);	//this saves a condidate, but currently saves all created individuals which is too many
-						}
+//						synchronized(this) { // Lock the whole archive when replacing something
+						System.out.println(" after discard, after synchronization");
+
+						archive.replace(candidateBinCoordinates, newBinContents);
+						//							System.out.println("bin size after replacement with front:" + archive.get(candidateBinCoordinates).size());
+						assert (archive.get(candidateBinCoordinates).size() <= maximumNumberOfIndividualsInSubPops) : "the number of individuals in this subpop exceed the maximum number that is allowed after replacing with front";
+						assert (archive.get(candidateBinCoordinates).size() == front.size()) : archive.get(candidateBinCoordinates).size()+" = subpop size != front size = "+front.size() + ",\nfront="+front+"\nbin="+archive.get(candidateBinCoordinates);
+						System.out.println("end of synchronize this");
+
+						// I think the code from this assert was freezing the execution somehow
+						//assert checkLargestSubpopNotGreaterThanMaxLimit() : "after adding and going through other asserts the largest subpop is greater than the limit"
+						// + " largest subpop:" + maxSubPopulationSizeInWholeArchive() + " size of current subpop:" + archive.get(candidateBinCoordinates).size();
+						//conditionalEliteSave(candidate, candidateBinCoordinates);	//this saves a condidate, but currently saves all created individuals which is too many
+//						}
 						return true;	//candidate was added
 					}
 				}
 				return false;	//candidate wasn't added
+				//end synchronization
 			}
 		} else {
 			// In some domains, a flawed genotype can emerge which cannot produce a behavior vector. Obviously cannot be added to archive.
@@ -238,7 +253,7 @@ public class MOMEArchive<T> {
 		Score<T> individualToDiscard;
 		do {
 			individualToDiscard = RandomNumbers.randomElement(front);
-			System.out.println("Random discard attempt: " + (++attempts));
+//			System.out.println("Random discard attempt: " + (++attempts));
 		} while (individualToKeep.individual.getId() == individualToDiscard.individual.getId());
 
 		assert (individualToDiscard != individualToKeep) : "to discard and to keep individual scores are the same";
@@ -345,7 +360,11 @@ public class MOMEArchive<T> {
 	 */
 	public int totalNumberOfIndividualsInArchive() {
 		//System.out.println("total number of individuals in archive:" + archive.values().size());
-		return archive.values().size();
+		int total = 0;
+		for(Vector<Score<T>> bin : archive.values()) {
+			total += bin.size();
+		}
+		return total;
 	}
 
 	/**
@@ -529,7 +548,7 @@ public class MOMEArchive<T> {
 	 * @return maxScores[bin][objective] for the whole archive
 	 */
 	public double[][] maxScorebyBinXObjective() {		
-		//System.out.println("in max score");
+//		System.out.println("in max score");
 
 		//initialize the result variable
 		double[][] maxScoresByBinXObjective = new double[mapping.binLabels().size()][];
@@ -542,6 +561,8 @@ public class MOMEArchive<T> {
 			int oneDBinIndex = mapping.oneDimensionalIndex(ArrayUtil.intArrayFromArrayList(key));
 			maxScoresByBinXObjective[oneDBinIndex] = maxFitnessInSingleBinXObjectives(key);
 		}
+//		System.out.println("RETURN STATEMENT max score");
+
 		return maxScoresByBinXObjective;
 	}
 
@@ -554,7 +575,7 @@ public class MOMEArchive<T> {
 	 * @return the min fitness score for each objective across the whole archive
 	 */
 	public double[] minFitnessInWholeArchiveXObjective() {
-		double[] minFitnessScores = ArrayUtil.doubleSpecified(MMNEAT.task.numObjectives(), Double.NEGATIVE_INFINITY);
+		double[] minFitnessScores = ArrayUtil.doubleSpecified(MMNEAT.task.numObjectives(), Double.POSITIVE_INFINITY);
 
 		Vector<Score<T>> allScores = getWholeArchiveScores();	//all the scores in the archive in one vector
 
@@ -591,17 +612,21 @@ public class MOMEArchive<T> {
 	 * @return minScores[bin][objective] for the whole archive
 	 */
 	public double[][] minScorebyBinXObjective() {
+//		System.out.println("in min score");
+
 		//initialize the result variable
 		double[][] minScoresByBinXObjective = new double[mapping.binLabels().size()][];
 		for(int i = 0; i < minScoresByBinXObjective.length; i++) {
 			// The unoccupied bins also need this initialization
-			minScoresByBinXObjective[i] = ArrayUtil.doubleSpecified(MMNEAT.task.numObjectives(), Double.NEGATIVE_INFINITY);
+			minScoresByBinXObjective[i] = ArrayUtil.doubleSpecified(MMNEAT.task.numObjectives(), Double.POSITIVE_INFINITY);
 		}
 		//go through bins to grab an array of min scores for each objective for that bin
 		for(Vector<Integer> key : archive.keySet()) {
 			int oneDBinIndex = mapping.oneDimensionalIndex(ArrayUtil.intArrayFromArrayList(key));
 			minScoresByBinXObjective[oneDBinIndex] = minFitnessInSingleBinXObjectives(key);
 		}
+//		System.out.println("RETURN STATEMENT in min score");
+
 		return minScoresByBinXObjective;
 	}
 
@@ -617,6 +642,7 @@ public class MOMEArchive<T> {
 	 */
 	public double hypervolumeOfSingleBin(Vector<Integer> keyBinCoordinates) {
 		List<Score<T>> listOfScores = archive.get(keyBinCoordinates);
+		assert listOfScores.size() > 0 : "Size 0 : "+listOfScores+"\n"+archiveDebug();
 		return MultiobjectiveUtil.hypervolumeFromParetoFront(listOfScores);
 	}
 
@@ -798,12 +824,12 @@ public class MOMEArchive<T> {
 		//			MMNEAT.main(("runNumber:1 randomSeed:99 maximumMOMESubPopulationSize:2 numVectorIndexMutations:1 polynomialMutation:false minecraftXRange:5 minecraftYRange:5 minecraftZRange:5 minecraftRewardFastFlyingMachines:false minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.IntegersToVolumeGenerator minecraftChangeCenterOfMassFitness:false minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.RedstoneQuartzBlockSet trials:1 mu:10 maxGens:1 minecraftContainsWholeMAPElitesArchive:false forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:false mating:true fs:false ea:edu.southwestern.evolution.mome.MOME experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:10 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedIntegerValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:false parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:testing log:Testing-TESTING saveTo:TESTING mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesRedstoneVSQuartzBinLabels minecraftTypeCountFitness:true minecraftDesiredBlockType:"+BlockType.REDSTONE_BLOCK.ordinal()+" crossover:edu.southwestern.evolution.crossover.ArrayCrossover").split(" ")); 
 
 		//			MMNEAT.main(("runNumber:105 randomSeed:99							   									   numVectorIndexMutations:1 polynomialMutation:false minecraftXRange:5 minecraftYRange:5 minecraftZRange:5 minecraftRewardFastFlyingMachines:false minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.IntegersToVolumeGenerator minecraftChangeCenterOfMassFitness:false minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.RedstoneQuartzBlockSet trials:1 mu:10 maxGens:1 minecraftContainsWholeMAPElitesArchive:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:true mating:true fs:false ea:edu.southwestern.evolution.mapelites.MAPElites experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:10 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.BoundedIntegerValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:false parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:testing
-		//			MMNEAT.main(("runNumber:3 randomSeed:99 saveWholeMinecraftArchiveAtEnd:false minecraftOccupiedCountFitness:true maximumMOMESubPopulationSize:5 numVectorIndexMutations:1 polynomialMutation:false minecraftXRange:5 minecraftYRange:5 minecraftZRange:5 minecraftRewardFastFlyingMachines:false minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.IntegersToVolumeGenerator minecraftChangeCenterOfMassFitness:false minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.RedstoneQuartzBlockSet trials:1 mu:10 maxGens:15 minecraftContainsWholeMAPElitesArchive:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:false mating:true fs:false ea:edu.southwestern.evolution.mome.MOME experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedIntegerValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:false parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:testing log:Testing-TESTING saveTo:TESTING mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesRedstoneVSQuartzBinLabels minecraftTypeCountFitness:true minecraftDesiredBlockType:"+BlockType.REDSTONE_BLOCK.ordinal()+" crossover:edu.southwestern.evolution.crossover.ArrayCrossover").split(" ")); 
+					MMNEAT.main(("runNumber:4 randomSeed:99 saveWholeMinecraftArchiveAtEnd:false minecraftOccupiedCountFitness:true maximumMOMESubPopulationSize:5 numVectorIndexMutations:1 polynomialMutation:false minecraftXRange:5 minecraftYRange:5 minecraftZRange:5 minecraftRewardFastFlyingMachines:false minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.IntegersToVolumeGenerator minecraftChangeCenterOfMassFitness:false minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.RedstoneQuartzBlockSet trials:1 mu:10 maxGens:15 minecraftContainsWholeMAPElitesArchive:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:false mating:true fs:false ea:edu.southwestern.evolution.mome.MOME experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedIntegerValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:false parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:testing log:Testing-TESTING saveTo:TESTING mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesRedstoneVSQuartzBinLabels minecraftTypeCountFitness:true minecraftDesiredBlockType:"+BlockType.REDSTONE_BLOCK.ordinal()+" crossover:edu.southwestern.evolution.crossover.ArrayCrossover").split(" ")); 
 
 		//MMNEAT.main(("runNumber:6 randomSeed:99 minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.DirectRepresentationShapeGenerator minecraftChangeCenterOfMassFitness:true minecraftMaximizeVolumeFitness:false minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.ExplosiveBlockSet trials:1 mu:100 maxGens:60000 launchMinecraftServerFromJava:false io:true netio:true mating:true fs:false spaceBetweenMinecraftShapes:15 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.tasks.evocraft.genotype.MinecraftShapeGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:minecraftmoo log:MinecraftMOO-MOMEFlyVsMissileDirectSmallPOCapped saveTo:MOMEFlyVsMissileDirectSmallPOCapped extraSpaceBetweenMinecraftShapes:100 minecraftTargetDistancefromShapeY:0 minecraftTargetDistancefromShapeX:50 minecraftTargetDistancefromShapeZ:0 minecraftMissileFitness:true rememberParentScores:true minecraftContainsWholeMAPElitesArchive:false experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 rememberParentScores:true minecraftContainsWholeMAPElitesArchive:false interactWithMapElitesInWorld:false ea:edu.southwestern.evolution.mome.MOME mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5 minecraftClearWithGlass:false maximumMOMESubPopulationSize:10").split(" ")); 
 
 
-		MMNEAT.main("runNumber:85 randomSeed:1 minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.DirectRepresentationShapeGenerator minecraftChangeCenterOfMassFitness:true minecraftMaximizeVolumeFitness:false minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.ExplosiveBlockSet trials:1 mu:100 maxGens:60000 launchMinecraftServerFromJava:false io:true netio:true mating:true fs:false spaceBetweenMinecraftShapes:15 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.tasks.evocraft.genotype.MinecraftShapeGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:testing log:TESTING-MOMEFlyVsMissileDirectSmallPOCappedCompass saveTo:MOMEFlyVsMissileDirectSmallPOCappedCompass extraSpaceBetweenMinecraftShapes:100 minecraftTargetDistancefromShapeY:0 minecraftTargetDistancefromShapeX:50 minecraftTargetDistancefromShapeZ:0 minecraftMissileFitness:true parallelMAPElitesInitialize:true rememberParentScores:true minecraftContainsWholeMAPElitesArchive:false experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 rememberParentScores:true minecraftContainsWholeMAPElitesArchive:false interactWithMapElitesInWorld:false ea:edu.southwestern.evolution.mome.MOME mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5 minecraftClearWithGlass:false maximumMOMESubPopulationSize:10 minecraftCompassMissileTargets:true".split(" "));
+		//MMNEAT.main("runNumber:85 randomSeed:1 minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.DirectRepresentationShapeGenerator minecraftChangeCenterOfMassFitness:true minecraftMaximizeVolumeFitness:false minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.ExplosiveBlockSet trials:1 mu:100 maxGens:60000 launchMinecraftServerFromJava:false io:true netio:true mating:true fs:false spaceBetweenMinecraftShapes:15 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.tasks.evocraft.genotype.MinecraftShapeGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:testing log:TESTING-MOMEFlyVsMissileDirectSmallPOCappedCompass saveTo:MOMEFlyVsMissileDirectSmallPOCappedCompass extraSpaceBetweenMinecraftShapes:100 minecraftTargetDistancefromShapeY:0 minecraftTargetDistancefromShapeX:50 minecraftTargetDistancefromShapeZ:0 minecraftMissileFitness:true parallelMAPElitesInitialize:true rememberParentScores:true minecraftContainsWholeMAPElitesArchive:false experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 rememberParentScores:true minecraftContainsWholeMAPElitesArchive:false interactWithMapElitesInWorld:false ea:edu.southwestern.evolution.mome.MOME mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5 minecraftClearWithGlass:false maximumMOMESubPopulationSize:10 minecraftCompassMissileTargets:true".split(" "));
 	}
 
 }
