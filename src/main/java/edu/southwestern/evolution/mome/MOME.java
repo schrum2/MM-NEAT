@@ -364,99 +364,105 @@ public class MOME<T> implements SteadyStateEA<T>{
 			archiveFileCreated = true;
 		}
 
-		assert archive.checkLargestSubpopNotGreaterThanMaxLimit() : "largest subpop is greater than max allowed-INSIDE LOG\n"+archive.archiveDebug();
-		//System.out.println("individuals per generation:"+ individualsPerGeneration + " parameter:" + Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration"));
 
 		//if an individual was added and the population count is even with the steadyStateIndividualsPerGeneration
 		//this is all periodic logging to text files
 		if(io && (individualCreationAttemptsCount%individualsPerGeneration == 0)) {
-			final int pseudoGeneration = individualCreationAttemptsCount/individualsPerGeneration;
+			// Synchronizing on the archive should stop any calculations/modifications that result in log irregularities.
+			// However, such course locking could slow down the simulation.
+			synchronized(archive) {
 
-//			System.out.println("generation:"+pseudoGeneration+ " addedIndividualCount:" +addedIndividualCount + " individualCreationAttemptsCount:" + individualCreationAttemptsCount + " discarded individuals:" + discardedIndividualCount);
-			System.out.println("generation:"+pseudoGeneration);
-			System.out.println("max bin size:" + archive.maxSubPopulationSizeInWholeArchive() + " max allowed: " + Parameters.parameters.integerParameter("maximumMOMESubPopulationSize"));
+				assert archive.checkLargestSubpopNotGreaterThanMaxLimit() : "largest subpop is greater than max allowed-INSIDE LOG\n"+archive.archiveDebug();
+				//System.out.println("individuals per generation:"+ individualsPerGeneration + " parameter:" + Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration"));
 
-			int numberOfObjectives = MMNEAT.task.numObjectives();
+				final int pseudoGeneration = individualCreationAttemptsCount/individualsPerGeneration;
 
-			//LOGGING POPULATION INFORMATION
-			assert archive.checkLargestSubpopNotGreaterThanMaxLimit() : "largest subpop is greater than max allowed -LOGGING POP INFO";
-			int[] populationSizesForBins = archive.populationSizeForEveryBin();
-			assert archive.checkIfNotGreaterThanMaxSubpop(populationSizesForBins) : "this array of subpop sizes contains one that is bigger than the max allowed";
-			String popString = Arrays.toString(populationSizesForBins).replace(", ", "\t");
-			popString = pseudoGeneration + "\t" + popString.substring(1, popString.length() - 1); // Remove opening and closing [ ] brackets
-			binPopulationSizeLog.log(popString);
-			
-			//LOGGING HYPERVOLUME INFORMATION
-			double[] hypervolumeForBins = archive.hyperVolumeOfAllBins();
-			String hypervolumeString = Arrays.toString(hypervolumeForBins).replace(", ", "\t");
-			hypervolumeString = pseudoGeneration + "\t" + hypervolumeString.substring(1, hypervolumeString.length() - 1); // Remove opening and closing [ ] brackets
+				//			System.out.println("generation:"+pseudoGeneration+ " addedIndividualCount:" +addedIndividualCount + " individualCreationAttemptsCount:" + individualCreationAttemptsCount + " discarded individuals:" + discardedIndividualCount);
+				System.out.println("generation:"+pseudoGeneration);
+				System.out.println("max bin size:" + archive.maxSubPopulationSizeInWholeArchive() + " max allowed: " + Parameters.parameters.integerParameter("maximumMOMESubPopulationSize"));
 
-			//LOGGING OBJECTIVES MAX AND MIN
-			double[][] maxScoresBinXObjective = archive.maxScorebyBinXObjective(); //maxScores[bin][objective]
-			double[][] minScoresBinXObjective = archive.minScorebyBinXObjective(); //minScores[bin][objective]
-			//initialize log with info labels
-			
-			//loop through objectives to log max and min for each objectives log
-			for (int i = 0; i < numberOfObjectives; i++) {
-				
-				//MAX FITNESS SCORES LOG
-				double[] maxColumn = ArrayUtil.column(maxScoresBinXObjective, i);
-				Double[] maxScoresForOneObjective = ArrayUtils.toObject(maxColumn);
-				maxFitnessLogs[i].log(pseudoGeneration + "\t" + StringUtils.join(maxScoresForOneObjective, " \t").replaceAll("-Infinity", "X"));
-				
-				//MIN FITNESS SCORES LOG
-				double[] minColumn = ArrayUtil.column(minScoresBinXObjective, i);
-				Double[] minScoresForOneObjective = ArrayUtils.toObject(minColumn);
-				minFitnessLogs[i].log(pseudoGeneration + "\t" + StringUtils.join(minScoresForOneObjective, "\t").replaceAll("-Infinity", "X"));
-				
-				//RANGE FITNESS SCORES LOG
-				// If a bin is empty, its min and max are negative infinity, but the range should be 0.
-				// With floating point, negative infinity minus itself is not 0. So, instead, we convert negative infinity to 0,
-				// which will lead to a result of 0 - 0 = 0.
-				Arrays.parallelSetAll(maxColumn, j -> (Double.isInfinite(maxColumn[j]) && maxColumn[j] < 0) ? 0.0 : maxColumn[j]);
-				Arrays.parallelSetAll(minColumn, j -> (Double.isInfinite(minColumn[j]) && minColumn[j] < 0) ? 0.0 : minColumn[j]);
-				Double[] scoreRangesForOneObjective = ArrayUtils.toObject(ArrayUtil.zipSubtract(maxColumn, minColumn));
-				rangeFitnessLogs[i].log(pseudoGeneration + "\t" + StringUtils.join(scoreRangesForOneObjective, "\t"));
+				int numberOfObjectives = MMNEAT.task.numObjectives();
+
+				//LOGGING POPULATION INFORMATION
+				assert archive.checkLargestSubpopNotGreaterThanMaxLimit() : "largest subpop is greater than max allowed -LOGGING POP INFO";
+				int[] populationSizesForBins = archive.populationSizeForEveryBin();
+				assert archive.checkIfNotGreaterThanMaxSubpop(populationSizesForBins) : "this array of subpop sizes contains one that is bigger than the max allowed";
+				String popString = Arrays.toString(populationSizesForBins).replace(", ", "\t");
+				popString = pseudoGeneration + "\t" + popString.substring(1, popString.length() - 1); // Remove opening and closing [ ] brackets
+				binPopulationSizeLog.log(popString);
+
+				//LOGGING HYPERVOLUME INFORMATION
+				double[] hypervolumeForBins = archive.hyperVolumeOfAllBins();
+				String hypervolumeString = Arrays.toString(hypervolumeForBins).replace(", ", "\t");
+				hypervolumeString = pseudoGeneration + "\t" + hypervolumeString.substring(1, hypervolumeString.length() - 1); // Remove opening and closing [ ] brackets
+
+				//LOGGING OBJECTIVES MAX AND MIN
+				double[][] maxScoresBinXObjective = archive.maxScorebyBinXObjective(); //maxScores[bin][objective]
+				double[][] minScoresBinXObjective = archive.minScorebyBinXObjective(); //minScores[bin][objective]
+				//initialize log with info labels
+
+				//loop through objectives to log max and min for each objectives log
+				for (int i = 0; i < numberOfObjectives; i++) {
+
+					//MAX FITNESS SCORES LOG
+					double[] maxColumn = ArrayUtil.column(maxScoresBinXObjective, i);
+					Double[] maxScoresForOneObjective = ArrayUtils.toObject(maxColumn);
+					maxFitnessLogs[i].log(pseudoGeneration + "\t" + StringUtils.join(maxScoresForOneObjective, " \t").replaceAll("-Infinity", "X"));
+
+					//MIN FITNESS SCORES LOG
+					double[] minColumn = ArrayUtil.column(minScoresBinXObjective, i);
+					Double[] minScoresForOneObjective = ArrayUtils.toObject(minColumn);
+					minFitnessLogs[i].log(pseudoGeneration + "\t" + StringUtils.join(minScoresForOneObjective, "\t").replaceAll("-Infinity", "X"));
+
+					//RANGE FITNESS SCORES LOG
+					// If a bin is empty, its min and max are negative infinity, but the range should be 0.
+					// With floating point, negative infinity minus itself is not 0. So, instead, we convert negative infinity to 0,
+					// which will lead to a result of 0 - 0 = 0.
+					Arrays.parallelSetAll(maxColumn, j -> (Double.isInfinite(maxColumn[j]) && maxColumn[j] < 0) ? 0.0 : maxColumn[j]);
+					Arrays.parallelSetAll(minColumn, j -> (Double.isInfinite(minColumn[j]) && minColumn[j] < 0) ? 0.0 : minColumn[j]);
+					Double[] scoreRangesForOneObjective = ArrayUtils.toObject(ArrayUtil.zipSubtract(maxColumn, minColumn));
+					rangeFitnessLogs[i].log(pseudoGeneration + "\t" + StringUtils.join(scoreRangesForOneObjective, "\t"));
+				}
+
+				//below is for archive logging archive
+				//			////////////ARCHIVE LOGGING / GENERAL PLOT LOGGING
+				/**
+				 * when logging for the archive make sure when you add a variable here
+				 * you also add it to setUpLogging to keep consistency
+				 */
+				//PSEUDOGENERATION, NUMBER OF OCCUPIED BINS, PERCENTAGE OF BINS FILLED
+				double percentageOfBinsFilled = (archive.getNumberOfOccupiedBins()*1.0)/archive.getBinMapping().binLabels().size();
+				String printString = pseudoGeneration+"\t"+archive.getNumberOfOccupiedBins()+"\t"+ percentageOfBinsFilled +"\t";
+
+				//TOTAL NUMBER OF INDIVIDUALS CURRENTLY IN THE ARCHIVE, NUMBER OF ADDED AND DISCARCARDED INDIVIDUALS
+				printString = printString + archive.totalNumberOfIndividualsInArchive()+"\t" + addedIndividualCount + "\t" + discardedIndividualCount + "\t";
+
+				//HYPERVOLUME, INDIVIDUAL BIN MAX,MIN,MEAN, TOTAL OF ALL BINS
+				double maxHyperVolumeBin = StatisticsUtilities.maximum(hypervolumeForBins);
+				double minHyperVolumeBin = StatisticsUtilities.minimum(ArrayUtil.replace(hypervolumeForBins, 0, Double.POSITIVE_INFINITY)); //replace 0 with pos infinity so it gets actual scores
+				double meanHyperVolumeOfBins = StatisticsUtilities.average(hypervolumeForBins);
+				double totalHypervolume = archive.totalHyperVolumeOfAllBinsCombined();
+				//			System.out.println("max:"+maxHyperVolumeBin+" min:"+minHyperVolumeBin+" mean:"+meanHyperVolumeOfBins+" total:"+totalHypervolume);
+				//add the max and min hypervolume before the max and min of other things
+				printString = printString + maxHyperVolumeBin + "\t" + minHyperVolumeBin + "\t" + meanHyperVolumeOfBins + "\t" + totalHypervolume + "\t";
+
+				//MAX/MIN FITNESS PER OBJECTIVE FOR WHOLE ARCHIVE
+				//adding max fitness scores to print
+				//since all bins are put together it simply gets the max fitness score from the array
+				double[] maxFitnessScoresArray = archive.maxFitnessInWholeArchiveXObjective();
+				for (int i = 0; i < maxFitnessScoresArray.length; i++) {
+					printString = printString + maxFitnessScoresArray[i] + "\t";
+				}
+				//adding min fitness scores to print, must be done after max to keep the order of max then min
+				double[] minFitnessScoresArray = archive.minFitnessInWholeArchiveXObjective();
+				for (int i = 0; i < minFitnessScoresArray.length; i++) {
+					printString = printString + minFitnessScoresArray[i] + "\t";
+				}
+
+				//			System.out.println(printString);
+
+				archiveLog.log(printString);
 			}
-
-			//below is for archive logging archive
-//			////////////ARCHIVE LOGGING / GENERAL PLOT LOGGING
-			/**
-			 * when logging for the archive make sure when you add a variable here
-			 * you also add it to setUpLogging to keep consistency
-			 */
-			//PSEUDOGENERATION, NUMBER OF OCCUPIED BINS, PERCENTAGE OF BINS FILLED
-			double percentageOfBinsFilled = (archive.getNumberOfOccupiedBins()*1.0)/archive.getBinMapping().binLabels().size();
-			String printString = pseudoGeneration+"\t"+archive.getNumberOfOccupiedBins()+"\t"+ percentageOfBinsFilled +"\t";
-			
-			//TOTAL NUMBER OF INDIVIDUALS CURRENTLY IN THE ARCHIVE, NUMBER OF ADDED AND DISCARCARDED INDIVIDUALS
-			printString = printString + archive.totalNumberOfIndividualsInArchive()+"\t" + addedIndividualCount + "\t" + discardedIndividualCount + "\t";
-			
-			//HYPERVOLUME, INDIVIDUAL BIN MAX,MIN,MEAN, TOTAL OF ALL BINS
-			double maxHyperVolumeBin = StatisticsUtilities.maximum(hypervolumeForBins);
-			double minHyperVolumeBin = StatisticsUtilities.minimum(ArrayUtil.replace(hypervolumeForBins, 0, Double.POSITIVE_INFINITY)); //replace 0 with pos infinity so it gets actual scores
-			double meanHyperVolumeOfBins = StatisticsUtilities.average(hypervolumeForBins);
-			double totalHypervolume = archive.totalHyperVolumeOfAllBinsCombined();
-//			System.out.println("max:"+maxHyperVolumeBin+" min:"+minHyperVolumeBin+" mean:"+meanHyperVolumeOfBins+" total:"+totalHypervolume);
-			//add the max and min hypervolume before the max and min of other things
-			printString = printString + maxHyperVolumeBin + "\t" + minHyperVolumeBin + "\t" + meanHyperVolumeOfBins + "\t" + totalHypervolume + "\t";
-			
-			//MAX/MIN FITNESS PER OBJECTIVE FOR WHOLE ARCHIVE
-			//adding max fitness scores to print
-			//since all bins are put together it simply gets the max fitness score from the array
-			double[] maxFitnessScoresArray = archive.maxFitnessInWholeArchiveXObjective();
-			for (int i = 0; i < maxFitnessScoresArray.length; i++) {
-				printString = printString + maxFitnessScoresArray[i] + "\t";
-			}
-			//adding min fitness scores to print, must be done after max to keep the order of max then min
-			double[] minFitnessScoresArray = archive.minFitnessInWholeArchiveXObjective();
-			for (int i = 0; i < minFitnessScoresArray.length; i++) {
-				printString = printString + minFitnessScoresArray[i] + "\t";
-			}
-			
-//			System.out.println(printString);
-
-			archiveLog.log(printString);
 		}
 	}
 	

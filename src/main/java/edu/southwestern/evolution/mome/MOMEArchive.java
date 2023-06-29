@@ -175,10 +175,11 @@ public class MOMEArchive<T> {
 			//add the candidate (Score) to the vector of scores for that bin
 			Vector<Score<T>> subpopInBin = archive.get(candidateBinCoordinates);
 			synchronized(subpopInBin) {
-				//System.out.println("Synchrnoized on "+subpopInBin.hashCode());
-				subpopInBin.add(candidate);	
+				// We don't want any other thread accessing our modified subpop before we are done with it
+				Vector<Score<T>> subpopCopy = new Vector<>(subpopInBin);
+				subpopCopy.add(candidate);	
 				// Recalculate Pareto front
-				ArrayList<NSGA2Score<T>> front = NSGA2.getParetoFront(NSGA2.staticNSGA2Scores(subpopInBin));
+				ArrayList<NSGA2Score<T>> front = NSGA2.getParetoFront(NSGA2.staticNSGA2Scores(subpopCopy));
 				assert allNondominated(front) : "How can there be dominated points in the Pareto front?\n"+front;
 				//check if the candidate it there and return if it is
 				long candidateID = candidate.individual.getId();
@@ -202,8 +203,7 @@ public class MOMEArchive<T> {
 						assert maximumNumberOfIndividualsInSubPops >= front.size() : "after if statement in add, front larger than max, front:" + front.size();
 						//update map
 						Vector<Score<T>> newBinContents = new Vector<>(front);
-						synchronized(newBinContents) {
-							System.out.println("Synchrnoized on "+newBinContents.hashCode());
+						synchronized(this) { // Lock the whole archive when replacing something
 							archive.replace(candidateBinCoordinates, newBinContents);
 							System.out.println("bin size after replacement with front:" + archive.get(candidateBinCoordinates).size());
 							assert (archive.get(candidateBinCoordinates).size() <= maximumNumberOfIndividualsInSubPops) : "the number of individuals in this subpop exceed the maximum number that is allowed after replacing with front";
@@ -213,13 +213,10 @@ public class MOMEArchive<T> {
 							//assert checkLargestSubpopNotGreaterThanMaxLimit() : "after adding and going through other asserts the largest subpop is greater than the limit"
 							// + " largest subpop:" + maxSubPopulationSizeInWholeArchive() + " size of current subpop:" + archive.get(candidateBinCoordinates).size();
 							//conditionalEliteSave(candidate, candidateBinCoordinates);	//this saves a condidate, but currently saves all created individuals which is too many
-							System.out.println("Unlock "+newBinContents.hashCode());
 						}
-						//System.out.println("Unlock "+subpopInBin.hashCode() + " ADD");
 						return true;	//candidate was added
 					}
 				}
-				//System.out.println("Unlock "+subpopInBin.hashCode() + " NO ADD");
 				return false;	//candidate wasn't added
 			}
 		} else {
