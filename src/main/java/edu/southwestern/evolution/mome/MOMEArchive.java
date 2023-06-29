@@ -606,13 +606,16 @@ public class MOMEArchive<T> {
 	}
 
 //HYPERVOLUME METHODS
+	
+	//total hypervolume is the hypervolume in whole archive pareto front
+	//moqd is what I have right now
 
 	/**
 	 * Gets the hypervolume of the population of a given bin.
 	 * @param keyBinCoordinates the coordinates of the bin, used to get the subpop of Scores
 	 * @return the maxHypervolume of the given bin
 	 */
-	public double maxHyperVolumeInBin(Vector<Integer> keyBinCoordinates) {
+	public double hypervolumeOfSingleBin(Vector<Integer> keyBinCoordinates) {
 		List<Score<T>> listOfScores = archive.get(keyBinCoordinates);
 		return MultiobjectiveUtil.hypervolumeFromParetoFront(listOfScores);
 	}
@@ -626,7 +629,7 @@ public class MOMEArchive<T> {
 
 		for(Vector<Integer> key : archive.keySet()) {
 			int oneDBinIndex = mapping.oneDimensionalIndex(ArrayUtil.intArrayFromArrayList(key));
-			hyperVolumeOfAllBins[oneDBinIndex] = maxHyperVolumeInBin(key); //index that bin into the array using its oneDBinIndex
+			hyperVolumeOfAllBins[oneDBinIndex] = hypervolumeOfSingleBin(key); //index that bin into the array using its oneDBinIndex
 		}
 		return hyperVolumeOfAllBins;
 	}
@@ -635,13 +638,23 @@ public class MOMEArchive<T> {
 	 * calculates the hypervolume of all bins added together
 	 * @return the total hypervolume of all bin's hypervolumes added together
 	 */
-	public double totalHyperVolumeOfAllBinsCombined() {
+	public double totalHypervolumeMOQDScore() {
 		double[] hypervolumeOfAllBins = hyperVolumeOfAllBins();
 		double totalHypervolume = 0;
 		for (int i = 0; i < hypervolumeOfAllBins.length; i++) {
 			totalHypervolume += hypervolumeOfAllBins[i];
 		}
 		return totalHypervolume;
+	}
+	
+	/**
+	 * this calculates the hypervolume of the whole archive combined pareto front
+	 * @return hypervolume of the pareto front from all archive points
+	 */
+	public double combinedParetoFrontWholeArchiveHypervolume() {
+		//in gnuplot it should be global hypervolume
+		Vector<Score<T>> wholeArchiveCombinedParetoFront = getCombinedParetoFrontWholeArchive();
+		return MultiobjectiveUtil.hypervolumeFromParetoFront(wholeArchiveCombinedParetoFront);
 	}
 
 //PARETO FRONT METHODS
