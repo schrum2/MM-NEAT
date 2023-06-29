@@ -182,7 +182,7 @@ public class MOMEArchive<T> {
 //			Vector<Score<T>> subpopInBin;
 			if(!archive.containsKey(candidateBinCoordinates)) {
 			synchronized(this) {
-				System.out.println("New bin uncovered: "+candidateBinCoordinates);
+//				System.out.println("New bin uncovered: "+candidateBinCoordinates);
 //				subpopInBin = new Vector<Score<T>>();
 				archive.put(candidateBinCoordinates, new Vector<Score<T>>());
 				archive.get(candidateBinCoordinates).add(candidate);
