@@ -39,7 +39,7 @@ public class MinecraftClient extends Comm {
 	
 
 	//a corner that is no where near any other used area meant to evaluate shapes after a completed evolution experiment
-	public static final MinecraftCoordinates POST_EVALUATION_CORNER = new MinecraftCoordinates(-500, 100 + Parameters.parameters.integerParameter("minecraftPostCornerAdjustY"), 500);
+	public static final MinecraftCoordinates POST_EVALUATION_SHAPE_CORNER = new MinecraftCoordinates(-500, 100 + Parameters.parameters.integerParameter("minecraftPostCornerAdjustY"), 500);
 	//An extra amount of empty space that should surround shapes whose evaluation depends on movement.
 	public static final int EMPTY_SPACE_SAFETY_BUFFER = 20;
 
@@ -47,6 +47,10 @@ public class MinecraftClient extends Comm {
 		super();
 	}
 
+	public static boolean clientRunning() {
+		return client != null;
+	}
+	
 	@Override
 	public void initBuffers() {
 		//Initialize input and output
@@ -607,7 +611,10 @@ public class MinecraftClient extends Comm {
 		public int z() {
 			return position.z();
 		}
-
+		public MinecraftCoordinates blockPosition() {
+			return position;
+		}
+		
 		/**
 		 * Get type index of the type that will be recognized by Python
 		 * @return Type index/number for type
@@ -662,10 +669,102 @@ public class MinecraftClient extends Comm {
 	}
 	
 	/**
-	 * TODO: usually passed evaluation corner, but passes to 
+	 * TODO: this is an auto call, passes true, auto sets y to stopAtGround -ground level?
+	 * Clear a large enough space in the world for a population of shapes.
+	 * 
+	 * @param start Start coordinates where shapes are generated
+	 * @param ranges Size of each shape space
+	 * @param numShapes Number of generated shapes
+	 * @param buffer Buffer distance between shapes
+	 */
+	public void clearSpaceForShapes(MinecraftCoordinates start, MinecraftCoordinates ranges, int numShapes, int buffer) {
+		clearSpaceForShapes(start, ranges, numShapes, buffer, true);
+	}
+	
+	/**(
+	 * Clear a large enough space in the world for up to a population of shapes. This
+	 * is a separate method that is called by a method of the same name, however, this 
+	 * method allows for toggling whether or not the y is set at ground level
+	 * 
+	 * @param start Start coordinates where shapes are generated
+	 * @param ranges Size of each shape space
+	 * @param numShapes Number of generated shapes
+	 * @param buffer Buffer distance between shapes
+	 * @param stopAtGround Whether or not the y axis is set at ground level
+	 */
+	public void clearSpaceForShapes(MinecraftCoordinates start, MinecraftCoordinates ranges, int numShapes, int buffer, boolean stopAtGround) {
+		MinecraftCoordinates groundStart = new MinecraftCoordinates(start.x()-buffer, stopAtGround ? GROUND_LEVEL : start.y()-buffer, start.z()-buffer);
+		//System.out.println("Starts:"+groundStart);
+		MinecraftCoordinates end = new MinecraftCoordinates(start.x() + numShapes*(ranges.x() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")) + buffer, start.y() + ranges.y() + buffer, start.z() + (int)(ranges.z()*Math.sqrt(numShapes)) + buffer);
+		//System.out.println("ENDS:"+end);
+		
+		
+		// If cleared space isn't very large, just clear that space
+		int clearSize = (end.x()-groundStart.x())*(end.y()-groundStart.y())*(end.z()-groundStart.z());
+		if( clearSize<=MAX_CLEAR_WITHOUT_LOOP) {
+			clearCube(groundStart, end); // Calls clear cube, which checks coordinates
+		}else {
+			int counter=50000000; // Don't need gradual clear messages for small clear sizes
+			// Otherwise, clears out large block sections one at a time to ensure the server isn't overloaded
+			int fillSize = Parameters.parameters.integerParameter("minecraftClearDimension");
+			System.out.println("*WARNING* The size that needs to be cleared out is over "+MAX_CLEAR_WITHOUT_LOOP+" blocks, this may take a while to clear");
+			System.out.println("Size neededing to be cleared: "+clearSize+" blocks"); // Prints to warn user
+			System.out.println("From "+groundStart+" to "+end);
+			for(int x=groundStart.x();x<=end.x();x+=fillSize) {
+				for(int z=groundStart.z();z<=end.z();z+=fillSize) {
+					for(int y=GROUND_LEVEL;y<=end.y();y+=fillSize) {
+						//System.out.println("clearing "+counter);
+						counter++;
+						clearCube(x,y,z,x+fillSize,y+fillSize,z+fillSize);
+						//System.out.println(x+fillSize+" "+(y+fillSize)+" "+(z+fillSize));
+						if((x+fillSize)*(y+fillSize)*(z+fillSize)>counter) {
+							System.out.println("Blocks cleared = "+((x+fillSize)*(y+fillSize)*(z+fillSize)));
+							counter+=50000000; // Gradual prints to let the user know it's still running
+						}
+						try {
+							Thread.sleep(Parameters.parameters.integerParameter("minecraftClearSleepTimer"));
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			}	
+			System.out.println("Clearing done");
+		}
+	}
+	/**
+	 * This checks some coordinates to see if the evaluation space for them would go below ground level
+	 * It then shifts the coordinates if necessary and then returns the shifted (or not shifted) coordinates
+	 * @param originalShapeCorner the shape corner that was passed for evaluation
+	 * @return the new shifted coordinates if they needed to be shifter, or the old coordinates if not
+	 */
+	public MinecraftCoordinates checkForYOutOfBoundsAndShiftUp (MinecraftCoordinates originalShapeCorner) {
+		MinecraftCoordinates newShapeCorner = originalShapeCorner;
+		
+		//check for out of bounds
+		if(originalShapeCorner.y() - EMPTY_SPACE_SAFETY_BUFFER - Parameters.parameters.integerParameter("minecraftExtraClearSpace") <= MinecraftClient.GROUND_LEVEL) { // Push up if close to ground)
+			System.out.println("Pushed up from " + originalShapeCorner);
+			
+			MinecraftCoordinates shiftPoint = new MinecraftCoordinates(0,MinecraftClient.EMPTY_SPACE_SAFETY_BUFFER,0);
+			newShapeCorner = originalShapeCorner.add(shiftPoint);			//shifts the shape corner to a new adjusted corner
+		}
+		return newShapeCorner;
+	}
+	
+	/**
+	 * this just gives access to the extra clear method
+	 * @param originalShapeCorner
+	 */
+	public void clearEvaluationSpaceForJUnitTests(MinecraftCoordinates originalShapeCorner) {
+		//clear this area
+		extraClearAreaClearAroundCornerWithGlass(originalShapeCorner);
+	}
+	
+	/**
 	 * Clears an area and verifies that it is clear
 	 * called if you need to make sure it is clear
 	 * makes use of clearWithGlass if the minecraftClearWithGlass parameter is set to true
+	 * clears larger area than what is passed
 	 * @param shapeCornerCoordinates corner that the shape is occupying 
 	 */
 	public static void clearAndVerify(MinecraftCoordinates shapeCornerCoordinates) {
@@ -679,11 +778,25 @@ public class MinecraftClient extends Comm {
 	}
 	
 	/**
+	 * same as clearAreaAroundCorner, but adds the extra clear space
+	 * always clears with glass
+	 * @param shapeCorner the original min coordinates of the shape
+	 */
+	public static void extraClearAreaClearAroundCornerWithGlass (MinecraftCoordinates shapeCorner) {
+		//add a little extra
+		MinecraftCoordinates lowerCoordinates = shapeCorner.sub(Parameters.parameters.integerParameter("minecraftExtraClearSpace") + EMPTY_SPACE_SAFETY_BUFFER);
+		MinecraftCoordinates upperCoordinates = shapeCorner.add(MinecraftUtilClass.getRanges().add(EMPTY_SPACE_SAFETY_BUFFER+Parameters.parameters.integerParameter("minecraftExtraClearSpace")));
+		getMinecraftClient().clearCube(lowerCoordinates, upperCoordinates, true);
+		List<Block> errorCheck = null;
+		assert areaAroundCornerEmpty(shapeCorner) : "Area not empty after clearing! "+errorCheck;
+	}
+	
+	/**
 	 * TODO: need to change to shape corner of post evaluation corner or modify clearAreaAroundCorner
 	 * Normal case of not using the clear with glass option, only clears with air
 	 */
 	public static void clearAreaAroundPostEvaluationCorner() {
-		clearAreaAroundCorner(POST_EVALUATION_CORNER, false);
+		clearAreaAroundCorner(POST_EVALUATION_SHAPE_CORNER, false);
 	}
 	
 	/**
@@ -870,70 +983,7 @@ public class MinecraftClient extends Comm {
 		return result;
 	}
 	
-	/**
-	 * TODO: this is an auto call, passes true, auto sets y to stopAtGround -ground level?
-	 * Clear a large enough space in the world for a population of shapes.
-	 * 
-	 * @param start Start coordinates where shapes are generated
-	 * @param ranges Size of each shape space
-	 * @param numShapes Number of generated shapes
-	 * @param buffer Buffer distance between shapes
-	 */
-	public void clearSpaceForShapes(MinecraftCoordinates start, MinecraftCoordinates ranges, int numShapes, int buffer) {
-		clearSpaceForShapes(start, ranges, numShapes, buffer, true);
-	}
-	
-	/**(
-	 * Clear a large enough space in the world for up to a population of shapes. This
-	 * is a separate method that is called by a method of the same name, however, this 
-	 * method allows for toggling whether or not the y is set at ground level
-	 * 
-	 * @param start Start coordinates where shapes are generated
-	 * @param ranges Size of each shape space
-	 * @param numShapes Number of generated shapes
-	 * @param buffer Buffer distance between shapes
-	 * @param stopAtGround Whether or not the y axis is set at ground level
-	 */
-	public void clearSpaceForShapes(MinecraftCoordinates start, MinecraftCoordinates ranges, int numShapes, int buffer, boolean stopAtGround) {
-		MinecraftCoordinates groundStart = new MinecraftCoordinates(start.x()-buffer, stopAtGround ? GROUND_LEVEL : start.y()-buffer, start.z()-buffer);
-		//System.out.println("Starts:"+groundStart);
-		MinecraftCoordinates end = new MinecraftCoordinates(start.x() + numShapes*(ranges.x() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")) + buffer, start.y() + ranges.y() + buffer, start.z() + (int)(ranges.z()*Math.sqrt(numShapes)) + buffer);
-		//System.out.println("ENDS:"+end);
-		
-		
-		// If cleared space isn't very large, just clear that space
-		int clearSize = (end.x()-groundStart.x())*(end.y()-groundStart.y())*(end.z()-groundStart.z());
-		if( clearSize<=MAX_CLEAR_WITHOUT_LOOP) {
-			clearCube(groundStart, end); // Calls clear cube, which checks coordinates
-		}else {
-			int counter=50000000; // Don't need gradual clear messages for small clear sizes
-			// Otherwise, clears out large block sections one at a time to ensure the server isn't overloaded
-			int fillSize = Parameters.parameters.integerParameter("minecraftClearDimension");
-			System.out.println("*WARNING* The size that needs to be cleared out is over "+MAX_CLEAR_WITHOUT_LOOP+" blocks, this may take a while to clear");
-			System.out.println("Size neededing to be cleared: "+clearSize+" blocks"); // Prints to warn user
-			System.out.println("From "+groundStart+" to "+end);
-			for(int x=groundStart.x();x<=end.x();x+=fillSize) {
-				for(int z=groundStart.z();z<=end.z();z+=fillSize) {
-					for(int y=GROUND_LEVEL;y<=end.y();y+=fillSize) {
-						//System.out.println("clearing "+counter);
-						counter++;
-						clearCube(x,y,z,x+fillSize,y+fillSize,z+fillSize);
-						//System.out.println(x+fillSize+" "+(y+fillSize)+" "+(z+fillSize));
-						if((x+fillSize)*(y+fillSize)*(z+fillSize)>counter) {
-							System.out.println("Blocks cleared = "+((x+fillSize)*(y+fillSize)*(z+fillSize)));
-							counter+=50000000; // Gradual prints to let the user know it's still running
-						}
-						try {
-							Thread.sleep(Parameters.parameters.integerParameter("minecraftClearSleepTimer"));
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-					}
-				}
-			}	
-			System.out.println("Clearing done");
-		}
-	}
+
 	
 	/**
 	 * Represent a list of Minecraft blocks as a 3D array where the given corner is the

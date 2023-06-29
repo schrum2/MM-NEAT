@@ -85,6 +85,13 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		this(Parameters.parameters.stringParameter("archiveSubDirectoryName"), Parameters.parameters.booleanParameter("io"), Parameters.parameters.booleanParameter("netio"), true);
 	}
 	
+	/**
+	 * TODO: JavaDoc
+	 * @param archiveSubDirectoryName
+	 * @param ioOption
+	 * @param netioOption
+	 * @param createLogs
+	 */
 	@SuppressWarnings("unchecked")
 	public MAPElites(String archiveSubDirectoryName, boolean ioOption, boolean netioOption, boolean createLogs) {
 		MMNEAT.usingDiversityBinningScheme = true;
@@ -109,7 +116,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 					+ Parameters.parameters.integerParameter("runNumber");
 			individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
 			int yrange = Parameters.parameters.integerParameter("maxGens")/individualsPerGeneration;
-			setUpLogging(numLabels, infix, experimentPrefix, yrange, cppnDirLogging, individualsPerGeneration, archive.getBinMapping().binLabels().size());
+			setUpLogging(numLabels, infix, experimentPrefix, yrange, cppnDirLogging, individualsPerGeneration);
 		}
 		this.mating = Parameters.parameters.booleanParameter("mating");
 		this.crossoverRate = Parameters.parameters.doubleParameter("crossoverRate");
@@ -118,7 +125,18 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		this.iterationsWithoutElite = 0; // Not accurate on resume		
 	}
 
-	public static void setUpLogging(int numLabels, String infix, String experimentPrefix, int yrange, boolean cppnDirLogging, int individualsPerGeneration, int archiveSize) {
+	/**
+	 * TODO: JavaDoc
+	 * This seems to be all the set up necessary for the GNU Plot related files
+	 * @param numLabels
+	 * @param infix
+	 * @param experimentPrefix
+	 * @param yrange
+	 * @param cppnDirLogging
+	 * @param individualsPerGeneration
+	 * @param archiveSize
+	 */
+	public static void setUpLogging(int numLabels, String infix, String experimentPrefix, int yrange, boolean cppnDirLogging, int individualsPerGeneration) {
 		
 		String prefix = experimentPrefix + "_" + infix;
 		String fillPrefix = experimentPrefix + "_" + "Fill";
@@ -149,7 +167,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			ps.println("unset key");
 			// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
 			ps.println("set yrange [0:"+ yrange +"]");
-			ps.println("set xrange [0:"+ archiveSize + "]");
+			ps.println("set xrange [1:"+ numLabels + "]");
 			ps.println("set title \"" + experimentPrefix + " Archive Performance\"");
 			ps.println("set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");
 			// The :1 is for skipping the "generation" number logged in the file
@@ -161,7 +179,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			ps.println("unset key");
 			// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
 			ps.println("set yrange [0:"+ yrange +"]");
-			ps.println("set xrange [0:"+ archiveSize + "]");
+			ps.println("set xrange [1:"+ numLabels + "]");
 			ps.println("set title \"" + experimentPrefix + " Archive Performance\"");
 			//ps.println("set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");
 			// The :1 is for skipping the "generation" number logged in the file
@@ -229,6 +247,11 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		}
 	}
 
+	/**
+	 * TODO: JavaDoc
+	 * @param bins
+	 * @throws FileNotFoundException
+	 */
 	private void setupArchiveVisualizer(BinLabels bins) throws FileNotFoundException {
 		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
 		directory += (directory.equals("") ? "" : "/");
@@ -286,6 +309,17 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		}
 	}
 
+	/**
+	 * TODO: JavaDoc
+	 * I think this creates the .bat file?
+	 * @param directory
+	 * @param prefix
+	 * @param fullName
+	 * @param dimensionNames
+	 * @param dimensionSizes
+	 * @param ps
+	 * @param finalLine
+	 */
 	private void writeScriptLauncher(String directory, String prefix, String fullName, String[] dimensionNames,
 			int[] dimensionSizes, PrintStream ps, String finalLine) {
 		ps.println("cd ..");
@@ -318,6 +352,14 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void initialize(Genotype<T> example) {	
+		
+		if(MMNEAT.fitnessFunctions.get(0).size() > 1) {
+			throw new IllegalStateException("MAP Elites is not equipped to handle multiple fitness functions: "+MMNEAT.fitnessFunctions.get(0)+
+						". If you want multiple fitness functions, consider using MOME or NSGA2.");
+		} else if(MMNEAT.fitnessFunctions.get(0).size() == 0) {
+			throw new IllegalStateException("MAP Elites still needs an objective/fitness to work.");
+		}
+		
 		if (this instanceof CMAME && MMNEAT.genotype instanceof RealValuedGenotype) {
 			emitterMeanLog = new MMNEATLog("EmitterMeans", false, false, false, true);
 		}
@@ -332,7 +374,9 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			Parameters.parameters.setBoolean("discardFromBinOutsideRestrictedRange", false);
 		}	
 		
-		if(iterations > 0) {
+		// logLock generally means we are doing a post experiment evaluation rather than attempting
+		// to resume an experiment, so loading results is ok if logLock is true
+		if(!Parameters.parameters.booleanParameter("logLock") && iterations > 0) {
 			
 			System.out.println("It is not safe to resume MAP-Elites runs that crash.");
 			System.out.println("Because logging is periodic, the state of the archive may not reflect the state of the logs.");
@@ -467,7 +511,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		}
 		if(io && iterations % individualsPerGeneration == 0) {
 			int numCPPN = 0;
-			int numDirect = 0;
+			int numDirect = 0;	//cppn related variable
 			// When all iterations were logged, the file got too large
 			//log.log(iterations + "\t" + iterationsWithoutElite + "\t" + StringUtils.join(ArrayUtils.toObject(archive.getEliteScores()), "\t"));
 			// Just log every "generation" instead
@@ -609,9 +653,9 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			// Replace child2 with a crossover result, and modify child1 in the process (two new children)
 			child2 = child1.crossover(child2);
 			child2.mutate(); // Probabilistic mutation of child
-			child2.addParent(parent2.getId());
-			child2.addParent(parent1.getId());
-			child1.addParent(parent2.getId());
+			child2.addParent(parentId2);
+			child2.addParent(parentId1);
+			child1.addParent(parentId2);
 			EvolutionaryHistory.logLineageData(parentId1,parentId2,child2);
 			// Evaluate and add child to archive
 			Score<T> s2 = task.evaluate(child2);

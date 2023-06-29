@@ -365,10 +365,11 @@ public class Parameters {
 		integerOptions.add("minecraftDesiredBlockType", MinecraftClient.BlockType.REDSTONE_BLOCK.ordinal(), "Type desired by TypeCountFitness");
 		integerOptions.add("minecraftDesiredBlockCount", 0, "Count desired by TypeTargetFitness");
 		integerOptions.add("minecraftMaxSnakeLength", 100, "Maximum length that a generated snake can be");
-		integerOptions.add("spaceBetweenMinecraftShapes", 15, "The space in blocks that are in between each of the generated minecraft structures");
 		integerOptions.add("minecraftAmountOfBlocksToEvolve", 5, "The ammount of possible blocks that can be evolved by CPPN");
 		integerOptions.add("interactiveSleepTimer", 1000, "The ammount of time the interactive thread sleeps for");
+		integerOptions.add("spaceBetweenMinecraftShapes", 15, "The space in blocks that are in between each of the generated minecraft structures");
 		integerOptions.add("extraSpaceBetweenMinecraftShapes", 50, "The extra space that will be in between the shapes being evaluated");
+		integerOptions.add("minecraftExtraClearSpace", 2, "extra padding for evaluation clears");
 		integerOptions.add("startX", 0, "The X coordinate the shapes are generated on");
 		integerOptions.add("startY", 30, "The Y coordinate the shapes are generated on");
 		integerOptions.add("startZ", 0, "The Z coordinate the shapes are generated on");
@@ -394,6 +395,11 @@ public class Parameters {
 		integerOptions.add("minecraftTargetDistancefromShapeZ", 0, "The distance from shape origin to target on the Z");
 		integerOptions.add("minecraftMissleTargetBlockType", BlockType.SLIME.ordinal(), "Block that is used in the target");
 		integerOptions.add("minecraftPostCornerAdjustY", 0, "This is an int whose value will be added to the y-coordinate of the POST_EVALUATION_CORNER to adjust the special shape");
+		integerOptions.add("numVectorIndexMutations", -1, "If -1, thne ignore this. Else, vector mutations target this specific number of indicies per occurrence rather than have a per-index mutation rate");
+		integerOptions.add("maximumMOMESubPopulationSize", -1, "this contains the maximum number of individuals for each cell with implementing MOME with minecraft. -1 is unrestricted");
+		integerOptions.add("minecraftDelayAfterEvaluation", 0, "If the value is greater than 0 causes the thread to sleep for the amount it is set to");
+		integerOptions.add("minecraftXMovementBetweenEvals", 0, "If the value is greater than 0 it adds it to the x value");
+		integerOptions.add("minecraftMaxXShift", 0, "Max value we can shift X");
 		
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
@@ -837,7 +843,7 @@ public class Parameters {
 		booleanOptions.add("minecraftRedirectConfinedSnakes", false, "Confines the snakes to a given area and will redirect the snake when the next direction is out of bounds");
 		booleanOptions.add("minecraftStopConfinedSnakes", false, "Confines the snakes to a given area and will stop the snake when the next direction is out of bounds");
 		booleanOptions.add("launchMinecraftServerFromJava", true, "The Java code can launch a server, or it can simply join whatever server is already running on the localhost");
-		booleanOptions.add("minecraftContainsWholeMAPElitesArchive", true, "Spawns in the MAP Elite archive in the Minecraft world");
+		booleanOptions.add("minecraftContainsWholeMAPElitesArchive", false, "Spawns in the MAP Elite archive in the Minecraft world");
 		booleanOptions.add("forceLinearArchiveLayoutInMinecraft", false, "minecraftContainsWholeMAPElitesArchive must be true for this. Generates shape in a linear fashion, as opposed to in 2D or 3D");
 		booleanOptions.add("minecraftChangeCenterOfMassFitness", false, "Calculates the change in position of a shapes center of mass.");
 		booleanOptions.add("NegativeSpaceCountFitness", false, "Tries to maximixe the negative space in a shape that i generated");
@@ -858,10 +864,19 @@ public class Parameters {
 		booleanOptions.add("minecraftWaterLavaSecondaryCreationFitness", false, "uses water and lava block set to reward for the creation of secondary blocks");
 		booleanOptions.add("minecraftMaximizeVolumeFitness", false, "rewards shapes that spread out over larger areas");
 		booleanOptions.add("minecraftMissileFitness", false, "rewards a shape for blowing up a target");
-		booleanOptions.add("minecraftClearWithGlass", true, "determines if glass is used to clear a space before air");
+		booleanOptions.add("minecraftClearWithGlass", false, "determines if glass is used to clear a space before air");
 		booleanOptions.add("minecraftChangeBlocksFitness", false, "rewards a shape for changing its blocks position");
+		booleanOptions.add("minecraftRandomFitness", false, "this is a very basic test fitness that returns a random fitnessScore");
+		booleanOptions.add("minecraftNumAirFitness", false, "Fitness test for number of air blocks");
+		booleanOptions.add("rememberParentScores", false, "Avoid repeated evaluation of parents");
+		booleanOptions.add("minecraftChangeBlocksMomentum", false, "Multiplies change blocks by change in center of madd fitness");
+		booleanOptions.add("minecraftClearAfterEvaluation", false, "If true clears and verifies the shapeCorner after evaluation");
+		booleanOptions.add("saveWholeMinecraftArchiveAtEnd", true, "If true saves shape in the final archive to finalArchiveOfShapes");
+		booleanOptions.add("momeSelectsUniformlyAcrossWholeArchive", false, "alternates the getRandomIndividual method to grab individual from whole archive instead of random bin");
+		booleanOptions.add("minecraftChangeBlockAndChangeCenterOfMassWeightedFitness", false, "uses the changeBlockAndChangeCenterOfMassWeightedFitness function");
+		booleanOptions.add("minecraftAccumulateNewBlockPositionsFitness", false, "Fitness function that is scored based on how many unique block positions are added to a hashset");
+		booleanOptions.add("minecraftCompassMissileTargets", false, "Spawns 4 targets in the cardinal directions around the shape");
 		
-	
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
 		doubleOptions.add("backpropLearningRate", 0.1, "Rate backprop learning for neural networks");
@@ -951,6 +966,12 @@ public class Parameters {
 		doubleOptions.add("GANSegmentCopyMutationRate", 0.0, "Segment copy mutation rate.");
 		doubleOptions.add("anyRealVectorModificationRate", 1.0, "The chance to use either perturb or polynomial mutation");
 		doubleOptions.add("voxelExpressionThreshold", 0.1, "The value that determines the presence of a block");
+		doubleOptions.add("minecraftRemoveBlockMutationRate", 0.2, "Rate of mutation to remove a block");
+		doubleOptions.add("minecraftAddBlockMutation", 0.2, "Rate of mutation to add a block");
+		doubleOptions.add("minecraftChangeBlockTypeMutation", 0.2, "Rate of mutation to change a block type");
+		doubleOptions.add("minecraftChangeBlockOrientationMutation", 0.2, "Rate of mutation to change a block orientation");
+		doubleOptions.add("minecraftSwapBlocksMutation", 0.2, "Rate of mutation to swap two blocks");
+		doubleOptions.add("minecraftPercentOfTarget", 0.7, "Percent of the target that needs to be blown up");
 		
 		// String parameters
 		stringOptions.add("marioTargetLevel", "data\\VGLC\\SuperMarioBrosNewEncoding\\overworld\\mario-1-1.txt", "Relative path to json file with Mario level to target");

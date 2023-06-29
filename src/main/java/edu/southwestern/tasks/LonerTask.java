@@ -9,6 +9,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -37,11 +38,33 @@ import edu.southwestern.util.graphics.DrawingPanel;
  * other members of the population.
  *
  * @author Jacob Schrum
- * @param <T>
- *            Phenotype of evolved agent
+ * @param <T> Phenotype of evolved agent
  */
 public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 
+	// Don't need to re-evaluate parents in a (Mu+Lambda) scheme if fitness won't change (or we don't care if it does)
+	ConcurrentHashMap<Long, Score<T>> previousEvaluationMemory = null; // Null means do not use the memory. Initialize in constructor
+	
+	/**
+	 * Don't keep storing scores that will never be used again, since the genotype died
+	 * @param nextGeneration Genotypes in next generation
+	 */
+	public void forgetDeadScores(ArrayList<Genotype<T>> nextGeneration) {
+		if(previousEvaluationMemory != null) {
+			//System.out.println("LonerTask: " + previousEvaluationMemory.size() + " previous scores stored");
+			ConcurrentHashMap<Long, Score<T>> newMemory = new ConcurrentHashMap<>(nextGeneration.size());
+			nextGeneration.parallelStream().forEach(g -> {
+				if(previousEvaluationMemory.containsKey(g.getId())) {
+					newMemory.put(g.getId(), previousEvaluationMemory.get(g.getId()));
+				}
+			});
+			previousEvaluationMemory = newMemory; // Old forgotten entries will be garpage collected
+			System.out.println("LonerTask: " + previousEvaluationMemory.size() + " previous scores remembered");
+			// This line will crash if used with MAP Elites, but MAP Elites should not be remembering parent scores anyway
+			//rememberedLog.log(((SinglePopulationGenerationalEA<?>) MMNEAT.ea).currentGeneration() + "\t" + previousEvaluationMemory.size());
+		}
+	}
+	
 	/**
 	 * Since agents are evaluated in isolation, it is possible to parallelize
 	 * their evaluation. This thread class enables parallel evaluation, and
@@ -86,10 +109,25 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 			if (CommonConstants.evalReport) {
 				MMNEAT.evalReport = new EvalLog("Eval-Net" + genotype.getId());
 			}
-			long before = System.currentTimeMillis();
-			// finds the score based on evaluation of the task's genotype
-			Score<T> score = task.evaluate(genotype);
-			long after = System.currentTimeMillis();
+			
+			Score<T> score = null;
+			if(previousEvaluationMemory != null && previousEvaluationMemory.containsKey(genotype.getId()) ) {
+				//System.out.println("Score for "+genotype.getId()+" already known");
+				// get old score if known
+				score = previousEvaluationMemory.get(genotype.getId());
+			} else {
+				long before = System.currentTimeMillis();
+				score = task.evaluate(genotype); // evaluate if never evaluated before
+				long after = System.currentTimeMillis();
+				score.totalEvalTime = (after - before);
+				
+				// May need to remember score for later
+				if(previousEvaluationMemory != null) {
+					//System.out.println("Save score for "+genotype.getId());
+					previousEvaluationMemory.put(genotype.getId(), score);
+				}
+			}
+						
 			// if there is an evalReport, save it
 			if (MMNEAT.evalReport != null) {
 				if (CommonConstants.recordPacman) {
@@ -106,7 +144,7 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 				}
 				MMNEAT.evalReport.close();
 			}
-			score.totalEvalTime = (after - before);
+			
 			// May need a Reentrant lock on this, if it is still used
 			for (Metaheuristic<T> m : MMNEAT.metaheuristics) {
 				m.augmentScore(score);
@@ -128,6 +166,7 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 
 	private final boolean parallel;
 	private final int threads;
+	//private MMNEATLog rememberedLog;
 
 	/**
 	 * constructor for a LonerTask based upon command line specified evaluation
@@ -136,6 +175,10 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 	public LonerTask() {
 		this.parallel = Parameters.parameters.booleanParameter("parallelEvaluations");
 		this.threads = Parameters.parameters.integerParameter("threads");
+		if(Parameters.parameters.booleanParameter("rememberParentScores")) {
+			previousEvaluationMemory = new ConcurrentHashMap<>();
+			//rememberedLog = new MMNEATLog("Remembered", false, false, false, true);
+		}
 	}
 
 	/**

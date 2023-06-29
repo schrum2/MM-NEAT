@@ -8,8 +8,7 @@ import edu.southwestern.tasks.SinglePopulationTask;
  * population.
  * 
  * @author Jacob Schrum
- * @param <T>
- *            Type of phenotype evolved.
+ * @param <T> Type of phenotype evolved.
  */
 public abstract class MuPlusLambda<T> extends MuLambda<T> {
 

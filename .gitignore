@@ -259,3 +259,12 @@ minecraftshapetaskaccumulate/
 mariopdsl/
 waterlavaminecraft/
 minecraftmoo/
+missileminecraft/
+*.xml
+
+testing/
+minecraftinteger/
+minecraftdirectencoding/
+directencoding/
+mometest/
+baseline/

@@ -8,8 +8,7 @@ import java.util.ArrayList;
  * (no coevolution) one generation at a time.
  * 
  * @author Jacob Schrum
- * @param <T>
- *            Phenotype of evolved organisms
+ * @param <T> Phenotype of evolved organisms
  */
 public interface SinglePopulationGenerationalEA<T> extends GenerationalEA {
 
@@ -18,8 +17,7 @@ public interface SinglePopulationGenerationalEA<T> extends GenerationalEA {
 	 * population will consist of random individuals generated according to
 	 * whatever constraints restrict the structure of the example Genotype.
 	 *
-	 * @param example
-	 *            example genotype
+	 * @param example example genotype
 	 * @return randomized population
 	 */
 	public ArrayList<Genotype<T>> initialPopulation(Genotype<T> example);
@@ -29,8 +27,7 @@ public interface SinglePopulationGenerationalEA<T> extends GenerationalEA {
 	 * and doing crossover and mutation to get a new population, which is
 	 * returned.
 	 *
-	 * @param population
-	 *            population to evaluate and evolve
+	 * @param population population to evaluate and evolve
 	 * @return new population for next generation.
 	 */
 	public ArrayList<Genotype<T>> getNextGeneration(ArrayList<Genotype<T>> population);
@@ -39,8 +36,7 @@ public interface SinglePopulationGenerationalEA<T> extends GenerationalEA {
 	 * Do ending steps to get final bits of data and/or clean up simulation
 	 * before ending evolution.
 	 *
-	 * @param population
-	 *            final population produced by evolution
+	 * @param population final population produced by evolution
 	 */
 	public void close(ArrayList<Genotype<T>> population);
 }

@@ -16,12 +16,9 @@ public class MultiObjectiveScore<T> extends Score<T> {
 	/**
 	 * Default constructor for multiObjectiveScore
 	 * 
-	 * @param individual:
-	 *            the genotype of the individual in question
-	 * @param scores:a
-	 *            double array containing the individual's past scores
-	 * @param behaviorVector:
-	 *            the behaviors open to the individual
+	 * @param individual the genotype of the individual in question
+	 * @param scores a double array containing the individual's past scores
+	 * @param behaviorVector the behaviors open to the individual
 	 */
 	public MultiObjectiveScore(Genotype<T> individual, double[] scores, ArrayList<Double> behaviorVector) {
 		this(individual, scores, behaviorVector, new double[0]);

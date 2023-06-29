@@ -17,10 +17,14 @@ import edu.southwestern.util.random.RandomNumbers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Implementation of Deb's NSGA2 multiobjective EA. NSGA2 stands for non-sorting
- * genetic algorithm 2
+ * genetic algorithm 2.
+ * 
+ * K. Deb, A. Pratap, S. Agarwal and T. Meyarivan, "A fast and elitist multiobjective genetic algorithm: NSGA-II," 
+ * in IEEE Transactions on Evolutionary Computation, vol. 6, no. 2, pp. 182-197, April 2002, doi: 10.1109/4235.996017.
  * 
  * @param <T> phenotype
  * @commented Lauren Gillespie
@@ -185,11 +189,10 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 	 * NSGA2Score array
 	 * 
 	 * @param <T> phenotype
-	 * @param scores
-	 *            scores to convert
+	 * @param scores scores to convert
 	 * @return array of NSGA2Scores
 	 */
-	public static <T> NSGA2Score<T>[] staticNSGA2Scores(ArrayList<Score<T>> scores) {
+	public static <T> NSGA2Score<T>[] staticNSGA2Scores(List<Score<T>> scores) {
 		@SuppressWarnings("unchecked")
 		NSGA2Score<T>[] scoresArray = new NSGA2Score[scores.size()];
 		for (int i = 0; i < scores.size(); i++) {
@@ -201,10 +204,8 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 	/**
 	 * non-static version of selection method
 	 * 
-	 * @param numParents
-	 *            number of parents to select from
-	 * @param scores
-	 *            scores of parents
+	 * @param numParents number of parents to select from
+	 * @param scores scores of parents
 	 * @return list of selected genotypes
 	 */
 	@Override
@@ -216,10 +217,8 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 	 * static version of NSGA2 selection method
 	 * 
 	 * @param <T> phenotype
-	 * @param numParents
-	 *            number of parents to select from
-	 * @param scoresArray
-	 *            array of scores from parents
+	 * @param numParents number of parents to select from
+	 * @param scoresArray array of scores from parents
 	 * @return array list of selected genotypes
 	 */
 	public static <T> ArrayList<Genotype<T>> staticSelection(int numParents, NSGA2Score<T>[] scoresArray) {

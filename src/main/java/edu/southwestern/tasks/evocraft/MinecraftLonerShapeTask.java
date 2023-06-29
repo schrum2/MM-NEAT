@@ -2,7 +2,6 @@ package edu.southwestern.tasks.evocraft;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -266,7 +265,6 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		//System.out.println("    Archive "+ Arrays.toString(MMNEAT.getArchive().getArchive().stream().map(s -> s == null ? "X" : ((Score) s).behaviorIndexScore() ).toArray()));
 		
 		MinecraftCoordinates ranges = MinecraftUtilClass.getRanges();
-
 		// Corner to clear and then place is taken from the queue. If the queue is empty, it waits until something is added in
 		MinecraftCoordinates corner=null;
 		try {
@@ -278,33 +276,41 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		}
 		// Clears specified space for new shape
 		clearBlocksForShape(ranges, corner);
+		
 		MinecraftCoordinates middle = corner.add(MinecraftUtilClass.emptySpaceOffsets());
 		// Evaluates the shape at the middle of the space defined by the corner, and then adds the corner back to the queue
 		Score<T> score = internalMinecraftShapeTask.evaluateOneShape(individual, middle);
 		try {
-			coordinateQueue.put(corner);
+			if(Parameters.parameters.integerParameter("minecraftXMovementBetweenEvals") != 0 && Parameters.parameters.integerParameter("minecraftMaxXShift") != 0) {
+				int shiftValue = (corner.x() + Parameters.parameters.integerParameter("minecraftXMovementBetweenEvals")) % Parameters.parameters.integerParameter("minecraftMaxXShift");
+				coordinateQueue.put(new MinecraftCoordinates(shiftValue, corner.y(), corner.z()));
+			}else {
+				coordinateQueue.put(new MinecraftCoordinates(corner));
+			}
 		} catch (InterruptedException e) {
 			System.out.println("Error with queue");
 			e.printStackTrace();
 			System.exit(1);
 		}
 
-		// Minimum over HashMap values
-		for(HashMap.Entry<String,Object> entry : score.MAPElitesBehaviorMap().entrySet()) {
-			if(behaviorCharacteristics.containsKey(entry.getKey()) && entry.getValue() instanceof Double) {
-				double previous = ((Double) behaviorCharacteristics.get(entry.getKey())).doubleValue();
-				double current = ((Double) entry.getValue()).doubleValue();
-				//double avg = previous + (current - previous) / (num + 1); // Incremental average calculation 
-				//behaviorCharacteristics.put(entry.getKey(), avg);
-				double min = Math.min(previous,current); // Minimum: has to really succeed as flying machine, at least twice
-				behaviorCharacteristics.put(entry.getKey(), min);
-			} else { // Overwrite, fresh start
-				assert num == 0 || !(entry.getValue() instanceof Double) : ""+behaviorCharacteristics;
-				behaviorCharacteristics.put(entry.getKey(), entry.getValue());
+		if(score.usesMAPElitesMapSpecification()) {
+			// Minimum over HashMap values
+			for(HashMap.Entry<String,Object> entry : score.MAPElitesBehaviorMap().entrySet()) {
+				if(behaviorCharacteristics.containsKey(entry.getKey()) && entry.getValue() instanceof Double) {
+					double previous = ((Double) behaviorCharacteristics.get(entry.getKey())).doubleValue();
+					double current = ((Double) entry.getValue()).doubleValue();
+					//double avg = previous + (current - previous) / (num + 1); // Incremental average calculation 
+					//behaviorCharacteristics.put(entry.getKey(), avg);
+					double min = Math.min(previous,current); // Minimum: has to really succeed as flying machine, at least twice
+					behaviorCharacteristics.put(entry.getKey(), min);
+				} else { // Overwrite, fresh start
+					assert num == 0 || !(entry.getValue() instanceof Double) : ""+behaviorCharacteristics;
+					behaviorCharacteristics.put(entry.getKey(), entry.getValue());
+				}
 			}
 		}
 		// Checks command line param on whether or not to generate shapes in archive
-		if(Parameters.parameters.booleanParameter("minecraftContainsWholeMAPElitesArchive") || CommonConstants.netio) {
+		if(Parameters.parameters.booleanParameter("minecraftContainsWholeMAPElitesArchive")) { // || CommonConstants.netio) { // Why netio?
 			// Places the shapes in the world based on their position
 			placeArchiveInWorld(individual, behaviorCharacteristics, ranges);	
 		}
@@ -446,6 +452,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	}
 
 	/**
+	 * TODO: deals with saving files / should this also be generalized and moved?
 	 * Save a test list of the blocks in the generated shape to the archive directory for MAP Elites
 	 * 
 	 * @param <T>
@@ -461,27 +468,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			Archive<T> archive = MMNEAT.getArchive();
 			String fileName = String.format("%7.5f", scoreOfCurrentElite) + "_" + genomeId + ".txt";
 			String binPath = archive.getArchiveDirectory() + File.separator + minecraftBinLabels.binLabels().get(dim1D);
-			writeBlockListFile(blocks, binPath, fileName);
-		}
-	}
-
-	/**
-	 * Write block list text file to specified location
-	 * @param blocks The blocks to write
-	 * @param pathAndPrefix Path plus first part of filename. Will be followed by _ before the fileSuffix
-	 * @param fileSuffix Last part of filename
-	 */
-	public static void writeBlockListFile(List<Block> blocks, String pathAndPrefix, String fileSuffix) {
-		String fullName = pathAndPrefix + "_" + fileSuffix;
-		System.out.println(fullName);
-		try {
-			PrintStream outputFile = new PrintStream(new File(fullName));
-			outputFile.println(blocks);
-			outputFile.close();
-		} catch (FileNotFoundException e) {
-			System.out.println("Error writing file "+fullName);
-			e.printStackTrace();
-			System.exit(1);
+			MinecraftUtilClass.writeBlockListFile(blocks, binPath, fileName);
 		}
 	}
 
@@ -540,7 +527,9 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		MinecraftCoordinates clearEnd = startPosition.add(MinecraftUtilClass.reservedSpace());
 		// Sub 1 to not delete interactive blocks
 		clearEnd = clearEnd.sub(new MinecraftCoordinates(1));
-		MinecraftClient.getMinecraftClient().clearCube(startPosition, clearEnd);
+		if(MinecraftClient.clientRunning()) {
+			MinecraftClient.getMinecraftClient().clearCube(startPosition, clearEnd);
+		} 
 		return new Pair<MinecraftCoordinates,MinecraftCoordinates>(startPosition, clearEnd);
 	}
 
@@ -616,6 +605,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		if(Parameters.parameters.booleanParameter("minecraftChangeCenterOfMassFitness") && MMNEAT.usingDiversityBinningScheme && CommonConstants.netio) {
 			System.out.println("Write block lists for all flying elites to finalFlyingMachines");
 			
+			//final flying machines directory is created
 			String flyingDir = FileUtilities.getSaveDirectory() + "/finalFlyingMachines";
 			File dir = new File(flyingDir);
 			// Create dir
@@ -628,13 +618,15 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
 			for(int i = 0; i < archiveVector.size(); i++) {
 				Score<T> score = archiveVector.get(i);
+				//if there is a fitness score related to this bin (ie. there exists a shape)
 				if(score != null) {
 					double fitness = score.behaviorIndexScore();
+					//TODO: this deals with saving shapes
 					if(this.internalMinecraftShapeTask.certainFlying(fitness)) {
 						@SuppressWarnings("unchecked")
-						List<Block> blocks = MMNEAT.shapeGenerator.generateShape(score.individual, MinecraftClient.POST_EVALUATION_CORNER, MMNEAT.blockSet);
+						List<Block> blocks = MMNEAT.shapeGenerator.generateShape(score.individual, MinecraftClient.POST_EVALUATION_SHAPE_CORNER, MMNEAT.blockSet);
 						String label = minecraftBinLabels.binLabels().get(i);
-						MinecraftLonerShapeTask.writeBlockListFile(blocks, flyingDir + File.separator + label+"ID"+score.individual.getId(), "FITNESS"+fitness+".txt");			
+						MinecraftUtilClass.writeBlockListFile(blocks, flyingDir + File.separator + label+"ID"+score.individual.getId(), "FITNESS"+fitness+".txt");			
 					}
 				}
 			}			

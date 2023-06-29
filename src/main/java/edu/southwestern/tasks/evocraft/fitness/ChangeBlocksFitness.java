@@ -3,6 +3,7 @@ package edu.southwestern.tasks.evocraft.fitness;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
@@ -16,7 +17,9 @@ import edu.southwestern.util.datastructures.Pair;
  *
  */
 public class ChangeBlocksFitness extends TimedEvaluationMinecraftFitnessFunction {
-
+	
+	
+	
 	@Override
 	public Double earlyEvaluationTerminationResult(MinecraftCoordinates corner, List<Block> originalBlocks,
 			ArrayList<Pair<Long, List<Block>>> history, List<Block> newShapeBlockList) {
@@ -35,14 +38,26 @@ public class ChangeBlocksFitness extends TimedEvaluationMinecraftFitnessFunction
 			List<Block> originalBlocks) {
 
 		double fitness = 0;
-		
-		for(int i = 1; i < history.size(); i++) {
+		// Start at index 2 to skip the first shape (the only one with orientation information)
+		List<Block> originalShape = history.get(0).t2;
+		for(int i = 2; i < history.size(); i++) {
 			// Remove the blocks that changed between consecutive readings
 			List<Block> shape1 = history.get(i-1).t2;
+			//System.out.println("shape 1:" + shape1);
 			List<Block> shape2 = history.get(i).t2;
+			//System.out.println("shape 2:" + shape2);
 			List<Block> shape1minusShape2 = MinecraftUtilClass.shapeListDifference(shape1, shape2);
+			//System.out.println("shape1minusShape2:" + shape1minusShape2);
+			//System.out.println("change in center of mass:" + MinecraftUtilClass.getCenterOfMass(shape1).distance(MinecraftUtilClass.getCenterOfMass(shape2)));
 			// If more blocks move, then less will stay the same, and fitness will be higher
-			fitness += shape1.size() - shape1minusShape2.size();
+			int difference = shape1minusShape2.size();
+			//System.out.println("difference:" + difference);
+			if(Parameters.parameters.booleanParameter("minecraftChangeBlocksMomentum")) {
+				fitness += difference + Math.pow((MinecraftUtilClass.getCenterOfMass(originalShape).distance(MinecraftUtilClass.getCenterOfMass(shape2)) + 1), 2);
+			} else {
+				fitness += difference;
+			}
+			//System.out.println("fitness so far:" + fitness);
 		}
 		
 		return fitness;
@@ -55,5 +70,11 @@ public class ChangeBlocksFitness extends TimedEvaluationMinecraftFitnessFunction
 		// Assume the whole shape changes on each reading, which seems very unlikely
 		return volume * (minNumberOfShapeReadings()+1);
 	}
-
+	@Override
+	public boolean shapeIsWorthSaving(double fitnessScore, ArrayList<Pair<Long, List<Block>>> history, MinecraftCoordinates shapeCorner, List<Block> originalBlocks) {
+		//change later
+		
+		if(fitnessScore > 200) return true;
+		return false;
+	}
 }

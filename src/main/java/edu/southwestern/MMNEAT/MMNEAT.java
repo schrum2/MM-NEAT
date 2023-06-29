@@ -32,6 +32,7 @@ import edu.southwestern.evolution.metaheuristics.LinkPenalty;
 import edu.southwestern.evolution.metaheuristics.MaxModulesFitness;
 import edu.southwestern.evolution.metaheuristics.Metaheuristic;
 import edu.southwestern.evolution.metaheuristics.SubstrateLinkPenalty;
+import edu.southwestern.evolution.mome.MOME;
 import edu.southwestern.evolution.mulambda.MuLambda;
 import edu.southwestern.experiment.Experiment;
 import edu.southwestern.experiment.post.MinecraftBlockCompareExperiment;
@@ -129,8 +130,10 @@ public class MMNEAT {
 			return pseudoArchive.getBinMapping();
 		} else if (ea instanceof MAPElites) {
 			return ((MAPElites) ea).getBinLabelsClass();
+		} else if (ea instanceof MOME) {
+			return ((MOME) ea).getBinLabelsClass();
 		}
-		throw new IllegalStateException("Attempted to get archive bin label class without using MAP Elites or a psuedo-archive");
+		throw new IllegalStateException("Attempted to get archive bin label class without using MAP Elites, MOME, or a psuedo-archive");
 	}
 	
 	@SuppressWarnings("rawtypes")
@@ -276,8 +279,23 @@ public class MMNEAT {
 		Parameters.initializeParameterCollections(parameterFile);
 	}
 
+	/**
+	 * Add the name of a fitness function to the list used by the main (possibly only) population.
+	 * @param name Name of fitness function
+	 */
 	public static void registerFitnessFunction(String name) {
 		registerFitnessFunction(name, 0);
+	}
+	
+	/**
+	 * When only one population is being used (no co-evolution), get the
+	 * name of the fitness function at the designated index.
+	 * 
+	 * @param index of fitness function
+	 * @return name of fitness function
+	 */
+	public static String getFitnessFunctionName(int index) {
+		return fitnessFunctions.get(0).get(index);
 	}
 
 	/**
@@ -365,8 +383,6 @@ public class MMNEAT {
 			EvolutionaryHistory.initGenotypeIds();
 			weightPerturber = (RandomGenerator) ClassCreation.createObject("weightPerturber");
 
-			setupCrossover();
-
 			// A task is always required
 			System.out.println("Set Task");
 			// modesToTrack has to be set before task initialization
@@ -377,6 +393,9 @@ public class MMNEAT {
 			
 			task = (Task) ClassCreation.createObject("task");
 			System.out.println("Load task: " + task);
+
+			// SBX crossover needs the bounds from the BoundedTask after it is instantiated
+			setupCrossover();
 			
 			// For all types of Ms Pac-Man tasks
 			if (Parameters.parameters.booleanParameter("scalePillsByGen")

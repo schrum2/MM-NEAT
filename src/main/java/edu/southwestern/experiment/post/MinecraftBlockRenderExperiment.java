@@ -2,6 +2,7 @@ package edu.southwestern.experiment.post;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -37,6 +38,7 @@ public class MinecraftBlockRenderExperiment implements Experiment {
 	public void run() {
 		try {
 			seen = new HashSet<>();
+			HashMap<List<Block>, String> fileNames = new HashMap<>();
 			File file = new File(dir);
 			if(file.isDirectory()) {
 				int count = 0;
@@ -48,6 +50,7 @@ public class MinecraftBlockRenderExperiment implements Experiment {
 						try {
 							List<Block> shiftedBlocks = shiftBlocks(new File(dir + File.separator + individual));
 							seen.add(shiftedBlocks); // Won't add duplicates
+							fileNames.put(shiftedBlocks, individual);
 						} catch(Exception e) {
 							System.out.println("Error adding/reading "+individual);
 							e.printStackTrace();
@@ -67,6 +70,7 @@ public class MinecraftBlockRenderExperiment implements Experiment {
 							System.out.println(i + " of " + seenList.length);
 							if(clear) MinecraftClient.clearAreaAroundPostEvaluationCorner();
 							MinecraftClient.getMinecraftClient().spawnBlocks(shiftedBlocks);
+							System.out.println("Currently watching: "+fileNames.get(seenList[i]));
 							System.out.println("Press enter to continue, 'b' to go back, 'r' to repeat, 'k' proceed without clearing");
 							String input = MiscUtil.waitForReadStringAndEnterKeyPress();
 							if(input.equals("b")) i-=2;
@@ -107,7 +111,7 @@ public class MinecraftBlockRenderExperiment implements Experiment {
 	static List<Block> shiftBlocks(File blockTextFile) throws FileNotFoundException {
 		List<Block> blocks = MinecraftUtilClass.loadMAPElitesOutputFile(blockTextFile); // get block list from output file
 		MinecraftCoordinates shapeCorner = MinecraftUtilClass.minCoordinates(blocks); // Original corner (or close to it) -shape corner
-		List<Block> shiftedBlocks = MinecraftUtilClass.shiftBlocksBetweenCorners(blocks, shapeCorner, MinecraftClient.POST_EVALUATION_CORNER);
+		List<Block> shiftedBlocks = MinecraftUtilClass.shiftBlocksBetweenCorners(blocks, shapeCorner, MinecraftClient.POST_EVALUATION_SHAPE_CORNER);
 		
 //		System.out.println("Spawning " + shiftedBlocks.size() + " blocks from " + dir);
 //		for(Block b: shiftedBlocks) {

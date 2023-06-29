@@ -27,24 +27,40 @@ public class Hypervolume {
 		utils_ = new jmetal.qualityIndicator.util.MetricsUtil();
 	} // Hypervolume
 
-	/*
-	 * returns true if 'point1' dominates 'points2' with respect to the to the
-	 * first 'noObjectives' objectives
+	/**
+	 * This checks if point1 (an array of scores) is better in any given score to point2
+	 * If point2 has any objective score that is greater than point1 it returns false
+	 * only returns true if all of point1's scores are greater than or equal to point2's scores
+	 * 
+	 * returns true if 'point1' dominates 'points2' with respect to the 
+	 * first 'numberOfObjectives' objectives
+	 * @param point1 an array of scores belonging to one individual
+	 * @param point2 an array of scores belonging to one individual
+	 * @param numberOfObjectives the number of objectives/scores being compared
+	 * @return true if point1 scores higher than point2 in at least one objective
 	 */
-	boolean dominates(double point1[], double point2[], int noObjectives) {
+	boolean dominates(double point1[], double point2[], int numberOfObjectives) {
 		int i;
 		int betterInAnyObjective;
 
 		betterInAnyObjective = 0;
-		for (i = 0; i < noObjectives && point1[i] >= point2[i]; i++) {
+		for (i = 0; i < numberOfObjectives && point1[i] >= point2[i]; i++) {
+			//breaks loop early if point2[i] is greater than point1[i]
 			if (point1[i] > point2[i]) {
 				betterInAnyObjective = 1;
 			}
 		}
 
-		return ((i >= noObjectives) && (betterInAnyObjective > 0));
+		return ((i >= numberOfObjectives) && (betterInAnyObjective > 0));
 	} // Dominates
 
+	/**
+	 * Swaps the double[] of front index i with front index j
+	 * front[i][] <--> front[j][]
+	 * @param front the collection of scores
+	 * @param i	an index in the front
+	 * @param j an index in the front
+	 */
 	void swap(double[][] front, int i, int j) {
 		double[] temp;
 
@@ -53,35 +69,41 @@ public class Hypervolume {
 		front[j] = temp;
 	} // Swap
 
-	/*
-	 * all nondominated points regarding the first 'noObjectives' dimensions are
-	 * collected; the points referenced by 'front[0..noPoints-1]' are
+	/**
+	 * filters out any point whose scores are all < another point, returns the new number of points in the front.
+	 * 
+	 * all nondominated points regarding the first 'numberOfObjectives' dimensions are
+	 * collected; the points referenced by 'front[0..numberOfPoints-1]' are
 	 * considered; 'front' is resorted, such that 'front[0..n-1]' contains the
 	 * nondominated points; n is returned
+	 * @param front the collection of scores being considered front[0..numberOfPoints-1][0..numberOfObjectives-1]
+	 * @param numberOfPoints the number of score sets or individuals in the front ie front[numberOfPoints][]
+	 * @param numberOfObjectives the number of objectives being considered front[][numberOfObjectives]
+	 * @return the new number of points in the front (n) such that n is front[0...n-1] TODO: fix this sentence
 	 */
-	public int filterNondominatedSet(double[][] front, int noPoints, int noObjectives) {
+	public int filterNondominatedSet(double[][] front, int numberOfPoints, int numberOfObjectives) {
 		int i, j;
 		int n;
 
-		n = noPoints;
+		n = numberOfPoints;	//controls the looping of front comparisons front[0..n-1]
 		i = 0;
-		while (i < n) {
+		while (i < n) {	//outer loop
 			j = i + 1;
-			while (j < n) {
-				if (dominates(front[i], front[j], noObjectives)) {
+			while (j < n) {	//inner loop
+				if (dominates(front[i], front[j], numberOfObjectives)) {
 					/* remove point 'j' */
-					n--;
-					swap(front, j, n);
-				} else if (dominates(front[j], front[i], noObjectives)) {
+					n--;	
+					swap(front, j, n);	//swaps the last element with j
+				} else if (dominates(front[j], front[i], numberOfObjectives)) {
 					/*
 					 * remove point 'i'; ensure that the point copied to index
 					 * 'i' is considered in the next outer loop (thus, decrement
 					 * i)
 					 */
-					n--;
+					n--;	//decrement the number of points so that it swaps the last point into spot i
 					swap(front, i, n);
-					i--;
-					break;
+					i--;	//so that it reevaluates the element that was swapped in
+					break;	//breaks to reevaluate all j elements to the newly swapped in i element
 				} else {
 					j++;
 				}
@@ -95,16 +117,16 @@ public class Hypervolume {
 	 * calculate next value regarding dimension 'objective'; consider points
 	 * referenced in 'front[0..noPoints-1]'
 	 */
-	double surfaceUnchangedTo(double[][] front, int noPoints, int objective) {
+	double surfaceUnchangedTo(double[][] front, int numberOfPoints, int objective) {
 		int i;
 		double minValue, value;
 
-		if (noPoints < 1) {
+		if (numberOfPoints < 1) {
 			System.err.println("run-time error");
 		}
 
 		minValue = front[0][objective];
-		for (i = 1; i < noPoints; i++) {
+		for (i = 1; i < numberOfPoints; i++) {
 			value = front[i][objective];
 			if (value < minValue) {
 				minValue = value;
@@ -115,15 +137,23 @@ public class Hypervolume {
 
 	/*
 	 * remove all points which have a value <= 'threshold' regarding the
-	 * dimension 'objective'; the points referenced by 'front[0..noPoints-1]'
+	 * dimension 'objective'; the points referenced by 'front[0..numberOfPoints-1]'
 	 * are considered; 'front' is resorted, such that 'front[0..n-1]' contains
 	 * the remaining points; 'n' is returned
 	 */
-	int reduceNondominatedSet(double[][] front, int noPoints, int objective, double threshold) {
+	/**
+	 * 
+	 * @param front
+	 * @param numberOfPoints
+	 * @param objective
+	 * @param threshold
+	 * @return
+	 */
+	int reduceNondominatedSet(double[][] front, int numberOfPoints, int objective, double threshold) {
 		int n;
 		int i;
 
-		n = noPoints;
+		n = numberOfPoints;
 		for (i = 0; i < n; i++) {
 			if (front[i][objective] <= threshold) {
 				n--;
@@ -134,59 +164,75 @@ public class Hypervolume {
 		return n;
 	} // ReduceNondominatedSet
 
-	public double calculateHypervolume(double[][] front, int noPoints, int noObjectives) {
+	/**
+	 * 
+	 * @param front
+	 * @param numberOfPoints
+	 * @param numberOfObjectives
+	 * @return
+	 */
+	public double calculateHypervolume(double[][] front, int numberOfPoints, int numberOfObjectives) {
 		int n;
 		double volume, distance;
 
 		volume = 0;
 		distance = 0;
-		n = noPoints;
+		n = numberOfPoints;
 		while (n > 0) {
 			int noNondominatedPoints;
 			double tempVolume, tempDistance;
 
-			noNondominatedPoints = filterNondominatedSet(front, n, noObjectives - 1);
+			noNondominatedPoints = filterNondominatedSet(front, n, numberOfObjectives - 1);
 			tempVolume = 0;
-			if (noObjectives < 3) {
+			if (numberOfObjectives < 3) {
 				if (noNondominatedPoints < 1) {
 					System.err.println("run-time error");
 				}
 
 				tempVolume = front[0][0];
 			} else {
-				tempVolume = calculateHypervolume(front, noNondominatedPoints, noObjectives - 1);
+				tempVolume = calculateHypervolume(front, noNondominatedPoints, numberOfObjectives - 1);
 			}
 
-			tempDistance = surfaceUnchangedTo(front, n, noObjectives - 1);
+			tempDistance = surfaceUnchangedTo(front, n, numberOfObjectives - 1);
 			volume += tempVolume * (tempDistance - distance);
 			distance = tempDistance;
-			n = reduceNondominatedSet(front, n, noObjectives - 1, distance);
+			n = reduceNondominatedSet(front, n, numberOfObjectives - 1, distance);
 		}
 		return volume;
 	} // CalculateHypervolume
 
 	/* merge two fronts */
-	double[][] mergeFronts(double[][] front1, int sizeFront1, double[][] front2, int sizeFront2, int noObjectives) {
+	/**
+	 * 
+	 * @param front1
+	 * @param sizeFront1
+	 * @param front2
+	 * @param sizeFront2
+	 * @param numberOfObjectives
+	 * @return
+	 */
+	double[][] mergeFronts(double[][] front1, int sizeFront1, double[][] front2, int sizeFront2, int numberOfObjectives) {
 		int i, j;
-		int noPoints;
+		int numberOfPoints;
 		double[][] frontPtr;
 
 		/* allocate memory */
-		noPoints = sizeFront1 + sizeFront2;
-		frontPtr = new double[noPoints][noObjectives];
+		numberOfPoints = sizeFront1 + sizeFront2;
+		frontPtr = new double[numberOfPoints][numberOfObjectives];
 		/* copy points */
-		noPoints = 0;
+		numberOfPoints = 0;
 		for (i = 0; i < sizeFront1; i++) {
-			for (j = 0; j < noObjectives; j++) {
-				frontPtr[noPoints][j] = front1[i][j];
+			for (j = 0; j < numberOfObjectives; j++) {
+				frontPtr[numberOfPoints][j] = front1[i][j];
 			}
-			noPoints++;
+			numberOfPoints++;
 		}
 		for (i = 0; i < sizeFront2; i++) {
-			for (j = 0; j < noObjectives; j++) {
-				frontPtr[noPoints][j] = front2[i][j];
+			for (j = 0; j < numberOfObjectives; j++) {
+				frontPtr[numberOfPoints][j] = front2[i][j];
 			}
-			noPoints++;
+			numberOfPoints++;
 		}
 
 		return frontPtr;
@@ -194,14 +240,11 @@ public class Hypervolume {
 
 	/**
 	 * Returns the hypevolume value of the paretoFront. This method call to the
-	 * calculate hipervolume one
+	 * calculate hypervolume one
 	 *
-	 * @param paretoFront
-	 *            The pareto front
-	 * @param paretoTrueFront
-	 *            The true pareto front
-	 * @param numberOfObjectives
-	 *            Number of objectives of the pareto front
+	 * @param paretoFront The pareto front
+	 * @param paretoTrueFront The true pareto front
+	 * @param numberOfObjectives Number of objectives of the pareto front
 	 */
 	public double hypervolume(double[][] paretoFront, double[][] paretoTrueFront, int numberOfObjectives) {
 
@@ -237,15 +280,15 @@ public class Hypervolume {
 		// metric by Zitzler is for maximization problems
 		invertedFront = utils_.invertedFront(normalizedFront);
 
-		// STEP4. The hypervolumen (control is passed to java version of Zitzler
+		// STEP4. The hypervolume (control is passed to java version of Zitzler
 		// code)
 		return this.calculateHypervolume(invertedFront, invertedFront.length, numberOfObjectives);
 	}// hypervolume
 
 	/**
-	 * This class can be invoqued from the command line. Three params are
+	 * This class can be invoked from the command line. Three params are
 	 * required: 1) the name of the file containing the front, 2) the name of
-	 * the file containig the true Pareto front 3) the number of objectives
+	 * the file containing the true Pareto front 3) the number of objectives
 	 */
 	public static void main(String args[]) {
 		if (args.length < 2) {

@@ -20,14 +20,21 @@ public class MaximizeVolumeFitness extends TimedEvaluationMinecraftFitnessFuncti
 	@Override
 	public double calculateFinalScore(ArrayList<Pair<Long, List<Block>>> history, MinecraftCoordinates corner,
 			List<Block> originalBlocks) {
-
-		MinecraftCoordinates maxResultCoordinates = new MinecraftCoordinates(0, 0, 0);
-		MinecraftCoordinates minResultCoordinates = new MinecraftCoordinates(0, 0, 0);
-		List<Block> currentShapeBlockList;
+		List<Block> currentShapeBlockList = history.get(0).t2;
+		MinecraftCoordinates maxResultCoordinates = MinecraftUtilClass.maxCoordinates(currentShapeBlockList);
+		MinecraftCoordinates minResultCoordinates = MinecraftUtilClass.minCoordinates(currentShapeBlockList);
+		
 		for (int i = 0; i < history.size(); i++) {
 			currentShapeBlockList = history.get(i).t2;
-			minResultCoordinates = MinecraftUtilClass.minCoordinates(currentShapeBlockList);
-			maxResultCoordinates = MinecraftUtilClass.maxCoordinates(currentShapeBlockList);
+			
+			// Empty shape has no min or max coordinates
+			if(currentShapeBlockList.isEmpty()) break;
+			
+			MinecraftCoordinates minResultNextShapeCoordinates = MinecraftUtilClass.minCoordinates(currentShapeBlockList);
+			MinecraftCoordinates maxResultNextShapeCoordinates = MinecraftUtilClass.maxCoordinates(currentShapeBlockList);
+			
+			minResultCoordinates = MinecraftUtilClass.minCoordinates(minResultCoordinates, minResultNextShapeCoordinates);
+			maxResultCoordinates = MinecraftUtilClass.maxCoordinates(maxResultCoordinates, maxResultNextShapeCoordinates);
 		}
 	
 		return MinecraftUtilClass.volume(minResultCoordinates, maxResultCoordinates);
