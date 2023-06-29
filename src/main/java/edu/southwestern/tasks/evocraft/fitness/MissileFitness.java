@@ -78,9 +78,9 @@ public class MissileFitness extends TimedEvaluationMinecraftFitnessFunction {
 			//Target to the side of the shape
 			MinecraftClient.getMinecraftClient().fillCube(shapeCorner.add(modifiedCoordinates), shapeCorner.add(modifiedCoordinates.add(MinecraftUtilClass.getRanges().sub(1))), targetBlockType);
 			//modifies it again so it will offset it to the other side
-			modifiedCoordinates = new MinecraftCoordinates(-targetCornerOffset.z(), targetCornerOffset.y(), targetCornerOffset.x());
+			MinecraftCoordinates modifiedCoordinatesOther = new MinecraftCoordinates(-targetCornerOffset.z(), targetCornerOffset.y(), targetCornerOffset.x());
 			//Target to the other side of the shape
-			MinecraftClient.getMinecraftClient().fillCube(shapeCorner.add(modifiedCoordinates), shapeCorner.add(modifiedCoordinates.add(MinecraftUtilClass.getRanges().sub(1))), targetBlockType);
+			MinecraftClient.getMinecraftClient().fillCube(shapeCorner.add(modifiedCoordinatesOther), shapeCorner.add(modifiedCoordinatesOther.add(MinecraftUtilClass.getRanges().sub(1))), targetBlockType);
 		
 	
 		}
@@ -93,8 +93,22 @@ public class MissileFitness extends TimedEvaluationMinecraftFitnessFunction {
 	@Override
 	public double calculateFinalScore(ArrayList<Pair<Long, List<Block>>> history, MinecraftCoordinates shapeCorner,
 			List<Block> originalBlocks) {
-
 		List<Block> leftOverBlocksFromTarget = MinecraftClient.getMinecraftClient().readCube(shapeCorner.add(targetCornerOffset), shapeCorner.add(targetCornerOffset).add(MinecraftUtilClass.getRanges().sub(1)));
+		
+		if(Parameters.parameters.booleanParameter("minecraftCompassMissileTargets")) {
+			leftOverBlocksFromTarget.addAll(MinecraftClient.getMinecraftClient().readCube(shapeCorner.sub(targetCornerOffset), shapeCorner.sub(targetCornerOffset).add(MinecraftUtilClass.getRanges().sub(1))));
+			//new coordinate that changes targetCornerOffset
+			MinecraftCoordinates modifiedCoordinates = new MinecraftCoordinates(targetCornerOffset.z(), targetCornerOffset.y(), -targetCornerOffset.x()); 
+			//Target to the side of the shape
+			leftOverBlocksFromTarget.addAll(MinecraftClient.getMinecraftClient().readCube(shapeCorner.add(modifiedCoordinates), shapeCorner.add(modifiedCoordinates.add(MinecraftUtilClass.getRanges().sub(1)))));
+			//modifies it again so it will offset it to the other side
+			MinecraftCoordinates modifiedCoordinatesOther = new MinecraftCoordinates(-targetCornerOffset.z(), targetCornerOffset.y(), targetCornerOffset.x());
+			//Target to the other side of the shape
+			leftOverBlocksFromTarget.addAll(MinecraftClient.getMinecraftClient().readCube(shapeCorner.add(modifiedCoordinatesOther), shapeCorner.add(modifiedCoordinatesOther.add(MinecraftUtilClass.getRanges().sub(1)))));
+		
+		
+		}
+		
 		List<Block> leftOverOfTargetBlocks = MinecraftUtilClass.getDesiredBlocks(leftOverBlocksFromTarget, acceptedBlownUpBlockTypes);
 		
 		// For troubleshooting successful shapes that destroy the target
