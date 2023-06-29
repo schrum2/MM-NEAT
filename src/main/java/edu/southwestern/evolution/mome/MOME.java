@@ -32,12 +32,9 @@ import edu.southwestern.util.stats.StatisticsUtilities;
 
 /**
  * TODO: Explain a bit more, and also cite the paper whose algorithm we are implementing using ACM style
- * This class implements MOME instead of MAP Elites
+ * This class implements MOME instead of MAP Elites using the paper from https://arxiv.org/pdf/2202.03057.pdf
  * It creates an archive where bins can house multiple individuals, it keeps track of generations
  * and does statistical data logging in files.
- * 
- *  My version of Multi-dimensional Archive of Phenotypic Elites (MAP-Elites), the quality diversity (QD)
- * algorithms that illuminates a search space. This is an unusual implementation, but it gets the job done.
  * 
  * Thomas Pierrot, Guillaume Richard, Karim Beguir, and Antoine Cully. 
  * 2022. Multi-objective quality diversity optimization. 
@@ -68,21 +65,21 @@ public class MOME<T> implements SteadyStateEA<T>{
 	private int individualsPerGeneration;
 	private int individualCreationAttemptsCount;	//this is analogous to iterations and helps to keep track of how many actual times new individual is called
 	
-	//logging variables (might be sorted into tracking or other grouping
+	//logging variables 
 	public boolean io;
 	private boolean archiveFileCreated = false;	//track if the archive file is made
 	
 	// Not a MOMELog
 	private MMNEATLog archiveLog = null; // Log general archive information. Does not use matrix plot, logged every generation
-//	private MMNEATLog[] paretoFrontFinalLogs = null;	//logging for final cleanup, logs the paretoFront
 	
-	// MOMELogs
+	//MOMELogs
 	private MMNEATLog binPopulationSizeLog = null; // contains sizes of subpops in each bin, logged every generation
 	private MMNEATLog hypervolumeLog = null;	//contains the size of the hypervolume for each bin's subpop, logged every generation
 	private MMNEATLog[] maxFitnessLogs = null; //creates a log for each objective that contains the max fitness for each bin, logged every generation
 	private MMNEATLog[] minFitnessLogs = null; //creates a log for each objective that contains the min fitness for each bin, logged every generation
 	private MMNEATLog[] rangeFitnessLogs = null; //creates a log for each objective that contains the range from min to max for each bin, logged every generation
 
+	//CONSTRUCTORS
 	public MOME() {
 		this(Parameters.parameters.stringParameter("archiveSubDirectoryName"), Parameters.parameters.booleanParameter("io"), Parameters.parameters.booleanParameter("netio"));
 	}
@@ -109,11 +106,12 @@ public class MOME<T> implements SteadyStateEA<T>{
 		this.individualCreationAttemptsCount = Parameters.parameters.integerParameter("lastSavedGeneration");
 		//TODO: the above might cause issues
 		
-		if(io) {
-			//logging
+		//everything below here in this constructor deals with logging
+		if(io) {	//logging
 			String infix = "MOMEArchive";
 			int numberOfObjectives = MMNEAT.task.numObjectives();
 			int numberOfBinLabels = archive.getBinMapping().binLabels().size();
+			
 			// TODO: Contains MMNEATLogs for now, but later will be only those logs that are MOMELogs. Specifically, they have a column for each archive bin
 			ArrayList<MMNEATLog> momeLogs = new ArrayList<>();
 			
@@ -148,7 +146,6 @@ public class MOME<T> implements SteadyStateEA<T>{
 			String experimentPrefix = Parameters.parameters.stringParameter("log") + Parameters.parameters.integerParameter("runNumber");					
 			int yrange = Parameters.parameters.integerParameter("maxGens")/individualsPerGeneration;
 			System.out.println("yrange = " + yrange + ", from maxGens = "+Parameters.parameters.integerParameter("maxGens")+"/"+individualsPerGeneration+"=individualsPerGeneration");
-			
 			
 			setUpLogging(numberOfBinLabels, infix, experimentPrefix, yrange, individualsPerGeneration, momeLogs);
 		}
@@ -259,54 +256,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 		afterIndividualCreationProcesses(archive.add(s1));			//this will call anything we need to do after making a new individual
 		assert archive.checkLargestSubpopNotGreaterThanMaxLimit() : "largest subpop is greater than max allowed-END OF NEW INDIVIDUAL";
 	}
-
-	/**
-	 * the current generation is the number of attempts to create individuals 
-	 * divided by the number of individuals in a generation
-	 * 
-	 * This is required to end the experiment! Otherwise it never ends
-	 */
-	@Override
-	public int currentIteration() {
-		return individualCreationAttemptsCount/individualsPerGeneration;
-	}
-
-	/**
-	 * gets an ArrayList of the populations genotypes
-	 */
-	@Override
-	public ArrayList<Genotype<T>> getPopulation() {
-		//System.out.println("in get population");
-
-		 ArrayList<Genotype<T>> result = new ArrayList<Genotype<T>>(archive.archive.size());
-
-		 archive.archive.forEach( (coords, subpop) -> {	////goes through the archive
-			 for(Score<T> s : subpop) {		//goes through the scores of the subpop
-				 result.add(s.individual);
-			 }
-		 });
-		 
-		return result;
-	}
-
-	// This and MAP Elites probably should have a common interface that specifies the need for this method
-	/**
-	 * a method that mirrors MAP Elites
-	 * same as getWholeArchiveScores in MOMEArchive, but returns ArrayList instead of Vector
-	 * @return every score for the archive
-	 */
-	public ArrayList<Score<T>> getArchive() {
-		 ArrayList<Score<T>> result = new ArrayList<>(archive.archive.size());
-
-		 archive.archive.forEach( (coords, subpop) -> {	////goes through the archive
-			 for(Score<T> s : subpop) {		//goes through the scores of the subpop
-				 result.add(s);
-			 }
-		 });
-		 
-		return result;
-	}
-
+	
 	/**
 	 * holds commands made after an individual is created
 	 * synchronized for logging purposes and tracking add and discard counts
@@ -324,6 +274,42 @@ public class MOME<T> implements SteadyStateEA<T>{
 		}
 	}
 	
+//GETTERS/SETTERS
+	/**
+	 * the current generation is the number of attempts to create individuals 
+	 * divided by the number of individuals in a generation
+	 * 
+	 * This is required to end the experiment! Otherwise it never ends
+	 */
+	@Override
+	public int currentIteration() {
+		return individualCreationAttemptsCount/individualsPerGeneration;
+	}
+
+	/**
+	 * gets an ArrayList of the populations genotypes
+	 */
+	@Override
+	public ArrayList<Genotype<T>> getPopulation() {
+		//System.out.println("in get population");
+		return archive.getPopulation();
+	}
+
+	// This and MAP Elites probably should have a common interface that specifies the need for this method
+	/**
+	 * a method that mirrors MAP Elites
+	 * same as getWholeArchiveScores in MOMEArchive, but returns ArrayList instead of Vector
+	 * @return every score for the archive in an ArrayList
+	 */
+	public ArrayList<Score<T>> getArchive() {
+		 ArrayList<Score<T>> result = new ArrayList<>(archive.totalNumberOfIndividualsInArchive());
+		 Vector<Score<T>> archiveScores = archive.getWholeArchiveScores();
+		 int i = 0;
+		 for (Score<T> score : archiveScores) {
+			result.add(score);
+		}
+		return result;
+	}
 
 	@Override
 	public boolean populationChanged() {
@@ -348,6 +334,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 		return addedIndividualCount;
 	}
 
+//LOGGING RELATED METHODS / LOGGING METHODS
 	/**
 	 * Write one line of data to each of the active log files, but only periodically,
 	 * when number of iterations divisible by individualsPerGeneration. 
