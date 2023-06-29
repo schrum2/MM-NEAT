@@ -37,11 +37,11 @@ public class MultiobjectiveUtil {
 		for (Score<T> individualScore : scores) {		//adds the scores to the double array of scores
 			scoresArrayForHypervolume[i] = individualScore.scores;
 			for (int j = 0; j < scoresArrayForHypervolume[i].length; j++) {		//this should subtract the minimum score value for each objective from its score
-				scoresArrayForHypervolume[i][j] -= minScoreForEachObjective[j];
+				scoresArrayForHypervolume[i][j] -= minScoreForEachObjective[j]; //before passing to hypervolume, adjust scores for the minimum 
 			}
 			i++;
 		}
-		//before passing to hypervolume, adjust scores for the minimum so that they are properly situated (-10 score should add 10 and 10 score should minus 10 so score-min
+		
 		Hypervolume hv = new Hypervolume();	//instantiates an instance of the class for access to the calculateHypervolume method
 		return hv.calculateHypervolume(scoresArrayForHypervolume, numberOfPoints, numberOfObjectives);
 		//doubleScores[numberOfIndividualScoresInList][numberOfObjectives]
