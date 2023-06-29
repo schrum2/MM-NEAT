@@ -6,9 +6,11 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
+import cern.colt.Arrays;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.mapelites.BinLabels;
@@ -177,6 +179,7 @@ public class MOMEArchive<T> {
 				subpopInBin.add(candidate);	
 				// Recalculate Pareto front
 				ArrayList<NSGA2Score<T>> front = NSGA2.getParetoFront(NSGA2.staticNSGA2Scores(subpopInBin));
+				assert allNondominated(front) : "How can there be dominated points in the Pareto front?\n"+front;
 				//check if the candidate it there and return if it is
 				long candidateID = candidate.individual.getId();
 				for (NSGA2Score<T> score : front) {
@@ -225,7 +228,42 @@ public class MOMEArchive<T> {
 		}
 	}
 	
-	
+	// Should only be called from assertion when all of the points really are non-dominated
+	private boolean allNondominated(ArrayList<NSGA2Score<T>> front) {
+		for(int i = 0; i < front.size(); i++) {
+			for(int j = 0; j < front.size(); j++) {
+				if(i != j) {
+					NSGA2Score<T> scoreI = front.get(i);
+					NSGA2Score<T> scoreJ = front.get(j);
+					
+					assert !scoreI.isBetter(scoreJ) : "How is " + scoreI + " better than " + scoreJ + "?";
+					assert !scoreJ.isBetter(scoreI) : "How is " + scoreJ + " better than " + scoreI + "?";
+					
+					double[] iNums = scoreI.scores;
+					double[] jNums = scoreJ.scores;
+					
+					assert iNums.length == jNums.length;
+					
+					boolean iBetterOnce = false;
+					boolean jBetterOnce = false;
+					
+					for(int k = 0; k < iNums.length; k++) {
+						if(iNums[k] > jNums[k]) iBetterOnce = true;
+						if(jNums[k] > iNums[k]) jBetterOnce = true;
+					}
+					
+					assert iBetterOnce : "i never better? iNums = "+Arrays.toString(iNums) + ", jNums = " + Arrays.toString(jNums);
+					assert jBetterOnce : "j never better? iNums = "+Arrays.toString(iNums) + ", jNums = " + Arrays.toString(jNums);
+					
+					// Will never reach with assertions
+					if(!iBetterOnce) return false;
+					if(!jBetterOnce) return false;
+				}
+			}
+		}
+		
+		return true;
+	}
 	/**
 	 * This takes a front and discards a random individual that is not the one just added to the front
 	 * @param individualToKeep the individual you can not discard
@@ -338,10 +376,12 @@ public class MOMEArchive<T> {
 	 * @return true if the max subpop size is less than the max allowed, false if it is more than the max allowed
 	 */
 	public boolean checkLargestSubpopNotGreaterThanMaxLimit() {
-		if (maxSubPopulationSizeInWholeArchive() > maximumNumberOfIndividualsInSubPops) {
+		if (maximumNumberOfIndividualsInSubPops == -1) 
+			return true; // No restrictions here
+		else if (maxSubPopulationSizeInWholeArchive() > maximumNumberOfIndividualsInSubPops) 
 			return false;
-		}
-		return true;
+		else
+			return true;
 	}
 	/**
 	 * checks if a gives list is greater than the max subpop allowed
@@ -367,6 +407,7 @@ public class MOMEArchive<T> {
 		Collection<Vector<Score<T>>> allVectorsOfScores = archive.values();	//this returns a collection of all the scores/values in the archive
 		for(Vector<Score<T>> scoreVector : allVectorsOfScores) {	//for each bin
 			if(scoreVector.size() > maxSubPop) {					//check population size
+				assert !(maxSubPop > maximumNumberOfIndividualsInSubPops && maximumNumberOfIndividualsInSubPops > -1) : "Population too big: "+scoreVector.size() + ":" + scoreVector;
 				maxSubPop = scoreVector.size();	
 			}	
 		}
@@ -374,6 +415,14 @@ public class MOMEArchive<T> {
 		return maxSubPop;
 	}
 
+	public String archiveDebug() {
+		String result = "";
+		for(Entry<Vector<Integer>, Vector<Score<T>>> pair : archive.entrySet()) {
+			result += ""+pair.getKey() + "->" + pair.getValue().size() + ":" + pair.getValue() + "\n";
+		}
+		return result;
+	}
+	
 	//Min sub pop size of all occupied bins in the archive
 	/**
 	 * this returns the least number of individuals in a subpopulation from the whole archive
@@ -724,7 +773,7 @@ public class MOMEArchive<T> {
 
 		
 		
-		MMNEAT.main("runNumber:1 randomSeed:1 minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.DirectRepresentationShapeGenerator minecraftChangeCenterOfMassFitness:true minecraftMaximizeVolumeFitness:false minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.ExplosiveBlockSet trials:1 mu:10 maxGens:60000 launchMinecraftServerFromJava:false io:true netio:true mating:true fs:false spaceBetweenMinecraftShapes:15 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.tasks.evocraft.genotype.MinecraftShapeGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:testing log:TESTING-MOMEFlyVsMissileDirectSmallPOCappedCompass saveTo:MOMEFlyVsMissileDirectSmallPOCappedCompass extraSpaceBetweenMinecraftShapes:100 minecraftTargetDistancefromShapeY:0 minecraftTargetDistancefromShapeX:50 minecraftTargetDistancefromShapeZ:0 minecraftMissileFitness:true parallelMAPElitesInitialize:true rememberParentScores:true minecraftContainsWholeMAPElitesArchive:false experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 rememberParentScores:true minecraftContainsWholeMAPElitesArchive:false interactWithMapElitesInWorld:false ea:edu.southwestern.evolution.mome.MOME mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5 minecraftClearWithGlass:false maximumMOMESubPopulationSize:10 minecraftCompassMissileTargets:true".split(" "));
+		MMNEAT.main("runNumber:1 randomSeed:1 minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.DirectRepresentationShapeGenerator minecraftChangeCenterOfMassFitness:true minecraftMaximizeVolumeFitness:false minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.ExplosiveBlockSet trials:1 mu:100 maxGens:60000 launchMinecraftServerFromJava:false io:true netio:true mating:true fs:false spaceBetweenMinecraftShapes:15 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.tasks.evocraft.genotype.MinecraftShapeGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:testing log:TESTING-MOMEFlyVsMissileDirectSmallPOCappedCompass saveTo:MOMEFlyVsMissileDirectSmallPOCappedCompass extraSpaceBetweenMinecraftShapes:100 minecraftTargetDistancefromShapeY:0 minecraftTargetDistancefromShapeX:50 minecraftTargetDistancefromShapeZ:0 minecraftMissileFitness:true parallelMAPElitesInitialize:true rememberParentScores:true minecraftContainsWholeMAPElitesArchive:false experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 rememberParentScores:true minecraftContainsWholeMAPElitesArchive:false interactWithMapElitesInWorld:false ea:edu.southwestern.evolution.mome.MOME mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5 minecraftClearWithGlass:false maximumMOMESubPopulationSize:10 minecraftCompassMissileTargets:true".split(" "));
 	}
 
 }

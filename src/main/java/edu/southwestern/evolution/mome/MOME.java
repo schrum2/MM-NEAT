@@ -364,7 +364,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 			archiveFileCreated = true;
 		}
 
-		assert archive.checkLargestSubpopNotGreaterThanMaxLimit() : "largest subpop is greater than max allowed-INSIDE LOG";
+		assert archive.checkLargestSubpopNotGreaterThanMaxLimit() : "largest subpop is greater than max allowed-INSIDE LOG\n"+archive.archiveDebug();
 		//System.out.println("individuals per generation:"+ individualsPerGeneration + " parameter:" + Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration"));
 
 		//if an individual was added and the population count is even with the steadyStateIndividualsPerGeneration
