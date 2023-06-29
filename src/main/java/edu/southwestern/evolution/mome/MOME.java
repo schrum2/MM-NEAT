@@ -76,6 +76,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 	private MMNEATLog archiveLog = null; // Log general archive information. Does not use matrix plot, logged every generation
 //	private MMNEATLog[] paretoFrontFinalLogs = null;	//logging for final cleanup, logs the paretoFront
 	
+	// MOMELogs
 	private MMNEATLog binPopulationSizeLog = null; // contains sizes of subpops in each bin, logged every generation
 	private MMNEATLog hypervolumeLog = null;	//contains the size of the hypervolume for each bin's subpop, logged every generation
 	private MMNEATLog[] maxFitnessLogs = null; //creates a log for each objective that contains the max fitness for each bin, logged every generation
@@ -170,7 +171,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 		
 		//add initial population to the archive
 		Vector<Score<T>> evaluatedPopulation = new Vector<Score<T>>(startingPopulation.size());
-		//not sure if we need netio stuff at all
+
 		boolean backupNetIO = CommonConstants.netio;
 		CommonConstants.netio = false; // Some tasks require archive comparison to do this, but it does not exist yet.
 		Stream<Genotype<T>> evaluateStream = Parameters.parameters.booleanParameter("parallelMAPElitesInitialize") ? 
@@ -259,7 +260,6 @@ public class MOME<T> implements SteadyStateEA<T>{
 		assert archive.checkLargestSubpopNotGreaterThanMaxLimit() : "largest subpop is greater than max allowed-END OF NEW INDIVIDUAL";
 	}
 
-	//the current generation is the number of attempts to create individuals divided by the number of individuals in a generation
 	/**
 	 * the current generation is the number of attempts to create individuals 
 	 * divided by the number of individuals in a generation
@@ -309,6 +309,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 
 	/**
 	 * holds commands made after an individual is created
+	 * synchronized for logging purposes and tracking add and discard counts
 	 * @param individualAddStatus	if an individual was added or not
 	 */
 	//@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -373,11 +374,12 @@ public class MOME<T> implements SteadyStateEA<T>{
 			synchronized(archive) {
 
 				assert archive.checkLargestSubpopNotGreaterThanMaxLimit() : "largest subpop is greater than max allowed-INSIDE LOG\n"+archive.archiveDebug();
-				//System.out.println("individuals per generation:"+ individualsPerGeneration + " parameter:" + Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration"));
-
+				
 				final int pseudoGeneration = individualCreationAttemptsCount/individualsPerGeneration;
-
-				//			System.out.println("generation:"+pseudoGeneration+ " addedIndividualCount:" +addedIndividualCount + " individualCreationAttemptsCount:" + individualCreationAttemptsCount + " discarded individuals:" + discardedIndividualCount);
+				
+				//print statements for the beginning of logging
+				//System.out.println("individuals per generation:"+ individualsPerGeneration + " parameter:" + Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration"));
+				//System.out.println("generation:"+pseudoGeneration+ " addedIndividualCount:" +addedIndividualCount + " individualCreationAttemptsCount:" + individualCreationAttemptsCount + " discarded individuals:" + discardedIndividualCount);
 				System.out.println("generation:"+pseudoGeneration);
 				System.out.println("max bin size:" + archive.maxSubPopulationSizeInWholeArchive() + " max allowed: " + Parameters.parameters.integerParameter("maximumMOMESubPopulationSize"));
 
@@ -424,8 +426,8 @@ public class MOME<T> implements SteadyStateEA<T>{
 					rangeFitnessLogs[i].log(pseudoGeneration + "\t" + StringUtils.join(scoreRangesForOneObjective, "\t"));
 				}
 
-				//below is for archive logging archive
-				//			////////////ARCHIVE LOGGING / GENERAL PLOT LOGGING
+
+				//////////////ARCHIVE LOGGING / GENERAL PLOT LOGGING
 				/**
 				 * when logging for the archive make sure when you add a variable here
 				 * you also add it to setUpLogging to keep consistency
@@ -437,14 +439,20 @@ public class MOME<T> implements SteadyStateEA<T>{
 				//TOTAL NUMBER OF INDIVIDUALS CURRENTLY IN THE ARCHIVE, NUMBER OF ADDED AND DISCARCARDED INDIVIDUALS
 				printString = printString + archive.totalNumberOfIndividualsInArchive()+"\t" + addedIndividualCount + "\t" + discardedIndividualCount + "\t";
 
-				//HYPERVOLUME, INDIVIDUAL BIN MAX,MIN,MEAN, TOTAL OF ALL BINS
+		//total hypervolume is the hypervolume in whole archive pareto front
+		//moqd is what I have right now
+				
+				//HYPERVOLUME, INDIVIDUAL BIN MAX,MIN,MEAN, HYPERVOLUME OF COMBINED PARETO FRONT, MOQDSCORE
 				double maxHyperVolumeBin = StatisticsUtilities.maximum(hypervolumeForBins);
 				double minHyperVolumeBin = StatisticsUtilities.minimum(ArrayUtil.replace(hypervolumeForBins, 0, Double.POSITIVE_INFINITY)); //replace 0 with pos infinity so it gets actual scores
 				double meanHyperVolumeOfBins = StatisticsUtilities.average(hypervolumeForBins);
-				double totalHypervolume = archive.totalHyperVolumeOfAllBinsCombined();
-				//			System.out.println("max:"+maxHyperVolumeBin+" min:"+minHyperVolumeBin+" mean:"+meanHyperVolumeOfBins+" total:"+totalHypervolume);
+				double totalHypervolumeCombinedParetoFrontOfWholeArchive = archive.combinedParetoFrontWholeArchiveHypervolume();
+				//log separately
+				double totalHypervolumeMOQDScore = archive.totalHypervolumeMOQDScore();
+				
+				//System.out.println("max:"+maxHyperVolumeBin+" min:"+minHyperVolumeBin+" mean:"+meanHyperVolumeOfBins+" totalCombinedParetoFront:"+totalParetoFrontCombinedHypervolume +" MOQDScore:"+ totalHypervolumeMOQDScore);
 				//add the max and min hypervolume before the max and min of other things
-				printString = printString + maxHyperVolumeBin + "\t" + minHyperVolumeBin + "\t" + meanHyperVolumeOfBins + "\t" + totalHypervolume + "\t";
+				printString = printString + maxHyperVolumeBin + "\t" + minHyperVolumeBin + "\t" + meanHyperVolumeOfBins + "\t" + totalHypervolumeCombinedParetoFrontOfWholeArchive + "\t" + totalHypervolumeMOQDScore + "\t";
 
 				//MAX/MIN FITNESS PER OBJECTIVE FOR WHOLE ARCHIVE
 				//adding max fitness scores to print
@@ -502,7 +510,8 @@ public class MOME<T> implements SteadyStateEA<T>{
 
 		logIndex.put("pseudoGeneration", columnIndex++); logIndex.put("occupiedBins", columnIndex++); logIndex.put("percentageBins", columnIndex++);
 		logIndex.put("totalIndividuals", columnIndex++); logIndex.put("addedIndividuals", columnIndex++); logIndex.put("discardedIndividuals", columnIndex++);
-		logIndex.put("hypervolumeMax", columnIndex++); logIndex.put("hypervolumeMin", columnIndex++); logIndex.put("hypervolumeMean", columnIndex++); logIndex.put("hypervolumeTotal", columnIndex++);
+		logIndex.put("hypervolumeMax", columnIndex++); logIndex.put("hypervolumeMin", columnIndex++); logIndex.put("hypervolumeMean", columnIndex++); 
+		logIndex.put("hypervolumeTotalCombinedPareto", columnIndex++); logIndex.put("hypervolumeTotalMOQDScore", columnIndex++);
 		logIndex.put("maxFitnessByObjectiveStart", columnIndex++);
 //		System.out.println("hypervolumeMax test:"+logIndex.get("hypervolumeMax")+ " Inside logging thehypervolume, before fitness");
 //		System.out.println("Max fitness starts:"+logIndex.get("maxFitnessByObjectiveStart")+ " Inside logging the max fitness scores");
@@ -536,13 +545,19 @@ public class MOME<T> implements SteadyStateEA<T>{
 			ps.println("plot \"" + prefix + "_log.txt\" u 1:" + logIndex.get("addedIndividuals") + " w linespoints t \"Added Individuals\", \\");
 			ps.println("     \"" + prefix + "_log.txt\" u 1:" + logIndex.get("discardedIndividuals") + " w linespoints t \"Discarded Individuals\"");
 	
-			//hypervolume data bin
-			ps.println("set title \"" + experimentPrefix + " Max/Min/Mean/Total Hypervolume in an Individual Bin\"");
-			ps.println("set output \""+ prefix + "_HypervolumeSingleBinData_log.pdf\"");
+			//HYPERVOLUME, INDIVIDUAL BIN MAX,MIN,MEAN, HYPERVOLUME OF COMBINED PARETO FRONT, MOQDSCORE
+			//hypervolume data bin		//in gnuplot it should be global hypervolume --- combinedParetoFrontWholeArchiveHypervolume
+			ps.println("set title \"" + experimentPrefix + " Max/Min/Mean/Total Hypervolume in the Whole Archive\"");
+			ps.println("set output \""+ prefix + "_HypervolumeWholeArchive_log.pdf\"");
 			ps.println("plot \"" + prefix + "_log.txt\" u 1:" + logIndex.get("hypervolumeMax") + " w linespoints t \"Max Hypervolume\", \\");
 			ps.println("     \"" + prefix + "_log.txt\" u 1:" + logIndex.get("hypervolumeMin") + " w linespoints t \"Min Hypervolume\", \\");
 			ps.println("     \"" + prefix + "_log.txt\" u 1:" + logIndex.get("hypervolumeMean") + " w linespoints t \"Mean Hypervolume\", \\");
-			ps.println("     \"" + prefix + "_log.txt\" u 1:" + logIndex.get("hypervolumeTotal") + " w linespoints t \"Total Hypervolume\"");
+			ps.println("     \"" + prefix + "_log.txt\" u 1:" + logIndex.get("hypervolumeTotalCombinedPareto") + " w linespoints t \"Global Hypervolume\"");
+		
+			//hypervolumeTotalMOQDScore
+			ps.println("set title \"" + experimentPrefix + " MOQDScore\"");
+			ps.println("set output \""+ prefix + "_HypervolumeMOQDScore_log.pdf\"");
+			ps.println("plot \"" + prefix + "_log.txt\" u 1:" + logIndex.get("hypervolumeTotalMOQDScore") + " w linespoints t \"MOQDScore\"");
 			
 //			System.out.println("Max fitness starts:"+logIndex.get("maxFitnessByObjectiveStart"));
 			//doing multiple max/min logs per objective
