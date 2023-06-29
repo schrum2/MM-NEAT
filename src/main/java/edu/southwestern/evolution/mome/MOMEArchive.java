@@ -169,19 +169,28 @@ public class MOMEArchive<T> {
 				candidateBinCoordinates.add(binIndex[i]);
 			}
 			
-			synchronized(this) {
+//			synchronized(this) {
 			// If the bin has never been filled before, then initialize as empty vector
-			if(!archive.containsKey(candidateBinCoordinates)) {
-//				synchronized(this) {
-				System.out.println("New bin uncovered: "+candidateBinCoordinates);
-				archive.put(candidateBinCoordinates, new Vector<Score<T>>());
-//				}
-			}
+//			if(!archive.containsKey(candidateBinCoordinates)) {
+////				synchronized(this) {
+//				System.out.println("New bin uncovered: "+candidateBinCoordinates);
+//				archive.put(candidateBinCoordinates, new Vector<Score<T>>());
+////				}
+//			}
 			//TODO: this is causing synchronization issues
 			//add the candidate (Score) to the vector of scores for that bin
-			
-			Vector<Score<T>> subpopInBin = archive.get(candidateBinCoordinates);
-//			synchronized(subpopInBin) {
+			Vector<Score<T>> subpopInBin;
+			if(!archive.containsKey(candidateBinCoordinates)) {
+//			synchronized(this) {
+				System.out.println("New bin uncovered: "+candidateBinCoordinates);
+				subpopInBin = new Vector<Score<T>>();
+				//			}
+			} else {
+				subpopInBin = archive.get(candidateBinCoordinates);
+			}
+
+//			Vector<Score<T>> subpopInBin = archive.get(candidateBinCoordinates);
+			synchronized(subpopInBin) {
 //			synchronized(this) {
 //				System.out.println("subpopInBin synchronization, add");
 
@@ -216,19 +225,24 @@ public class MOMEArchive<T> {
 						//						System.out.println(" after discard, before synchronization");
 
 //						synchronized(this) { // Lock the whole archive when replacing something
+						synchronized (archive) {
+							
+						
 						System.out.println(" after discard, after synchronization");
-
+						if (!archive.containsKey(candidateBinCoordinates)) {
+							archive.put(candidateBinCoordinates, new Vector<Score<T>>());
+						}
 						archive.replace(candidateBinCoordinates, newBinContents);
 						//							System.out.println("bin size after replacement with front:" + archive.get(candidateBinCoordinates).size());
 						assert (archive.get(candidateBinCoordinates).size() <= maximumNumberOfIndividualsInSubPops) : "the number of individuals in this subpop exceed the maximum number that is allowed after replacing with front";
 						assert (archive.get(candidateBinCoordinates).size() == front.size()) : archive.get(candidateBinCoordinates).size()+" = subpop size != front size = "+front.size() + ",\nfront="+front+"\nbin="+archive.get(candidateBinCoordinates);
-						System.out.println("end of synchronize this");
+//						System.out.println("end of synchronize this");
 
 						// I think the code from this assert was freezing the execution somehow
 						//assert checkLargestSubpopNotGreaterThanMaxLimit() : "after adding and going through other asserts the largest subpop is greater than the limit"
 						// + " largest subpop:" + maxSubPopulationSizeInWholeArchive() + " size of current subpop:" + archive.get(candidateBinCoordinates).size();
 						//conditionalEliteSave(candidate, candidateBinCoordinates);	//this saves a condidate, but currently saves all created individuals which is too many
-//						}
+						}
 						return true;	//candidate was added
 					}
 				}
