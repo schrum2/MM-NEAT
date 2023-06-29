@@ -36,6 +36,8 @@ import edu.southwestern.util.stats.StatisticsUtilities;
  * It creates an archive where bins can house multiple individuals, it keeps track of generations
  * and does statistical data logging in files.
  * 
+ * Just like MAPElites but with pareto fronts
+ * 
  * Thomas Pierrot, Guillaume Richard, Karim Beguir, and Antoine Cully. 
  * 2022. Multi-objective quality diversity optimization. 
  * In Proceedings of the Genetic and Evolutionary Computation Conference (GECCO '22). 
@@ -652,6 +654,8 @@ public class MOME<T> implements SteadyStateEA<T>{
 		
 		//logging aggregate file
 		File paretoFrontAggregateOutput = new File(saveDirectoryParetoFronts + "/AggregateFront.txt");
+		
+		
 		PrintStream ps;
 		try {
 			ps = new PrintStream(paretoFrontAggregateOutput);
@@ -669,6 +673,49 @@ public class MOME<T> implements SteadyStateEA<T>{
 				ps.println(scoreString);
 			}
 			ps.close();
+			
+			String logTitle = saveDirectoryParetoFronts+"/AggregateFront.txt";
+			String plotFilename = saveDirectoryParetoFronts+"/AggregateFront.plt";
+			String plotPDFFilename = plotFilename.replace(".plt", "_PDF.plt");
+			File plotFile = new File(directory + plotFilename);
+			
+			try {
+//				// The PDF version
+//				ps = new PrintStream(plotPDFFile);
+//				ps.println("set term pdf enhanced");
+//				ps.println("unset key");
+//				// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
+//				ps.println("set yrange [0:"+ yrange +"]");
+//				ps.println("set xrange [1:"+ numberOfBinLabels + "]");
+//				ps.println("set title \"" + logTitle + "\"");
+//				ps.println("set output \"" + pdfFilename + "\"");				
+//				// The :1 is for skipping the "generation" number logged in the file
+//				ps.println("plot \"" + textLogFilename + "\" matrix every ::1 with image");
+//				ps.close();
+				double[] maxPerObjective = archive.maxFitnessInWholeArchiveXObjective();
+				double yrange = maxPerObjective[0];
+				double xrange = maxPerObjective[1];
+				// Non-PDF version
+				ps = new PrintStream(plotFile);
+				ps.println("unset key");
+				// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
+				ps.println("set yrange [0:"+ (yrange+10) +"]");
+				ps.println("set xrange [1:"+ (xrange+10) + "]");
+				ps.println("set title \"" + logTitle + "\"");
+				// The :1 is for skipping the "generation" number logged in the file
+				ps.println("plot \"" + logTitle + "\" matrix every ::1 with image");
+				// ps.println("pause -1"); // Not needed when only one item is plotted?
+				ps.close();
+		
+			} catch (FileNotFoundException e) {
+				System.out.println("Error creating MOME log files");
+				e.printStackTrace();
+				System.exit(1);
+			}
+			
+			
+			
+			
 			
 			int iLogs = 0;	//anytime a log is created, increment and check that it's not out of bounds
 			
