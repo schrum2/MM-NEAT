@@ -6,7 +6,6 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Vector;
 import java.util.stream.Stream;
 
@@ -18,15 +17,12 @@ import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.SteadyStateEA;
 import edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
-import edu.southwestern.evolution.mapelites.Archive;
 import edu.southwestern.evolution.mapelites.BinLabels;
 import edu.southwestern.log.MMNEATLog;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
-import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
-import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.util.PopulationUtil;
 import edu.southwestern.util.PythonUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
@@ -80,7 +76,6 @@ public class MOME<T> implements SteadyStateEA<T>{
 	private MMNEATLog archiveLog = null; // Log general archive information. Does not use matrix plot, logged every generation
 //	private MMNEATLog[] paretoFrontFinalLogs = null;	//logging for final cleanup, logs the paretoFront
 	
-	// TODO: Convert these to MOMELogs
 	private MMNEATLog binPopulationSizeLog = null; // contains sizes of subpops in each bin, logged every generation
 	private MMNEATLog hypervolumeLog = null;	//contains the size of the hypervolume for each bin's subpop, logged every generation
 	private MMNEATLog[] maxFitnessLogs = null; //creates a log for each objective that contains the max fitness for each bin, logged every generation
@@ -191,6 +186,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 			//System.out.println("single evaluation done");
 		});
 
+		System.out.println("Initial population evaluated");
 		
 		CommonConstants.netio = backupNetIO;
 	
@@ -198,7 +194,9 @@ public class MOME<T> implements SteadyStateEA<T>{
 		evaluatedPopulation.parallelStream().forEach( (s) -> {
 			archive.add(s); // Fill the archive with random starting individuals, only when this flag is true
 		});
-		
+
+		System.out.println("Initial population binned");
+
 		//initializing a variable
 		this.mating = Parameters.parameters.booleanParameter("mating");
 	}
