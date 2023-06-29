@@ -246,18 +246,18 @@ public class MOMEArchive<T> {
 					
 					boolean iBetterOnce = false;
 					boolean jBetterOnce = false;
+					int numEqual = 0;
 					
 					for(int k = 0; k < iNums.length; k++) {
 						if(iNums[k] > jNums[k]) iBetterOnce = true;
 						if(jNums[k] > iNums[k]) jBetterOnce = true;
+						if(jNums[k] == iNums[k]) numEqual++;
 					}
 					
-					assert iBetterOnce : "i never better? iNums = "+Arrays.toString(iNums) + ", jNums = " + Arrays.toString(jNums);
-					assert jBetterOnce : "j never better? iNums = "+Arrays.toString(iNums) + ", jNums = " + Arrays.toString(jNums);
+					assert (iBetterOnce && jBetterOnce) || numEqual == iNums.length: "Not right! iNums = "+Arrays.toString(iNums) + ", jNums = " + Arrays.toString(jNums);
 					
 					// Will never reach with assertions
-					if(!iBetterOnce) return false;
-					if(!jBetterOnce) return false;
+					if(!((iBetterOnce && jBetterOnce) || numEqual == iNums.length) ) return false;
 				}
 			}
 		}
