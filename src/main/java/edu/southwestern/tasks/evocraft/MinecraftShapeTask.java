@@ -47,6 +47,7 @@ import edu.southwestern.tasks.evocraft.shapegeneration.IntegersToVolumeGenerator
 import edu.southwestern.tasks.evocraft.shapegeneration.ShapeGenerator;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.file.FileUtilities;
 
 /**
@@ -336,16 +337,18 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		MinecraftLonerShapeTask.clearBlocksForShape(MinecraftUtilClass.getRanges(), corner.sub(MinecraftUtilClass.emptySpaceOffsets()));
 
 		//MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
-		double[] fitnessScores = calculateFitnessScores(corner,fitnessFunctions,blocks);
-
-		Score<T> score = new Score<T>(genome, fitnessScores);
+		Pair<double[],double[]> scores = calculateFitnessScores(corner,fitnessFunctions,blocks);
+		double[] fitnessScores = scores.t1;
+		double[] otherScores = scores.t2;
+		
+		Score<T> score = new Score<T>(genome, fitnessScores, null, otherScores);
 		if(MMNEAT.usingDiversityBinningScheme) {
 			//System.out.println("evaluate "+genome.getId() + " at " + corner + ": scores = "+ Arrays.toString(fitnessScores));
 
 			MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
 			// It is important to note that the original blocks from the CPPN are used here rather than the blocks
 			// read from the world. So, any properties collected will be before movement due to machine parts.
-			double[] propertyScores = calculateFitnessScores(corner,minecraftBinLabels.properties(), blocks);
+			double[] propertyScores = calculateFitnessScores(corner,minecraftBinLabels.properties(), blocks).t1; // t1 since no "other" scores are used here
 			// Map contains all required properties now
 			HashMap<String,Object> behaviorMap = minecraftBinLabels.behaviorMapFromScores(propertyScores);
 
@@ -432,9 +435,9 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	 * @param fitnessFunctions Fitness functions to calculate
 	 * @param numTimedFitnessFunctions Number that require timed evaluation
 	 * @param originalBlocks blocks from generator, before rendering
-	 * @return double array of all fitness values in order
+	 * @return pair with double array of all fitness values in order, followed by a double array of additional "other" scores to log
 	 */
-	public static double[] calculateFitnessScores(MinecraftCoordinates shapeCorner, List<MinecraftFitnessFunction> fitnessFunctions, List<Block> originalBlocks) {
+	public static Pair<double[],double[]> calculateFitnessScores(MinecraftCoordinates shapeCorner, List<MinecraftFitnessFunction> fitnessFunctions, List<Block> originalBlocks) {
 		//create separate lists for the TimedEvaluationMinecraftFitnessFunctions and MinecraftFitnessFunctions
 		int numTimedFitnessFunctions = 0;
 		List<TimedEvaluationMinecraftFitnessFunction> timedEvaluationFitnessFunctionsList = new ArrayList<TimedEvaluationMinecraftFitnessFunction>();
@@ -455,7 +458,10 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		//concatenate both lists here, a list must be made and then combined in a new list
 		double[] timedEvalResults = numTimedFitnessFunctions == 0 ? new double[0] : TimedEvaluationMinecraftFitnessFunction.multipleFitnessScores(timedEvaluationFitnessFunctionsList, shapeCorner, originalBlocks);
 		double[] notTimedEvalResults = notTimedFitnessFunctionsList.parallelStream().mapToDouble(ff -> ff.fitnessScore(shapeCorner,originalBlocks)).toArray();
-		return ArrayUtil.combineArrays(timedEvalResults, notTimedEvalResults);
+		
+		double[] otherScores = new double[0]; // NOT YET IMPLEMENTED: Will provide a way to track scores that do not affect fitness
+		
+		return new Pair<>(ArrayUtil.combineArrays(timedEvalResults, notTimedEvalResults), otherScores);
 
 	}
 

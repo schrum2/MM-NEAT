@@ -76,7 +76,7 @@ public class MinecraftBlockEvaluateExperiment implements Experiment{
 					boolean tryAgain = false;
 					do {
 						System.out.println("Evaluate shape");
-						double[] fitnessScores = MinecraftShapeTask.calculateFitnessScores(MinecraftClient.POST_EVALUATION_SHAPE_CORNER, fitnessFunctions, shiftedBlocks);
+						double[] fitnessScores = MinecraftShapeTask.calculateFitnessScores(MinecraftClient.POST_EVALUATION_SHAPE_CORNER, fitnessFunctions, shiftedBlocks).t1;
 
 						for(int j = 0; j < fitnessFunctions.size(); j++) {
 							System.out.print(fitnessFunctions.get(j).getClass().getSimpleName() + ": ");
