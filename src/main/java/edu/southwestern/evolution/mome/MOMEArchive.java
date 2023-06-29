@@ -168,6 +168,7 @@ public class MOMEArchive<T> {
 			for (int i = 0; i < binIndex.length; i++) {		//turns int array into vector
 				candidateBinCoordinates.add(binIndex[i]);
 			}
+			
 			synchronized(this) {
 			// If the bin has never been filled before, then initialize as empty vector
 			if(!archive.containsKey(candidateBinCoordinates)) {
