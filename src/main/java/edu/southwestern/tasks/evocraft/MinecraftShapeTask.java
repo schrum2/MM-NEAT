@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.nd4j.nativeblas.Nd4jCpu.weighted_cross_entropy_with_logits;
-
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.BoundedIntegerValuedGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
@@ -27,7 +25,6 @@ import edu.southwestern.tasks.evocraft.blocks.BlockSet;
 import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBinLabels;
 import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBlockCountBinLabels;
 import edu.southwestern.tasks.evocraft.fitness.AccumulateNewBlockPositionsFitness;
-import edu.southwestern.tasks.evocraft.fitness.WeightedSumsChangeBlockAndChangeCenterOfMassFitness;
 import edu.southwestern.tasks.evocraft.fitness.ChangeBlocksFitness;
 import edu.southwestern.tasks.evocraft.fitness.ChangeCenterOfMassFitness;
 import edu.southwestern.tasks.evocraft.fitness.DiversityBlockFitness;
@@ -44,6 +41,7 @@ import edu.southwestern.tasks.evocraft.fitness.TimedEvaluationMinecraftFitnessFu
 import edu.southwestern.tasks.evocraft.fitness.TypeCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.TypeTargetFitness;
 import edu.southwestern.tasks.evocraft.fitness.WaterLavaSecondaryCreationFitness;
+import edu.southwestern.tasks.evocraft.fitness.WeightedSumsChangeBlockAndChangeCenterOfMassFitness;
 import edu.southwestern.tasks.evocraft.fitness.WeightedSumsTypeCountAndNegativeSpaceCountFitness;
 import edu.southwestern.tasks.evocraft.shapegeneration.BoundedVectorGenerator;
 import edu.southwestern.tasks.evocraft.shapegeneration.IntegersToVolumeGenerator;
@@ -122,6 +120,11 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		
 		for(MinecraftFitnessFunction ff : fitnessFunctions) {
 			MMNEAT.registerFitnessFunction(ff.getClass().getSimpleName());
+		}		
+
+		for(MinecraftFitnessFunction ff : fitnessFunctions) {
+			if(ff instanceof MinecraftWeightedSumFitnessFunction)
+				((MinecraftWeightedSumFitnessFunction) ff).registerNonFitnessScores();
 		}		
 
 		startingX = Parameters.parameters.integerParameter("startX");
@@ -211,7 +214,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		if(Parameters.parameters.booleanParameter("minecraftWeightedSumsTypeCountAndNegativeSpaceCountFitness")) {
 			fitness.add(new WeightedSumsTypeCountAndNegativeSpaceCountFitness());
 		}
-		System.out.println(fitness);
+		System.out.println(fitness);		
 		
 		return fitness;
 	}
@@ -458,7 +461,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 				numTimedFitnessFunctions++;
 				timedEvaluationFitnessFunctionsList.add((TimedEvaluationMinecraftFitnessFunction) mff);
 			} else if (mff instanceof MinecraftWeightedSumFitnessFunction) {
-				numTimedFitnessFunctions++;
+				numWeightedSumsFitnessFunctions++;
 				weightedSumFitnessFunctions.add((MinecraftWeightedSumFitnessFunction) mff);
 			} else {
 				notTimedFitnessFunctionsList.add(mff);

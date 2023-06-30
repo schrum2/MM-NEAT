@@ -36,17 +36,31 @@ public abstract class MinecraftWeightedSumFitnessFunction extends MinecraftFitne
 
 		for(int i = 0; i < fitnessFunctions.size(); i++) {
 			MinecraftFitnessFunction ff = fitnessFunctions.get(i);
-			// register the function for tracking/logging, but it does not affect selection
-			MMNEAT.registerFitnessFunction(ff.getClass().getSimpleName(), false);
-			
 			if(ff instanceof TimedEvaluationMinecraftFitnessFunction) {
+				System.out.println("weighted sums timed evail");
 				timedFitnessFunctions.add((TimedEvaluationMinecraftFitnessFunction) ff);
 				timedWeights.add(weights.get(i));
 			} else {
-				plainFitnessFunctions.add((TimedEvaluationMinecraftFitnessFunction) ff);
+				System.out.println("weighted sums plain eval");
+				plainFitnessFunctions.add(ff);
 				plainWeights.add(weights.get(i));
 			}
 		}		
+	}
+	
+	/**
+	 * Need to call after fitness scores used for selection have been registered
+	 * @param fitnessFunctions
+	 */
+	public void registerNonFitnessScores() {
+		// timed functions come before plain in the order that they are returned
+		List<MinecraftFitnessFunction> fitnessFunctions = new ArrayList<>(timedFitnessFunctions);
+		fitnessFunctions.addAll(plainFitnessFunctions);
+		
+		for(MinecraftFitnessFunction ff : fitnessFunctions) {
+			// register the function for tracking/logging, but it does not affect selection
+			MMNEAT.registerFitnessFunction(ff.getClass().getSimpleName(), false);
+		}
 	}
 	
 	@Override
@@ -57,7 +71,13 @@ public abstract class MinecraftWeightedSumFitnessFunction extends MinecraftFitne
 		
 	public Pair<Double, double[]> weightedSumsFitnessScores(MinecraftCoordinates shapeCorner, List<Block> originalBlocks){
 		// Calculate timed and plain scores
-		double[] timedScores = TimedEvaluationMinecraftFitnessFunction.multipleFitnessScores(timedFitnessFunctions, shapeCorner, originalBlocks);
+		if (timedFitnessFunctions != null) {
+			System.out.println("timed fitness functions size = " + timedFitnessFunctions.size());
+		}
+		double[] timedScores = new double[timedFitnessFunctions.size()];
+		if (timedFitnessFunctions.size() != 0) {
+			timedScores = TimedEvaluationMinecraftFitnessFunction.multipleFitnessScores(timedFitnessFunctions, shapeCorner, originalBlocks);
+		}
 		double[] plainScores = plainFitnessFunctions.parallelStream().mapToDouble(ff -> ff.fitnessScore(shapeCorner,originalBlocks)).toArray();
 		
 		// Multiply each score by its weight and add up the results
