@@ -10,13 +10,7 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 import edu.southwestern.util.datastructures.Pair;
 
-/**
- * Accumulates the number of blocks whose positions differ in consecutive snapshots
- * from reading the evaluation space for a shape.
- * 
- * @author schrum2
- *
- */
+
 public class AccumulateNewBlockPositionsFitness extends TimedEvaluationMinecraftFitnessFunction {
 	
 	
