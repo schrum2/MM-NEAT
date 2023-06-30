@@ -353,10 +353,10 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	@Override
 	public void initialize(Genotype<T> example) {	
 		
-		if(MMNEAT.fitnessFunctions.get(0).size() > 1) {
+		if(MMNEAT.task.numObjectives() > 1) {
 			throw new IllegalStateException("MAP Elites is not equipped to handle multiple fitness functions: "+MMNEAT.fitnessFunctions.get(0)+
 						". If you want multiple fitness functions, consider using MOME or NSGA2.");
-		} else if(MMNEAT.fitnessFunctions.get(0).size() == 0) {
+		} else if(MMNEAT.task.numObjectives() == 0) {
 			throw new IllegalStateException("MAP Elites still needs an objective/fitness to work.");
 		}
 		
