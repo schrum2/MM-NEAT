@@ -26,6 +26,7 @@ import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.util.PopulationUtil;
 import edu.southwestern.util.PythonUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.stats.StatisticsUtilities;
@@ -401,10 +402,12 @@ public class MOME<T> implements SteadyStateEA<T>{
 
 //				System.out.println("LOGGING HYPERVOLUME INFORMATION");
 				//LOGGING HYPERVOLUME INFORMATION
-				double[] hypervolumeForBins = archive.hyperVolumeOfAllBins();
-				String hypervolumeString = Arrays.toString(hypervolumeForBins).replace(", ", "\t");
+				Pair<double[],double[]> hypervolumeForBins = archive.hyperVolumeOfAllBins();
+				String hypervolumeString = Arrays.toString(hypervolumeForBins.t1).replace(", ", "\t");
 				hypervolumeString = pseudoGeneration + "\t" + hypervolumeString.substring(1, hypervolumeString.length() - 1); // Remove opening and closing [ ] brackets
+				hypervolumeLog.log(hypervolumeString);
 
+				
 //				System.out.println("LOGGING OBJECTIVES MAX AND MIN INFORMATION");
 				//LOGGING OBJECTIVES MAX AND MIN INFORMATION
 				double[][] maxScoresBinXObjective = archive.maxScorebyBinXObjective(); //maxScores[bin][objective]
@@ -459,17 +462,22 @@ public class MOME<T> implements SteadyStateEA<T>{
 		//total hypervolume is the hypervolume in whole archive pareto front
 		//moqd is what I have right now
 				
-				//HYPERVOLUME, INDIVIDUAL BIN MAX,MIN,MEAN, HYPERVOLUME OF COMBINED PARETO FRONT, MOQDSCORE
-				double maxHyperVolumeBin = StatisticsUtilities.maximum(hypervolumeForBins);
-				double minHyperVolumeBin = StatisticsUtilities.minimum(ArrayUtil.replace(hypervolumeForBins, 0, Double.POSITIVE_INFINITY)); //replace 0 with pos infinity so it gets actual scores
-				double meanHyperVolumeOfBins = StatisticsUtilities.average(hypervolumeForBins);
-				double totalHypervolumeCombinedParetoFrontOfWholeArchive = archive.combinedParetoFrontWholeArchiveHypervolume();
-				//log separately
-				double totalHypervolumeMOQDScore = archive.totalHypervolumeMOQDScore();
-				
-//				System.out.println("max:"+maxHyperVolumeBin+" min:"+minHyperVolumeBin+" mean:"+meanHyperVolumeOfBins+" totalCombinedParetoFront:???"+" MOQDScore:"+ totalHypervolumeMOQDScore);
+				//HYPERVOLUME, INDIVIDUAL BIN MAX,MIN, AVERAGE OVERALL, AVERAGE OCCUPIED, HYPERVOLUME OF COMBINED PARETO FRONT, MOQDSCORE
+				//archive logs over all data, not bin by bin data
+				double hypervolumeMax = StatisticsUtilities.maximum(hypervolumeForBins.t1);
+				//could remove and just do t2?
+				double hypervolumeMin = StatisticsUtilities.minimum(hypervolumeForBins.t2);
+//				double minHyperVolumeBin = StatisticsUtilities.minimum(ArrayUtil.replace(hypervolumeForBins.t1, 0, Double.POSITIVE_INFINITY)); //replace 0 with pos infinity so it gets actual scores
+				double hypervolumeAverageOverall = StatisticsUtilities.average(hypervolumeForBins.t1);	//this is the average including 0 for empty bins
+				//need to make an average not including 0 bins
+				double hypervolumeAverageOccupiedBins = StatisticsUtilities.average(hypervolumeForBins.t2);	//the average of only occupied bins
+				double hypervolumeGlobalCombinedParetoFront = archive.hypervolumeGlobalCombinedParetoFrontOfWholeArchive();
+
+				double totalHypervolumeMOQDScore = archive.totalHypervolumeMOQDScore();	//log as own plot
+			
+//				System.out.println("max:"+maxHyperVolumeBin+" min:"+minHyperVolumeBin+" averageOverall:"+hypervolumeAverageOverall+ " averageOccupied:" + hypervolumeAverageOccupiedBins +" MOQDScore:"+ totalHypervolumeMOQDScore);
 				//add the max and min hypervolume before the max and min of other things
-				printString = printString + maxHyperVolumeBin + "\t" + minHyperVolumeBin + "\t" + meanHyperVolumeOfBins + "\t" + totalHypervolumeCombinedParetoFrontOfWholeArchive + "\t" + totalHypervolumeMOQDScore + "\t";
+				printString = printString + hypervolumeMax + "\t" + hypervolumeMin + "\t" + hypervolumeAverageOverall + "\t" + hypervolumeAverageOccupiedBins + "\t" + hypervolumeGlobalCombinedParetoFront + "\t" + totalHypervolumeMOQDScore + "\t";
 
 //				System.out.println("ARCHIVE LOGGGING BEFORE MAX/MIN FITNESS");
 				
@@ -531,16 +539,16 @@ public class MOME<T> implements SteadyStateEA<T>{
 		int columnIndex = 1;	//keeps track of where the item is in the archive log
 		HashMap<String, Integer> logIndex = new HashMap<>(); //tracks the column placement of data in the archive log
 
-
 		logIndex.put("pseudoGeneration", columnIndex++); logIndex.put("occupiedBins", columnIndex++); logIndex.put("percentageBins", columnIndex++);
 		logIndex.put("totalIndividuals", columnIndex++); logIndex.put("addedIndividuals", columnIndex++); logIndex.put("discardedIndividuals", columnIndex++);
-		logIndex.put("hypervolumeMax", columnIndex++); logIndex.put("hypervolumeMin", columnIndex++); logIndex.put("hypervolumeMean", columnIndex++); 
-		logIndex.put("hypervolumeTotalCombinedPareto", columnIndex++); logIndex.put("hypervolumeTotalMOQDScore", columnIndex++);
+		logIndex.put("hypervolumeMax", columnIndex++); logIndex.put("hypervolumeMin", columnIndex++); 
+		logIndex.put("hypervolumeAverageOverall", columnIndex++); logIndex.put("hypervolumeAverageOfOccupiedBins", columnIndex++);
+		logIndex.put("hypervolumeGlobalCombinedPareto", columnIndex++); logIndex.put("hypervolumeTotalMOQDScore", columnIndex++);
 		logIndex.put("maxFitnessByObjectiveStart", columnIndex++);
 //		System.out.println("hypervolumeMax test:"+logIndex.get("hypervolumeMax")+ " Inside logging thehypervolume, before fitness");
 //		System.out.println("Max fitness starts:"+logIndex.get("maxFitnessByObjectiveStart")+ " Inside logging the max fitness scores");
 
-		
+
 		try {
 			ps = new PrintStream(archivePlotFile);
 			ps.println("set term pdf enhanced");
@@ -576,9 +584,11 @@ public class MOME<T> implements SteadyStateEA<T>{
 			ps.println("set output \""+ prefix + "_HypervolumeWholeArchive_log.pdf\"");
 			ps.println("plot \"" + prefix + "_log.txt\" u 1:" + logIndex.get("hypervolumeMax") + " w linespoints t \"Max Hypervolume\", \\");
 			ps.println("     \"" + prefix + "_log.txt\" u 1:" + logIndex.get("hypervolumeMin") + " w linespoints t \"Min Hypervolume\", \\");
-			ps.println("     \"" + prefix + "_log.txt\" u 1:" + logIndex.get("hypervolumeMean") + " w linespoints t \"Mean Hypervolume\", \\");
-			ps.println("     \"" + prefix + "_log.txt\" u 1:" + logIndex.get("hypervolumeTotalCombinedPareto") + " w linespoints t \"Global Hypervolume\"");
+			ps.println("     \"" + prefix + "_log.txt\" u 1:" + logIndex.get("hypervolumeAverageOverall") + " w linespoints t \"Average Overall Hypervolume\", \\");
+			ps.println("     \"" + prefix + "_log.txt\" u 1:" + logIndex.get("hypervolumeAverageOfOccupiedBins") + " w linespoints t \"Average Occupied Bins Hypervolume\", \\");
+			ps.println("     \"" + prefix + "_log.txt\" u 1:" + logIndex.get("hypervolumeGlobalCombinedPareto") + " w linespoints t \"Global Hypervolume\"");
 		
+	
 			//hypervolumeTotalMOQDScore
 			ps.println("set title \"" + experimentPrefix + " MOQDScore\"");
 			ps.println("set output \""+ prefix + "_HypervolumeMOQDScore_log.pdf\"");

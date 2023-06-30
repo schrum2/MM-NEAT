@@ -23,6 +23,7 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.MultiobjectiveUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.file.Serialization;
 import edu.southwestern.util.random.RandomNumbers;
@@ -639,17 +640,24 @@ public class MOMEArchive<T> {
 	}
 
 	/**
-	 * Returns an array containing the hypervolume of every bin in the archive
-	 * @return the hypervolume of every bin in the archive
+	 * Returns a pair of arrays containing the hypervolume of every bin in the archive
+	 * The first pair contains all hypervolumes including empty bins that are counted as 0
+	 * the second pair only contains occupied bins
+	 * @return first pair is the hypervolume of all bins including empty (0) bins, 
+	 * and the second is the hypervolume of only occupied bins
 	 */
-	public double[] hyperVolumeOfAllBins() {
+	public Pair<double[],double[]> hyperVolumeOfAllBins() {
 		double[] hyperVolumeOfAllBins = new double[mapping.binLabels().size()];
-
+		double[] hyperVolumeOfOccupiedBins = new double[archive.size()];
+		
+		int index = 0;
 		for(Vector<Integer> key : archive.keySet()) {
 			int oneDBinIndex = mapping.oneDimensionalIndex(ArrayUtil.intArrayFromArrayList(key));
-			hyperVolumeOfAllBins[oneDBinIndex] = hypervolumeOfSingleBin(key); //index that bin into the array using its oneDBinIndex
+			double hyperVolumeOfBin = hypervolumeOfSingleBin(key);
+			hyperVolumeOfAllBins[oneDBinIndex] = hyperVolumeOfBin; //index that bin into the array using its oneDBinIndex
+			hyperVolumeOfOccupiedBins[index++] = hyperVolumeOfBin;
 		}
-		return hyperVolumeOfAllBins;
+		return new Pair<>(hyperVolumeOfAllBins,hyperVolumeOfOccupiedBins);
 	}
 
 	/**
@@ -658,10 +666,10 @@ public class MOMEArchive<T> {
 	 * @return the total hypervolume of all bin's hypervolumes added together
 	 */
 	public double totalHypervolumeMOQDScore() {
-		double[] hypervolumeOfAllBins = hyperVolumeOfAllBins();
+		Pair<double[],double[]> hypervolumeOfAllBins = hyperVolumeOfAllBins();
 		double totalHypervolume = 0;
-		for (int i = 0; i < hypervolumeOfAllBins.length; i++) {
-			totalHypervolume += hypervolumeOfAllBins[i];
+		for (int i = 0; i < hypervolumeOfAllBins.t2.length; i++) {
+			totalHypervolume += hypervolumeOfAllBins.t2[i];
 		}
 		return totalHypervolume;
 	}
@@ -672,7 +680,7 @@ public class MOMEArchive<T> {
 	 * in gnuplot it should be global hypervolume
 	 * @return hypervolume of the pareto front from all archive points
 	 */
-	public double combinedParetoFrontWholeArchiveHypervolume() {
+	public double hypervolumeGlobalCombinedParetoFrontOfWholeArchive() {
 		Vector<Score<T>> wholeArchiveCombinedParetoFront = getCombinedParetoFrontWholeArchive();
 		return MultiobjectiveUtil.hypervolumeFromParetoFront(wholeArchiveCombinedParetoFront);
 	}
