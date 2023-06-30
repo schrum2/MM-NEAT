@@ -169,34 +169,19 @@ public class MOMEArchive<T> {
 				candidateBinCoordinates.add(binIndex[i]);
 			}
 			
-//			synchronized(this) {
-			// If the bin has never been filled before, then initialize as empty vector
-//			if(!archive.containsKey(candidateBinCoordinates)) {
-////				synchronized(this) {
-//				System.out.println("New bin uncovered: "+candidateBinCoordinates);
-//				archive.put(candidateBinCoordinates, new Vector<Score<T>>());
-////				}
-//			}
-			//TODO: this is causing synchronization issues
 			//add the candidate (Score) to the vector of scores for that bin
-//			Vector<Score<T>> subpopInBin;
 			if(!archive.containsKey(candidateBinCoordinates)) {
-			synchronized(this) {
-//				System.out.println("New bin uncovered: "+candidateBinCoordinates);
-//				subpopInBin = new Vector<Score<T>>();
-				archive.put(candidateBinCoordinates, new Vector<Score<T>>());
-				archive.get(candidateBinCoordinates).add(candidate);
-				return true;
-							}
-//			} else {
-//				subpopInBin = archive.get(candidateBinCoordinates);
+				// If the bin does not exist, just create it and add the new individual. There is definitely room
+				synchronized(this) {
+					archive.put(candidateBinCoordinates, new Vector<Score<T>>());
+					archive.get(candidateBinCoordinates).add(candidate);
+					return true; // Indicate that the archive changed
+				}
 			}
 
 			Vector<Score<T>> subpopInBin = archive.get(candidateBinCoordinates);
+			// Don't let other threads access this particular bin, but they can access others
 			synchronized(subpopInBin) {
-//			synchronized(this) {
-//				System.out.println("subpopInBin synchronization, add");
-
 				// We don't want any other thread accessing our modified subpop before we are done with it
 				Vector<Score<T>> subpopCopy = new Vector<>(subpopInBin);
 				subpopCopy.add(candidate);	
@@ -208,43 +193,32 @@ public class MOMEArchive<T> {
 				for (NSGA2Score<T> score : front) {
 
 					if(score.individual.getId() == candidateID) {
-
 						// Since the new individual is present, the Pareto front must have changed.
 						// Check that the front contains the correct max number of individuals and remove if not
 						if((front.size() > maximumNumberOfIndividualsInSubPops) && (maximumNumberOfIndividualsInSubPops > 0)) {	//check the subpop size
-							//							System.out.println("max subpop set to: "+ maximumNumberOfIndividualsInSubPops + " currently: "+ front.size());
+							//System.out.println("max subpop set to: "+ maximumNumberOfIndividualsInSubPops + " currently: "+ front.size());
 							int sizeBefore = front.size();
 							front = discardRandomIndividualFromFront(candidate, front);
-//					System.out.println(" after discard: "+ front.size());
+							//System.out.println(" after discard: "+ front.size());
 							assert front.size() == sizeBefore - 1 : "Should have removed one individual: "+front;
-
 							assert (front.size() <= maximumNumberOfIndividualsInSubPops) : "subpop size exceeds max size that is allowed. front:" + front.size();
 							assert (!front.contains(candidate)) : "deleted candidate instead of random individual";
-							//							System.out.println("archive bin size: "+ archive.get(candidateBinCoordinates).size() + " front: "+ front.size());
+							//System.out.println("archive bin size: "+ archive.get(candidateBinCoordinates).size() + " front: "+ front.size());
 						}
 						assert maximumNumberOfIndividualsInSubPops >= front.size() : "after if statement in add, front larger than max, front:" + front.size();
 						//update map
-						Vector<Score<T>> newBinContents = new Vector<>(front);
-						//						System.out.println(" after discard, before synchronization");
-
-//						synchronized(this) { // Lock the whole archive when replacing something
-						synchronized (archive) {
-							
+						Vector<Score<T>> newBinContents = new Vector<>(front); // Convert from ArrayList to Vector
+						// System.out.println(" after discard, before synchronization");
 						
-//						System.out.println(" after discard, after synchronization");
-//						if (!archive.containsKey(candidateBinCoordinates)) {
-//							archive.put(candidateBinCoordinates, new Vector<Score<T>>());
-//						}
-						archive.replace(candidateBinCoordinates, newBinContents);
-						//							System.out.println("bin size after replacement with front:" + archive.get(candidateBinCoordinates).size());
-						assert (archive.get(candidateBinCoordinates).size() <= maximumNumberOfIndividualsInSubPops) : "the number of individuals in this subpop exceed the maximum number that is allowed after replacing with front";
-						assert (archive.get(candidateBinCoordinates).size() == front.size()) : archive.get(candidateBinCoordinates).size()+" = subpop size != front size = "+front.size() + ",\nfront="+front+"\nbin="+archive.get(candidateBinCoordinates);
-//						System.out.println("end of synchronize this");
-
-						// I think the code from this assert was freezing the execution somehow
-						//assert checkLargestSubpopNotGreaterThanMaxLimit() : "after adding and going through other asserts the largest subpop is greater than the limit"
-						// + " largest subpop:" + maxSubPopulationSizeInWholeArchive() + " size of current subpop:" + archive.get(candidateBinCoordinates).size();
-						//conditionalEliteSave(candidate, candidateBinCoordinates);	//this saves a condidate, but currently saves all created individuals which is too many
+						// TODO: Monitor this closely: I think synchronized(this) is more appropriate
+						// synchronized(this) { // Lock the whole archive when replacing something
+						synchronized (archive) {
+							archive.replace(candidateBinCoordinates, newBinContents);
+							//System.out.println("bin size after replacement with front:" + archive.get(candidateBinCoordinates).size());
+							assert (archive.get(candidateBinCoordinates).size() <= maximumNumberOfIndividualsInSubPops) : "the number of individuals in this subpop exceed the maximum number that is allowed after replacing with front";
+							assert (archive.get(candidateBinCoordinates).size() == front.size()) : archive.get(candidateBinCoordinates).size()+" = subpop size != front size = "+front.size() + ",\nfront="+front+"\nbin="+archive.get(candidateBinCoordinates);
+							//System.out.println("end of synchronize this");
+							//conditionalEliteSave(candidate, candidateBinCoordinates);	//this saves a condidate, but currently saves all created individuals which is too many
 						}
 						return true;	//candidate was added
 					}
@@ -267,7 +241,7 @@ public class MOMEArchive<T> {
 	 */
 	public ArrayList<NSGA2Score<T>> discardRandomIndividualFromFront(Score<T> individualToKeep, ArrayList<NSGA2Score<T>> front) {
 		//discard individual that isn't the one that is set there
-		int attempts = 0;
+		//int attempts = 0;
 		Score<T> individualToDiscard;
 		do {
 			individualToDiscard = RandomNumbers.randomElement(front);

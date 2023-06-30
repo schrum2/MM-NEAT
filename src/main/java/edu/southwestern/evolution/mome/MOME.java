@@ -29,7 +29,6 @@ import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.stats.StatisticsUtilities;
-import jdk.nashorn.internal.ir.TryNode;
 
 /**
  * TODO: Explain a bit more, and also cite the paper whose algorithm we are implementing using ACM style
@@ -62,9 +61,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 	//tracking variables
 	private int addedIndividualCount;
 	private int discardedIndividualCount;	//don't know if we will need this
-//	private boolean populationChangeCheck;	//this keeps track of what happened to the most recent individual created (if it was added or not)
-						//false means the individual was not added and so the population hasn't changed
-						//true means an individual was added and the population changed
+	private boolean populationChangeCheck;	//TWEANN individuals need to know so that an updated archetype can be saved
 	private int individualsPerGeneration;
 	private int individualCreationAttemptsCount;	//this is analogous to iterations and helps to keep track of how many actual times new individual is called
 	
@@ -102,7 +99,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 		this.io = ioOption; // write logs
 		this.mating = Parameters.parameters.booleanParameter("mating");
 		this.crossoverRate = Parameters.parameters.doubleParameter("crossoverRate");
-//		this.populationChangeCheck = false;
+		this.populationChangeCheck = false;
 		this.addedIndividualCount = 0;
 		this.discardedIndividualCount = 0;
 		this.individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
@@ -280,6 +277,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 		individualCreationAttemptsCount++;
 		log();			////////////////
 		if(individualAddStatus) {	//the individual was added and the population changed
+			populationChangeCheck = true;
 			addedIndividualCount++;
 		} else {
 			discardedIndividualCount++;
@@ -316,12 +314,10 @@ public class MOME<T> implements SteadyStateEA<T>{
 	 * @return every score for the archive in an ArrayList
 	 */
 	public ArrayList<Score<T>> getArchive() {
-//		System.out.println("in getArchive");
-
-		 ArrayList<Score<T>> result = new ArrayList<>(archive.totalNumberOfIndividualsInArchive());
-		 Vector<Score<T>> archiveScores = archive.getWholeArchiveScores();
-		 int i = 0;
-		 for (Score<T> score : archiveScores) {
+		//		System.out.println("in getArchive");
+		ArrayList<Score<T>> result = new ArrayList<>(archive.totalNumberOfIndividualsInArchive());
+		Vector<Score<T>> archiveScores = archive.getWholeArchiveScores();
+		for (Score<T> score : archiveScores) {
 			result.add(score);
 		}
 		return result;
@@ -329,8 +325,9 @@ public class MOME<T> implements SteadyStateEA<T>{
 
 	@Override
 	public boolean populationChanged() {
-//		return populationChangeCheck; TODO:
-		return false;
+		boolean result = populationChangeCheck;
+		populationChangeCheck = false; // only reset this once the change has been detected
+		return result;
 	}
 
 	/**
