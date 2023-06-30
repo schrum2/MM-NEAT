@@ -25,7 +25,7 @@ public class SpecificTargetFitness extends TimedEvaluationMinecraftFitnessFuncti
 		double fitness = 0;
 		MinecraftCoordinates targetCorner = new MinecraftCoordinates(targetCornerOffset.add(corner));
 		Vertex blockLocation =new Vertex(targetCorner.x(),targetCorner.y(), targetCorner.z());
-		fitness = MinecraftUtilClass.getCenterOfMass(history.get(history.size()).t2).distance(blockLocation);
+		fitness = MinecraftUtilClass.getCenterOfMass(history.get(history.size()-1).t2).distance(blockLocation);
 		return -fitness;
 	}
 
