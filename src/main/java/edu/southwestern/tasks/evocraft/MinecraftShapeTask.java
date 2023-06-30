@@ -38,6 +38,7 @@ import edu.southwestern.tasks.evocraft.fitness.NegativeSpaceCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.NumAirFitness;
 import edu.southwestern.tasks.evocraft.fitness.OccupiedCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.RandomFitness;
+import edu.southwestern.tasks.evocraft.fitness.SpecificTargetFitness;
 import edu.southwestern.tasks.evocraft.fitness.TimedEvaluationMinecraftFitnessFunction;
 import edu.southwestern.tasks.evocraft.fitness.TypeCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.TypeTargetFitness;
@@ -204,6 +205,9 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		}
 		if(Parameters.parameters.booleanParameter("minecraftAccumulateNewBlockPositionsFitness")) {
 			fitness.add(new AccumulateNewBlockPositionsFitness());
+		}
+		if(Parameters.parameters.booleanParameter("minecraftSpecificTargetFitness")) {
+			fitness.add(new SpecificTargetFitness());
 		}
 		System.out.println(fitness);
 		
