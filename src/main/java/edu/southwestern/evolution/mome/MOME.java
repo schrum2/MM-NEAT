@@ -582,11 +582,11 @@ public class MOME<T> implements SteadyStateEA<T>{
 			//hypervolume data bin		//in gnuplot it should be global hypervolume --- combinedParetoFrontWholeArchiveHypervolume
 			ps.println("set title \"" + experimentPrefix + " Max/Min/Mean/Total Hypervolume in the Whole Archive\"");
 			ps.println("set output \""+ prefix + "_HypervolumeWholeArchive_log.pdf\"");
-			ps.println("plot \"" + prefix + "_log.txt\" u 1:" + logIndex.get("hypervolumeMax") + " w linespoints t \"Max Hypervolume\", \\");
-			ps.println("     \"" + prefix + "_log.txt\" u 1:" + logIndex.get("hypervolumeMin") + " w linespoints t \"Min Hypervolume\", \\");
-			ps.println("     \"" + prefix + "_log.txt\" u 1:" + logIndex.get("hypervolumeAverageOverall") + " w linespoints t \"Average Overall Hypervolume\", \\");
+			ps.println("plot \"" + prefix + "_log.txt\" u 1:" + logIndex.get("hypervolumeGlobalCombinedPareto") + " w linespoints t \"Global Hypervolume\", \\");
+			ps.println("     \"" + prefix + "_log.txt\" u 1:" + logIndex.get("hypervolumeMax") + " w linespoints t \"Max Hypervolume\", \\");
 			ps.println("     \"" + prefix + "_log.txt\" u 1:" + logIndex.get("hypervolumeAverageOfOccupiedBins") + " w linespoints t \"Average Occupied Bins Hypervolume\", \\");
-			ps.println("     \"" + prefix + "_log.txt\" u 1:" + logIndex.get("hypervolumeGlobalCombinedPareto") + " w linespoints t \"Global Hypervolume\"");
+			ps.println("     \"" + prefix + "_log.txt\" u 1:" + logIndex.get("hypervolumeAverageOverall") + " w linespoints t \"Average Overall Hypervolume\", \\");
+			ps.println("     \"" + prefix + "_log.txt\" u 1:" + logIndex.get("hypervolumeMin") + " w linespoints t \"Min Hypervolume\"");
 		
 	
 			//hypervolumeTotalMOQDScore
