@@ -865,7 +865,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 			ps.close();
 	
 		} catch (FileNotFoundException e) {
-			System.out.println("Error creating MOME log files");
+			System.out.println("Error creating " + textLogNameWithDirectory + " log files");
 			e.printStackTrace();
 			System.exit(1);
 		}
@@ -895,7 +895,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 			ps.close();
 	
 		} catch (FileNotFoundException e) {
-			System.out.println("Error creating MOME log files");
+			System.out.println("Error creating " + textLogNameWithDirectory + " log files");
 			e.printStackTrace();
 			System.exit(1);
 		}
@@ -924,7 +924,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 			ps.println("plot \"" + textLogNameWithDirectory + "\" matrix every ::1 with image");
 			ps.close();
 		} catch (FileNotFoundException e) {
-			System.out.println("Error creating MOME log files");
+			System.out.println("Error creating " + textLogNameWithDirectory + " log files");
 			e.printStackTrace();
 			System.exit(1);
 		}

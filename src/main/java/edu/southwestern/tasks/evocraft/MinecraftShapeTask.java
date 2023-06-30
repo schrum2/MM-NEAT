@@ -32,6 +32,7 @@ import edu.southwestern.tasks.evocraft.fitness.FakeTestFitness;
 import edu.southwestern.tasks.evocraft.fitness.MaximizeVolumeFitness;
 import edu.southwestern.tasks.evocraft.fitness.MinecraftFitnessFunction;
 import edu.southwestern.tasks.evocraft.fitness.MinecraftWeightedSumFitnessFunction;
+import edu.southwestern.tasks.evocraft.fitness.MinimizeBlockCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.MissileFitness;
 import edu.southwestern.tasks.evocraft.fitness.NegativeSpaceCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.NumAirFitness;
@@ -214,6 +215,10 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		if(Parameters.parameters.booleanParameter("minecraftWeightedSumsTypeCountAndNegativeSpaceCountFitness")) {
 			fitness.add(new WeightedSumsTypeCountAndNegativeSpaceCountFitness());
 		}
+		if(Parameters.parameters.booleanParameter("minecraftMinimizeBlockCountFitness")) {
+			fitness.add(new MinimizeBlockCountFitness());
+		}
+
 		System.out.println(fitness);		
 		
 		return fitness;

@@ -877,7 +877,8 @@ public class Parameters {
 		booleanOptions.add("minecraftAccumulateNewBlockPositionsFitness", false, "Fitness function that is scored based on how many unique block positions are added to a hashset");
 		booleanOptions.add("minecraftCompassMissileTargets", false, "Spawns 4 targets in the cardinal directions around the shape");
 		booleanOptions.add("minecraftWeightedSumsTypeCountAndNegativeSpaceCountFitness", false, "uses the WeightedSumsTypeCountAndNegativeSpaceFitness function");
-		
+		booleanOptions.add("minecraftMinimizeBlockCountFitness", false, "uses the MinimizeBlockCountFitness function");
+
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
 		doubleOptions.add("backpropLearningRate", 0.1, "Rate backprop learning for neural networks");
