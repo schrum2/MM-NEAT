@@ -527,6 +527,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 	public static void setUpLogging(int numberOfBinLabels, String infix, String experimentPrefix, int yrange, int individualsPerGeneration, ArrayList<MMNEATLog> momeLogs) {
 		System.out.println("setupLogging");
 		String prefix = experimentPrefix + "_" + infix;
+		String logTitlePlus = prefix + "_log.txt\" u 1:";
 		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
 		directory += (directory.equals("") ? "" : "/");
 		
@@ -559,8 +560,9 @@ public class MOME<T> implements SteadyStateEA<T>{
 			//occupied bins plot
 			ps.println("set title \"" + experimentPrefix + " Archive Number of Occupied Bins\"");
 			ps.println("set output \""+ prefix + "_OccupiedBins_log.pdf\"");
-			ps.println("plot \"" + prefix + "_log.txt\" u 1:" + logIndex.get("occupiedBins") + " w linespoints t \"Number Of Occupied Bins\"");
-			
+//			ps.println("plot \"" + prefix + "_log.txt\" u 1:" + logIndex.get("occupiedBins") + " w linespoints t \"Number Of Occupied Bins\"");
+			ps.println("plot \"" + logTitlePlus + logIndex.get("occupiedBins") + " w linespoints t \"Number Of Occupied Bins\"");
+
 			//percentage bins plot
 			ps.println("set title \"" + experimentPrefix + " Percentage Of Bins Occupied\"");
 			ps.println("set output \""+ prefix + "_OccupiedBinsPercentage_log.pdf\"");
@@ -721,52 +723,58 @@ public class MOME<T> implements SteadyStateEA<T>{
 			}
 			ps.close();
 			
-//			
-//			System.out.println("about to make aggregate .plt");
-//			String logTitle = saveDirectoryParetoFronts+"/AggregateFront.txt";
-//			System.out.println("logTitle: " + logTitle);
-//			String plotFilename = saveDirectoryParetoFronts+"/AggregateFront.plt";
-//			System.out.println("plotFilename: " + plotFilename);
-//			
+	//TODO: don't know why it doesn't actually plot, probably has to do with syntax for the plot line
+			
+			System.out.println("about to make aggregate .plt");
+			String logTitle = saveDirectoryParetoFronts+"/AggregateFront.txt";
+			System.out.println("logTitle: " + logTitle);
+			String plotFilename = saveDirectoryParetoFronts+"/AggregateFront.plt";
+			System.out.println("plotFilename: " + plotFilename);
+			
 //			String plotPDFFilename = plotFilename.replace(".plt", "_PDF.plt");
-//			File plotFile = new File(plotFilename);
+			File plotFile = new File(plotFilename);
 //			int yrange = 300;
 //			int xrange = 300;
-//			
-//			try {
-////				// The PDF version
-////				ps = new PrintStream(plotPDFFile);
-////				ps.println("set term pdf enhanced");
-////				ps.println("unset key");
-////				// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
-////				ps.println("set yrange [0:"+ yrange +"]");
-////				ps.println("set xrange [1:"+ numberOfBinLabels + "]");
-////				ps.println("set title \"" + logTitle + "\"");
-////				ps.println("set output \"" + pdfFilename + "\"");				
-////				// The :1 is for skipping the "generation" number logged in the file
-////				ps.println("plot \"" + textLogFilename + "\" matrix every ::1 with image");
-////				ps.close();
-////				double[] maxPerObjective = archive.maxFitnessInWholeArchiveXObjective();
-////				double yrange = maxPerObjective[0];
-////				double xrange = maxPerObjective[1];
-//				
-//				// Non-PDF version
-//				ps = new PrintStream(plotFile);
+			double[] maxPerObjective = archive.maxFitnessInWholeArchiveXObjective();
+			double yrange = maxPerObjective[0];
+			double xrange = maxPerObjective[1];
+			
+			try {
+//				// The PDF version
+//				ps = new PrintStream(plotPDFFile);
+//				ps.println("set term pdf enhanced");
 //				ps.println("unset key");
 //				// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
-//				ps.println("set yrange [0:"+ (yrange+10) +"]");
-//				ps.println("set xrange [1:"+ (xrange+10) + "]");
+//				ps.println("set yrange [0:"+ yrange +"]");
+//				ps.println("set xrange [1:"+ numberOfBinLabels + "]");
 //				ps.println("set title \"" + logTitle + "\"");
+//				ps.println("set output \"" + pdfFilename + "\"");				
 //				// The :1 is for skipping the "generation" number logged in the file
-//				ps.println("plot \"" + logTitle + "\" matrix every ::1 with image");
-//				// ps.println("pause -1"); // Not needed when only one item is plotted?
+//				ps.println("plot \"" + textLogFilename + "\" matrix every ::1 with image");
 //				ps.close();
-//		
-//			} catch (FileNotFoundException e) {
-//				System.out.println("Error creating plt log file");
-//				e.printStackTrace();
-//				System.exit(1);
-//			}
+				
+				
+				// Non-PDF version
+				ps = new PrintStream(plotFile);
+				ps.println("unset key");
+				// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
+				ps.println("set yrange [0:"+ (yrange+10) +"]");
+				ps.println("set xrange [1:"+ (xrange+10) + "]");
+				ps.println("set title \"AggregateFront.txt\"");
+				// The :1 is for skipping the "generation" number logged in the file
+//				ps.println("plot \"" + logTitle + "\" matrix every ::1 with image");
+				ps.println("plot \"" + "AggregateFront.txt" + "\" w linespoints t \"pareto front\"");
+
+				// ps.println("pause -1"); // Not needed when only one item is plotted?
+				ps.close();
+		
+//				ps.println("plot \"" +  "_log.txt\" u 1:"  + " w linespoints t \"Number Of Occupied Bins\"");
+
+			} catch (FileNotFoundException e) {
+				System.out.println("Error creating plt log file");
+				e.printStackTrace();
+				System.exit(1);
+			}
 			
 			
 			
@@ -818,6 +826,109 @@ public class MOME<T> implements SteadyStateEA<T>{
 		task.finalCleanup();
 	}
 	
+	public void gnuPlotCreationMatrixPlot(String textLogNameWithDirectory, int yrange, int xrange) {
+		String plotFilename = textLogNameWithDirectory.replace(".txt", ".plt");
+		String plotPDFFilename = plotFilename.replace(".plt", "_PDF.plt");
+		String logTitle = textLogNameWithDirectory.replace(".txt", "");
+		String pdfFilename = textLogNameWithDirectory.replace(".txt", ".pdf");
+		
+		File plotFile = new File(plotFilename);
+		File plotPDFFile = new File(plotPDFFilename);
+		
+		PrintStream ps;
+
+		
+//		 The PDF version
+		try {
+			ps = new PrintStream(plotPDFFile);
+			ps.println("set term pdf enhanced");
+			ps.println("unset key");
+			// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
+			ps.println("set yrange [0:"+ yrange +"]");
+			ps.println("set xrange [1:"+ xrange + "]");
+			ps.println("set title \"" + logTitle + "\"");
+			ps.println("set output \"" + pdfFilename + "\"");				
+			// The :1 is for skipping the "generation" number logged in the file
+			ps.println("plot \"" + textLogNameWithDirectory + "\" matrix every ::1 with image");
+			ps.close();
+			
+			// Non-PDF version
+			ps = new PrintStream(plotFile);
+			ps.println("unset key");
+			// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
+			ps.println("set yrange [0:"+ yrange +"]");
+			ps.println("set xrange [1:"+ xrange + "]");
+			ps.println("set title \"" + logTitle + "\"");
+			// The :1 is for skipping the "generation" number logged in the file
+			ps.println("plot \"" + textLogNameWithDirectory + "\" matrix every ::1 with image");
+			// ps.println("pause -1"); // Not needed when only one item is plotted?
+			ps.close();
+	
+		} catch (FileNotFoundException e) {
+			System.out.println("Error creating MOME log files");
+			e.printStackTrace();
+			System.exit(1);
+		}
+	}
+	public void gnuPlotCreationMatrixPlotNonPDFOnly(String textLogNameWithDirectory, int yrange, int xrange) {
+		String plotFilename = textLogNameWithDirectory.replace(".txt", ".plt");
+//		String plotPDFFilename = plotFilename.replace(".plt", "_PDF.plt");
+		String logTitle = textLogNameWithDirectory.replace(".txt", "");
+//		String pdfFilename = textLogNameWithDirectory.replace(".txt", ".pdf");
+		
+		File plotFile = new File(plotFilename);
+//		File plotPDFFile = new File(plotPDFFilename);
+		
+		PrintStream ps;
+
+		try {
+			// Non-PDF version
+			ps = new PrintStream(plotFile);
+			ps.println("unset key");
+			// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
+			ps.println("set yrange [0:"+ yrange +"]");
+			ps.println("set xrange [1:"+ xrange + "]");
+			ps.println("set title \"" + logTitle + "\"");
+			// The :1 is for skipping the "generation" number logged in the file
+			ps.println("plot \"" + textLogNameWithDirectory + "\" matrix every ::1 with image");
+			// ps.println("pause -1"); // Not needed when only one item is plotted?
+			ps.close();
+	
+		} catch (FileNotFoundException e) {
+			System.out.println("Error creating MOME log files");
+			e.printStackTrace();
+			System.exit(1);
+		}
+	}
+	
+	public void gnuPlotPDFOnly(String textLogNameWithDirectory, int yrange, int xrange) {
+		//pdf only file creation
+		String plotPDFFilename = textLogNameWithDirectory.replace(".txt", "_PDF.plt");
+		String logTitle = textLogNameWithDirectory.replace(".txt", "");
+		String pdfFilename = textLogNameWithDirectory.replace(".txt", ".pdf");
+
+		File plotPDFFile = new File(plotPDFFilename);
+		
+		PrintStream ps;
+		
+		try {
+			ps = new PrintStream(plotPDFFile);
+			ps.println("set term pdf enhanced");
+			ps.println("unset key");
+			// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
+			ps.println("set yrange [0:"+ yrange +"]");
+			ps.println("set xrange [1:"+ xrange + "]");
+			ps.println("set title \"" + logTitle + "\"");
+			ps.println("set output \"" + pdfFilename + "\"");				
+			// The :1 is for skipping the "generation" number logged in the file
+			ps.println("plot \"" + textLogNameWithDirectory + "\" matrix every ::1 with image");
+			ps.close();
+		} catch (FileNotFoundException e) {
+			System.out.println("Error creating MOME log files");
+			e.printStackTrace();
+			System.exit(1);
+		}
+	}
 
 	public static void main (String[] args) {
 		try {

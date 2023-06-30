@@ -874,9 +874,10 @@ public class Parameters {
 		booleanOptions.add("minecraftClearAfterEvaluation", false, "If true clears and verifies the shapeCorner after evaluation");
 		booleanOptions.add("saveWholeMinecraftArchiveAtEnd", true, "If true saves shape in the final archive to finalArchiveOfShapes");
 		booleanOptions.add("momeSelectsUniformlyAcrossWholeArchive", false, "alternates the getRandomIndividual method to grab individual from whole archive instead of random bin");
-		booleanOptions.add("minecraftChangeBlockAndChangeCenterOfMassWeightedFitness", false, "uses the changeBlockAndChangeCenterOfMassWeightedFitness function");
+		booleanOptions.add("minecraftWeightedSumsChangeBlockAndChangeCenterOfMassFitness", false, "uses the WeightedSumsChangeBlockAndChangeCenterOfMassFitness function");
 		booleanOptions.add("minecraftAccumulateNewBlockPositionsFitness", false, "Fitness function that is scored based on how many unique block positions are added to a hashset");
 		booleanOptions.add("minecraftCompassMissileTargets", false, "Spawns 4 targets in the cardinal directions around the shape");
+		booleanOptions.add("minecraftWeightedSumsTypeCountAndNegativeSpaceCountFitness", false, "uses the WeightedSumsTypeCountAndNegativeSpaceFitness function");
 		booleanOptions.add("minecraftSpecificTargetFitness", false, "Parameter for turning specific target fitness on");
 		
 		// Double parameters

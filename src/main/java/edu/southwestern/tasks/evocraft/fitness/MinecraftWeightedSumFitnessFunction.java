@@ -3,8 +3,11 @@ package edu.southwestern.tasks.evocraft.fitness;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
+import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.datastructures.Pair;
 
 /**
  * A single fitness function that can be a weighted sum of several fitness functions
@@ -34,19 +37,47 @@ public abstract class MinecraftWeightedSumFitnessFunction extends MinecraftFitne
 		for(int i = 0; i < fitnessFunctions.size(); i++) {
 			MinecraftFitnessFunction ff = fitnessFunctions.get(i);
 			if(ff instanceof TimedEvaluationMinecraftFitnessFunction) {
+				System.out.println("weighted sums timed evail");
 				timedFitnessFunctions.add((TimedEvaluationMinecraftFitnessFunction) ff);
 				timedWeights.add(weights.get(i));
 			} else {
-				plainFitnessFunctions.add((TimedEvaluationMinecraftFitnessFunction) ff);
+				System.out.println("weighted sums plain eval");
+				plainFitnessFunctions.add(ff);
 				plainWeights.add(weights.get(i));
 			}
 		}		
 	}
 	
+	/**
+	 * Need to call after fitness scores used for selection have been registered
+	 * @param fitnessFunctions
+	 */
+	public void registerNonFitnessScores() {
+		// timed functions come before plain in the order that they are returned
+		List<MinecraftFitnessFunction> fitnessFunctions = new ArrayList<>(timedFitnessFunctions);
+		fitnessFunctions.addAll(plainFitnessFunctions);
+		
+		for(MinecraftFitnessFunction ff : fitnessFunctions) {
+			// register the function for tracking/logging, but it does not affect selection
+			MMNEAT.registerFitnessFunction(ff.getClass().getSimpleName(), false);
+		}
+	}
+	
 	@Override
 	public double fitnessScore(MinecraftCoordinates shapeCorner, List<Block> originalBlocks) {
+		//unsupported, should not be called, call weightedSumsFitnessScores instead
+		throw new UnsupportedOperationException("weighted sum uses weightedSumsFitnessScores function instead of fitnessScore");
+	}
+		
+	public Pair<Double, double[]> weightedSumsFitnessScores(MinecraftCoordinates shapeCorner, List<Block> originalBlocks){
 		// Calculate timed and plain scores
-		double[] timedScores = TimedEvaluationMinecraftFitnessFunction.multipleFitnessScores(timedFitnessFunctions, shapeCorner, originalBlocks);
+		if (timedFitnessFunctions != null) {
+			System.out.println("timed fitness functions size = " + timedFitnessFunctions.size());
+		}
+		double[] timedScores = new double[timedFitnessFunctions.size()];
+		if (timedFitnessFunctions.size() != 0) {
+			timedScores = TimedEvaluationMinecraftFitnessFunction.multipleFitnessScores(timedFitnessFunctions, shapeCorner, originalBlocks);
+		}
 		double[] plainScores = plainFitnessFunctions.parallelStream().mapToDouble(ff -> ff.fitnessScore(shapeCorner,originalBlocks)).toArray();
 		
 		// Multiply each score by its weight and add up the results
@@ -58,8 +89,9 @@ public abstract class MinecraftWeightedSumFitnessFunction extends MinecraftFitne
 			weightedSum += plainScores[i]*plainWeights.get(i);
 		}
 		
-		return weightedSum;
-	}	
+		Pair<Double, double[]> results = new Pair<>(weightedSum, ArrayUtil.combineArrays(timedScores, plainScores));
+		return results;
+	}
 	
 	@Override
 	public double maxFitness() {
