@@ -877,6 +877,7 @@ public class Parameters {
 		booleanOptions.add("minecraftChangeBlockAndChangeCenterOfMassWeightedFitness", false, "uses the changeBlockAndChangeCenterOfMassWeightedFitness function");
 		booleanOptions.add("minecraftAccumulateNewBlockPositionsFitness", false, "Fitness function that is scored based on how many unique block positions are added to a hashset");
 		booleanOptions.add("minecraftCompassMissileTargets", false, "Spawns 4 targets in the cardinal directions around the shape");
+		booleanOptions.add("minecraftSpecificTargetFitness", false, "Parameter for turning specific target fitness on");
 		
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
