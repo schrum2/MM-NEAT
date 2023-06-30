@@ -878,6 +878,7 @@ public class Parameters {
 		booleanOptions.add("minecraftAccumulateNewBlockPositionsFitness", false, "Fitness function that is scored based on how many unique block positions are added to a hashset");
 		booleanOptions.add("minecraftCompassMissileTargets", false, "Spawns 4 targets in the cardinal directions around the shape");
 		booleanOptions.add("minecraftWeightedSumsTypeCountAndNegativeSpaceCountFitness", false, "uses the WeightedSumsTypeCountAndNegativeSpaceFitness function");
+		booleanOptions.add("minecraftMinimizeBlockCountFitness", false, "uses the MinimizeBlockCountFitness function");
 		booleanOptions.add("minecraftSpecificTargetFitness", false, "Parameter for turning specific target fitness on");
 		
 		// Double parameters

@@ -3,6 +3,7 @@ package edu.southwestern.tasks.evocraft;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,6 +33,7 @@ import edu.southwestern.tasks.evocraft.fitness.FakeTestFitness;
 import edu.southwestern.tasks.evocraft.fitness.MaximizeVolumeFitness;
 import edu.southwestern.tasks.evocraft.fitness.MinecraftFitnessFunction;
 import edu.southwestern.tasks.evocraft.fitness.MinecraftWeightedSumFitnessFunction;
+import edu.southwestern.tasks.evocraft.fitness.MinimizeBlockCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.MissileFitness;
 import edu.southwestern.tasks.evocraft.fitness.NegativeSpaceCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.NumAirFitness;
@@ -219,6 +221,10 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		if(Parameters.parameters.booleanParameter("minecraftWeightedSumsTypeCountAndNegativeSpaceCountFitness")) {
 			fitness.add(new WeightedSumsTypeCountAndNegativeSpaceCountFitness());
 		}
+		if(Parameters.parameters.booleanParameter("minecraftMinimizeBlockCountFitness")) {
+			fitness.add(new MinimizeBlockCountFitness());
+		}
+
 		System.out.println(fitness);		
 		
 		return fitness;
@@ -273,6 +279,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		for(int i = 0; i < scores.length; i++) {
 			scores[i] = fitnessFunctions.get(i).minFitness();
 		}
+//		System.out.println("minscores:"+Arrays.toString(scores));
 		return scores;
 	}
 
