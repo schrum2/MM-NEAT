@@ -147,7 +147,10 @@ public class MOME<T> implements SteadyStateEA<T>{
 			String experimentPrefix = Parameters.parameters.stringParameter("log") + Parameters.parameters.integerParameter("runNumber");					
 			int yrange = Parameters.parameters.integerParameter("maxGens")/individualsPerGeneration;
 			System.out.println("yrange = " + yrange + ", from maxGens = "+Parameters.parameters.integerParameter("maxGens")+"/"+individualsPerGeneration+"=individualsPerGeneration");
-			
+			if(yrange < 1) {
+				yrange = Parameters.parameters.integerParameter("maxGens")+5;
+				System.out.println("yrange too low, adjusting to = " + yrange + ", from maxGens = "+Parameters.parameters.integerParameter("maxGens"));
+			}
 			setUpLogging(numberOfBinLabels, infix, experimentPrefix, yrange, individualsPerGeneration, momeLogs);
 		}
 	}
