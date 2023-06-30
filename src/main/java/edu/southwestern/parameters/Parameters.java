@@ -400,6 +400,7 @@ public class Parameters {
 		integerOptions.add("minecraftDelayAfterEvaluation", 0, "If the value is greater than 0 causes the thread to sleep for the amount it is set to");
 		integerOptions.add("minecraftXMovementBetweenEvals", 0, "If the value is greater than 0 it adds it to the x value");
 		integerOptions.add("minecraftMaxXShift", 0, "Max value we can shift X");
+		integerOptions.add("minecraftEmptySpaceBuffer", 22, "Additional space that is cleared around shape on all sides before each evaluation");
 		
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");

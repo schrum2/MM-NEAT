@@ -2,10 +2,9 @@ package edu.southwestern.util;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
+import cern.colt.Arrays;
 import edu.southwestern.MMNEAT.MMNEAT;
-import edu.southwestern.evolution.mapelites.Archive;
 import edu.southwestern.evolution.nsga2.NSGA2;
 import edu.southwestern.evolution.nsga2.NSGA2Score;
 import edu.southwestern.scores.Score;
@@ -45,6 +44,7 @@ public class MultiobjectiveUtil {
 			scoresArrayForHypervolume[i] = individualScore.scores;
 			for (int j = 0; j < scoresArrayForHypervolume[i].length; j++) {		//this should subtract the minimum score value for each objective from its score
 				scoresArrayForHypervolume[i][j] -= minScoreForEachObjective[j]; //before passing to hypervolume, adjust scores for the minimum 
+				assert scoresArrayForHypervolume[i][j] >= 0 : "scoresArrayForHypervolume["+i+"]["+j+"]= "+scoresArrayForHypervolume[i][j]+", minScoreForEachObjective="+Arrays.toString(minScoreForEachObjective);
 			}
 			i++;
 		}
