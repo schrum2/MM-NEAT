@@ -27,7 +27,7 @@ import edu.southwestern.tasks.evocraft.blocks.BlockSet;
 import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBinLabels;
 import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBlockCountBinLabels;
 import edu.southwestern.tasks.evocraft.fitness.AccumulateNewBlockPositionsFitness;
-import edu.southwestern.tasks.evocraft.fitness.ChangeBlockAndChangeCenterOfMassWeightedFitness;
+import edu.southwestern.tasks.evocraft.fitness.WeightedSumsChangeBlockAndChangeCenterOfMassFitness;
 import edu.southwestern.tasks.evocraft.fitness.ChangeBlocksFitness;
 import edu.southwestern.tasks.evocraft.fitness.ChangeCenterOfMassFitness;
 import edu.southwestern.tasks.evocraft.fitness.DiversityBlockFitness;
@@ -44,6 +44,7 @@ import edu.southwestern.tasks.evocraft.fitness.TimedEvaluationMinecraftFitnessFu
 import edu.southwestern.tasks.evocraft.fitness.TypeCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.TypeTargetFitness;
 import edu.southwestern.tasks.evocraft.fitness.WaterLavaSecondaryCreationFitness;
+import edu.southwestern.tasks.evocraft.fitness.WeightedSumsTypeCountAndNegativeSpaceCountFitness;
 import edu.southwestern.tasks.evocraft.shapegeneration.BoundedVectorGenerator;
 import edu.southwestern.tasks.evocraft.shapegeneration.IntegersToVolumeGenerator;
 import edu.southwestern.tasks.evocraft.shapegeneration.ShapeGenerator;
@@ -201,11 +202,14 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		if(Parameters.parameters.booleanParameter("minecraftNumAirFitness")) {
 			fitness.add(new NumAirFitness());
 		}
-		if(Parameters.parameters.booleanParameter("minecraftChangeBlockAndChangeCenterOfMassWeightedFitness")) {
-			fitness.add(new ChangeBlockAndChangeCenterOfMassWeightedFitness());
+		if(Parameters.parameters.booleanParameter("minecraftWeightedSumsChangeBlockAndChangeCenterOfMassFitness")) {
+			fitness.add(new WeightedSumsChangeBlockAndChangeCenterOfMassFitness());
 		}
 		if(Parameters.parameters.booleanParameter("minecraftAccumulateNewBlockPositionsFitness")) {
 			fitness.add(new AccumulateNewBlockPositionsFitness());
+		}
+		if(Parameters.parameters.booleanParameter("minecraftWeightedSumsTypeCountAndNegativeSpaceCountFitness")) {
+			fitness.add(new WeightedSumsTypeCountAndNegativeSpaceCountFitness());
 		}
 		System.out.println(fitness);
 		

@@ -3,6 +3,7 @@ package edu.southwestern.tasks.evocraft.fitness;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.util.datastructures.ArrayUtil;
@@ -35,6 +36,9 @@ public abstract class MinecraftWeightedSumFitnessFunction extends MinecraftFitne
 
 		for(int i = 0; i < fitnessFunctions.size(); i++) {
 			MinecraftFitnessFunction ff = fitnessFunctions.get(i);
+			// register the function for tracking/logging, but it does not affect selection
+			MMNEAT.registerFitnessFunction(ff.getClass().getSimpleName(), false);
+			
 			if(ff instanceof TimedEvaluationMinecraftFitnessFunction) {
 				timedFitnessFunctions.add((TimedEvaluationMinecraftFitnessFunction) ff);
 				timedWeights.add(weights.get(i));
