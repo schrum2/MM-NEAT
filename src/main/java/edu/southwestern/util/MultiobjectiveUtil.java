@@ -28,6 +28,13 @@ public class MultiobjectiveUtil {
 	 * @return the hypervolume of the pareto front.
 	 */
 	public static <T> double hypervolumeFromParetoFront(List<Score<T>> scores) {
+//		System.out.println("score scores length:" + scores.get(0).scores.length);
+		assert scores.size() > 0 : "scores size is less than 0";
+		if(scores.size() <= 0) {
+			System.out.println("score scores length:" + scores.size());
+			//System.out.println("scores.scores" + scores.get(0).toString());
+			throw new IllegalStateException("Empty bin should not be possible here: " + scores);
+		}
 		int numberOfObjectives = scores.get(0).scores.length;
 		int numberOfPoints = scores.size();
 		double[][] scoresArrayForHypervolume = new double[numberOfPoints][numberOfObjectives];

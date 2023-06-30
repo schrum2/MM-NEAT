@@ -6,6 +6,7 @@ import java.util.List;
 
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 import edu.southwestern.util.datastructures.Pair;
 
@@ -46,7 +47,16 @@ public class AccumulateNewBlockPositionsFitness extends TimedEvaluationMinecraft
 		
 		return fitness.size();
 	}
-
+	@Override
+	public boolean shapeIsWorthSaving(double fitnessScore, ArrayList<Pair<Long, List<Block>>> history, MinecraftCoordinates shapeCorner, List<Block> originalBlocks) {
+		
+		//System.out.println("target * PERCENT_NEEDED_TO_SAVE" + -(target * PERCENT_NEEDED_TO_SAVE) + "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		if(fitnessScore > (originalBlocks.size() * 2)) { 
+			//System.out.println("target * PERCENT_NEEDED_TO_SAVE" + -(target * PERCENT_NEEDED_TO_SAVE) + "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+			return true;
+		}
+			return false;
+	}
 	@Override
 	public double maxFitness() {
 		MinecraftCoordinates ranges = MinecraftUtilClass.getRanges();
