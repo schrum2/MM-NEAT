@@ -5,6 +5,8 @@ import java.util.List;
 
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
+import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.datastructures.Pair;
 
 /**
  * A single fitness function that can be a weighted sum of several fitness functions
@@ -45,6 +47,11 @@ public abstract class MinecraftWeightedSumFitnessFunction extends MinecraftFitne
 	
 	@Override
 	public double fitnessScore(MinecraftCoordinates shapeCorner, List<Block> originalBlocks) {
+		//unsupported, should not be called, call weightedSumsFitnessScores instead
+		throw new UnsupportedOperationException("weighted sum uses weightedSumsFitnessScores function instead of fitnessScore");
+	}
+		
+	public Pair<Double, double[]> weightedSumsFitnessScores(MinecraftCoordinates shapeCorner, List<Block> originalBlocks){
 		// Calculate timed and plain scores
 		double[] timedScores = TimedEvaluationMinecraftFitnessFunction.multipleFitnessScores(timedFitnessFunctions, shapeCorner, originalBlocks);
 		double[] plainScores = plainFitnessFunctions.parallelStream().mapToDouble(ff -> ff.fitnessScore(shapeCorner,originalBlocks)).toArray();
@@ -58,8 +65,9 @@ public abstract class MinecraftWeightedSumFitnessFunction extends MinecraftFitne
 			weightedSum += plainScores[i]*plainWeights.get(i);
 		}
 		
-		return weightedSum;
-	}	
+		Pair<Double, double[]> results = new Pair<>(weightedSum, ArrayUtil.combineArrays(timedScores, plainScores));
+		return results;
+	}
 	
 	@Override
 	public double maxFitness() {
