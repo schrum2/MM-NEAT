@@ -595,6 +595,11 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	public String[] outputLabels() {
 		return internalMinecraftShapeTask.outputLabels();
 	}
+	
+	@Override
+	public double[] minScores() {
+		return this.internalMinecraftShapeTask.minScores();
+	}
 
 	@Override
 	public void finalCleanup() {

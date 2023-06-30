@@ -3,6 +3,7 @@ package edu.southwestern.tasks.evocraft;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -273,6 +274,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		for(int i = 0; i < scores.length; i++) {
 			scores[i] = fitnessFunctions.get(i).minFitness();
 		}
+//		System.out.println("minscores:"+Arrays.toString(scores));
 		return scores;
 	}
 
