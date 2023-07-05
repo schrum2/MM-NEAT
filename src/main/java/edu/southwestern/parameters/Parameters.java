@@ -881,7 +881,8 @@ public class Parameters {
 		booleanOptions.add("minecraftMinimizeBlockCountFitness", false, "uses the MinimizeBlockCountFitness function");
 		booleanOptions.add("minecraftSpecificTargetFitness", false, "Parameter for turning specific target fitness on");
 		booleanOptions.add("minecraftWeightedSumsMissileAndChangeCenterOfMassFitness", false, "uses the WeightedSumsMissileAndChangeCenterOfMassFitness function");
-		
+		booleanOptions.add("minecraftWeightedSumsAccumulateNewBlockPositionsAndChangeCenterOfMassFitness", false, "uses the WeightedSumsAccumulateNewBlockPositionsAndChangeCenterOfMassFitness function");
+				
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
 		doubleOptions.add("backpropLearningRate", 0.1, "Rate backprop learning for neural networks");
