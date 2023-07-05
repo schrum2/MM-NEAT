@@ -43,6 +43,7 @@ import edu.southwestern.tasks.evocraft.fitness.TypeCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.TypeTargetFitness;
 import edu.southwestern.tasks.evocraft.fitness.WaterLavaSecondaryCreationFitness;
 import edu.southwestern.tasks.evocraft.fitness.WeightedSumsChangeBlockAndChangeCenterOfMassFitness;
+import edu.southwestern.tasks.evocraft.fitness.WeightedSumsMissileAndChangeCenterOfMassFitness;
 import edu.southwestern.tasks.evocraft.fitness.WeightedSumsTypeCountAndNegativeSpaceCountFitness;
 import edu.southwestern.tasks.evocraft.shapegeneration.BoundedVectorGenerator;
 import edu.southwestern.tasks.evocraft.shapegeneration.IntegersToVolumeGenerator;
@@ -207,6 +208,10 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		}
 		if(Parameters.parameters.booleanParameter("minecraftWeightedSumsChangeBlockAndChangeCenterOfMassFitness")) {
 			fitness.add(new WeightedSumsChangeBlockAndChangeCenterOfMassFitness());
+		}
+		
+		if(Parameters.parameters.booleanParameter("minecraftWeightedSumsMissileAndChangeCenterOfMassFitness")) {
+			fitness.add(new WeightedSumsMissileAndChangeCenterOfMassFitness());
 		}
 		if(Parameters.parameters.booleanParameter("minecraftAccumulateNewBlockPositionsFitness")) {
 			fitness.add(new AccumulateNewBlockPositionsFitness());
