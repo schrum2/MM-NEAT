@@ -93,6 +93,13 @@ public class MOME<T> implements SteadyStateEA<T>{
 	 */
 	@SuppressWarnings("unchecked")
 	public MOME(String archiveSubDirectoryName, boolean ioOption, boolean netioOption) {
+		
+		if(Parameters.parameters.integerParameter("lastSavedGeneration") > 0) {
+			System.out.println("There are already results in "+archiveSubDirectoryName);
+			System.out.println("Cannot resume a terminated MOME run. Have to start from scratch.");
+			System.exit(1);
+		}
+		
 		MMNEAT.usingDiversityBinningScheme = true;
 		this.task = (LonerTask<T>) MMNEAT.task;
 		this.archive = new MOMEArchive<>(netioOption, archiveSubDirectoryName);	//set up archive
@@ -104,7 +111,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 		this.addedIndividualCount = 0;
 		this.discardedIndividualCount = 0;
 		this.individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
-		this.individualCreationAttemptsCount = Parameters.parameters.integerParameter("lastSavedGeneration");
+		this.individualCreationAttemptsCount = 0; // Parameters.parameters.integerParameter("lastSavedGeneration"); // No resumin gallowed
 		//TODO: the above might cause issues
 		
 		//everything below here in this constructor deals with logging
@@ -299,7 +306,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 	 */
 	@Override
 	public int currentIteration() {
-		return individualCreationAttemptsCount/individualsPerGeneration;
+		return individualCreationAttemptsCount;
 	}
 
 	/**
