@@ -332,15 +332,18 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			//this is for individual
 			//fill log is experimentPrefix + "_" + infix + "_otherStatsFillLog";
 			//whole thing is infix+"_otherStat_"+i+"_" +MMNEAT.getFitnessFunctionName(i+1)_log.txt
+			int index = 2;
 			for (int i = 0; i < numberOfOtherStats; i++) {
 				ps.println("set title \"" + experimentPrefix + " " + MMNEAT.getFitnessFunctionName(i+1) + " Max Fitness\"");
 				ps.println("set output \"" + experimentPrefix + "_otherStatsFillLog_"+ MMNEAT.getFitnessFunctionName(i+1) + "_MaxFitness.pdf\"");
-				ps.println("plot \"" + textLogFilename + "\" u 1:"+ i+2 +" w linespoints t \"Max Fitness\"");
+				ps.println("plot \"" + textLogFilename + "\" u 1:"+ (i+index) +" w linespoints t \"Max Fitness\"");
 
-				
+				index++;
+	
 				ps.println("set title \"" + experimentPrefix + " " + MMNEAT.getFitnessFunctionName(i+1) + " QD Score\"");
 				ps.println("set output \"" + experimentPrefix + "_otherStatsFillLog_"+ MMNEAT.getFitnessFunctionName(i+1) + "_QDScore.pdf\"");
-				ps.println("plot \"" + textLogFilename + "\" u 1:"+ i+3 +" w linespoints t \"QD Score\"");
+				ps.println("plot \"" + textLogFilename + "\" u 1:"+ (i+index) +" w linespoints t \"QD Score\"");
+//				index++;
 			}
 
 			ps.close();
