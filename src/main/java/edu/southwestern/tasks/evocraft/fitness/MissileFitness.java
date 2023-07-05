@@ -25,8 +25,10 @@ public class MissileFitness extends TimedEvaluationMinecraftFitnessFunction {
 	private MinecraftCoordinates targetCornerOffset;
 	private BlockType targetBlockType;
 	private BlockType[] acceptedBlownUpBlockTypes;
-	//constructor to create the accepted block type list
+	private MinecraftCoordinates rotatedCompassTarget1;
+	private MinecraftCoordinates rotatedCompassTarget2;
 
+	//constructor to create the accepted block type list
 	public MissileFitness() {
 		int xOffset = Parameters.parameters.integerParameter("minecraftTargetDistancefromShapeX");
 		int yOffset = Parameters.parameters.integerParameter("minecraftTargetDistancefromShapeY");
@@ -40,8 +42,11 @@ public class MissileFitness extends TimedEvaluationMinecraftFitnessFunction {
 	@Override
 	public double minFitness() {
 		MinecraftCoordinates ranges = MinecraftUtilClass.getRanges();
-		int min = ranges.x() * ranges.z() * ranges.y();
-		return -min;
+		int numBlocksInTarget = ranges.x() * ranges.z() * ranges.y();
+		if(Parameters.parameters.booleanParameter("minecraftCompassMissileTargets")) {
+			numBlocksInTarget *= 4; // because there are 4 targets
+		}
+		return -numBlocksInTarget; // negative since left over blocks are bad
 	}
 
 	//shape dimensions
@@ -74,28 +79,16 @@ public class MissileFitness extends TimedEvaluationMinecraftFitnessFunction {
 		//
 		if(Parameters.parameters.booleanParameter("minecraftCompassMissileTargets")) {
 			//Target opposite the original
-			//MinecraftClient.getMinecraftClient();
-			//MinecraftClient.clearAndVerify(shapeCorner.add(targetCornerOffset));
 			MinecraftClient.getMinecraftClient().fillCube(shapeCorner.sub(targetCornerOffset), shapeCorner.sub(targetCornerOffset).add(MinecraftUtilClass.getRanges().sub(1)), targetBlockType);
-			//new coordinate that changes targetCornerOffset
-			MinecraftCoordinates modifiedCoordinates = new MinecraftCoordinates(targetCornerOffset.z(), targetCornerOffset.y(), -targetCornerOffset.x()); 
+			rotatedCompassTarget1 = new MinecraftCoordinates(targetCornerOffset.z(), targetCornerOffset.y(), -targetCornerOffset.x()); 
 			//Target to the side of the shape
-//			MinecraftClient.getMinecraftClient();
-//			MinecraftClient.clearAndVerify(shapeCorner.add(modifiedCoordinates));
-			MinecraftClient.getMinecraftClient().fillCube(shapeCorner.add(modifiedCoordinates), shapeCorner.add(modifiedCoordinates.add(MinecraftUtilClass.getRanges().sub(1))), targetBlockType);
-			//modifies it again so it will offset it to the other side
-			MinecraftCoordinates modifiedCoordinatesOther = new MinecraftCoordinates(-targetCornerOffset.z(), targetCornerOffset.y(), targetCornerOffset.x());
+			MinecraftClient.getMinecraftClient().fillCube(shapeCorner.add(rotatedCompassTarget1), shapeCorner.add(rotatedCompassTarget1.add(MinecraftUtilClass.getRanges().sub(1))), targetBlockType);
+			rotatedCompassTarget2 = new MinecraftCoordinates(-targetCornerOffset.z(), targetCornerOffset.y(), targetCornerOffset.x());
 			//Target to the other side of the shape
-//			MinecraftClient.getMinecraftClient();
-//			MinecraftClient.clearAndVerify(shapeCorner.add(modifiedCoordinatesOther));
-			MinecraftClient.getMinecraftClient().fillCube(shapeCorner.add(modifiedCoordinatesOther), shapeCorner.add(modifiedCoordinatesOther.add(MinecraftUtilClass.getRanges().sub(1))), targetBlockType);
+			MinecraftClient.getMinecraftClient().fillCube(shapeCorner.add(rotatedCompassTarget2), shapeCorner.add(rotatedCompassTarget2.add(MinecraftUtilClass.getRanges().sub(1))), targetBlockType);
 		
 	
-		}
-		
-		//System.out.println("targetCornerOffset" + targetCornerOffset);
-		//System.out.println("modifiedCoordinates" + modifiedCoordinates);
-		//System.out.println("TARGET!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		}		
 	}
 
 	@Override
@@ -105,25 +98,16 @@ public class MissileFitness extends TimedEvaluationMinecraftFitnessFunction {
 		
 		if(Parameters.parameters.booleanParameter("minecraftCompassMissileTargets")) {
 			leftOverBlocksFromTarget.addAll(MinecraftClient.getMinecraftClient().readCube(shapeCorner.sub(targetCornerOffset), shapeCorner.sub(targetCornerOffset).add(MinecraftUtilClass.getRanges().sub(1))));
-			//new coordinate that changes targetCornerOffset
-			MinecraftCoordinates modifiedCoordinates = new MinecraftCoordinates(targetCornerOffset.z(), targetCornerOffset.y(), -targetCornerOffset.x()); 
 			//Target to the side of the shape
-			leftOverBlocksFromTarget.addAll(MinecraftClient.getMinecraftClient().readCube(shapeCorner.add(modifiedCoordinates), shapeCorner.add(modifiedCoordinates.add(MinecraftUtilClass.getRanges().sub(1)))));
-			//modifies it again so it will offset it to the other side
-			MinecraftCoordinates modifiedCoordinatesOther = new MinecraftCoordinates(-targetCornerOffset.z(), targetCornerOffset.y(), targetCornerOffset.x());
+			leftOverBlocksFromTarget.addAll(MinecraftClient.getMinecraftClient().readCube(shapeCorner.add(rotatedCompassTarget1), shapeCorner.add(rotatedCompassTarget1.add(MinecraftUtilClass.getRanges().sub(1)))));
 			//Target to the other side of the shape
-			leftOverBlocksFromTarget.addAll(MinecraftClient.getMinecraftClient().readCube(shapeCorner.add(modifiedCoordinatesOther), shapeCorner.add(modifiedCoordinatesOther.add(MinecraftUtilClass.getRanges().sub(1)))));
+			leftOverBlocksFromTarget.addAll(MinecraftClient.getMinecraftClient().readCube(shapeCorner.add(rotatedCompassTarget2), shapeCorner.add(rotatedCompassTarget2.add(MinecraftUtilClass.getRanges().sub(1)))));
 		
 		
 		}
 		
 		List<Block> leftOverOfTargetBlocks = MinecraftUtilClass.getDesiredBlocks(leftOverBlocksFromTarget, acceptedBlownUpBlockTypes);
-		
-		// For troubleshooting successful shapes that destroy the target
-//		if(leftOverOfTargetBlocks.size() == 0) {
-//			throw new IllegalStateException(""+history+"\n"+shapeCorner+"\n"+originalBlocks);
-//		}
-		
+				
 		return -leftOverOfTargetBlocks.size();
 	}
 	@Override
@@ -136,7 +120,7 @@ public class MissileFitness extends TimedEvaluationMinecraftFitnessFunction {
 			//System.out.println("target * PERCENT_NEEDED_TO_SAVE" + -(target * PERCENT_NEEDED_TO_SAVE) + "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 			return true;
 		}
-			return false;
+		return false;
 	}
 	public static void main(String[] args) {
 

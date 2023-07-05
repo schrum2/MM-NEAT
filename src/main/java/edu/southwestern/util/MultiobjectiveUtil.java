@@ -3,12 +3,12 @@ package edu.southwestern.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import cern.colt.Arrays;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.nsga2.NSGA2;
 import edu.southwestern.evolution.nsga2.NSGA2Score;
 import edu.southwestern.scores.Score;
 import jmetal.qualityIndicator.Hypervolume;
+import java.util.Arrays;
 
 /**
  * Contains methods for computing Pareto fronts. Based on jmetal.qualityIndicator.Hypervolume
@@ -41,7 +41,7 @@ public class MultiobjectiveUtil {
 		double[] minScoreForEachObjective = MMNEAT.task.minScores();
 		
 		for (Score<T> individualScore : scores) {		//adds the scores to the double array of scores
-			scoresArrayForHypervolume[i] = individualScore.scores;
+			scoresArrayForHypervolume[i] = Arrays.copyOf(individualScore.scores,individualScore.scores.length);
 			for (int j = 0; j < scoresArrayForHypervolume[i].length; j++) {		//this should subtract the minimum score value for each objective from its score
 				scoresArrayForHypervolume[i][j] -= minScoreForEachObjective[j]; //before passing to hypervolume, adjust scores for the minimum 
 				assert scoresArrayForHypervolume[i][j] >= 0 : "scoresArrayForHypervolume["+i+"]["+j+"]= "+scoresArrayForHypervolume[i][j]+", minScoreForEachObjective="+Arrays.toString(minScoreForEachObjective);
