@@ -71,9 +71,9 @@ public abstract class MinecraftWeightedSumFitnessFunction extends MinecraftFitne
 		
 	public Pair<Double, double[]> weightedSumsFitnessScores(MinecraftCoordinates shapeCorner, List<Block> originalBlocks){
 		// Calculate timed and plain scores
-		if (timedFitnessFunctions != null) {
-			System.out.println("timed fitness functions size = " + timedFitnessFunctions.size());
-		}
+//		if (timedFitnessFunctions != null) {
+//			System.out.println("timed fitness functions size = " + timedFitnessFunctions.size());
+//		}
 		double[] timedScores = new double[timedFitnessFunctions.size()];
 		if (timedFitnessFunctions.size() != 0) {
 			timedScores = TimedEvaluationMinecraftFitnessFunction.multipleFitnessScores(timedFitnessFunctions, shapeCorner, originalBlocks);
