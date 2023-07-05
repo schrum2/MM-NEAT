@@ -162,7 +162,6 @@ public class MOME<T> implements SteadyStateEA<T>{
 		}
 	}
 	
-	
 	@Override
 	public void initialize(Genotype<T> example) {
 		// Do not allow Minecraft to contain archive when using MOME
@@ -732,9 +731,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 				ps.println(scoreString);
 			}
 			ps.close();
-			
-	//TODO: don't know why it doesn't actually plot, probably has to do with syntax for the plot line
-			
+						
 			System.out.println("about to make aggregate .plt");
 			String logTitle = saveDirectoryParetoFronts+"/AggregateFront.txt";
 			System.out.println("logTitle: " + logTitle);
@@ -750,20 +747,6 @@ public class MOME<T> implements SteadyStateEA<T>{
 			double xrange = maxPerObjective[1];
 			
 			try {
-//				// The PDF version
-//				ps = new PrintStream(plotPDFFile);
-//				ps.println("set term pdf enhanced");
-//				ps.println("unset key");
-//				// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
-//				ps.println("set yrange [0:"+ yrange +"]");
-//				ps.println("set xrange [1:"+ numberOfBinLabels + "]");
-//				ps.println("set title \"" + logTitle + "\"");
-//				ps.println("set output \"" + pdfFilename + "\"");				
-//				// The :1 is for skipping the "generation" number logged in the file
-//				ps.println("plot \"" + textLogFilename + "\" matrix every ::1 with image");
-//				ps.close();
-				
-				
 				// Non-PDF version
 				ps = new PrintStream(plotFile);
 				ps.println("unset key");
@@ -939,7 +922,39 @@ public class MOME<T> implements SteadyStateEA<T>{
 			System.exit(1);
 		}
 	}
+	/**
+	 * quickly get the experimentPrefix without having to pass it around constantly
+	 * @return experimentPrefix
+	 */
+	public String getExperimentPrefix() {
+		return Parameters.parameters.stringParameter("log") + Parameters.parameters.integerParameter("runNumber");
+	}
+	/**
+	 * grabs the usual yrange without having to pass it around and includes cratch for yrange=0
+	 * @return the yrange for plots based on generations and individuals per generation (maxGens/individualsPerGeneration)
+	 */
+	public int getYRange() {
+		int yrange = Parameters.parameters.integerParameter("maxGens")/individualsPerGeneration;
+		System.out.println("yrange = " + yrange + ", from maxGens = "+Parameters.parameters.integerParameter("maxGens")+"/"+individualsPerGeneration+"=individualsPerGeneration");
+		if(yrange < 1) {
+			yrange = Parameters.parameters.integerParameter("maxGens")+5;
+			System.out.println("yrange too low, maxGens should be larger than individualsPerGeneration, adjusting to = " + yrange + ", from maxGens = "+Parameters.parameters.integerParameter("maxGens"));
+		}
+		return yrange;
+	}
+	/**
+	 * String prefix = experimentPrefix + "_" + infix;
+		String logTitlePlus = prefix + "_log.txt\" u 1:";
+		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
+		directory += (directory.equals("") ? "" : "/");
+		
+		String fullName = directory + prefix + "_log.plt";
+		File archivePlotFile = new File(fullName);
 
+	
+	 */
+
+	
 	public static void main (String[] args) {
 		try {
 			// This is a GECCO set of parameters with some minor changes for MOME
