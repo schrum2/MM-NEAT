@@ -545,6 +545,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 
 		PrintStream ps;
 		
+		//ARCHIVE LOGGING
 		//tracks placement based on things
 		int columnIndex = 1;	//keeps track of where the item is in the archive log
 		HashMap<String, Integer> logIndex = new HashMap<>(); //tracks the column placement of data in the archive log

@@ -129,6 +129,21 @@ public class Archive<T> {
 	}
 	
 	/**
+	 * gets the scores for a stat in the otherStats index for each bin
+	 * instead of getting the fitness score for each bin, it gets the score in a specific otherStats
+	 * @param index
+	 * @return list of scores within the Scores otherStats at given index for each bin
+	 */
+	public float[] getOtherStatsScores(int index) {
+		float[] result = new float[archive.size()];
+		for(int i = 0; i < result.length; i++) {
+			Score<T> score = archive.get(i);
+			result[i] = score == null ? Float.NEGATIVE_INFINITY : new Double(score.otherStats[i]).floatValue();
+		}
+		return result;
+	}
+	
+	/**
 	 * Directory where the archive is being saved on disk
 	 * @return Path to directory
 	 */
