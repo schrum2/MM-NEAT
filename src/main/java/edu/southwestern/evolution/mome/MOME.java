@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Vector;
 import java.util.stream.Stream;
@@ -712,7 +714,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 		
 		//logging aggregate file
 		File paretoFrontAggregateOutput = new File(saveDirectoryParetoFronts + "/AggregateFront.txt");
-		System.out.println("aggregat name: " + saveDirectoryParetoFronts + "/AggregateFront.txt");
+		System.out.println("aggregate name: " + saveDirectoryParetoFronts + "/AggregateFront.txt");
 
 		
 		PrintStream ps;
@@ -722,6 +724,19 @@ public class MOME<T> implements SteadyStateEA<T>{
 			///AGGREGATE LOGGING
 			
 			Vector<Score<T>> archiveFinalParetoFront = archive.getCombinedParetoFrontWholeArchive();
+			Comparator<Score<T>> paretoScoreComparator = new Comparator<Score<T>>() {
+				// Sort lexicographically: first score, then second score, etc
+				@Override
+				public int compare(Score<T> o1, Score<T> o2) {
+					for(int i = 0; i < o1.scores.length; i++) {
+						if(o1.scores[i] < o2.scores[i]) return -1;
+						if(o1.scores[i] > o2.scores[i]) return 1;
+					}
+					return 0; // All were equal
+				}
+				
+			};
+			Collections.sort(archiveFinalParetoFront, paretoScoreComparator);
 			//go through score for row
 			//column is objectives
 			for (Score<T> score : archiveFinalParetoFront) {
@@ -739,40 +754,20 @@ public class MOME<T> implements SteadyStateEA<T>{
 			String plotFilename = saveDirectoryParetoFronts+"/AggregateFront.plt";
 			System.out.println("plotFilename: " + plotFilename);
 			
-//			String plotPDFFilename = plotFilename.replace(".plt", "_PDF.plt");
 			File plotFile = new File(plotFilename);
-//			int yrange = 300;
-//			int xrange = 300;
-			double[] maxPerObjective = archive.maxFitnessInWholeArchiveXObjective();
-			double yrange = maxPerObjective[0];
-			double xrange = maxPerObjective[1];
-			
 			try {
 				// Non-PDF version
 				ps = new PrintStream(plotFile);
 				ps.println("unset key");
-				// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
-//				ps.println("set yrange [0:"+ (yrange+10) +"]");	//removed x and y range to allow for auto accomodations
-//				ps.println("set xrange [1:"+ (xrange+10) + "]");
-				ps.println("set title \"AggregateFront.txt\"");
-				// The :1 is for skipping the "generation" number logged in the file
-//				ps.println("plot \"" + logTitle + "\" matrix every ::1 with image");
-				ps.println("plot \"" + "AggregateFront.txt" + "\" w linespoints t \"pareto front\"");
-
-				// ps.println("pause -1"); // Not needed when only one item is plotted?
+				ps.println("set title \"Aggregate Pareto Front\"");
+				ps.println("plot \"" + "AggregateFront.txt" + "\" w linespoints t \"Pareto front\"");
 				ps.close();
-		
-//				ps.println("plot \"" +  "_log.txt\" u 1:"  + " w linespoints t \"Number Of Occupied Bins\"");
 
 			} catch (FileNotFoundException e) {
 				System.out.println("Error creating plt log file");
 				e.printStackTrace();
 				System.exit(1);
 			}
-			
-			
-			
-			
 			
 			int iLogs = 0;	//anytime a log is created, increment and check that it's not out of bounds
 			
@@ -790,6 +785,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 					ps = new PrintStream(paretoFrontSingleBinFile);
 					
 					Vector<Score<T>> scoresForBin = archive.getScoresForBin(key);
+					Collections.sort(scoresForBin, paretoScoreComparator);
 
 					//GET A SINGLE ROW LOGGED
 					//for each score in the bin, log that scores data on one row
