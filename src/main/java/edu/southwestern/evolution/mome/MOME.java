@@ -820,114 +820,139 @@ public class MOME<T> implements SteadyStateEA<T>{
 		task.finalCleanup();
 	}
 	
-	public void gnuPlotCreationMatrixPlot(String textLogNameWithDirectory, int yrange, int xrange) {
-		String plotFilename = textLogNameWithDirectory.replace(".txt", ".plt");
-		String plotPDFFilename = plotFilename.replace(".plt", "_PDF.plt");
-		String logTitle = textLogNameWithDirectory.replace(".txt", "");
-		String pdfFilename = textLogNameWithDirectory.replace(".txt", ".pdf");
-		
-		File plotFile = new File(plotFilename);
-		File plotPDFFile = new File(plotPDFFilename);
-		
-		PrintStream ps;
-
-		
-//		 The PDF version
-		try {
-			ps = new PrintStream(plotPDFFile);
-			ps.println("set term pdf enhanced");
-			ps.println("unset key");
-			// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
-			ps.println("set yrange [0:"+ yrange +"]");
-			ps.println("set xrange [1:"+ xrange + "]");
-			ps.println("set title \"" + logTitle + "\"");
-			ps.println("set output \"" + pdfFilename + "\"");				
-			// The :1 is for skipping the "generation" number logged in the file
-			ps.println("plot \"" + textLogNameWithDirectory + "\" matrix every ::1 with image");
-			ps.close();
-			
-			// Non-PDF version
-			ps = new PrintStream(plotFile);
-			ps.println("unset key");
-			// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
-			ps.println("set yrange [0:"+ yrange +"]");
-			ps.println("set xrange [1:"+ xrange + "]");
-			ps.println("set title \"" + logTitle + "\"");
-			// The :1 is for skipping the "generation" number logged in the file
-			ps.println("plot \"" + textLogNameWithDirectory + "\" matrix every ::1 with image");
-			// ps.println("pause -1"); // Not needed when only one item is plotted?
-			ps.close();
+//the below methods are just ideas to make plotting more convenient or understandable
 	
-		} catch (FileNotFoundException e) {
-			System.out.println("Error creating " + textLogNameWithDirectory + " log files");
-			e.printStackTrace();
-			System.exit(1);
-		}
-	}
-	public void gnuPlotCreationMatrixPlotNonPDFOnly(String textLogNameWithDirectory, int yrange, int xrange) {
-		String plotFilename = textLogNameWithDirectory.replace(".txt", ".plt");
+//	/**
+//	 * considering convenient ways to create modular plotting
+//	 * @param textLogNameWithDirectory
+//	 * @param yrange
+//	 * @param xrange
+//	 */
+//	public void gnuPlotCreationMatrixPlot(String textLogNameWithDirectory, int yrange, int xrange) {
+//		String plotFilename = textLogNameWithDirectory.replace(".txt", ".plt");
 //		String plotPDFFilename = plotFilename.replace(".plt", "_PDF.plt");
-		String logTitle = textLogNameWithDirectory.replace(".txt", "");
+//		String logTitle = textLogNameWithDirectory.replace(".txt", "");
 //		String pdfFilename = textLogNameWithDirectory.replace(".txt", ".pdf");
-		
-		File plotFile = new File(plotFilename);
+//		
+//		File plotFile = new File(plotFilename);
 //		File plotPDFFile = new File(plotPDFFilename);
-		
-		PrintStream ps;
-
-		try {
-			// Non-PDF version
-			ps = new PrintStream(plotFile);
-			ps.println("unset key");
-			// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
-			ps.println("set yrange [0:"+ yrange +"]");
-			ps.println("set xrange [1:"+ xrange + "]");
-			ps.println("set title \"" + logTitle + "\"");
-			// The :1 is for skipping the "generation" number logged in the file
-			ps.println("plot \"" + textLogNameWithDirectory + "\" matrix every ::1 with image");
-			// ps.println("pause -1"); // Not needed when only one item is plotted?
-			ps.close();
+//		
+//		PrintStream ps;
+//
+//		
+////		 The PDF version
+//		try {
+//			ps = new PrintStream(plotPDFFile);
+//			ps.println("set term pdf enhanced");
+//			ps.println("unset key");
+//			// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
+//			ps.println("set yrange [0:"+ yrange +"]");
+//			ps.println("set xrange [1:"+ xrange + "]");
+//			ps.println("set title \"" + logTitle + "\"");
+//			ps.println("set output \"" + pdfFilename + "\"");				
+//			// The :1 is for skipping the "generation" number logged in the file
+//			ps.println("plot \"" + textLogNameWithDirectory + "\" matrix every ::1 with image");
+//			ps.close();
+//			
+//			// Non-PDF version
+//			ps = new PrintStream(plotFile);
+//			ps.println("unset key");
+//			// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
+//			ps.println("set yrange [0:"+ yrange +"]");
+//			ps.println("set xrange [1:"+ xrange + "]");
+//			ps.println("set title \"" + logTitle + "\"");
+//			// The :1 is for skipping the "generation" number logged in the file
+//			ps.println("plot \"" + textLogNameWithDirectory + "\" matrix every ::1 with image");
+//			// ps.println("pause -1"); // Not needed when only one item is plotted?
+//			ps.close();
+//	
+//		} catch (FileNotFoundException e) {
+//			System.out.println("Error creating " + textLogNameWithDirectory + " log files");
+//			e.printStackTrace();
+//			System.exit(1);
+//		}
+//	}
+//	/**
+//	 * considering convenient ways to plot pdf only
+//	 * @param textLogNameWithDirectory
+//	 * @param yrange
+//	 * @param xrange
+//	 */
+//	public void gnuPlotCreationMatrixPlotNonPDFOnly(String textLogNameWithDirectory, int yrange, int xrange) {
+//		String plotFilename = textLogNameWithDirectory.replace(".txt", ".plt");
+////		String plotPDFFilename = plotFilename.replace(".plt", "_PDF.plt");
+//		String logTitle = textLogNameWithDirectory.replace(".txt", "");
+////		String pdfFilename = textLogNameWithDirectory.replace(".txt", ".pdf");
+//		
+//		File plotFile = new File(plotFilename);
+////		File plotPDFFile = new File(plotPDFFilename);
+//		
+//		PrintStream ps;
+//
+//		try {
+//			// Non-PDF version
+//			ps = new PrintStream(plotFile);
+//			ps.println("unset key");
+//			// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
+//			ps.println("set yrange [0:"+ yrange +"]");
+//			ps.println("set xrange [1:"+ xrange + "]");
+//			ps.println("set title \"" + logTitle + "\"");
+//			// The :1 is for skipping the "generation" number logged in the file
+//			ps.println("plot \"" + textLogNameWithDirectory + "\" matrix every ::1 with image");
+//			// ps.println("pause -1"); // Not needed when only one item is plotted?
+//			ps.close();
+//	
+//		} catch (FileNotFoundException e) {
+//			System.out.println("Error creating " + textLogNameWithDirectory + " log files");
+//			e.printStackTrace();
+//			System.exit(1);
+//		}
+//	}
+//	
+//	/**
+//	 * considering convenient ways to create gnu plots only
+//	 * @param textLogNameWithDirectory
+//	 * @param yrange
+//	 * @param xrange
+//	 */
+//	public void gnuPlotPDFOnly(String textLogNameWithDirectory, int yrange, int xrange) {
+//		//pdf only file creation
+//		String plotPDFFilename = textLogNameWithDirectory.replace(".txt", "_PDF.plt");
+//		String logTitle = textLogNameWithDirectory.replace(".txt", "");
+//		String pdfFilename = textLogNameWithDirectory.replace(".txt", ".pdf");
+//
+//		File plotPDFFile = new File(plotPDFFilename);
+//		
+//		PrintStream ps;
+//		
+//		try {
+//			ps = new PrintStream(plotPDFFile);
+//			ps.println("set term pdf enhanced");
+//			ps.println("unset key");
+//			// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
+//			ps.println("set yrange [0:"+ yrange +"]");
+//			ps.println("set xrange [1:"+ xrange + "]");
+//			ps.println("set title \"" + logTitle + "\"");
+//			ps.println("set output \"" + pdfFilename + "\"");				
+//			// The :1 is for skipping the "generation" number logged in the file
+//			ps.println("plot \"" + textLogNameWithDirectory + "\" matrix every ::1 with image");
+//			ps.close();
+//		} catch (FileNotFoundException e) {
+//			System.out.println("Error creating " + textLogNameWithDirectory + " log files");
+//			e.printStackTrace();
+//			System.exit(1);
+//		}
+//	}
 	
-		} catch (FileNotFoundException e) {
-			System.out.println("Error creating " + textLogNameWithDirectory + " log files");
-			e.printStackTrace();
-			System.exit(1);
-		}
-	}
-	
-	public void gnuPlotPDFOnly(String textLogNameWithDirectory, int yrange, int xrange) {
-		//pdf only file creation
-		String plotPDFFilename = textLogNameWithDirectory.replace(".txt", "_PDF.plt");
-		String logTitle = textLogNameWithDirectory.replace(".txt", "");
-		String pdfFilename = textLogNameWithDirectory.replace(".txt", ".pdf");
-
-		File plotPDFFile = new File(plotPDFFilename);
-		
-		PrintStream ps;
-		
-		try {
-			ps = new PrintStream(plotPDFFile);
-			ps.println("set term pdf enhanced");
-			ps.println("unset key");
-			// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
-			ps.println("set yrange [0:"+ yrange +"]");
-			ps.println("set xrange [1:"+ xrange + "]");
-			ps.println("set title \"" + logTitle + "\"");
-			ps.println("set output \"" + pdfFilename + "\"");				
-			// The :1 is for skipping the "generation" number logged in the file
-			ps.println("plot \"" + textLogNameWithDirectory + "\" matrix every ::1 with image");
-			ps.close();
-		} catch (FileNotFoundException e) {
-			System.out.println("Error creating " + textLogNameWithDirectory + " log files");
-			e.printStackTrace();
-			System.exit(1);
-		}
-	}
-	
-	public void printWithPsPassed(PrintStream ps, String logTitleTxt) {
-		//use the passed ps to ptrint?
-		
-	}
+//	/**
+//	 * considering ways to create convenient modular logging passing the ps stream
+//	 * @param ps
+//	 * @param logTitleTxt
+//	 */
+//	public void printWithPsPassed(PrintStream ps, String logTitleTxt) {
+//		//use the passed ps to ptrint?
+//		
+//	}
 	/**
 	 * quickly get the experimentPrefix without having to pass it around constantly
 	 * @return experimentPrefix
@@ -986,7 +1011,9 @@ public class MOME<T> implements SteadyStateEA<T>{
 			//there is an issue with bin labels - MMNEAT.java method getArchiveBinLabelsClass & getArchive
 			//Attempted to get archive bin label class without using MAP Elites or a psuedo-archive
 			MMNEAT.main("runNumber:99 randomSeed:2 minecraftMaximizeVolumeFitness:true trackPseudoArchive:false minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftChangeCenterOfMassFitness:true minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet trials:1 mu:100 maxGens:60000 minecraftContainsWholeMAPElitesArchive:false forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:false mating:true fs:false ea:edu.southwestern.evolution.mome.MOME experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:mometest log:MOMETest-currentlyTesting saveTo:currentlyTesting mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5 crossover:edu.southwestern.evolution.crossover.ArrayCrossover".split(" "));
-//above is quick check
+//above is quick check, maximize volume fitness mu:100 maxGens:60000
+			
+			//below are mometests
 			//MMNEAT.main("runNumber:7 randomSeed:2 minecraftMaximizeVolumeFitness:true trackPseudoArchive:false minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftChangeCenterOfMassFitness:true minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet trials:1 mu:100 maxGens:60000 minecraftContainsWholeMAPElitesArchive:false forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:false mating:true fs:false ea:edu.southwestern.evolution.mome.MOME experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:mometest log:MOMETest-MEObserverVectorPistonOrientation saveTo:MEObserverVectorPistonOrientation mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5 crossover:edu.southwestern.evolution.crossover.ArrayCrossover".split(" "));
 			//MMNEAT.main("runNumber:5 randomSeed:1 minecraftMaximizeVolumeFitness:true minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftChangeCenterOfMassFitness:true minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet trials:1 mu:5 maxGens:1 minecraftContainsWholeMAPElitesArchive:false forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:false mating:true fs:false ea:edu.southwestern.evolution.mome.MOME experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:5 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:mometest log:MOMETest-MEObserverVectorPistonOrientation saveTo:MEObserverVectorPistonOrientation mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5 crossover:edu.southwestern.evolution.crossover.ArrayCrossover".split(" "));
 		} catch (FileNotFoundException | NoSuchMethodException e) {
