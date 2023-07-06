@@ -270,79 +270,83 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			int numberOfOtherStats = MMNEAT.getNumberOtherStatsForPopulation(0);
 			
 //			int otherStatIndex = 1;
-			for (MMNEATLog log : otherStatsLogsList) {
-				String textLogFilename = log.getLogTextFilename();
+			if (otherStatsLogsList != null) {
+				for (MMNEATLog log : otherStatsLogsList) {
+					String textLogFilename = log.getLogTextFilename();
+					String plotFilename = textLogFilename.replace(".txt", ".plt");
+					String plotPDFFilename = plotFilename.replace(".plt", "_PDF.plt");
+					String logTitle = textLogFilename.replace(".txt", "");
+					String pdfFilename = textLogFilename.replace(".txt", ".pdf");
+
+					File plotFile = new File(directory + plotFilename);
+					File plotPDFFile = new File(directory + plotPDFFilename);
+
+					//log and plot each other stat
+					// The PDF version
+					ps = new PrintStream(plotPDFFile);
+					ps.println("set term pdf enhanced");
+					ps.println("unset key");
+					// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
+					ps.println("set yrange [0:"+ yrange +"]");
+					ps.println("set xrange [1:"+ numLabels + "]");
+					ps.println("set title \"" + logTitle + "\"");
+					ps.println("set output \"" + pdfFilename + "\"");				
+					// The :1 is for skipping the "generation" number logged in the file
+					ps.println("plot \"" + textLogFilename + "\" matrix every ::1 with image");
+					ps.close();
+
+					// Non-PDF version
+					ps = new PrintStream(plotFile);
+					ps.println("unset key");
+					// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
+					ps.println("set yrange [0:"+ yrange +"]");
+					ps.println("set xrange [1:"+ numLabels + "]");
+					ps.println("set title \"" + logTitle.replace("_", " ") + "\"");
+					// The :1 is for skipping the "generation" number logged in the file
+					ps.println("plot \"" + textLogFilename + "\" matrix every ::1 with image");
+					// ps.println("pause -1"); // Not needed when only one item is plotted?
+					ps.close();
+
+				}
+
+//				String prefix = experimentPrefix + "_" + infix;
+//				String outputString = experimentPrefix + "_" + infix + "_otherStatsFillLog";
+				String textLogFilename = experimentPrefix + "_" + infix + "_otherStatsFillLog_log.txt";
 				String plotFilename = textLogFilename.replace(".txt", ".plt");
-				String plotPDFFilename = plotFilename.replace(".plt", "_PDF.plt");
-				String logTitle = textLogFilename.replace(".txt", "");
-				String pdfFilename = textLogFilename.replace(".txt", ".pdf");
-
-				File plotFile = new File(directory + plotFilename);
-				File plotPDFFile = new File(directory + plotPDFFilename);
-
-				//log and plot each other stat
-				// The PDF version
-				ps = new PrintStream(plotPDFFile);
-				ps.println("set term pdf enhanced");
-				ps.println("unset key");
-				// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
-				ps.println("set yrange [0:"+ yrange +"]");
-				ps.println("set xrange [1:"+ numLabels + "]");
-				ps.println("set title \"" + logTitle + "\"");
-				ps.println("set output \"" + pdfFilename + "\"");				
-				// The :1 is for skipping the "generation" number logged in the file
-				ps.println("plot \"" + textLogFilename + "\" matrix every ::1 with image");
-				ps.close();
-
-				// Non-PDF version
-				ps = new PrintStream(plotFile);
-				ps.println("unset key");
-				// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
-				ps.println("set yrange [0:"+ yrange +"]");
-				ps.println("set xrange [1:"+ numLabels + "]");
-				ps.println("set title \"" + logTitle.replace("_", " ") + "\"");
-				// The :1 is for skipping the "generation" number logged in the file
-				ps.println("plot \"" + textLogFilename + "\" matrix every ::1 with image");
-				// ps.println("pause -1"); // Not needed when only one item is plotted?
-				ps.close();
-
-			}
-//			String prefix = experimentPrefix + "_" + infix;
-//			String outputString = experimentPrefix + "_" + infix + "_otherStatsFillLog";
-			String textLogFilename = experimentPrefix + "_" + infix + "_otherStatsFillLog_log.txt";
-			String plotFilename = textLogFilename.replace(".txt", ".plt");
-//			String plotPDFFilename = plotFilename.replace(".plt", "_PDF.plt");
-//			String logTitle = textLogFilename.replace(".txt", "");
-			
-			File plotFile = new File(directory + plotFilename);
-			
-			ps = new PrintStream(plotFile);
-			ps.println("set term pdf enhanced");
-			//ps.println("unset key");
-			ps.println("set key bottom right");
-			// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
-			ps.println("set xrange [0:"+ yrange +"]");
-			
-	
-			
-//			String fillPrefix = experimentPrefix + "_" + "Fill";
-//			String fullFillName = directory + fillPrefix + "_log.plt";
-//			File fillPlot = new File(fullFillName);
-			//infix+"_otherStat_"+i+"_" +MMNEAT.getFitnessFunctionName(i+1)
-			//this is for individual
-			//fill log is experimentPrefix + "_" + infix + "_otherStatsFillLog";
-			//whole thing is infix+"_otherStat_"+i+"_" +MMNEAT.getFitnessFunctionName(i+1)_log.txt
-			for (int i = 0; i < numberOfOtherStats; i++) {
-				ps.println("set title \"" + experimentPrefix + " " + MMNEAT.getFitnessFunctionName(i+1) + " Max Fitness\"");
-				ps.println("set output \"" + experimentPrefix + "_otherStatsFillLog_"+ MMNEAT.getFitnessFunctionName(i+1) + "_MaxFitness.pdf\"");
-				ps.println("plot \"" + textLogFilename + "\" u 1:"+ i+2 +" w linespoints t \"Max Fitness\"");
-
+//				String plotPDFFilename = plotFilename.replace(".plt", "_PDF.plt");
+//				String logTitle = textLogFilename.replace(".txt", "");
 				
-				ps.println("set title \"" + experimentPrefix + " " + MMNEAT.getFitnessFunctionName(i+1) + " QD Score\"");
-				ps.println("set output \"" + experimentPrefix + "_otherStatsFillLog_"+ MMNEAT.getFitnessFunctionName(i+1) + "_QDScore.pdf\"");
-				ps.println("plot \"" + textLogFilename + "\" u 1:"+ i+3 +" w linespoints t \"QD Score\"");
-			}
+				File plotFile = new File(directory + plotFilename);
+				
+				ps = new PrintStream(plotFile);
+				ps.println("set term pdf enhanced");
+				//ps.println("unset key");
+				ps.println("set key bottom right");
+				// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
+				ps.println("set xrange [0:"+ yrange +"]");
+				
+		
+				
+//				String fillPrefix = experimentPrefix + "_" + "Fill";
+//				String fullFillName = directory + fillPrefix + "_log.plt";
+//				File fillPlot = new File(fullFillName);
+				//infix+"_otherStat_"+i+"_" +MMNEAT.getFitnessFunctionName(i+1)
+				//this is for individual
+				//fill log is experimentPrefix + "_" + infix + "_otherStatsFillLog";
+				//whole thing is infix+"_otherStat_"+i+"_" +MMNEAT.getFitnessFunctionName(i+1)_log.txt
+				for (int i = 0; i < numberOfOtherStats; i++) {
+					ps.println("set title \"" + experimentPrefix + " " + MMNEAT.getFitnessFunctionName(i+1) + " Max Fitness\"");
+					ps.println("set output \"" + experimentPrefix + "_otherStatsFillLog_"+ MMNEAT.getFitnessFunctionName(i+1) + "_MaxFitness.pdf\"");
+					ps.println("plot \"" + textLogFilename + "\" u 1:"+ i+2 +" w linespoints t \"Max Fitness\"");
 
+					
+					ps.println("set title \"" + experimentPrefix + " " + MMNEAT.getFitnessFunctionName(i+1) + " QD Score\"");
+					ps.println("set output \"" + experimentPrefix + "_otherStatsFillLog_"+ MMNEAT.getFitnessFunctionName(i+1) + "_QDScore.pdf\"");
+					ps.println("plot \"" + textLogFilename + "\" u 1:"+ i+3 +" w linespoints t \"QD Score\"");
+				}
+
+			}
+			
 			ps.close();
 
 		} catch (FileNotFoundException e) {

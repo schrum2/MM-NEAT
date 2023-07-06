@@ -752,8 +752,8 @@ public class MOME<T> implements SteadyStateEA<T>{
 				ps = new PrintStream(plotFile);
 				ps.println("unset key");
 				// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
-				ps.println("set yrange [0:"+ (yrange+10) +"]");
-				ps.println("set xrange [1:"+ (xrange+10) + "]");
+//				ps.println("set yrange [0:"+ (yrange+10) +"]");	//removed x and y range to allow for auto accomodations
+//				ps.println("set xrange [1:"+ (xrange+10) + "]");
 				ps.println("set title \"AggregateFront.txt\"");
 				// The :1 is for skipping the "generation" number logged in the file
 //				ps.println("plot \"" + logTitle + "\" matrix every ::1 with image");
