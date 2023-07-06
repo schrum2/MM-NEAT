@@ -33,6 +33,13 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 	// There have to be at least this many entries in the history before a judgement about early termination can be made
 	private static final int MINIMUM_HISTORY_SIZE_FOR_JUDGEMENT = 5;
 		
+	
+	@Override
+	public boolean shapeIsWorthSaving(double fitnessScore, ArrayList<Pair<Long, List<Block>>> history, MinecraftCoordinates shapeCorner, List<Block> originalBlocks) {
+		// Should probably make this more precise, but a lot of engineerings already goes into assigning maxFitness
+		return fitnessScore > maxFitness() - FLYING_PENALTY_BUFFER;
+	}
+	
 	@Override
 	public double maxFitness() {
 		if(CommonConstants.watch) System.out.println("MAX FITNESS BEING APPLIED");

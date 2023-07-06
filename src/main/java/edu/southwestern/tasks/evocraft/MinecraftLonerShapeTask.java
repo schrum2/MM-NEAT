@@ -10,7 +10,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.Vector;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
@@ -30,7 +29,6 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
 import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBinLabels;
 import edu.southwestern.util.datastructures.Pair;
-import edu.southwestern.util.file.FileUtilities;
 /**
  * MAPElites only works with LonerTasks because it is a steady-state algorithm.
  * MinecraftShapeTask is parallelized for evolving populations, but this
@@ -595,42 +593,49 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	public String[] outputLabels() {
 		return internalMinecraftShapeTask.outputLabels();
 	}
+	
+	@Override
+	public double[] minScores() {
+		return this.internalMinecraftShapeTask.minScores();
+	}
 
 	@Override
 	public void finalCleanup() {
 		if(!Parameters.parameters.booleanParameter("interactWithMinecraftForever")) {
 			running = false; // Stop the interactive loop
 		}
-		
-		if(Parameters.parameters.booleanParameter("minecraftChangeCenterOfMassFitness") && MMNEAT.usingDiversityBinningScheme && CommonConstants.netio) {
-			System.out.println("Write block lists for all flying elites to finalFlyingMachines");
-			
-			//final flying machines directory is created
-			String flyingDir = FileUtilities.getSaveDirectory() + "/finalFlyingMachines";
-			File dir = new File(flyingDir);
-			// Create dir
-			if (!dir.exists()) {
-				dir.mkdir();
-			}
-			@SuppressWarnings("unchecked")
-			Archive<T> archive = MMNEAT.getArchive();
-			Vector<Score<T>> archiveVector = archive.getArchive();
-			MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
-			for(int i = 0; i < archiveVector.size(); i++) {
-				Score<T> score = archiveVector.get(i);
-				//if there is a fitness score related to this bin (ie. there exists a shape)
-				if(score != null) {
-					double fitness = score.behaviorIndexScore();
-					//TODO: this deals with saving shapes
-					if(this.internalMinecraftShapeTask.certainFlying(fitness)) {
-						@SuppressWarnings("unchecked")
-						List<Block> blocks = MMNEAT.shapeGenerator.generateShape(score.individual, MinecraftClient.POST_EVALUATION_SHAPE_CORNER, MMNEAT.blockSet);
-						String label = minecraftBinLabels.binLabels().get(i);
-						MinecraftUtilClass.writeBlockListFile(blocks, flyingDir + File.separator + label+"ID"+score.individual.getId(), "FITNESS"+fitness+".txt");			
-					}
-				}
-			}			
-		}
+	
+		// The individual fitness functions should save flying machines as they are created,
+		// and the whole archive should be saved at the end of execution
+//		if(Parameters.parameters.booleanParameter("minecraftChangeCenterOfMassFitness") && MMNEAT.usingDiversityBinningScheme && CommonConstants.netio) {
+//			System.out.println("Write block lists for all flying elites to finalFlyingMachines");
+//			
+//			//final flying machines directory is created
+//			String flyingDir = FileUtilities.getSaveDirectory() + "/finalFlyingMachines";
+//			File dir = new File(flyingDir);
+//			// Create dir
+//			if (!dir.exists()) {
+//				dir.mkdir();
+//			}
+//			@SuppressWarnings("unchecked")
+//			Archive<T> archive = MMNEAT.getArchive();
+//			Vector<Score<T>> archiveVector = archive.getArchive();
+//			MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
+//			for(int i = 0; i < archiveVector.size(); i++) {
+//				Score<T> score = archiveVector.get(i);
+//				//if there is a fitness score related to this bin (ie. there exists a shape)
+//				if(score != null) {
+//					double fitness = score.behaviorIndexScore();
+//					//TODO: this deals with saving shapes
+//					if(this.internalMinecraftShapeTask.certainFlying(fitness)) {
+//						@SuppressWarnings("unchecked")
+//						List<Block> blocks = MMNEAT.shapeGenerator.generateShape(score.individual, MinecraftClient.POST_EVALUATION_SHAPE_CORNER, MMNEAT.blockSet);
+//						String label = minecraftBinLabels.binLabels().get(i);
+//						MinecraftUtilClass.writeBlockListFile(blocks, flyingDir + File.separator + label+"ID"+score.individual.getId(), "FITNESS"+fitness+".txt");			
+//					}
+//				}
+//			}			
+//		}
 		
 		while(!interactiveLoopFinished) {
 			// Let interactive loop finish

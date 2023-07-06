@@ -1,0 +1,3 @@
+REM Usage:   postSpawnMinecraftEvaluateBlocks.bat <filename>
+REM Example: postSpawnMinecraftEvaluateBlocks.bat minecraftaccumulate/VectorPistonOrientationCount19/archive/NS0EW2UD8_0.07125_7270.txt
+java -ea -jar "target/MM-NEAT-0.0.1-SNAPSHOT.jar" minecraftEvaluate minecraftBlockListTextFile:%1 netio:false spaceBetweenMinecraftShapes:20 minecraftMissileFitness:true minecraftPistonLabelSize:5 startY:40 extraSpaceBetweenMinecraftShapes:100 minecraftTargetDistancefromShapeY:0 minecraftTargetDistancefromShapeX:25 minecraftTargetDistancefromShapeZ:0 minecraftXRange:5 minecraftYRange:5 minecraftZRange:5 minecraftCompassMissileTargets:true

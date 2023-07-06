@@ -26,18 +26,18 @@ import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.util.PopulationUtil;
 import edu.southwestern.util.PythonUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.stats.StatisticsUtilities;
 
 /**
  * TODO: Explain a bit more, and also cite the paper whose algorithm we are implementing using ACM style
- * This class implements MOME instead of MAP Elites
+ * This class implements MOME instead of MAP Elites using the paper from https://arxiv.org/pdf/2202.03057.pdf
  * It creates an archive where bins can house multiple individuals, it keeps track of generations
  * and does statistical data logging in files.
  * 
- *  My version of Multi-dimensional Archive of Phenotypic Elites (MAP-Elites), the quality diversity (QD)
- * algorithms that illuminates a search space. This is an unusual implementation, but it gets the job done.
+ * Just like MAPElites but with pareto fronts
  * 
  * Thomas Pierrot, Guillaume Richard, Karim Beguir, and Antoine Cully. 
  * 2022. Multi-objective quality diversity optimization. 
@@ -62,27 +62,25 @@ public class MOME<T> implements SteadyStateEA<T>{
 	//tracking variables
 	private int addedIndividualCount;
 	private int discardedIndividualCount;	//don't know if we will need this
-//	private boolean populationChangeCheck;	//this keeps track of what happened to the most recent individual created (if it was added or not)
-						//false means the individual was not added and so the population hasn't changed
-						//true means an individual was added and the population changed
+	private boolean populationChangeCheck;	//TWEANN individuals need to know so that an updated archetype can be saved
 	private int individualsPerGeneration;
 	private int individualCreationAttemptsCount;	//this is analogous to iterations and helps to keep track of how many actual times new individual is called
 	
-	//logging variables (might be sorted into tracking or other grouping
+	//logging variables 
 	public boolean io;
 	private boolean archiveFileCreated = false;	//track if the archive file is made
 	
 	// Not a MOMELog
 	private MMNEATLog archiveLog = null; // Log general archive information. Does not use matrix plot, logged every generation
-//	private MMNEATLog[] paretoFrontFinalLogs = null;	//logging for final cleanup, logs the paretoFront
 	
-	// MOMELogs
+	//MOMELogs
 	private MMNEATLog binPopulationSizeLog = null; // contains sizes of subpops in each bin, logged every generation
 	private MMNEATLog hypervolumeLog = null;	//contains the size of the hypervolume for each bin's subpop, logged every generation
 	private MMNEATLog[] maxFitnessLogs = null; //creates a log for each objective that contains the max fitness for each bin, logged every generation
 	private MMNEATLog[] minFitnessLogs = null; //creates a log for each objective that contains the min fitness for each bin, logged every generation
 	private MMNEATLog[] rangeFitnessLogs = null; //creates a log for each objective that contains the range from min to max for each bin, logged every generation
 
+	//CONSTRUCTORS
 	public MOME() {
 		this(Parameters.parameters.stringParameter("archiveSubDirectoryName"), Parameters.parameters.booleanParameter("io"), Parameters.parameters.booleanParameter("netio"));
 	}
@@ -95,6 +93,13 @@ public class MOME<T> implements SteadyStateEA<T>{
 	 */
 	@SuppressWarnings("unchecked")
 	public MOME(String archiveSubDirectoryName, boolean ioOption, boolean netioOption) {
+		
+		if(Parameters.parameters.integerParameter("lastSavedGeneration") > 0) {
+			System.out.println("There are already results in "+archiveSubDirectoryName);
+			System.out.println("Cannot resume a terminated MOME run. Have to start from scratch.");
+			System.exit(1);
+		}
+		
 		MMNEAT.usingDiversityBinningScheme = true;
 		this.task = (LonerTask<T>) MMNEAT.task;
 		this.archive = new MOMEArchive<>(netioOption, archiveSubDirectoryName);	//set up archive
@@ -102,18 +107,19 @@ public class MOME<T> implements SteadyStateEA<T>{
 		this.io = ioOption; // write logs
 		this.mating = Parameters.parameters.booleanParameter("mating");
 		this.crossoverRate = Parameters.parameters.doubleParameter("crossoverRate");
-//		this.populationChangeCheck = false;
+		this.populationChangeCheck = false;
 		this.addedIndividualCount = 0;
 		this.discardedIndividualCount = 0;
 		this.individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
-		this.individualCreationAttemptsCount = Parameters.parameters.integerParameter("lastSavedGeneration");
+		this.individualCreationAttemptsCount = 0; // Parameters.parameters.integerParameter("lastSavedGeneration"); // No resumin gallowed
 		//TODO: the above might cause issues
 		
-		if(io) {
-			//logging
+		//everything below here in this constructor deals with logging
+		if(io) {	//logging
 			String infix = "MOMEArchive";
 			int numberOfObjectives = MMNEAT.task.numObjectives();
 			int numberOfBinLabels = archive.getBinMapping().binLabels().size();
+			
 			// TODO: Contains MMNEATLogs for now, but later will be only those logs that are MOMELogs. Specifically, they have a column for each archive bin
 			ArrayList<MMNEATLog> momeLogs = new ArrayList<>();
 			
@@ -148,12 +154,13 @@ public class MOME<T> implements SteadyStateEA<T>{
 			String experimentPrefix = Parameters.parameters.stringParameter("log") + Parameters.parameters.integerParameter("runNumber");					
 			int yrange = Parameters.parameters.integerParameter("maxGens")/individualsPerGeneration;
 			System.out.println("yrange = " + yrange + ", from maxGens = "+Parameters.parameters.integerParameter("maxGens")+"/"+individualsPerGeneration+"=individualsPerGeneration");
-			
-			
+			if(yrange < 1) {
+				yrange = Parameters.parameters.integerParameter("maxGens")+5;
+				System.out.println("yrange too low, adjusting to = " + yrange + ", from maxGens = "+Parameters.parameters.integerParameter("maxGens"));
+			}
 			setUpLogging(numberOfBinLabels, infix, experimentPrefix, yrange, individualsPerGeneration, momeLogs);
 		}
 	}
-	
 	
 	@Override
 	public void initialize(Genotype<T> example) {
@@ -204,7 +211,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 
 	@Override
 	public void newIndividual() {
-		//System.out.println("new individual, current count:" + addedIndividualCount);
+//		System.out.println("new individual, current count:" + addedIndividualCount);
 
 		//get random individual for parent 1
 		Genotype<T> parentGenotype1 = archive.getRandomIndividual().individual;
@@ -240,6 +247,8 @@ public class MOME<T> implements SteadyStateEA<T>{
 			Score<T> s2 = task.evaluate(childGenotype2);
 			
 			//try and add new individual then check if successful and population has changed
+//			System.out.println("before individual creation call second child");
+
 			afterIndividualCreationProcesses(archive.add(s2));			//this method will deal with anything that needs to be done after an individual is made
 		}
 		
@@ -256,10 +265,38 @@ public class MOME<T> implements SteadyStateEA<T>{
 		Score<T> s1 = task.evaluate(childGenotype1);
 		
 		// Try and add newest individual and update population change variable on result
-		afterIndividualCreationProcesses(archive.add(s1));			//this will call anything we need to do after making a new individual
-		assert archive.checkLargestSubpopNotGreaterThanMaxLimit() : "largest subpop is greater than max allowed-END OF NEW INDIVIDUAL";
-	}
+//		System.out.println("before individual creation call first child");
 
+		afterIndividualCreationProcesses(archive.add(s1));			//this will call anything we need to do after making a new individual
+//		System.out.println("after individual creation call first child");
+
+		assert archive.checkLargestSubpopNotGreaterThanMaxLimit() : "largest subpop is greater than max allowed-END OF NEW INDIVIDUAL";
+		
+//		System.out.println("end new individual");
+
+	}
+	
+	/**
+	 * holds commands made after an individual is created
+	 * synchronized for logging purposes and tracking add and discard counts
+	 * @param individualAddStatus	if an individual was added or not
+	 */
+	//@SuppressWarnings({ "rawtypes", "unchecked" })
+	public synchronized void afterIndividualCreationProcesses(boolean individualAddStatus) {
+//		System.out.println("in afterIndividualCreation total in archive: " +archive.totalNumberOfIndividualsInArchive());
+		individualCreationAttemptsCount++;
+		log();			////////////////
+		if(individualAddStatus) {	//the individual was added and the population changed
+			populationChangeCheck = true;
+			addedIndividualCount++;
+		} else {
+			discardedIndividualCount++;
+		}
+//		System.out.println("outside afterIndividualCreationProcess");
+
+	}
+	
+//GETTERS/SETTERS
 	/**
 	 * the current generation is the number of attempts to create individuals 
 	 * divided by the number of individuals in a generation
@@ -268,7 +305,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 	 */
 	@Override
 	public int currentIteration() {
-		return individualCreationAttemptsCount/individualsPerGeneration;
+		return individualCreationAttemptsCount;
 	}
 
 	/**
@@ -277,58 +314,30 @@ public class MOME<T> implements SteadyStateEA<T>{
 	@Override
 	public ArrayList<Genotype<T>> getPopulation() {
 		//System.out.println("in get population");
-
-		 ArrayList<Genotype<T>> result = new ArrayList<Genotype<T>>(archive.archive.size());
-
-		 archive.archive.forEach( (coords, subpop) -> {	////goes through the archive
-			 for(Score<T> s : subpop) {		//goes through the scores of the subpop
-				 result.add(s.individual);
-			 }
-		 });
-		 
-		return result;
+		return archive.getPopulation();
 	}
 
 	// This and MAP Elites probably should have a common interface that specifies the need for this method
 	/**
 	 * a method that mirrors MAP Elites
 	 * same as getWholeArchiveScores in MOMEArchive, but returns ArrayList instead of Vector
-	 * @return every score for the archive
+	 * @return every score for the archive in an ArrayList
 	 */
 	public ArrayList<Score<T>> getArchive() {
-		 ArrayList<Score<T>> result = new ArrayList<>(archive.archive.size());
-
-		 archive.archive.forEach( (coords, subpop) -> {	////goes through the archive
-			 for(Score<T> s : subpop) {		//goes through the scores of the subpop
-				 result.add(s);
-			 }
-		 });
-		 
+		//		System.out.println("in getArchive");
+		ArrayList<Score<T>> result = new ArrayList<>(archive.totalNumberOfIndividualsInArchive());
+		Vector<Score<T>> archiveScores = archive.getWholeArchiveScores();
+		for (Score<T> score : archiveScores) {
+			result.add(score);
+		}
 		return result;
 	}
 
-	/**
-	 * holds commands made after an individual is created
-	 * synchronized for logging purposes and tracking add and discard counts
-	 * @param individualAddStatus	if an individual was added or not
-	 */
-	//@SuppressWarnings({ "rawtypes", "unchecked" })
-	public synchronized void afterIndividualCreationProcesses(boolean individualAddStatus) {
-		//System.out.println("in afterIndividualCreation: " +archive.totalNumberOfIndividualsInArchive());
-		individualCreationAttemptsCount++;
-		log();			////////////////
-		if(individualAddStatus) {	//the individual was added and the population changed
-			addedIndividualCount++;
-		} else {
-			discardedIndividualCount++;
-		}
-	}
-	
-
 	@Override
 	public boolean populationChanged() {
-//		return populationChangeCheck; TODO:
-		return false;
+		boolean result = populationChangeCheck;
+		populationChangeCheck = false; // only reset this once the change has been detected
+		return result;
 	}
 
 	/**
@@ -348,12 +357,13 @@ public class MOME<T> implements SteadyStateEA<T>{
 		return addedIndividualCount;
 	}
 
+//LOGGING RELATED METHODS / LOGGING METHODS
 	/**
 	 * Write one line of data to each of the active log files, but only periodically,
 	 * when number of iterations divisible by individualsPerGeneration. 
 	 */
 	protected void log() {
-		//System.out.println("in log method");
+//		System.out.println("in log method");
 		if (!archiveFileCreated) {
 			try {
 				if(Parameters.parameters.booleanParameter("io")) setupArchiveVisualizer(archive.getBinMapping());
@@ -364,26 +374,32 @@ public class MOME<T> implements SteadyStateEA<T>{
 			}
 			archiveFileCreated = true;
 		}
-
+		
 
 		//if an individual was added and the population count is even with the steadyStateIndividualsPerGeneration
 		//this is all periodic logging to text files
 		if(io && (individualCreationAttemptsCount%individualsPerGeneration == 0)) {
+//			System.out.println("in log method if statement");
+
 			// Synchronizing on the archive should stop any calculations/modifications that result in log irregularities.
 			// However, such course locking could slow down the simulation.
 			synchronized(archive) {
+//				System.out.println("in log method synchronized archive");
+
 
 				assert archive.checkLargestSubpopNotGreaterThanMaxLimit() : "largest subpop is greater than max allowed-INSIDE LOG\n"+archive.archiveDebug();
-				
+
 				final int pseudoGeneration = individualCreationAttemptsCount/individualsPerGeneration;
 				
 				//print statements for the beginning of logging
 				//System.out.println("individuals per generation:"+ individualsPerGeneration + " parameter:" + Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration"));
 				//System.out.println("generation:"+pseudoGeneration+ " addedIndividualCount:" +addedIndividualCount + " individualCreationAttemptsCount:" + individualCreationAttemptsCount + " discarded individuals:" + discardedIndividualCount);
 				System.out.println("generation:"+pseudoGeneration);
-				System.out.println("max bin size:" + archive.maxSubPopulationSizeInWholeArchive() + " max allowed: " + Parameters.parameters.integerParameter("maximumMOMESubPopulationSize"));
+//				System.out.println("max bin size:" + archive.maxSubPopulationSizeInWholeArchive() + " max allowed: " + Parameters.parameters.integerParameter("maximumMOMESubPopulationSize"));
 
 				int numberOfObjectives = MMNEAT.task.numObjectives();
+
+//				System.out.println("LOGGING POPULATION INFORMATION");
 
 				//LOGGING POPULATION INFORMATION
 				assert archive.checkLargestSubpopNotGreaterThanMaxLimit() : "largest subpop is greater than max allowed -LOGGING POP INFO";
@@ -393,16 +409,25 @@ public class MOME<T> implements SteadyStateEA<T>{
 				popString = pseudoGeneration + "\t" + popString.substring(1, popString.length() - 1); // Remove opening and closing [ ] brackets
 				binPopulationSizeLog.log(popString);
 
+//				System.out.println("LOGGING HYPERVOLUME INFORMATION");
 				//LOGGING HYPERVOLUME INFORMATION
-				double[] hypervolumeForBins = archive.hyperVolumeOfAllBins();
-				String hypervolumeString = Arrays.toString(hypervolumeForBins).replace(", ", "\t");
+				Pair<double[],double[]> hypervolumeForBins = archive.hyperVolumeOfAllBins();
+				String hypervolumeString = Arrays.toString(hypervolumeForBins.t1).replace(", ", "\t");
 				hypervolumeString = pseudoGeneration + "\t" + hypervolumeString.substring(1, hypervolumeString.length() - 1); // Remove opening and closing [ ] brackets
+				hypervolumeLog.log(hypervolumeString);
 
-				//LOGGING OBJECTIVES MAX AND MIN
+				
+//				System.out.println("LOGGING OBJECTIVES MAX AND MIN INFORMATION");
+				//LOGGING OBJECTIVES MAX AND MIN INFORMATION
 				double[][] maxScoresBinXObjective = archive.maxScorebyBinXObjective(); //maxScores[bin][objective]
+//				System.out.println("LOGGING OBJECTIVES MAX AND MIN INFORMATION MIDDLE");
+
 				double[][] minScoresBinXObjective = archive.minScorebyBinXObjective(); //minScores[bin][objective]
 				//initialize log with info labels
 
+//				System.out.println("before forLoop");
+
+				
 				//loop through objectives to log max and min for each objectives log
 				for (int i = 0; i < numberOfObjectives; i++) {
 
@@ -414,7 +439,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 					//MIN FITNESS SCORES LOG
 					double[] minColumn = ArrayUtil.column(minScoresBinXObjective, i);
 					Double[] minScoresForOneObjective = ArrayUtils.toObject(minColumn);
-					minFitnessLogs[i].log(pseudoGeneration + "\t" + StringUtils.join(minScoresForOneObjective, "\t").replaceAll("-Infinity", "X"));
+					minFitnessLogs[i].log(pseudoGeneration + "\t" + StringUtils.join(minScoresForOneObjective, "\t").replaceAll("Infinity", "X"));
 
 					//RANGE FITNESS SCORES LOG
 					// If a bin is empty, its min and max are negative infinity, but the range should be 0.
@@ -426,6 +451,8 @@ public class MOME<T> implements SteadyStateEA<T>{
 					rangeFitnessLogs[i].log(pseudoGeneration + "\t" + StringUtils.join(scoreRangesForOneObjective, "\t"));
 				}
 
+//				System.out.println("in log method after forLoop");
+
 
 				//////////////ARCHIVE LOGGING / GENERAL PLOT LOGGING
 				/**
@@ -436,24 +463,33 @@ public class MOME<T> implements SteadyStateEA<T>{
 				double percentageOfBinsFilled = (archive.getNumberOfOccupiedBins()*1.0)/archive.getBinMapping().binLabels().size();
 				String printString = pseudoGeneration+"\t"+archive.getNumberOfOccupiedBins()+"\t"+ percentageOfBinsFilled +"\t";
 
+//				System.out.println("ARCHIVE LOGGGING AFTER GEN/BINS");
+
 				//TOTAL NUMBER OF INDIVIDUALS CURRENTLY IN THE ARCHIVE, NUMBER OF ADDED AND DISCARCARDED INDIVIDUALS
 				printString = printString + archive.totalNumberOfIndividualsInArchive()+"\t" + addedIndividualCount + "\t" + discardedIndividualCount + "\t";
 
 		//total hypervolume is the hypervolume in whole archive pareto front
 		//moqd is what I have right now
 				
-				//HYPERVOLUME, INDIVIDUAL BIN MAX,MIN,MEAN, HYPERVOLUME OF COMBINED PARETO FRONT, MOQDSCORE
-				double maxHyperVolumeBin = StatisticsUtilities.maximum(hypervolumeForBins);
-				double minHyperVolumeBin = StatisticsUtilities.minimum(ArrayUtil.replace(hypervolumeForBins, 0, Double.POSITIVE_INFINITY)); //replace 0 with pos infinity so it gets actual scores
-				double meanHyperVolumeOfBins = StatisticsUtilities.average(hypervolumeForBins);
-				double totalHypervolumeCombinedParetoFrontOfWholeArchive = archive.combinedParetoFrontWholeArchiveHypervolume();
-				//log separately
-				double totalHypervolumeMOQDScore = archive.totalHypervolumeMOQDScore();
-				
-				//System.out.println("max:"+maxHyperVolumeBin+" min:"+minHyperVolumeBin+" mean:"+meanHyperVolumeOfBins+" totalCombinedParetoFront:"+totalParetoFrontCombinedHypervolume +" MOQDScore:"+ totalHypervolumeMOQDScore);
-				//add the max and min hypervolume before the max and min of other things
-				printString = printString + maxHyperVolumeBin + "\t" + minHyperVolumeBin + "\t" + meanHyperVolumeOfBins + "\t" + totalHypervolumeCombinedParetoFrontOfWholeArchive + "\t" + totalHypervolumeMOQDScore + "\t";
+				//HYPERVOLUME, INDIVIDUAL BIN MAX,MIN, AVERAGE OVERALL, AVERAGE OCCUPIED, HYPERVOLUME OF COMBINED PARETO FRONT, MOQDSCORE
+				//archive logs over all data, not bin by bin data
+				double hypervolumeMax = StatisticsUtilities.maximum(hypervolumeForBins.t1);
+				//could remove and just do t2?
+				double hypervolumeMin = StatisticsUtilities.minimum(hypervolumeForBins.t2);
+//				double minHyperVolumeBin = StatisticsUtilities.minimum(ArrayUtil.replace(hypervolumeForBins.t1, 0, Double.POSITIVE_INFINITY)); //replace 0 with pos infinity so it gets actual scores
+				double hypervolumeAverageOverall = StatisticsUtilities.average(hypervolumeForBins.t1);	//this is the average including 0 for empty bins
+				//need to make an average not including 0 bins
+				double hypervolumeAverageOccupiedBins = StatisticsUtilities.average(hypervolumeForBins.t2);	//the average of only occupied bins
+				double hypervolumeGlobalCombinedParetoFront = archive.hypervolumeGlobalCombinedParetoFrontOfWholeArchive();
 
+				double totalHypervolumeMOQDScore = archive.totalHypervolumeMOQDScore();	//log as own plot
+			
+//				System.out.println("max:"+maxHyperVolumeBin+" min:"+minHyperVolumeBin+" averageOverall:"+hypervolumeAverageOverall+ " averageOccupied:" + hypervolumeAverageOccupiedBins +" MOQDScore:"+ totalHypervolumeMOQDScore);
+				//add the max and min hypervolume before the max and min of other things
+				printString = printString + hypervolumeMax + "\t" + hypervolumeMin + "\t" + hypervolumeAverageOverall + "\t" + hypervolumeAverageOccupiedBins + "\t" + hypervolumeGlobalCombinedParetoFront + "\t" + totalHypervolumeMOQDScore + "\t";
+
+//				System.out.println("ARCHIVE LOGGGING BEFORE MAX/MIN FITNESS");
+				
 				//MAX/MIN FITNESS PER OBJECTIVE FOR WHOLE ARCHIVE
 				//adding max fitness scores to print
 				//since all bins are put together it simply gets the max fitness score from the array
@@ -470,8 +506,13 @@ public class MOME<T> implements SteadyStateEA<T>{
 				//			System.out.println(printString);
 
 				archiveLog.log(printString);
+//				System.out.println("end of synchronize archive log");
+
 			}
+//			System.out.println("end log method if statement");
+
 		}
+
 	}
 	
 	//stubs of things from MAPElites
@@ -493,8 +534,9 @@ public class MOME<T> implements SteadyStateEA<T>{
 	 * @param momeLogs the collection of logs that use the same setup
 	 */
 	public static void setUpLogging(int numberOfBinLabels, String infix, String experimentPrefix, int yrange, int individualsPerGeneration, ArrayList<MMNEATLog> momeLogs) {
-		
+		System.out.println("setupLogging");
 		String prefix = experimentPrefix + "_" + infix;
+		String logTitlePlus = prefix + "_log.txt\" u 1:";
 		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
 		directory += (directory.equals("") ? "" : "/");
 		
@@ -503,20 +545,21 @@ public class MOME<T> implements SteadyStateEA<T>{
 
 		PrintStream ps;
 		
+		//ARCHIVE LOGGING
 		//tracks placement based on things
 		int columnIndex = 1;	//keeps track of where the item is in the archive log
 		HashMap<String, Integer> logIndex = new HashMap<>(); //tracks the column placement of data in the archive log
 
-
 		logIndex.put("pseudoGeneration", columnIndex++); logIndex.put("occupiedBins", columnIndex++); logIndex.put("percentageBins", columnIndex++);
 		logIndex.put("totalIndividuals", columnIndex++); logIndex.put("addedIndividuals", columnIndex++); logIndex.put("discardedIndividuals", columnIndex++);
-		logIndex.put("hypervolumeMax", columnIndex++); logIndex.put("hypervolumeMin", columnIndex++); logIndex.put("hypervolumeMean", columnIndex++); 
-		logIndex.put("hypervolumeTotalCombinedPareto", columnIndex++); logIndex.put("hypervolumeTotalMOQDScore", columnIndex++);
+		logIndex.put("hypervolumeMax", columnIndex++); logIndex.put("hypervolumeMin", columnIndex++); 
+		logIndex.put("hypervolumeAverageOverall", columnIndex++); logIndex.put("hypervolumeAverageOfOccupiedBins", columnIndex++);
+		logIndex.put("hypervolumeGlobalCombinedPareto", columnIndex++); logIndex.put("hypervolumeTotalMOQDScore", columnIndex++);
 		logIndex.put("maxFitnessByObjectiveStart", columnIndex++);
 //		System.out.println("hypervolumeMax test:"+logIndex.get("hypervolumeMax")+ " Inside logging thehypervolume, before fitness");
 //		System.out.println("Max fitness starts:"+logIndex.get("maxFitnessByObjectiveStart")+ " Inside logging the max fitness scores");
 
-		
+
 		try {
 			ps = new PrintStream(archivePlotFile);
 			ps.println("set term pdf enhanced");
@@ -527,13 +570,15 @@ public class MOME<T> implements SteadyStateEA<T>{
 			//occupied bins plot
 			ps.println("set title \"" + experimentPrefix + " Archive Number of Occupied Bins\"");
 			ps.println("set output \""+ prefix + "_OccupiedBins_log.pdf\"");
-			ps.println("plot \"" + prefix + "_log.txt\" u 1:" + logIndex.get("occupiedBins") + " w linespoints t \"Number Of Occupied Bins\"");
-			
+//			ps.println("plot \"" + prefix + "_log.txt\" u 1:" + logIndex.get("occupiedBins") + " w linespoints t \"Number Of Occupied Bins\"");
+			ps.println("plot \"" + logTitlePlus + logIndex.get("occupiedBins") + " w linespoints t \"Number Of Occupied Bins\"");
+
 			//percentage bins plot
 			ps.println("set title \"" + experimentPrefix + " Percentage Of Bins Occupied\"");
 			ps.println("set output \""+ prefix + "_OccupiedBinsPercentage_log.pdf\"");
 			ps.println("plot \"" + prefix + "_log.txt\" u 1:" + logIndex.get("percentageBins") + " w linespoints t \"Percentage of Occupied Bins\"");
-			
+//			ps.println("plot \"" + prefix + "_log.txt\" u 1:" + 3 + " w linespoints t \"Percentage of Occupied Bins\"");
+
 			//Total Individuals in Archive
 			ps.println("set title \"" + experimentPrefix + " Total Individuals in Archive\"");
 			ps.println("set output \""+ prefix + "_TotalIndividualsInArchive_log.pdf\"");
@@ -549,11 +594,13 @@ public class MOME<T> implements SteadyStateEA<T>{
 			//hypervolume data bin		//in gnuplot it should be global hypervolume --- combinedParetoFrontWholeArchiveHypervolume
 			ps.println("set title \"" + experimentPrefix + " Max/Min/Mean/Total Hypervolume in the Whole Archive\"");
 			ps.println("set output \""+ prefix + "_HypervolumeWholeArchive_log.pdf\"");
-			ps.println("plot \"" + prefix + "_log.txt\" u 1:" + logIndex.get("hypervolumeMax") + " w linespoints t \"Max Hypervolume\", \\");
-			ps.println("     \"" + prefix + "_log.txt\" u 1:" + logIndex.get("hypervolumeMin") + " w linespoints t \"Min Hypervolume\", \\");
-			ps.println("     \"" + prefix + "_log.txt\" u 1:" + logIndex.get("hypervolumeMean") + " w linespoints t \"Mean Hypervolume\", \\");
-			ps.println("     \"" + prefix + "_log.txt\" u 1:" + logIndex.get("hypervolumeTotalCombinedPareto") + " w linespoints t \"Global Hypervolume\"");
+			ps.println("plot \"" + prefix + "_log.txt\" u 1:" + logIndex.get("hypervolumeGlobalCombinedPareto") + " w linespoints t \"Global Hypervolume\", \\");
+			ps.println("     \"" + prefix + "_log.txt\" u 1:" + logIndex.get("hypervolumeMax") + " w linespoints t \"Max Hypervolume\", \\");
+			ps.println("     \"" + prefix + "_log.txt\" u 1:" + logIndex.get("hypervolumeAverageOfOccupiedBins") + " w linespoints t \"Average Occupied Bins Hypervolume\", \\");
+			ps.println("     \"" + prefix + "_log.txt\" u 1:" + logIndex.get("hypervolumeAverageOverall") + " w linespoints t \"Average Overall Hypervolume\", \\");
+			ps.println("     \"" + prefix + "_log.txt\" u 1:" + logIndex.get("hypervolumeMin") + " w linespoints t \"Min Hypervolume\"");
 		
+	
 			//hypervolumeTotalMOQDScore
 			ps.println("set title \"" + experimentPrefix + " MOQDScore\"");
 			ps.println("set output \""+ prefix + "_HypervolumeMOQDScore_log.pdf\"");
@@ -665,6 +712,9 @@ public class MOME<T> implements SteadyStateEA<T>{
 		
 		//logging aggregate file
 		File paretoFrontAggregateOutput = new File(saveDirectoryParetoFronts + "/AggregateFront.txt");
+		System.out.println("aggregat name: " + saveDirectoryParetoFronts + "/AggregateFront.txt");
+
+		
 		PrintStream ps;
 		try {
 			ps = new PrintStream(paretoFrontAggregateOutput);
@@ -682,6 +732,47 @@ public class MOME<T> implements SteadyStateEA<T>{
 				ps.println(scoreString);
 			}
 			ps.close();
+						
+			System.out.println("about to make aggregate .plt");
+			String logTitle = saveDirectoryParetoFronts+"/AggregateFront.txt";
+			System.out.println("logTitle: " + logTitle);
+			String plotFilename = saveDirectoryParetoFronts+"/AggregateFront.plt";
+			System.out.println("plotFilename: " + plotFilename);
+			
+//			String plotPDFFilename = plotFilename.replace(".plt", "_PDF.plt");
+			File plotFile = new File(plotFilename);
+//			int yrange = 300;
+//			int xrange = 300;
+			double[] maxPerObjective = archive.maxFitnessInWholeArchiveXObjective();
+			double yrange = maxPerObjective[0];
+			double xrange = maxPerObjective[1];
+			
+			try {
+				// Non-PDF version
+				ps = new PrintStream(plotFile);
+				ps.println("unset key");
+				// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
+//				ps.println("set yrange [0:"+ (yrange+10) +"]");	//removed x and y range to allow for auto accomodations
+//				ps.println("set xrange [1:"+ (xrange+10) + "]");
+				ps.println("set title \"AggregateFront.txt\"");
+				// The :1 is for skipping the "generation" number logged in the file
+//				ps.println("plot \"" + logTitle + "\" matrix every ::1 with image");
+				ps.println("plot \"" + "AggregateFront.txt" + "\" w linespoints t \"pareto front\"");
+
+				// ps.println("pause -1"); // Not needed when only one item is plotted?
+				ps.close();
+		
+//				ps.println("plot \"" +  "_log.txt\" u 1:"  + " w linespoints t \"Number Of Occupied Bins\"");
+
+			} catch (FileNotFoundException e) {
+				System.out.println("Error creating plt log file");
+				e.printStackTrace();
+				System.exit(1);
+			}
+			
+			
+			
+			
 			
 			int iLogs = 0;	//anytime a log is created, increment and check that it's not out of bounds
 			
@@ -729,7 +820,190 @@ public class MOME<T> implements SteadyStateEA<T>{
 		task.finalCleanup();
 	}
 	
+//the below methods are just ideas to make plotting more convenient or understandable
+	
+//	/**
+//	 * considering convenient ways to create modular plotting
+//	 * @param textLogNameWithDirectory
+//	 * @param yrange
+//	 * @param xrange
+//	 */
+//	public void gnuPlotCreationMatrixPlot(String textLogNameWithDirectory, int yrange, int xrange) {
+//		String plotFilename = textLogNameWithDirectory.replace(".txt", ".plt");
+//		String plotPDFFilename = plotFilename.replace(".plt", "_PDF.plt");
+//		String logTitle = textLogNameWithDirectory.replace(".txt", "");
+//		String pdfFilename = textLogNameWithDirectory.replace(".txt", ".pdf");
+//		
+//		File plotFile = new File(plotFilename);
+//		File plotPDFFile = new File(plotPDFFilename);
+//		
+//		PrintStream ps;
+//
+//		
+////		 The PDF version
+//		try {
+//			ps = new PrintStream(plotPDFFile);
+//			ps.println("set term pdf enhanced");
+//			ps.println("unset key");
+//			// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
+//			ps.println("set yrange [0:"+ yrange +"]");
+//			ps.println("set xrange [1:"+ xrange + "]");
+//			ps.println("set title \"" + logTitle + "\"");
+//			ps.println("set output \"" + pdfFilename + "\"");				
+//			// The :1 is for skipping the "generation" number logged in the file
+//			ps.println("plot \"" + textLogNameWithDirectory + "\" matrix every ::1 with image");
+//			ps.close();
+//			
+//			// Non-PDF version
+//			ps = new PrintStream(plotFile);
+//			ps.println("unset key");
+//			// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
+//			ps.println("set yrange [0:"+ yrange +"]");
+//			ps.println("set xrange [1:"+ xrange + "]");
+//			ps.println("set title \"" + logTitle + "\"");
+//			// The :1 is for skipping the "generation" number logged in the file
+//			ps.println("plot \"" + textLogNameWithDirectory + "\" matrix every ::1 with image");
+//			// ps.println("pause -1"); // Not needed when only one item is plotted?
+//			ps.close();
+//	
+//		} catch (FileNotFoundException e) {
+//			System.out.println("Error creating " + textLogNameWithDirectory + " log files");
+//			e.printStackTrace();
+//			System.exit(1);
+//		}
+//	}
+//	/**
+//	 * considering convenient ways to plot pdf only
+//	 * @param textLogNameWithDirectory
+//	 * @param yrange
+//	 * @param xrange
+//	 */
+//	public void gnuPlotCreationMatrixPlotNonPDFOnly(String textLogNameWithDirectory, int yrange, int xrange) {
+//		String plotFilename = textLogNameWithDirectory.replace(".txt", ".plt");
+////		String plotPDFFilename = plotFilename.replace(".plt", "_PDF.plt");
+//		String logTitle = textLogNameWithDirectory.replace(".txt", "");
+////		String pdfFilename = textLogNameWithDirectory.replace(".txt", ".pdf");
+//		
+//		File plotFile = new File(plotFilename);
+////		File plotPDFFile = new File(plotPDFFilename);
+//		
+//		PrintStream ps;
+//
+//		try {
+//			// Non-PDF version
+//			ps = new PrintStream(plotFile);
+//			ps.println("unset key");
+//			// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
+//			ps.println("set yrange [0:"+ yrange +"]");
+//			ps.println("set xrange [1:"+ xrange + "]");
+//			ps.println("set title \"" + logTitle + "\"");
+//			// The :1 is for skipping the "generation" number logged in the file
+//			ps.println("plot \"" + textLogNameWithDirectory + "\" matrix every ::1 with image");
+//			// ps.println("pause -1"); // Not needed when only one item is plotted?
+//			ps.close();
+//	
+//		} catch (FileNotFoundException e) {
+//			System.out.println("Error creating " + textLogNameWithDirectory + " log files");
+//			e.printStackTrace();
+//			System.exit(1);
+//		}
+//	}
+//	
+//	/**
+//	 * considering convenient ways to create gnu plots only
+//	 * @param textLogNameWithDirectory
+//	 * @param yrange
+//	 * @param xrange
+//	 */
+//	public void gnuPlotPDFOnly(String textLogNameWithDirectory, int yrange, int xrange) {
+//		//pdf only file creation
+//		String plotPDFFilename = textLogNameWithDirectory.replace(".txt", "_PDF.plt");
+//		String logTitle = textLogNameWithDirectory.replace(".txt", "");
+//		String pdfFilename = textLogNameWithDirectory.replace(".txt", ".pdf");
+//
+//		File plotPDFFile = new File(plotPDFFilename);
+//		
+//		PrintStream ps;
+//		
+//		try {
+//			ps = new PrintStream(plotPDFFile);
+//			ps.println("set term pdf enhanced");
+//			ps.println("unset key");
+//			// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
+//			ps.println("set yrange [0:"+ yrange +"]");
+//			ps.println("set xrange [1:"+ xrange + "]");
+//			ps.println("set title \"" + logTitle + "\"");
+//			ps.println("set output \"" + pdfFilename + "\"");				
+//			// The :1 is for skipping the "generation" number logged in the file
+//			ps.println("plot \"" + textLogNameWithDirectory + "\" matrix every ::1 with image");
+//			ps.close();
+//		} catch (FileNotFoundException e) {
+//			System.out.println("Error creating " + textLogNameWithDirectory + " log files");
+//			e.printStackTrace();
+//			System.exit(1);
+//		}
+//	}
+	
+//	/**
+//	 * considering ways to create convenient modular logging passing the ps stream
+//	 * @param ps
+//	 * @param logTitleTxt
+//	 */
+//	public void printWithPsPassed(PrintStream ps, String logTitleTxt) {
+//		//use the passed ps to ptrint?
+//		
+//	}
+	/**
+	 * quickly get the experimentPrefix without having to pass it around constantly
+	 * @return experimentPrefix
+	 */
+	public String getExperimentPrefix() {
+		return Parameters.parameters.stringParameter("log") + Parameters.parameters.integerParameter("runNumber");
+	}
+	/**
+	 * grabs the usual yrange without having to pass it around and includes cratch for yrange=0
+	 * @return the yrange for plots based on generations and individuals per generation (maxGens/individualsPerGeneration)
+	 */
+	public int getYRange() {
+		int yrange = Parameters.parameters.integerParameter("maxGens")/individualsPerGeneration;
+		System.out.println("yrange = " + yrange + ", from maxGens = "+Parameters.parameters.integerParameter("maxGens")+"/"+individualsPerGeneration+"=individualsPerGeneration");
+		if(yrange < 1) {
+			yrange = Parameters.parameters.integerParameter("maxGens")+5;
+			System.out.println("yrange too low, maxGens should be larger than individualsPerGeneration, adjusting to = " + yrange + ", from maxGens = "+Parameters.parameters.integerParameter("maxGens"));
+		}
+		return yrange;
+	}
+	/**
+	 * String prefix = experimentPrefix + "_" + infix;
+		String logTitlePlus = prefix + "_log.txt\" u 1:";
+		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
+		directory += (directory.equals("") ? "" : "/");
+		
+		String fullName = directory + prefix + "_log.plt";
+		File archivePlotFile = new File(fullName);
 
+	
+	 */
+//for plt documentation
+//plt name same as txt name but plt
+	//plot - uses the name of the text file being accessed
+	//output - name of the file you want to create
+	//title of the plot
+	
+	//create plot name using the text file name .txt name
+	//create output name by using the plot name but with something else
+	//lot title using the experiment name only and then title of what's being logged
+//pdf is pretty much the same name
+	
+//take list of files and pass to create various items?
+//if using a single file then just need to open a ps stream and then 
+	//set up plt and pdf files first
+	
+	//log txt next
+	
+
+
+	
 	public static void main (String[] args) {
 		try {
 			// This is a GECCO set of parameters with some minor changes for MOME
@@ -737,7 +1011,9 @@ public class MOME<T> implements SteadyStateEA<T>{
 			//there is an issue with bin labels - MMNEAT.java method getArchiveBinLabelsClass & getArchive
 			//Attempted to get archive bin label class without using MAP Elites or a psuedo-archive
 			MMNEAT.main("runNumber:99 randomSeed:2 minecraftMaximizeVolumeFitness:true trackPseudoArchive:false minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftChangeCenterOfMassFitness:true minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet trials:1 mu:100 maxGens:60000 minecraftContainsWholeMAPElitesArchive:false forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:false mating:true fs:false ea:edu.southwestern.evolution.mome.MOME experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:mometest log:MOMETest-currentlyTesting saveTo:currentlyTesting mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5 crossover:edu.southwestern.evolution.crossover.ArrayCrossover".split(" "));
-
+//above is quick check, maximize volume fitness mu:100 maxGens:60000
+			
+			//below are mometests
 			//MMNEAT.main("runNumber:7 randomSeed:2 minecraftMaximizeVolumeFitness:true trackPseudoArchive:false minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftChangeCenterOfMassFitness:true minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet trials:1 mu:100 maxGens:60000 minecraftContainsWholeMAPElitesArchive:false forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:false mating:true fs:false ea:edu.southwestern.evolution.mome.MOME experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:mometest log:MOMETest-MEObserverVectorPistonOrientation saveTo:MEObserverVectorPistonOrientation mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5 crossover:edu.southwestern.evolution.crossover.ArrayCrossover".split(" "));
 			//MMNEAT.main("runNumber:5 randomSeed:1 minecraftMaximizeVolumeFitness:true minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftChangeCenterOfMassFitness:true minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet trials:1 mu:5 maxGens:1 minecraftContainsWholeMAPElitesArchive:false forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:false mating:true fs:false ea:edu.southwestern.evolution.mome.MOME experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:5 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:mometest log:MOMETest-MEObserverVectorPistonOrientation saveTo:MEObserverVectorPistonOrientation mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5 crossover:edu.southwestern.evolution.crossover.ArrayCrossover".split(" "));
 		} catch (FileNotFoundException | NoSuchMethodException e) {

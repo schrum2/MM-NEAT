@@ -1,6 +1,5 @@
 package edu.southwestern.tasks.evocraft;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,7 +24,6 @@ import edu.southwestern.tasks.evocraft.blocks.BlockSet;
 import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBinLabels;
 import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBlockCountBinLabels;
 import edu.southwestern.tasks.evocraft.fitness.AccumulateNewBlockPositionsFitness;
-import edu.southwestern.tasks.evocraft.fitness.ChangeBlockAndChangeCenterOfMassWeightedFitness;
 import edu.southwestern.tasks.evocraft.fitness.ChangeBlocksFitness;
 import edu.southwestern.tasks.evocraft.fitness.ChangeCenterOfMassFitness;
 import edu.southwestern.tasks.evocraft.fitness.DiversityBlockFitness;
@@ -33,22 +31,27 @@ import edu.southwestern.tasks.evocraft.fitness.FakeTestFitness;
 import edu.southwestern.tasks.evocraft.fitness.MaximizeVolumeFitness;
 import edu.southwestern.tasks.evocraft.fitness.MinecraftFitnessFunction;
 import edu.southwestern.tasks.evocraft.fitness.MinecraftWeightedSumFitnessFunction;
+import edu.southwestern.tasks.evocraft.fitness.MinimizeBlockCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.MissileFitness;
 import edu.southwestern.tasks.evocraft.fitness.NegativeSpaceCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.NumAirFitness;
 import edu.southwestern.tasks.evocraft.fitness.OccupiedCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.RandomFitness;
+import edu.southwestern.tasks.evocraft.fitness.SpecificTargetFitness;
 import edu.southwestern.tasks.evocraft.fitness.TimedEvaluationMinecraftFitnessFunction;
 import edu.southwestern.tasks.evocraft.fitness.TypeCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.TypeTargetFitness;
 import edu.southwestern.tasks.evocraft.fitness.WaterLavaSecondaryCreationFitness;
+import edu.southwestern.tasks.evocraft.fitness.WeightedSumsAccumulateNewBlockPositionsAndChangeCenterOfMassFitness;
+import edu.southwestern.tasks.evocraft.fitness.WeightedSumsChangeBlockAndChangeCenterOfMassFitness;
+import edu.southwestern.tasks.evocraft.fitness.WeightedSumsMissileAndChangeCenterOfMassFitness;
+import edu.southwestern.tasks.evocraft.fitness.WeightedSumsTypeCountAndNegativeSpaceCountFitness;
 import edu.southwestern.tasks.evocraft.shapegeneration.BoundedVectorGenerator;
 import edu.southwestern.tasks.evocraft.shapegeneration.IntegersToVolumeGenerator;
 import edu.southwestern.tasks.evocraft.shapegeneration.ShapeGenerator;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
-import edu.southwestern.util.file.FileUtilities;
 
 /**
  *  MinecraftShapeTask is a class environment that lets you evaluate a phenotypes fitness geared towards minecraft shapes 
@@ -119,6 +122,11 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		
 		for(MinecraftFitnessFunction ff : fitnessFunctions) {
 			MMNEAT.registerFitnessFunction(ff.getClass().getSimpleName());
+		}		
+
+		for(MinecraftFitnessFunction ff : fitnessFunctions) {
+			if(ff instanceof MinecraftWeightedSumFitnessFunction)
+				((MinecraftWeightedSumFitnessFunction) ff).registerNonFitnessScores();
 		}		
 
 		startingX = Parameters.parameters.integerParameter("startX");
@@ -199,13 +207,33 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		if(Parameters.parameters.booleanParameter("minecraftNumAirFitness")) {
 			fitness.add(new NumAirFitness());
 		}
-		if(Parameters.parameters.booleanParameter("minecraftChangeBlockAndChangeCenterOfMassWeightedFitness")) {
-			fitness.add(new ChangeBlockAndChangeCenterOfMassWeightedFitness());
+		if(Parameters.parameters.booleanParameter("minecraftWeightedSumsChangeBlockAndChangeCenterOfMassFitness")) {
+			fitness.add(new WeightedSumsChangeBlockAndChangeCenterOfMassFitness());
 		}
+		
+		if(Parameters.parameters.booleanParameter("minecraftWeightedSumsMissileAndChangeCenterOfMassFitness")) {
+			fitness.add(new WeightedSumsMissileAndChangeCenterOfMassFitness());
+		}
+		
+		if(Parameters.parameters.booleanParameter("minecraftWeightedSumsAccumulateNewBlockPositionsAndChangeCenterOfMassFitness")) {
+				fitness.add(new WeightedSumsAccumulateNewBlockPositionsAndChangeCenterOfMassFitness());
+		}
+			
 		if(Parameters.parameters.booleanParameter("minecraftAccumulateNewBlockPositionsFitness")) {
 			fitness.add(new AccumulateNewBlockPositionsFitness());
 		}
-		System.out.println(fitness);
+		if(Parameters.parameters.booleanParameter("minecraftSpecificTargetFitness")) {
+			fitness.add(new SpecificTargetFitness());
+		}
+        
+		if(Parameters.parameters.booleanParameter("minecraftWeightedSumsTypeCountAndNegativeSpaceCountFitness")) {
+			fitness.add(new WeightedSumsTypeCountAndNegativeSpaceCountFitness());
+		}
+		if(Parameters.parameters.booleanParameter("minecraftMinimizeBlockCountFitness")) {
+			fitness.add(new MinimizeBlockCountFitness());
+		}
+
+		System.out.println(fitness);		
 		
 		return fitness;
 	}
@@ -259,6 +287,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		for(int i = 0; i < scores.length; i++) {
 			scores[i] = fitnessFunctions.get(i).minFitness();
 		}
+//		System.out.println("minscores:"+Arrays.toString(scores));
 		return scores;
 	}
 
@@ -372,17 +401,17 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		// since we don't need to save shapes twice.
 		
 		//makes a directory, and writes block list
-		if(CommonConstants.netio && Parameters.parameters.booleanParameter("minecraftChangeCenterOfMassFitness") && certainFlying(fitnessFunctions, fitnessScores[0])) {
-			// Assuming that change in center of mass is at index 0, and that 5 is a suitable threshold for penalties to the max fitness
-			String flyingDir = FileUtilities.getSaveDirectory() + "/flyingMachines";
-			File dir = new File(flyingDir);	// Create dir
-			if (!dir.exists()) {
-				dir.mkdir();
-			}
-			//Orientation flyingDirection = directionOfMaximumDisplacement(deltaX,deltaY,deltaZ);
-			//String gen = "GEN"+(MMNEAT.ea instanceof GenerationalEA ? ((GenerationalEA) MMNEAT.ea).currentGeneration() : "ME");
-			MinecraftUtilClass.writeBlockListFile(blocks, flyingDir + File.separator + "ID"+genome.getId(), ".txt");
-		}
+//		if(CommonConstants.netio && Parameters.parameters.booleanParameter("minecraftChangeCenterOfMassFitness") && certainFlying(fitnessFunctions, fitnessScores[0])) {
+//			// Assuming that change in center of mass is at index 0, and that 5 is a suitable threshold for penalties to the max fitness
+//			String flyingDir = FileUtilities.getSaveDirectory() + "/flyingMachines";
+//			File dir = new File(flyingDir);	// Create dir
+//			if (!dir.exists()) {
+//				dir.mkdir();
+//			}
+//			//Orientation flyingDirection = directionOfMaximumDisplacement(deltaX,deltaY,deltaZ);
+//			//String gen = "GEN"+(MMNEAT.ea instanceof GenerationalEA ? ((GenerationalEA) MMNEAT.ea).currentGeneration() : "ME");
+//			MinecraftUtilClass.writeBlockListFile(blocks, flyingDir + File.separator + "ID"+genome.getId(), ".txt");
+//		}
 		if(Parameters.parameters.integerParameter("minecraftDelayAfterEvaluation")> 0) {
 			try {
 				Thread.sleep(Parameters.parameters.integerParameter("minecraftDelayAfterEvaluation"));
@@ -399,9 +428,9 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	 * @param fitnessScore the fitness score of the machine being evaluated
 	 * @return boolean that returns true if the machine is actually flying 
 	 */
-	public boolean certainFlying(double fitnessScore) {
-		return certainFlying(fitnessFunctions, fitnessScore);
-	}
+//	public boolean certainFlying(double fitnessScore) {
+//		return certainFlying(fitnessFunctions, fitnessScore);
+//	}
 
 	/**
 	 * A shape with a fitness of this amount must be flying (assumes first/only fitness is change in center of mass)
@@ -410,11 +439,11 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	 * @param fitnessScores the list of fitness scores of each function in fitness function of the machine being evaluated
 	 * @return boolean true if the fitnessScore is greater than max fitness - flying penalty buffer
 	 */
-	public static boolean certainFlying(ArrayList<MinecraftFitnessFunction> fitnessFunctions, double fitnessScore) {
-		assert fitnessFunctions.get(0) instanceof ChangeCenterOfMassFitness;
-		assert Parameters.parameters.booleanParameter("minecraftChangeCenterOfMassFitness");
-		return fitnessScore > fitnessFunctions.get(0).maxFitness() - ChangeCenterOfMassFitness.FLYING_PENALTY_BUFFER;
-	}
+//	public static boolean certainFlying(ArrayList<MinecraftFitnessFunction> fitnessFunctions, double fitnessScore) {
+//		assert fitnessFunctions.get(0) instanceof ChangeCenterOfMassFitness;
+//		assert Parameters.parameters.booleanParameter("minecraftChangeCenterOfMassFitness");
+//		return fitnessScore > fitnessFunctions.get(0).maxFitness() - ChangeCenterOfMassFitness.FLYING_PENALTY_BUFFER;
+//	}
 
 	/**
 	 * Gets quality score used by MAP Elites. Is currently
@@ -429,7 +458,8 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	}
 
 	/**
-	 * Calculate all fitness scores for a shape at a given corner
+	 * Calculate all fitness scores for a shape at a given corner.
+	 * Return order: weighted sum result, timedFitnessFunctions results, not timed fitness functions results
 	 *  
 	 * @param shapeCorner Minimal corner from which shape is generated
 	 * @param fitnessFunctions Fitness functions to calculate
@@ -440,28 +470,50 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	public static Pair<double[],double[]> calculateFitnessScores(MinecraftCoordinates shapeCorner, List<MinecraftFitnessFunction> fitnessFunctions, List<Block> originalBlocks) {
 		//create separate lists for the TimedEvaluationMinecraftFitnessFunctions and MinecraftFitnessFunctions
 		int numTimedFitnessFunctions = 0;
+		int numWeightedSumsFitnessFunctions = 0;
 		List<TimedEvaluationMinecraftFitnessFunction> timedEvaluationFitnessFunctionsList = new ArrayList<TimedEvaluationMinecraftFitnessFunction>();
-		List<MinecraftFitnessFunction> notTimedFitnessFunctionsList = new ArrayList<MinecraftFitnessFunction>();
+		List<MinecraftFitnessFunction> notTimedFitnessFunctionsList = new ArrayList<MinecraftFitnessFunction>();		
+		List<MinecraftWeightedSumFitnessFunction> weightedSumFitnessFunctions = new ArrayList<MinecraftWeightedSumFitnessFunction>();
 		
 		//sort through the passed fitness functions to separate the TimedEvaluationMinecraftFitnessFunctions from the not timed fitness functions into two lists
 		for(MinecraftFitnessFunction mff : fitnessFunctions) {
 			if(mff instanceof TimedEvaluationMinecraftFitnessFunction) {
 				numTimedFitnessFunctions++;
 				timedEvaluationFitnessFunctionsList.add((TimedEvaluationMinecraftFitnessFunction) mff);
+			} else if (mff instanceof MinecraftWeightedSumFitnessFunction) {
+				numWeightedSumsFitnessFunctions++;
+				weightedSumFitnessFunctions.add((MinecraftWeightedSumFitnessFunction) mff);
 			} else {
 				notTimedFitnessFunctionsList.add(mff);
 			}
 		}	
 
+		if(weightedSumFitnessFunctions.size() > 1) {
+			throw new UnsupportedOperationException("Can't support more than 1 weighted sum fitness function at a time yet");
+		}
+		
 		assert fitnessFunctions.size() == timedEvaluationFitnessFunctionsList.size() + notTimedFitnessFunctionsList.size() : fitnessFunctions + " should match \n" + timedEvaluationFitnessFunctionsList + " and " + notTimedFitnessFunctionsList;
 		
 		//concatenate both lists here, a list must be made and then combined in a new list
 		double[] timedEvalResults = numTimedFitnessFunctions == 0 ? new double[0] : TimedEvaluationMinecraftFitnessFunction.multipleFitnessScores(timedEvaluationFitnessFunctionsList, shapeCorner, originalBlocks);
 		double[] notTimedEvalResults = notTimedFitnessFunctionsList.parallelStream().mapToDouble(ff -> ff.fitnessScore(shapeCorner,originalBlocks)).toArray();
+		// May behave weird if there are multiple distinct weighted sum fitness functions
+		Pair<Double, double[]> weightedSumsResults = numWeightedSumsFitnessFunctions == 0 ? null : weightedSumFitnessFunctions.get(0).weightedSumsFitnessScores(shapeCorner, originalBlocks);
 		
-		double[] otherScores = new double[0]; // NOT YET IMPLEMENTED: Will provide a way to track scores that do not affect fitness
+		double[] otherScores = new double[0]; // Will provide a way to track scores that do not affect fitness
+		double[] weightedSumsSingleResult = new double[0];
 		
-		return new Pair<>(ArrayUtil.combineArrays(timedEvalResults, notTimedEvalResults), otherScores);
+		if(numWeightedSumsFitnessFunctions != 0) {
+			otherScores = weightedSumsResults.t2;
+			weightedSumsSingleResult = new double[1]; // One weighted sum result
+			weightedSumsSingleResult[0] = weightedSumsResults.t1;
+		}
+		
+		double[] intermediateResultsArray = ArrayUtil.combineArrays(weightedSumsSingleResult, timedEvalResults);
+		double[] endResults = ArrayUtil.combineArrays(intermediateResultsArray, notTimedEvalResults);
+		
+		//weighted sum score, then timed evals, then not timed evals
+		return new Pair<>(endResults, otherScores);
 
 	}
 

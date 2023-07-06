@@ -2,14 +2,13 @@ package edu.southwestern.util;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import edu.southwestern.MMNEAT.MMNEAT;
-import edu.southwestern.evolution.mapelites.Archive;
 import edu.southwestern.evolution.nsga2.NSGA2;
 import edu.southwestern.evolution.nsga2.NSGA2Score;
 import edu.southwestern.scores.Score;
 import jmetal.qualityIndicator.Hypervolume;
+import java.util.Arrays;
 
 /**
  * Contains methods for computing Pareto fronts. Based on jmetal.qualityIndicator.Hypervolume
@@ -28,6 +27,13 @@ public class MultiobjectiveUtil {
 	 * @return the hypervolume of the pareto front.
 	 */
 	public static <T> double hypervolumeFromParetoFront(List<Score<T>> scores) {
+//		System.out.println("score scores length:" + scores.get(0).scores.length);
+		assert scores.size() > 0 : "scores size is less than 0";
+		if(scores.size() <= 0) {
+			System.out.println("score scores length:" + scores.size());
+			//System.out.println("scores.scores" + scores.get(0).toString());
+			throw new IllegalStateException("Empty bin should not be possible here: " + scores);
+		}
 		int numberOfObjectives = scores.get(0).scores.length;
 		int numberOfPoints = scores.size();
 		double[][] scoresArrayForHypervolume = new double[numberOfPoints][numberOfObjectives];
@@ -35,9 +41,10 @@ public class MultiobjectiveUtil {
 		double[] minScoreForEachObjective = MMNEAT.task.minScores();
 		
 		for (Score<T> individualScore : scores) {		//adds the scores to the double array of scores
-			scoresArrayForHypervolume[i] = individualScore.scores;
+			scoresArrayForHypervolume[i] = Arrays.copyOf(individualScore.scores,individualScore.scores.length);
 			for (int j = 0; j < scoresArrayForHypervolume[i].length; j++) {		//this should subtract the minimum score value for each objective from its score
 				scoresArrayForHypervolume[i][j] -= minScoreForEachObjective[j]; //before passing to hypervolume, adjust scores for the minimum 
+				assert scoresArrayForHypervolume[i][j] >= 0 : "scoresArrayForHypervolume["+i+"]["+j+"]= "+scoresArrayForHypervolume[i][j]+", minScoreForEachObjective="+Arrays.toString(minScoreForEachObjective);
 			}
 			i++;
 		}

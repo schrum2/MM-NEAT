@@ -400,6 +400,7 @@ public class Parameters {
 		integerOptions.add("minecraftDelayAfterEvaluation", 0, "If the value is greater than 0 causes the thread to sleep for the amount it is set to");
 		integerOptions.add("minecraftXMovementBetweenEvals", 0, "If the value is greater than 0 it adds it to the x value");
 		integerOptions.add("minecraftMaxXShift", 0, "Max value we can shift X");
+		integerOptions.add("minecraftEmptySpaceBuffer", 22, "Additional space that is cleared around shape on all sides before each evaluation");
 		
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
@@ -873,10 +874,15 @@ public class Parameters {
 		booleanOptions.add("minecraftClearAfterEvaluation", false, "If true clears and verifies the shapeCorner after evaluation");
 		booleanOptions.add("saveWholeMinecraftArchiveAtEnd", true, "If true saves shape in the final archive to finalArchiveOfShapes");
 		booleanOptions.add("momeSelectsUniformlyAcrossWholeArchive", false, "alternates the getRandomIndividual method to grab individual from whole archive instead of random bin");
-		booleanOptions.add("minecraftChangeBlockAndChangeCenterOfMassWeightedFitness", false, "uses the changeBlockAndChangeCenterOfMassWeightedFitness function");
+		booleanOptions.add("minecraftWeightedSumsChangeBlockAndChangeCenterOfMassFitness", false, "uses the WeightedSumsChangeBlockAndChangeCenterOfMassFitness function");
 		booleanOptions.add("minecraftAccumulateNewBlockPositionsFitness", false, "Fitness function that is scored based on how many unique block positions are added to a hashset");
 		booleanOptions.add("minecraftCompassMissileTargets", false, "Spawns 4 targets in the cardinal directions around the shape");
-		
+		booleanOptions.add("minecraftWeightedSumsTypeCountAndNegativeSpaceCountFitness", false, "uses the WeightedSumsTypeCountAndNegativeSpaceFitness function");
+		booleanOptions.add("minecraftMinimizeBlockCountFitness", false, "uses the MinimizeBlockCountFitness function");
+		booleanOptions.add("minecraftSpecificTargetFitness", false, "Parameter for turning specific target fitness on");
+		booleanOptions.add("minecraftWeightedSumsMissileAndChangeCenterOfMassFitness", false, "uses the WeightedSumsMissileAndChangeCenterOfMassFitness function");
+		booleanOptions.add("minecraftWeightedSumsAccumulateNewBlockPositionsAndChangeCenterOfMassFitness", false, "uses the WeightedSumsAccumulateNewBlockPositionsAndChangeCenterOfMassFitness function");
+				
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
 		doubleOptions.add("backpropLearningRate", 0.1, "Rate backprop learning for neural networks");
@@ -971,7 +977,7 @@ public class Parameters {
 		doubleOptions.add("minecraftChangeBlockTypeMutation", 0.2, "Rate of mutation to change a block type");
 		doubleOptions.add("minecraftChangeBlockOrientationMutation", 0.2, "Rate of mutation to change a block orientation");
 		doubleOptions.add("minecraftSwapBlocksMutation", 0.2, "Rate of mutation to swap two blocks");
-		doubleOptions.add("minecraftPercentOfTarget", 0.7, "Percent of the target that needs to be blown up");
+		doubleOptions.add("minecraftPercentOfTarget", 1.0, "If percentage of target remaining is less than this, then save the shape");
 		
 		// String parameters
 		stringOptions.add("marioTargetLevel", "data\\VGLC\\SuperMarioBrosNewEncoding\\overworld\\mario-1-1.txt", "Relative path to json file with Mario level to target");
