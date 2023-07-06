@@ -564,8 +564,8 @@ public class MOME<T> implements SteadyStateEA<T>{
 			ps = new PrintStream(archivePlotFile);
 			ps.println("set term pdf enhanced");
 			ps.println("set key bottom right");
-//			ps.println("set xrange [0:"+ yrange +"]");
-			ps.println("set xrange [0:"+ (yrange + 20) +"]");
+			ps.println("set xrange [0:"+ yrange +"]");
+//			ps.println("set xrange [0:"+ (yrange + 20) +"]");
 
 			//occupied bins plot
 			ps.println("set title \"" + experimentPrefix + " Archive Number of Occupied Bins\"");
@@ -923,6 +923,11 @@ public class MOME<T> implements SteadyStateEA<T>{
 			System.exit(1);
 		}
 	}
+	
+	public void printWithPsPassed(PrintStream ps, String logTitleTxt) {
+		//use the passed ps to ptrint?
+		
+	}
 	/**
 	 * quickly get the experimentPrefix without having to pass it around constantly
 	 * @return experimentPrefix
@@ -954,6 +959,24 @@ public class MOME<T> implements SteadyStateEA<T>{
 
 	
 	 */
+//for plt documentation
+//plt name same as txt name but plt
+	//plot - uses the name of the text file being accessed
+	//output - name of the file you want to create
+	//title of the plot
+	
+	//create plot name using the text file name .txt name
+	//create output name by using the plot name but with something else
+	//lot title using the experiment name only and then title of what's being logged
+//pdf is pretty much the same name
+	
+//take list of files and pass to create various items?
+//if using a single file then just need to open a ps stream and then 
+	//set up plt and pdf files first
+	
+	//log txt next
+	
+
 
 	
 	public static void main (String[] args) {
