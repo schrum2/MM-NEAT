@@ -358,6 +358,15 @@ public class MMNEAT {
 		fitnessFunctions.get(pop).add(name);
 		aggregationOverrides.add(override);
 	}
+	
+	/**
+	 * Number of otherStats being tracked for all members of specified population
+	 * @param pop Index for population (is 0, unless coevolution is being used)
+	 * @return number of other stats
+	 */
+	public static int getNumberOtherStatsForPopulation(int pop) {
+		return fitnessFunctions.get(pop).size() - actualFitnessFunctions.get(pop);
+	}
 
 	/**
 	 * Load important classes from class parameters.
