@@ -50,13 +50,8 @@ public class AccumulateNewBlockPositionsFitness extends TimedEvaluationMinecraft
 	}
 	@Override
 	public boolean shapeIsWorthSaving(double fitnessScore, ArrayList<Pair<Long, List<Block>>> history, MinecraftCoordinates shapeCorner, List<Block> originalBlocks) {
-
-		//System.out.println("target * PERCENT_NEEDED_TO_SAVE" + -(target * PERCENT_NEEDED_TO_SAVE) + "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		if(fitnessScore > (originalBlocks.size() * SAVE_MULTIPLE)) { 
-			//System.out.println("target * PERCENT_NEEDED_TO_SAVE" + -(target * PERCENT_NEEDED_TO_SAVE) + "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-			return true;
-		}
-		return false;
+		// A certain multiple of blocks beyond the initial count implies the whole shape has moved to inhabit more space
+		return (fitnessScore > (originalBlocks.size() * SAVE_MULTIPLE));
 	}
 	@Override
 	public double maxFitness() {

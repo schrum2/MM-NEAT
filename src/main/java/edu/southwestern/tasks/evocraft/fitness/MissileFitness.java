@@ -112,15 +112,12 @@ public class MissileFitness extends TimedEvaluationMinecraftFitnessFunction {
 	}
 	@Override
 	public boolean shapeIsWorthSaving(double fitnessScore, ArrayList<Pair<Long, List<Block>>> history, MinecraftCoordinates shapeCorner, List<Block> originalBlocks) {
-		//change later
-		MinecraftCoordinates ranges = MinecraftUtilClass.getRanges();
-		double target = ranges.x() * ranges.z() * ranges.y();
-		//System.out.println("target * PERCENT_NEEDED_TO_SAVE" + -(target * PERCENT_NEEDED_TO_SAVE) + "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		if(fitnessScore > (-(target * Parameters.parameters.doubleParameter("minecraftPercentOfTarget")))) { 
-			//System.out.println("target * PERCENT_NEEDED_TO_SAVE" + -(target * PERCENT_NEEDED_TO_SAVE) + "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-			return true;
-		}
-		return false;
+
+		double minFitness = minFitness();
+		// minecraftPercentOfTarget is between 0.0 and 1.0, so portionMinFitness is a slightly higher value
+		double portionMinFitness = minFitness * Parameters.parameters.doubleParameter("minecraftPercentOfTarget");
+		
+		return (fitnessScore > portionMinFitness);
 	}
 	public static void main(String[] args) {
 

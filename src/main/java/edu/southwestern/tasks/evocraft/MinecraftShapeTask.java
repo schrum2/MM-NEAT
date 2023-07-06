@@ -1,9 +1,7 @@
 package edu.southwestern.tasks.evocraft;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,7 +42,9 @@ import edu.southwestern.tasks.evocraft.fitness.TimedEvaluationMinecraftFitnessFu
 import edu.southwestern.tasks.evocraft.fitness.TypeCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.TypeTargetFitness;
 import edu.southwestern.tasks.evocraft.fitness.WaterLavaSecondaryCreationFitness;
+import edu.southwestern.tasks.evocraft.fitness.WeightedSumsAccumulateNewBlockPositionsAndChangeCenterOfMassFitness;
 import edu.southwestern.tasks.evocraft.fitness.WeightedSumsChangeBlockAndChangeCenterOfMassFitness;
+import edu.southwestern.tasks.evocraft.fitness.WeightedSumsMissileAndChangeCenterOfMassFitness;
 import edu.southwestern.tasks.evocraft.fitness.WeightedSumsTypeCountAndNegativeSpaceCountFitness;
 import edu.southwestern.tasks.evocraft.shapegeneration.BoundedVectorGenerator;
 import edu.southwestern.tasks.evocraft.shapegeneration.IntegersToVolumeGenerator;
@@ -52,7 +52,6 @@ import edu.southwestern.tasks.evocraft.shapegeneration.ShapeGenerator;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
-import edu.southwestern.util.file.FileUtilities;
 
 /**
  *  MinecraftShapeTask is a class environment that lets you evaluate a phenotypes fitness geared towards minecraft shapes 
@@ -211,6 +210,15 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		if(Parameters.parameters.booleanParameter("minecraftWeightedSumsChangeBlockAndChangeCenterOfMassFitness")) {
 			fitness.add(new WeightedSumsChangeBlockAndChangeCenterOfMassFitness());
 		}
+		
+		if(Parameters.parameters.booleanParameter("minecraftWeightedSumsMissileAndChangeCenterOfMassFitness")) {
+			fitness.add(new WeightedSumsMissileAndChangeCenterOfMassFitness());
+		}
+		
+		if(Parameters.parameters.booleanParameter("minecraftWeightedSumsAccumulateNewBlockPositionsAndChangeCenterOfMassFitness")) {
+				fitness.add(new WeightedSumsAccumulateNewBlockPositionsAndChangeCenterOfMassFitness());
+		}
+			
 		if(Parameters.parameters.booleanParameter("minecraftAccumulateNewBlockPositionsFitness")) {
 			fitness.add(new AccumulateNewBlockPositionsFitness());
 		}
@@ -393,17 +401,17 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		// since we don't need to save shapes twice.
 		
 		//makes a directory, and writes block list
-		if(CommonConstants.netio && Parameters.parameters.booleanParameter("minecraftChangeCenterOfMassFitness") && certainFlying(fitnessFunctions, fitnessScores[0])) {
-			// Assuming that change in center of mass is at index 0, and that 5 is a suitable threshold for penalties to the max fitness
-			String flyingDir = FileUtilities.getSaveDirectory() + "/flyingMachines";
-			File dir = new File(flyingDir);	// Create dir
-			if (!dir.exists()) {
-				dir.mkdir();
-			}
-			//Orientation flyingDirection = directionOfMaximumDisplacement(deltaX,deltaY,deltaZ);
-			//String gen = "GEN"+(MMNEAT.ea instanceof GenerationalEA ? ((GenerationalEA) MMNEAT.ea).currentGeneration() : "ME");
-			MinecraftUtilClass.writeBlockListFile(blocks, flyingDir + File.separator + "ID"+genome.getId(), ".txt");
-		}
+//		if(CommonConstants.netio && Parameters.parameters.booleanParameter("minecraftChangeCenterOfMassFitness") && certainFlying(fitnessFunctions, fitnessScores[0])) {
+//			// Assuming that change in center of mass is at index 0, and that 5 is a suitable threshold for penalties to the max fitness
+//			String flyingDir = FileUtilities.getSaveDirectory() + "/flyingMachines";
+//			File dir = new File(flyingDir);	// Create dir
+//			if (!dir.exists()) {
+//				dir.mkdir();
+//			}
+//			//Orientation flyingDirection = directionOfMaximumDisplacement(deltaX,deltaY,deltaZ);
+//			//String gen = "GEN"+(MMNEAT.ea instanceof GenerationalEA ? ((GenerationalEA) MMNEAT.ea).currentGeneration() : "ME");
+//			MinecraftUtilClass.writeBlockListFile(blocks, flyingDir + File.separator + "ID"+genome.getId(), ".txt");
+//		}
 		if(Parameters.parameters.integerParameter("minecraftDelayAfterEvaluation")> 0) {
 			try {
 				Thread.sleep(Parameters.parameters.integerParameter("minecraftDelayAfterEvaluation"));
@@ -420,9 +428,9 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	 * @param fitnessScore the fitness score of the machine being evaluated
 	 * @return boolean that returns true if the machine is actually flying 
 	 */
-	public boolean certainFlying(double fitnessScore) {
-		return certainFlying(fitnessFunctions, fitnessScore);
-	}
+//	public boolean certainFlying(double fitnessScore) {
+//		return certainFlying(fitnessFunctions, fitnessScore);
+//	}
 
 	/**
 	 * A shape with a fitness of this amount must be flying (assumes first/only fitness is change in center of mass)
@@ -431,11 +439,11 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	 * @param fitnessScores the list of fitness scores of each function in fitness function of the machine being evaluated
 	 * @return boolean true if the fitnessScore is greater than max fitness - flying penalty buffer
 	 */
-	public static boolean certainFlying(ArrayList<MinecraftFitnessFunction> fitnessFunctions, double fitnessScore) {
-		assert fitnessFunctions.get(0) instanceof ChangeCenterOfMassFitness;
-		assert Parameters.parameters.booleanParameter("minecraftChangeCenterOfMassFitness");
-		return fitnessScore > fitnessFunctions.get(0).maxFitness() - ChangeCenterOfMassFitness.FLYING_PENALTY_BUFFER;
-	}
+//	public static boolean certainFlying(ArrayList<MinecraftFitnessFunction> fitnessFunctions, double fitnessScore) {
+//		assert fitnessFunctions.get(0) instanceof ChangeCenterOfMassFitness;
+//		assert Parameters.parameters.booleanParameter("minecraftChangeCenterOfMassFitness");
+//		return fitnessScore > fitnessFunctions.get(0).maxFitness() - ChangeCenterOfMassFitness.FLYING_PENALTY_BUFFER;
+//	}
 
 	/**
 	 * Gets quality score used by MAP Elites. Is currently
@@ -492,17 +500,14 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		// May behave weird if there are multiple distinct weighted sum fitness functions
 		Pair<Double, double[]> weightedSumsResults = numWeightedSumsFitnessFunctions == 0 ? null : weightedSumFitnessFunctions.get(0).weightedSumsFitnessScores(shapeCorner, originalBlocks);
 		
-		double[] otherScores = new double[0]; // NOT YET IMPLEMENTED: Will provide a way to track scores that do not affect fitness
+		double[] otherScores = new double[0]; // Will provide a way to track scores that do not affect fitness
 		double[] weightedSumsSingleResult = new double[0];
 		
 		if(numWeightedSumsFitnessFunctions != 0) {
 			otherScores = weightedSumsResults.t2;
+			weightedSumsSingleResult = new double[1]; // One weighted sum result
 			weightedSumsSingleResult[0] = weightedSumsResults.t1;
 		}
-		
-//		double[] weightedSumsSingleResult = new double[] {weightedSumsResults.t1};
-//		double[] weightedSumsSingleResult = new double[0];
-//		weightedSumsSingleResult[0] = weightedSumsResults.t1;
 		
 		double[] intermediateResultsArray = ArrayUtil.combineArrays(weightedSumsSingleResult, timedEvalResults);
 		double[] endResults = ArrayUtil.combineArrays(intermediateResultsArray, notTimedEvalResults);
