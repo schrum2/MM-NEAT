@@ -71,9 +71,9 @@ public abstract class MinecraftWeightedSumFitnessFunction extends MinecraftFitne
 		
 	public Pair<Double, double[]> weightedSumsFitnessScores(MinecraftCoordinates shapeCorner, List<Block> originalBlocks){
 		// Calculate timed and plain scores
-		if (timedFitnessFunctions != null) {
-			System.out.println("timed fitness functions size = " + timedFitnessFunctions.size());
-		}
+//		if (timedFitnessFunctions != null) {
+//			System.out.println("timed fitness functions size = " + timedFitnessFunctions.size());
+//		}
 		double[] timedScores = new double[timedFitnessFunctions.size()];
 		if (timedFitnessFunctions.size() != 0) {
 			timedScores = TimedEvaluationMinecraftFitnessFunction.multipleFitnessScores(timedFitnessFunctions, shapeCorner, originalBlocks);
@@ -83,28 +83,39 @@ public abstract class MinecraftWeightedSumFitnessFunction extends MinecraftFitne
 		// Multiply each score by its weight and add up the results
 		double weightedSum = 0;
 		for(int i = 0; i < timedScores.length; i++) {
-			weightedSum += timedScores[i]*timedWeights.get(i);
+			double minFitness = timedFitnessFunctions.get(i).minFitness();		//it is necessary to normalize the fitness score
+			double maxFitness = timedFitnessFunctions.get(i).maxFitness();		//before adding it to the scores list
+			double range = maxFitness - minFitness;
+			weightedSum += ((timedScores[i] - minFitness)/range)*timedWeights.get(i);
 		}
 		for(int i = 0; i < plainScores.length; i++) {
-			weightedSum += plainScores[i]*plainWeights.get(i);
+			double minFitness = plainFitnessFunctions.get(i).minFitness();		//it is necessary to normalize the fitness score
+			double maxFitness = plainFitnessFunctions.get(i).maxFitness();		//before adding it to the scores list
+			double range = maxFitness - minFitness;
+			weightedSum += ((plainScores[i] - minFitness)/range)*plainWeights.get(i);
 		}
 		
 		Pair<Double, double[]> results = new Pair<>(weightedSum, ArrayUtil.combineArrays(timedScores, plainScores));
 		return results;
 	}
 	
+	/**
+	 * because the fitness scores are normalized this should be the max possible value
+	 */
 	@Override
 	public double maxFitness() {
 
-		double weightedSum = 0;
-		for(int i = 0; i < timedWeights.size(); i++) {
-			weightedSum += timedFitnessFunctions.get(i).maxFitness()*timedWeights.get(i);
-		}
-		for(int i = 0; i < plainWeights.size(); i++) {
-			weightedSum += plainFitnessFunctions.get(i).maxFitness()*plainWeights.get(i);
-		}
+//		double weightedSum = 0;
+//		for(int i = 0; i < timedWeights.size(); i++) {
+//			weightedSum += timedFitnessFunctions.get(i).maxFitness()*timedWeights.get(i);
+//		}
+//		for(int i = 0; i < plainWeights.size(); i++) {
+//			weightedSum += plainFitnessFunctions.get(i).maxFitness()*plainWeights.get(i);
+//		}
+//		
+//		return weightedSum;
 		
-		return weightedSum;
+		return 1.0; 	//because the fitness scores are normalized this should be the max possible value
 	}
 
 	/**

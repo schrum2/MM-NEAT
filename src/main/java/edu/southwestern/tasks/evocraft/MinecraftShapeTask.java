@@ -500,17 +500,14 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		// May behave weird if there are multiple distinct weighted sum fitness functions
 		Pair<Double, double[]> weightedSumsResults = numWeightedSumsFitnessFunctions == 0 ? null : weightedSumFitnessFunctions.get(0).weightedSumsFitnessScores(shapeCorner, originalBlocks);
 		
-		double[] otherScores = new double[0]; // NOT YET IMPLEMENTED: Will provide a way to track scores that do not affect fitness
+		double[] otherScores = new double[0]; // Will provide a way to track scores that do not affect fitness
 		double[] weightedSumsSingleResult = new double[0];
 		
 		if(numWeightedSumsFitnessFunctions != 0) {
 			otherScores = weightedSumsResults.t2;
+			weightedSumsSingleResult = new double[1]; // One weighted sum result
 			weightedSumsSingleResult[0] = weightedSumsResults.t1;
 		}
-		
-//		double[] weightedSumsSingleResult = new double[] {weightedSumsResults.t1};
-//		double[] weightedSumsSingleResult = new double[0];
-//		weightedSumsSingleResult[0] = weightedSumsResults.t1;
 		
 		double[] intermediateResultsArray = ArrayUtil.combineArrays(weightedSumsSingleResult, timedEvalResults);
 		double[] endResults = ArrayUtil.combineArrays(intermediateResultsArray, notTimedEvalResults);

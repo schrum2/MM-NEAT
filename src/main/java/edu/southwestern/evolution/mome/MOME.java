@@ -545,6 +545,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 
 		PrintStream ps;
 		
+		//ARCHIVE LOGGING
 		//tracks placement based on things
 		int columnIndex = 1;	//keeps track of where the item is in the archive log
 		HashMap<String, Integer> logIndex = new HashMap<>(); //tracks the column placement of data in the archive log
@@ -563,8 +564,8 @@ public class MOME<T> implements SteadyStateEA<T>{
 			ps = new PrintStream(archivePlotFile);
 			ps.println("set term pdf enhanced");
 			ps.println("set key bottom right");
-//			ps.println("set xrange [0:"+ yrange +"]");
-			ps.println("set xrange [0:"+ (yrange + 20) +"]");
+			ps.println("set xrange [0:"+ yrange +"]");
+//			ps.println("set xrange [0:"+ (yrange + 20) +"]");
 
 			//occupied bins plot
 			ps.println("set title \"" + experimentPrefix + " Archive Number of Occupied Bins\"");
@@ -751,8 +752,8 @@ public class MOME<T> implements SteadyStateEA<T>{
 				ps = new PrintStream(plotFile);
 				ps.println("unset key");
 				// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
-				ps.println("set yrange [0:"+ (yrange+10) +"]");
-				ps.println("set xrange [1:"+ (xrange+10) + "]");
+//				ps.println("set yrange [0:"+ (yrange+10) +"]");	//removed x and y range to allow for auto accomodations
+//				ps.println("set xrange [1:"+ (xrange+10) + "]");
 				ps.println("set title \"AggregateFront.txt\"");
 				// The :1 is for skipping the "generation" number logged in the file
 //				ps.println("plot \"" + logTitle + "\" matrix every ::1 with image");
@@ -922,6 +923,11 @@ public class MOME<T> implements SteadyStateEA<T>{
 			System.exit(1);
 		}
 	}
+	
+	public void printWithPsPassed(PrintStream ps, String logTitleTxt) {
+		//use the passed ps to ptrint?
+		
+	}
 	/**
 	 * quickly get the experimentPrefix without having to pass it around constantly
 	 * @return experimentPrefix
@@ -953,6 +959,24 @@ public class MOME<T> implements SteadyStateEA<T>{
 
 	
 	 */
+//for plt documentation
+//plt name same as txt name but plt
+	//plot - uses the name of the text file being accessed
+	//output - name of the file you want to create
+	//title of the plot
+	
+	//create plot name using the text file name .txt name
+	//create output name by using the plot name but with something else
+	//lot title using the experiment name only and then title of what's being logged
+//pdf is pretty much the same name
+	
+//take list of files and pass to create various items?
+//if using a single file then just need to open a ps stream and then 
+	//set up plt and pdf files first
+	
+	//log txt next
+	
+
 
 	
 	public static void main (String[] args) {
