@@ -882,6 +882,7 @@ public class Parameters {
 		booleanOptions.add("minecraftSpecificTargetFitness", false, "Parameter for turning specific target fitness on");
 		booleanOptions.add("minecraftWeightedSumsMissileAndChangeCenterOfMassFitness", false, "uses the WeightedSumsMissileAndChangeCenterOfMassFitness function");
 		booleanOptions.add("minecraftWeightedSumsAccumulateNewBlockPositionsAndChangeCenterOfMassFitness", false, "uses the WeightedSumsAccumulateNewBlockPositionsAndChangeCenterOfMassFitness function");
+		booleanOptions.add("momeUsesCrowdingDistanceToDiscard", true, "If MOME has sub-pop cap, then base discards on crowding distance");
 				
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");

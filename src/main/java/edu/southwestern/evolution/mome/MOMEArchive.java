@@ -2,9 +2,9 @@ package edu.southwestern.evolution.mome;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Vector;
@@ -14,6 +14,7 @@ import cern.colt.Arrays;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.mapelites.BinLabels;
+import edu.southwestern.evolution.nsga2.CrowdingDistanceComparator;
 import edu.southwestern.evolution.nsga2.NSGA2;
 import edu.southwestern.evolution.nsga2.NSGA2Score;
 import edu.southwestern.parameters.Parameters;
@@ -25,7 +26,6 @@ import edu.southwestern.util.MultiobjectiveUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.file.FileUtilities;
-import edu.southwestern.util.file.Serialization;
 import edu.southwestern.util.random.RandomNumbers;
 
 /**
@@ -187,7 +187,11 @@ public class MOMEArchive<T> {
 				Vector<Score<T>> subpopCopy = new Vector<>(subpopInBin);
 				subpopCopy.add(candidate);	
 				// Recalculate Pareto front
-				ArrayList<NSGA2Score<T>> front = NSGA2.getParetoFront(NSGA2.staticNSGA2Scores(subpopCopy));
+				NSGA2Score<T>[] arrayOfNSGA2Scores = NSGA2.staticNSGA2Scores(subpopCopy);
+				if(Parameters.parameters.booleanParameter("momeUsesCrowdingDistanceToDiscard")) {
+					NSGA2.assignCrowdingDistance(arrayOfNSGA2Scores); // They are needed for sorting later
+				}
+				ArrayList<NSGA2Score<T>> front = NSGA2.getParetoFront(arrayOfNSGA2Scores);
 				assert allNondominated(front) : "How can there be dominated points in the Pareto front?\n"+front;
 				//check if the candidate it there and return if it is
 				long candidateID = candidate.individual.getId();
@@ -199,7 +203,17 @@ public class MOMEArchive<T> {
 						if((front.size() > maximumNumberOfIndividualsInSubPops) && (maximumNumberOfIndividualsInSubPops > 0)) {	//check the subpop size
 							//System.out.println("max subpop set to: "+ maximumNumberOfIndividualsInSubPops + " currently: "+ front.size());
 							int sizeBefore = front.size();
-							front = discardRandomIndividualFromFront(candidate, front);
+							if(Parameters.parameters.booleanParameter("momeUsesCrowdingDistanceToDiscard")) {
+								// Discard based on crowding distance, possibly discarding new addition
+								Collections.sort(front, new CrowdingDistanceComparator<T>());
+								// After sorting, the most crowded individuals in objective space are at front of list
+								while(front.size() > maximumNumberOfIndividualsInSubPops) {
+									front.remove(0); // Remove most crowded, keep those that are spread out
+								}
+							} else {
+								// Discard a random individual, but never the new addition
+								front = discardRandomIndividualFromFront(candidate, front);
+							}
 							//System.out.println(" after discard: "+ front.size());
 							assert front.size() == sizeBefore - 1 : "Should have removed one individual: "+front;
 							assert (front.size() <= maximumNumberOfIndividualsInSubPops) : "subpop size exceeds max size that is allowed. front:" + front.size();
@@ -708,59 +722,7 @@ public class MOMEArchive<T> {
 		return new Vector<>(front);
 	}
 
-	/**
-	 * saves individual shapes to the archive. Currently saves all added shapes, will create space issue
-	 * TODO: figure out how to limit the number of saves and overwrite desired individuals
-	 * @param candidate	the score of the individual being saved
-	 * @param candidateBinCoordinates the bin identifier and key for finding score
-	 */
-	private void conditionalEliteSave(Score<T> candidate, Vector<Integer> candidateBinCoordinates) {	//int binIndex needed?
-		if (saveElites) {
-			int binIndex = getOneDBinIndex(candidateBinCoordinates);
-			String binPath = getArchiveDir() + File.separator + mapping.binLabels().get(binIndex) + candidate.individual.getId();
-			Serialization.save(candidate.individual, binPath + "-elite");
-			// Write scores as simple text file (less to write than xml)
-			try {
-				PrintStream ps = new PrintStream(new File(binPath + "-scores.txt"));
-				for(Double score : candidate.getTraditionalDomainSpecificBehaviorVector()) {
-					ps.println(score);
-				}
-			} catch (FileNotFoundException e) {
-				System.out.println("Could not write scores for " + candidate.individual.getId() + ":" + candidate.getTraditionalDomainSpecificBehaviorVector());
-				e.printStackTrace();
-				System.exit(1);
-			}
-		}
-	}
-	//	
-	//	/**
-	//	 * turns a vector of Scores into a float array. Unsure if actually needed
-	//	 * @param scoresList the original scores
-	//	 * @return	a float array containing the score values
-	//	 */
-	//	//this doesn't work due to behavior index score being mapelites bin index specific
-	//	public float[] turnVectorScoresIntoFloatArray(Vector<Score<T>> scoresList) {
-	//		System.out.println("in vector to float");
-	//		float[] result = new float[scoresList.size()];
-	//		for(int i = 0; i < result.length; i++) {
-	//			Score<T> score = scoresList.get(i);
-	//			System.out.println("score:"+score);
-	//			System.out.println(" what is this? " + score.behaviorIndexScore());
-	//
-	//
-	//			//result[i] = score == null ? Float.NEGATIVE_INFINITY : new Double(score.behaviorIndexScore(i)).floatValue();
-	//			result[i] = new Double(score.behaviorIndexScore(2)).floatValue();
-	//		}
-	//		System.out.println("vector into FloatArray:"+result);
-	//
-	//		return result;
-	//	}
-	//	
-	//	public int binLabelsSize() {
-	//		return mapping.binLabels().size();
-	//	}
-
-//BIN INDEX AND COORDINATES RELATED HELPER FUNCTIONS
+	//BIN INDEX AND COORDINATES RELATED HELPER FUNCTIONS
 
 	/**
 	 * Gets the oneDBinIndex for a bin using a bin coordinates vector.
