@@ -2,7 +2,6 @@ package edu.southwestern.evolution.mome;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -27,7 +26,6 @@ import edu.southwestern.util.MultiobjectiveUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.file.FileUtilities;
-import edu.southwestern.util.file.Serialization;
 import edu.southwestern.util.random.RandomNumbers;
 
 /**
@@ -722,31 +720,6 @@ public class MOMEArchive<T> {
 		Vector<Score<T>> wholeArchiveFront = new Vector<Score<T>>(getWholeArchiveScores());
 		ArrayList<NSGA2Score<T>> front = NSGA2.getParetoFront(NSGA2.staticNSGA2Scores(wholeArchiveFront));
 		return new Vector<>(front);
-	}
-
-	/**
-	 * saves individual shapes to the archive. Currently saves all added shapes, will create space issue
-	 * TODO: figure out how to limit the number of saves and overwrite desired individuals
-	 * @param candidate	the score of the individual being saved
-	 * @param candidateBinCoordinates the bin identifier and key for finding score
-	 */
-	private void conditionalEliteSave(Score<T> candidate, Vector<Integer> candidateBinCoordinates) {	//int binIndex needed?
-		if (saveElites) {
-			int binIndex = getOneDBinIndex(candidateBinCoordinates);
-			String binPath = getArchiveDir() + File.separator + mapping.binLabels().get(binIndex) + candidate.individual.getId();
-			Serialization.save(candidate.individual, binPath + "-elite");
-			// Write scores as simple text file (less to write than xml)
-			try {
-				PrintStream ps = new PrintStream(new File(binPath + "-scores.txt"));
-				for(Double score : candidate.getTraditionalDomainSpecificBehaviorVector()) {
-					ps.println(score);
-				}
-			} catch (FileNotFoundException e) {
-				System.out.println("Could not write scores for " + candidate.individual.getId() + ":" + candidate.getTraditionalDomainSpecificBehaviorVector());
-				e.printStackTrace();
-				System.exit(1);
-			}
-		}
 	}
 
 	//BIN INDEX AND COORDINATES RELATED HELPER FUNCTIONS
