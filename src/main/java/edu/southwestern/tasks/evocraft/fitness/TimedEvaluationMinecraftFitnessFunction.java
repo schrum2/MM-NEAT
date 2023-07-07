@@ -71,9 +71,9 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 		//          is a hassle.		
 		
 		//if statement checks if the evaluation space plus the space that would be cleared is below the ground level
-		if(evaluationCorner.y() - MinecraftClient.EMPTY_SPACE_SAFETY_BUFFER <= MinecraftClient.GROUND_LEVEL) { // Push up if close to ground
+		if(evaluationCorner.y() - Parameters.parameters.integerParameter("minecraftEmptySpaceBuffer") <= MinecraftClient.GROUND_LEVEL) { // Push up if close to ground
 			System.out.println("Pushed up from " + evaluationCorner);
-			MinecraftCoordinates shiftPoint = new MinecraftCoordinates(0,MinecraftClient.EMPTY_SPACE_SAFETY_BUFFER,0);
+			MinecraftCoordinates shiftPoint = new MinecraftCoordinates(0,Parameters.parameters.integerParameter("minecraftEmptySpaceBuffer"),0);
 			MinecraftCoordinates oldCorner = evaluationCorner;
 			evaluationCorner = evaluationCorner.add(shiftPoint); // move sufficiently above the ground
 			shapeCorner = shapeCorner.add(shiftPoint);			//shifts the shape corner as well

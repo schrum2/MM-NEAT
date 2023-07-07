@@ -30,7 +30,7 @@ public class ChangeCenterOfMassFitnessTest {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		CommonConstants.netio = false;
-		Parameters.initializeParameterCollections(new String[] {"minecraftClearWithGlass:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+		Parameters.initializeParameterCollections(new String[] {"minecraftClearWithGlass:false","minecraftXRange:6","minecraftYRange:6","minecraftZRange:6","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
 		if(!MinecraftServer.serverIsRunner()) {
 			MinecraftServer.launchServer();
 			MinecraftClient.getMinecraftClient();
@@ -62,7 +62,8 @@ public class ChangeCenterOfMassFitnessTest {
 	// Passes
 	@Test
 	public void testStagnantStructureQuickly() {
-		Parameters.initializeParameterCollections(new String[] {"watch:false","minecraftClearWithGlass:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+		Parameters.initializeParameterCollections(new String[] {"watch:false","minecraftClearWithGlass:false","minecraftXRange:6","minecraftYRange:6","minecraftZRange:6","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+		CommonConstants.netio = false;
 		MinecraftCoordinates cornerBS1 = new MinecraftCoordinates(-26,7,-35);
 		
 		//set up test corner and clear area
@@ -89,6 +90,7 @@ public class ChangeCenterOfMassFitnessTest {
 	@Test
 	public void testSimpleCases() {
 		Parameters.initializeParameterCollections("minecraftXRange:4 minecraftYRange:4 minecraftZRange:4 minecraftChangeCenterOfMassFitness:true launchMinecraftServerFromJava:false io:false netio:false spaceBetweenMinecraftShapes:5 voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true minecraftClearSleepTimer:400".split(" "));
+		CommonConstants.netio = false;
 		CommonConstants.watch = false; // For extra debug info
 		
 		System.out.println("testSimpleCases");
@@ -124,6 +126,7 @@ public class ChangeCenterOfMassFitnessTest {
 	@Test
 	public void testBigSmallMove() {
 		Parameters.initializeParameterCollections("minecraftXRange:4 minecraftYRange:4 minecraftZRange:4 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftChangeCenterOfMassFitness:true minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet trials:1 mu:100 maxGens:100000 minecraftContainsWholeMAPElitesArchive:true forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:false netio:false interactWithMapElitesInWorld:true mating:true fs:false ea:edu.southwestern.evolution.mapelites.MAPElites experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 spaceBetweenMinecraftShapes:5 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesWidthHeightDepthBinLabels".split(" "));
+		CommonConstants.netio = false;
 		
 		System.out.println("testBigSmallMove");
 
@@ -178,7 +181,8 @@ public class ChangeCenterOfMassFitnessTest {
 	// Passes
 	@Test
 	public void testChangeInTotalDistance() throws InterruptedException {
-		Parameters.initializeParameterCollections(new String[] {"minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L, "minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+		Parameters.initializeParameterCollections(new String[] {"minecraftXRange:6","minecraftYRange:6","minecraftZRange:6","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L, "minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+		CommonConstants.netio = false;
 		MinecraftCoordinates cornerBS2 = new MinecraftCoordinates(0,11,-5);
 		
 		//set up test corner and clear area
@@ -230,7 +234,8 @@ public class ChangeCenterOfMassFitnessTest {
 	//passed
 	@Test
 	public void testFlyingRewardSpeed() throws InterruptedException {
-		Parameters.initializeParameterCollections(new String[] {"watch:false", "minecraftClearWithGlass:false", "minecraftRewardFastFlyingMachines:true", "minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:30","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L, "minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+		Parameters.initializeParameterCollections(new String[] {"minecraftEmptySpaceBuffer:18", "watch:false", "minecraftClearWithGlass:false", "minecraftRewardFastFlyingMachines:true", "minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:30","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L, "minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+		CommonConstants.netio = false;
 		MinecraftCoordinates cornerBS2 = new MinecraftCoordinates(0,16,-5);
 		
 		//set up test corner and clear area
@@ -282,7 +287,7 @@ public class ChangeCenterOfMassFitnessTest {
 	// as is the test.
 //	@Test
 //	public void testFlyingWithoutMaxFitness() throws InterruptedException {
-//		Parameters.initializeParameterCollections(new String[] { "minecraftClearWithGlass:false", "minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:30","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L, "minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+//		Parameters.initializeParameterCollections(new String[] { "minecraftClearWithGlass:false", "minecraftXRange:6","minecraftYRange:6","minecraftZRange:6","spaceBetweenMinecraftShapes:30","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L, "minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
 //		MinecraftCoordinates cornerBS2 = new MinecraftCoordinates(0,11,-5);	// what is this the corner of? - shape corner
 //
 //		//set up test corner and clear area
@@ -321,7 +326,7 @@ public class ChangeCenterOfMassFitnessTest {
 	// Passes
 	@Test
 	public void testChangeInPositionWithRemainingBlocks() {
-		Parameters.initializeParameterCollections(new String[] {"netio:false", "minecraftClearWithGlass:false", "watch:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+		Parameters.initializeParameterCollections(new String[] {"netio:false", "minecraftClearWithGlass:false", "watch:false","minecraftXRange:6","minecraftYRange:6","minecraftZRange:6","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
 		CommonConstants.netio = false;
 		
 		System.out.println("testChangeInPositionWithRemainingBlocks");
@@ -340,7 +345,7 @@ public class ChangeCenterOfMassFitnessTest {
 	 * @return
 	 */
 	public boolean flyingMachineWithRemainingBlocks() {
-		Parameters.initializeParameterCollections(new String[] {"watch:false", "minecraftClearWithGlass:false", "minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:false","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+		Parameters.initializeParameterCollections(new String[] {"watch:false", "minecraftClearWithGlass:false", "minecraftXRange:6","minecraftYRange:6","minecraftZRange:6","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:false","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
 		CommonConstants.netio = false;
 		MinecraftCoordinates cornerBS2 = new MinecraftCoordinates(0,11,-5);
 		//set up test corner and clear area
@@ -382,8 +387,9 @@ public class ChangeCenterOfMassFitnessTest {
 	//a small shape that explodes and leaves no blocks behind
 	@Test
 	public void testTNTnoMovement() {
-		Parameters.initializeParameterCollections(new String[] {"watch:false", "minecraftClearWithGlass:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.ExplosiveBlockSet"});
+		Parameters.initializeParameterCollections(new String[] {"watch:false", "minecraftClearWithGlass:false","minecraftXRange:6","minecraftYRange:6","minecraftZRange:6","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.ExplosiveBlockSet"});
 		
+		CommonConstants.netio = false;
 		System.out.println("testTNTnoMovement");
 
 		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,27,-35);
@@ -418,7 +424,9 @@ public class ChangeCenterOfMassFitnessTest {
 	//uses a string to create shape. Is a large shape that explodes and leaves some blocks behind with no movement
 	@Test
 	public void testTNTnoMovementLarger() {
-		Parameters.initializeParameterCollections(new String[] {"minecraftClearWithGlass:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.ExplosiveBlockSet"});
+		// Had to reduce minecraftEmptySpaceBuffer to avoid crashing server
+		Parameters.initializeParameterCollections(new String[] {"minecraftEmptySpaceBuffer:18", "minecraftClearWithGlass:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.ExplosiveBlockSet"});
+		CommonConstants.netio = false;
 
 		System.out.println("testTNTnoMovementLarger");
 
@@ -446,7 +454,8 @@ public class ChangeCenterOfMassFitnessTest {
 	@Test
 	public void testTNTwithFlyingMachine() {
 		//testing a flying machine that has tnt on it
-		Parameters.initializeParameterCollections(new String[] {"minecraftRewardFastFlyingMachines:false", "watch:false","minecraftClearWithGlass:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.ExplosiveBlockSet"});
+		Parameters.initializeParameterCollections(new String[] {"minecraftEmptySpaceBuffer:18", "minecraftRewardFastFlyingMachines:false", "watch:false","minecraftClearWithGlass:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.ExplosiveBlockSet"});
+		CommonConstants.netio = false;
 
 		//set up test corner and clear area
 		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,27,-35);
@@ -486,8 +495,9 @@ public class ChangeCenterOfMassFitnessTest {
 	public void testTNTOscillating() {
 		// TODO: This test fails!
 		
-		Parameters.initializeParameterCollections(new String[] {"minecraftClearWithGlass:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.ExplosiveBlockSet"});
-		
+		Parameters.initializeParameterCollections(new String[] {"minecraftClearWithGlass:false","minecraftXRange:6","minecraftYRange:6","minecraftZRange:6","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.ExplosiveBlockSet"});
+		CommonConstants.netio = false;
+
 		System.out.println("testTNTnoMovement");
 
 		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,27,-35);
@@ -527,7 +537,8 @@ public class ChangeCenterOfMassFitnessTest {
 	//passed
 	@Test
 	public void testSinglePistonShapeEarlyTermination() {
-		Parameters.initializeParameterCollections(new String[] {"minecraftRewardFastFlyingMachines:false", "watch:false","minecraftClearWithGlass:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.ExplosiveBlockSet"});
+		Parameters.initializeParameterCollections(new String[] {"minecraftRewardFastFlyingMachines:false", "watch:false","minecraftClearWithGlass:false","minecraftXRange:6","minecraftYRange:6","minecraftZRange:6","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.ExplosiveBlockSet"});
+		CommonConstants.netio = false;
 
 		//set up test corner and clear area
 		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,27,-35);
@@ -553,7 +564,8 @@ public class ChangeCenterOfMassFitnessTest {
 	
 	@Test
 	public void testSinglePistonShapeClearWithExtraSpace() {
-		Parameters.initializeParameterCollections(new String[] {"minecraftRewardFastFlyingMachines:false", "watch:false","minecraftClearWithGlass:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.ExplosiveBlockSet"});
+		Parameters.initializeParameterCollections(new String[] {"minecraftRewardFastFlyingMachines:false", "watch:false","minecraftClearWithGlass:false","minecraftXRange:6","minecraftYRange:6","minecraftZRange:6","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.ExplosiveBlockSet"});
+		CommonConstants.netio = false;
 
 		//set up test corner and clear area
 		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,27,-35);
@@ -579,7 +591,8 @@ public class ChangeCenterOfMassFitnessTest {
 	// Passes
 	@Test
 	public void testChangeInPosition() {
-		Parameters.initializeParameterCollections(new String[] {"minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:false","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+		Parameters.initializeParameterCollections(new String[] {"minecraftXRange:6","minecraftYRange:6","minecraftZRange:6","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:false","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+		CommonConstants.netio = false;
 		MinecraftCoordinates cornerBS2 = new MinecraftCoordinates(0,11,-5);
 
 		//check and clear coordinates
@@ -621,8 +634,9 @@ public class ChangeCenterOfMassFitnessTest {
 	// This test seems to pass reliably in isolation, but not always when run as part of the test suite, so it is disabled.
 	@Test
 	public void testOscillatingMachine() {
-		Parameters.initializeParameterCollections(new String[] {"netio:false", "minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:false","shortTimeBetweenMinecraftReads:" + 100L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
-		
+		Parameters.initializeParameterCollections(new String[] {"netio:false", "minecraftXRange:6","minecraftYRange:6","minecraftZRange:6","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:false","shortTimeBetweenMinecraftReads:" + 100L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+		CommonConstants.netio = false;
+
 		System.out.println("testOscillatingMachine");
 
 		MinecraftCoordinates cornerBS2 = new MinecraftCoordinates(0,11,-5);
@@ -654,7 +668,8 @@ public class ChangeCenterOfMassFitnessTest {
 	// Passes
 	@Test
 	public void testGetCenterOfMass() {
-		Parameters.initializeParameterCollections(new String[] {"netio:false", "minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+		Parameters.initializeParameterCollections(new String[] {"netio:false", "minecraftXRange:6","minecraftYRange:6","minecraftZRange:6","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+		CommonConstants.netio = false;
 		// Small list of blocks
 		ArrayList<Block> blockSet1 = new ArrayList<>();
 		blockSet1.add(new Block(-5,7,-35,BlockType.REDSTONE_BLOCK, Orientation.WEST));
@@ -685,6 +700,7 @@ public class ChangeCenterOfMassFitnessTest {
 	@Test
 	public void testMaxFitness() {
 		Parameters.initializeParameterCollections(new String[] {"minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L, "minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+		CommonConstants.netio = false;
 		System.out.println("testMaxFitness");
  
 		double maxFitness = (10 + 1) * ((6 + 10) / 2.0);
@@ -734,7 +750,8 @@ public class ChangeCenterOfMassFitnessTest {
 	//TODO: fix broken fitness function
 	@Test
 	public void testNotFlyingButGivingMaxFitnessOne() {
-		Parameters.initializeParameterCollections(new String[] {"watch:false","minecraftClearWithGlass:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+		Parameters.initializeParameterCollections(new String[] {"watch:false","minecraftClearWithGlass:false","minecraftXRange:6","minecraftYRange:6","minecraftZRange:6","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+		CommonConstants.netio = false;
 
 		System.out.println("testNotFlyingButGivingMaxFitnessOne");
 
@@ -757,7 +774,8 @@ public class ChangeCenterOfMassFitnessTest {
 	}
 	@Test
 	public void testNotFlyingButGivingMaxFitnessTwo() {
-		Parameters.initializeParameterCollections(new String[] {"watch:false","minecraftClearWithGlass:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+		Parameters.initializeParameterCollections(new String[] {"watch:false","minecraftClearWithGlass:false","minecraftXRange:6","minecraftYRange:6","minecraftZRange:6","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+		CommonConstants.netio = false;
 
 		System.out.println( "testNotFlyingButGivingMaxFitnessTwo");
 
@@ -789,6 +807,7 @@ public class ChangeCenterOfMassFitnessTest {
 	@Test
 	public void testExplodingMachineShouldNotGetMaxFitness() {
 		Parameters.initializeParameterCollections(new String[] {"watch:false","minecraftAccumulateChangeInCenterOfMass:true","minecraftClearWithGlass:false","minecraftXRange:5","minecraftYRange:5","minecraftZRange:5","spaceBetweenMinecraftShapes:10","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+		CommonConstants.netio = false;
 
 		System.out.println( "testExplodingMachineShouldNotGetMaxFitness");
 
@@ -818,6 +837,7 @@ public class ChangeCenterOfMassFitnessTest {
 	@Test
 	public void testFlyingMachineBlowsUpLeftovers() {
 		Parameters.initializeParameterCollections(new String[] {"watch:true","minecraftAccumulateChangeInCenterOfMass:true","minecraftClearWithGlass:false","minecraftXRange:3","minecraftYRange:3","minecraftZRange:3","spaceBetweenMinecraftShapes:10","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+		CommonConstants.netio = false;
 
 		System.out.println( "testFlyingMachineBlowsUpLeftovers");
 
