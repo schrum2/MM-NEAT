@@ -215,8 +215,10 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 	 */
 	private double sufficientDistanceForFlying() {
 		MinecraftCoordinates offsets = MinecraftUtilClass.emptySpaceOffsets();
-		// At least 3/4 of the distance to the edge of the evaluation area
-		return Math.min(offsets.x(), Math.min(offsets.y(), offsets.z()))*0.75;
+		// Recently reduced this to 0.6 from 0.75. Since this check is used in conjunction with
+		// the farthest block check, I hope it won't allow false positives, but there is a risk
+		// of that.
+		return Math.min(offsets.x(), Math.min(offsets.y(), offsets.z()))*0.6; // 0.75;
 	}
 
 	/**
