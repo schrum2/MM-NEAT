@@ -257,11 +257,10 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 	 * Given the whole population of scores (after evaluation), assign crowding
 	 * distances to each individual.
 	 * 
-	 * @param scores
-	 *            Each instance is a set of multiple scores for a member of the
-	 *            population that was just evaluated.
+	 * @param scores Each instance is a set of multiple scores for a member of the
+	 *               population that was just evaluated.
 	 */
-	private static <T> void assignCrowdingDistance(NSGA2Score<T>[] scores) {
+	public static <T> void assignCrowdingDistance(NSGA2Score<T>[] scores) {
 		// reset distances
 		for (int i = 0; i < scores.length; i++) {
 			scores[i].setCrowdingDistance(0);
