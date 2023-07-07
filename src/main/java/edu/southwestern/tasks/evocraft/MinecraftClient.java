@@ -40,8 +40,6 @@ public class MinecraftClient extends Comm {
 
 	//a corner that is no where near any other used area meant to evaluate shapes after a completed evolution experiment
 	public static final MinecraftCoordinates POST_EVALUATION_SHAPE_CORNER = new MinecraftCoordinates(-500, 100 + Parameters.parameters.integerParameter("minecraftPostCornerAdjustY"), 500);
-	//An extra amount of empty space that should surround shapes whose evaluation depends on movement.
-	public static final int EMPTY_SPACE_SAFETY_BUFFER = Parameters.parameters.integerParameter("minecraftEmptySpaceBuffer");
 
 	public MinecraftClient() {
 		super();
@@ -742,10 +740,10 @@ public class MinecraftClient extends Comm {
 		MinecraftCoordinates newShapeCorner = originalShapeCorner;
 		
 		//check for out of bounds
-		if(originalShapeCorner.y() - EMPTY_SPACE_SAFETY_BUFFER - Parameters.parameters.integerParameter("minecraftExtraClearSpace") <= MinecraftClient.GROUND_LEVEL) { // Push up if close to ground)
+		if(originalShapeCorner.y() - Parameters.parameters.integerParameter("minecraftEmptySpaceBuffer") - Parameters.parameters.integerParameter("minecraftExtraClearSpace") <= MinecraftClient.GROUND_LEVEL) { // Push up if close to ground)
 			System.out.println("Pushed up from " + originalShapeCorner);
 			
-			MinecraftCoordinates shiftPoint = new MinecraftCoordinates(0,MinecraftClient.EMPTY_SPACE_SAFETY_BUFFER,0);
+			MinecraftCoordinates shiftPoint = new MinecraftCoordinates(0,Parameters.parameters.integerParameter("minecraftEmptySpaceBuffer"),0);
 			newShapeCorner = originalShapeCorner.add(shiftPoint);			//shifts the shape corner to a new adjusted corner
 		}
 		return newShapeCorner;
@@ -784,8 +782,8 @@ public class MinecraftClient extends Comm {
 	 */
 	public static void extraClearAreaClearAroundCornerWithGlass (MinecraftCoordinates shapeCorner) {
 		//add a little extra
-		MinecraftCoordinates lowerCoordinates = shapeCorner.sub(Parameters.parameters.integerParameter("minecraftExtraClearSpace") + EMPTY_SPACE_SAFETY_BUFFER);
-		MinecraftCoordinates upperCoordinates = shapeCorner.add(MinecraftUtilClass.getRanges().add(EMPTY_SPACE_SAFETY_BUFFER+Parameters.parameters.integerParameter("minecraftExtraClearSpace")));
+		MinecraftCoordinates lowerCoordinates = shapeCorner.sub(Parameters.parameters.integerParameter("minecraftExtraClearSpace") + Parameters.parameters.integerParameter("minecraftEmptySpaceBuffer"));
+		MinecraftCoordinates upperCoordinates = shapeCorner.add(MinecraftUtilClass.getRanges().add(Parameters.parameters.integerParameter("minecraftEmptySpaceBuffer")+Parameters.parameters.integerParameter("minecraftExtraClearSpace")));
 		getMinecraftClient().clearCube(lowerCoordinates, upperCoordinates, true);
 		List<Block> errorCheck = null;
 		assert areaAroundCornerEmpty(shapeCorner) : "Area not empty after clearing! "+errorCheck;
@@ -807,8 +805,8 @@ public class MinecraftClient extends Comm {
 	 */
 	public static void clearAreaAroundCorner(MinecraftCoordinates shapeCorner, boolean clearWithGlass) {
 		//lower is the min coordinates of the clear space based on the 
-		MinecraftCoordinates lower = shapeCorner.sub(EMPTY_SPACE_SAFETY_BUFFER);
-		MinecraftCoordinates upper = shapeCorner.add(MinecraftUtilClass.getRanges().add(EMPTY_SPACE_SAFETY_BUFFER));
+		MinecraftCoordinates lower = shapeCorner.sub(Parameters.parameters.integerParameter("minecraftEmptySpaceBuffer"));
+		MinecraftCoordinates upper = shapeCorner.add(MinecraftUtilClass.getRanges().add(Parameters.parameters.integerParameter("minecraftEmptySpaceBuffer")));
 		getMinecraftClient().clearCube(lower, upper, clearWithGlass);
 		List<Block> errorCheck = null;
 		assert areaAroundCornerEmpty(shapeCorner) : "Area not empty after clearing! "+errorCheck;
@@ -820,8 +818,8 @@ public class MinecraftClient extends Comm {
 	 * @return boolean if space is empty or not
 	 */
 	public static boolean areaAroundCornerEmpty(MinecraftCoordinates corner) {
-		MinecraftCoordinates lower = corner.sub(EMPTY_SPACE_SAFETY_BUFFER);
-		MinecraftCoordinates upper = corner.add(MinecraftUtilClass.getRanges().add(EMPTY_SPACE_SAFETY_BUFFER));
+		MinecraftCoordinates lower = corner.sub(Parameters.parameters.integerParameter("minecraftEmptySpaceBuffer"));
+		MinecraftCoordinates upper = corner.add(MinecraftUtilClass.getRanges().add(Parameters.parameters.integerParameter("minecraftEmptySpaceBuffer")));
 		List<Block> errorCheck = MinecraftUtilClass.filterOutBlock(getMinecraftClient().readCube(lower, upper), BlockType.AIR);
 //		if(!errorCheck.isEmpty()) {
 //			System.out.println("NOT EMPTY at corner "+corner+"\n"+errorCheck);
