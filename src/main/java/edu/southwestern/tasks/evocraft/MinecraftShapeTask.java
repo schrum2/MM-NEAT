@@ -42,7 +42,9 @@ import edu.southwestern.tasks.evocraft.fitness.TimedEvaluationMinecraftFitnessFu
 import edu.southwestern.tasks.evocraft.fitness.TypeCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.TypeTargetFitness;
 import edu.southwestern.tasks.evocraft.fitness.WaterLavaSecondaryCreationFitness;
+import edu.southwestern.tasks.evocraft.fitness.WeightedSumsAccumulateNewBlockPositionsAndChangeCenterOfMassFitness;
 import edu.southwestern.tasks.evocraft.fitness.WeightedSumsChangeBlockAndChangeCenterOfMassFitness;
+import edu.southwestern.tasks.evocraft.fitness.WeightedSumsMissileAndChangeCenterOfMassFitness;
 import edu.southwestern.tasks.evocraft.fitness.WeightedSumsTypeCountAndNegativeSpaceCountFitness;
 import edu.southwestern.tasks.evocraft.shapegeneration.BoundedVectorGenerator;
 import edu.southwestern.tasks.evocraft.shapegeneration.IntegersToVolumeGenerator;
@@ -208,6 +210,15 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		if(Parameters.parameters.booleanParameter("minecraftWeightedSumsChangeBlockAndChangeCenterOfMassFitness")) {
 			fitness.add(new WeightedSumsChangeBlockAndChangeCenterOfMassFitness());
 		}
+		
+		if(Parameters.parameters.booleanParameter("minecraftWeightedSumsMissileAndChangeCenterOfMassFitness")) {
+			fitness.add(new WeightedSumsMissileAndChangeCenterOfMassFitness());
+		}
+		
+		if(Parameters.parameters.booleanParameter("minecraftWeightedSumsAccumulateNewBlockPositionsAndChangeCenterOfMassFitness")) {
+				fitness.add(new WeightedSumsAccumulateNewBlockPositionsAndChangeCenterOfMassFitness());
+		}
+			
 		if(Parameters.parameters.booleanParameter("minecraftAccumulateNewBlockPositionsFitness")) {
 			fitness.add(new AccumulateNewBlockPositionsFitness());
 		}
@@ -489,17 +500,14 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		// May behave weird if there are multiple distinct weighted sum fitness functions
 		Pair<Double, double[]> weightedSumsResults = numWeightedSumsFitnessFunctions == 0 ? null : weightedSumFitnessFunctions.get(0).weightedSumsFitnessScores(shapeCorner, originalBlocks);
 		
-		double[] otherScores = new double[0]; // NOT YET IMPLEMENTED: Will provide a way to track scores that do not affect fitness
+		double[] otherScores = new double[0]; // Will provide a way to track scores that do not affect fitness
 		double[] weightedSumsSingleResult = new double[0];
 		
 		if(numWeightedSumsFitnessFunctions != 0) {
 			otherScores = weightedSumsResults.t2;
+			weightedSumsSingleResult = new double[1]; // One weighted sum result
 			weightedSumsSingleResult[0] = weightedSumsResults.t1;
 		}
-		
-//		double[] weightedSumsSingleResult = new double[] {weightedSumsResults.t1};
-//		double[] weightedSumsSingleResult = new double[0];
-//		weightedSumsSingleResult[0] = weightedSumsResults.t1;
 		
 		double[] intermediateResultsArray = ArrayUtil.combineArrays(weightedSumsSingleResult, timedEvalResults);
 		double[] endResults = ArrayUtil.combineArrays(intermediateResultsArray, notTimedEvalResults);

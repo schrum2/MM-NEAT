@@ -17,7 +17,6 @@ public class SpecificTargetFitness extends TimedEvaluationMinecraftFitnessFuncti
 	@Override
 	public double calculateFinalScore(ArrayList<Pair<Long, List<Block>>> history, MinecraftCoordinates corner,
 			List<Block> originalBlocks) {
-		// TODO Auto-generated method stub
 		int xOffset = Parameters.parameters.integerParameter("minecraftTargetDistancefromShapeX");
 		int yOffset = Parameters.parameters.integerParameter("minecraftTargetDistancefromShapeY");
 		int zOffset = Parameters.parameters.integerParameter("minecraftTargetDistancefromShapeZ");
@@ -31,9 +30,9 @@ public class SpecificTargetFitness extends TimedEvaluationMinecraftFitnessFuncti
 
 	@Override
 	public double maxFitness() {
-		// TODO Auto-generated method stub
-		return 0;
+		return 0; // No distance to target
 	}
+
 	@Override
 	public boolean shapeIsWorthSaving(double fitnessScore, ArrayList<Pair<Long, List<Block>>> history, MinecraftCoordinates shapeCorner, List<Block> originalBlocks) {
 		//change later
@@ -44,12 +43,8 @@ public class SpecificTargetFitness extends TimedEvaluationMinecraftFitnessFuncti
 		
 		MinecraftCoordinates targetCorner = new MinecraftCoordinates(targetCornerOffset.add(shapeCorner));
 		Vertex blockLocation =new Vertex(targetCorner.x(),targetCorner.y(), targetCorner.z());
-		double distance = MinecraftUtilClass.getCenterOfMass(history.get(0).t2).distance(blockLocation);
-		if(fitnessScore > (distance/2)) { 
-			
-			return true;
-		}
-			return false;
+		double distance = MinecraftUtilClass.getCenterOfMass(history.get(history.size()-1).t2).distance(blockLocation);
+		return (fitnessScore > (distance/2.0));
 	}
 	
 	
