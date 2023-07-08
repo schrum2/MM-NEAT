@@ -73,9 +73,9 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 		//          is a hassle.		
 		
 		//if statement checks if the evaluation space plus the space that would be cleared is below the ground level
-		if(evaluationCorner.y() - Parameters.parameters.integerParameter("minecraftEmptySpaceBuffer") <= MinecraftClient.GROUND_LEVEL) { // Push up if close to ground
+		if(evaluationCorner.y() - Parameters.parameters.integerParameter("minecraftEmptySpaceBufferY") <= MinecraftClient.GROUND_LEVEL) { // Push up if close to ground
 			System.out.println("Pushed up from " + evaluationCorner);
-			MinecraftCoordinates shiftPoint = new MinecraftCoordinates(0,Parameters.parameters.integerParameter("minecraftEmptySpaceBuffer"),0);
+			MinecraftCoordinates shiftPoint = new MinecraftCoordinates(0,Parameters.parameters.integerParameter("minecraftEmptySpaceBufferY"),0);
 			MinecraftCoordinates oldCorner = evaluationCorner;
 			evaluationCorner = evaluationCorner.add(shiftPoint); // move sufficiently above the ground
 			shapeCorner = shapeCorner.add(shiftPoint);			//shifts the shape corner as well
@@ -254,7 +254,7 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 	}
 	
 	public static void main(String[] args) {
-		try { // minecraftEmptySpaceBuffer:30
+		try { //  minecraftEmptySpaceBuffer:30
 			MMNEAT.main("runNumber:1 randomSeed:1 minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.DirectRepresentationShapeGenerator trials:1 minecraftMandatoryWaitTime:15000 minecraftContainsWholeMAPElitesArchive:false forceLinearArchiveLayoutInMinecraft:false minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.ExplosiveBlockSet io:true netio:true interactWithMapElitesInWorld:false mating:true spaceBetweenMinecraftShapes:30 launchMinecraftServerFromJava:false task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.tasks.evocraft.genotype.MinecraftShapeGenotype vectorPresenceThresholdForEachBlock:true parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearWithGlass:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true rememberParentScores:true extraSpaceBetweenMinecraftShapes:100 mu:100 maxGens:100000 experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5 minecraftAccumulateChangeInCenterOfMass:true ea:edu.southwestern.evolution.mome.MOME maximumMOMESubPopulationSize:10 minecraftCompassMissileTargets:true minecraftTargetDistancefromShapeX:30 minecraftTargetDistancefromShapeY:0 minecraftTargetDistancefromShapeZ:0 minecraftChangeCenterOfMassFitness:true minecraftMissileFitness:true base:minecraftcomplex log:MinecraftComplex-MissileMOME saveTo:MissileMOME".split(" ")); 
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
