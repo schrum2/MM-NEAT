@@ -713,7 +713,10 @@ public class MOME<T> implements SteadyStateEA<T>{
 	 * @param directory
 	 * @return
 	 */
-	private String saveGlobalParetoFront(Comparator<Score<T>> paretoScoreComparator, String fileName) {
+	private void saveGlobalParetoFront(Comparator<Score<T>> paretoScoreComparator, String fileName) {
+		
+		Vector<Score<T>> paretoFront = archive.getCombinedParetoFrontWholeArchive();
+		
 		//this makes the directory folder for pareto fronts
 		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
 		String saveDirectoryParetoFronts = directory + "/ParetoFronts";
@@ -733,20 +736,18 @@ public class MOME<T> implements SteadyStateEA<T>{
 
 			///AGGREGATE LOGGING
 
-			Vector<Score<T>> archiveFinalParetoFront = archive.getCombinedParetoFrontWholeArchive();
-			
 			if(CommonConstants.netio) {
 				// Save global Pareto front at each logging event
-				for(Score<T> candidate : archiveFinalParetoFront) {
+				for(Score<T> candidate : paretoFront) {
 					String path = archive.getArchiveDir();
 					Serialization.save(candidate.individual, path + "/" + fileName + "-elite-"+Arrays.toString(candidate.scores));
 				}
 			}
 
-			Collections.sort(archiveFinalParetoFront, paretoScoreComparator);
+			Collections.sort(paretoFront, paretoScoreComparator);
 			//go through score for row
 			//column is objectives
-			for (Score<T> score : archiveFinalParetoFront) {
+			for (Score<T> score : paretoFront) {
 				String scoreString = "";
 				for (int i = 0; i < numberOfObjectives; i++) {
 					scoreString = scoreString + score.scores[i] + "\t";
@@ -779,7 +780,6 @@ public class MOME<T> implements SteadyStateEA<T>{
 			e.printStackTrace();
 			System.exit(1);
 		}
-		return saveDirectoryParetoFronts;
 	}
 	
 //the below methods are just ideas to make plotting more convenient or understandable

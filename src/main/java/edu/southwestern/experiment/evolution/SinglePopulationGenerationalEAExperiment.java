@@ -253,17 +253,11 @@ public abstract class SinglePopulationGenerationalEAExperiment<T> implements Exp
 	/**
 	 * Save all members of population as xml files in the dir saveDirectory.
 	 *
-	 * @param <T>
-	 *            phenotype of genotype
-	 * @param prefix
-	 *            subdir in saveDirectory to save files (usually gen40 or
-	 *            something similar)
-	 * @param saveDirectory
-	 *            directory where files are saved
-	 * @param population
-	 *            list of genotypes to save
-	 * @param parallel
-	 *            whether or not the save is executed with parallel threads
+	 * @param <T> phenotype of genotype
+	 * @param prefix subdir in saveDirectory to save files (usually gen40 or something similar)
+	 * @param saveDirectory directory where files are saved
+	 * @param population list of genotypes to save
+	 * @param parallel whether or not the save is executed with parallel threads
 	 */
 	public static <T> void save(String prefix, String saveDirectory, ArrayList<Genotype<T>> population, boolean parallel) {
 		String experimentPrefix = Parameters.parameters.stringParameter("log") + Parameters.parameters.integerParameter("runNumber");
