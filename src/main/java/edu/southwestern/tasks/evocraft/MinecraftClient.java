@@ -19,7 +19,7 @@ import edu.southwestern.util.datastructures.Triple;
  */
 public class MinecraftClient extends Comm {
 	// Max volume of blocks allowed to be read from a readCube command
-	private static final int MAX_VOLUME_READ = 110592;
+	private static final int MAX_VOLUME_READ = 134560; // 110592;
 
 	public static final int MAX_Y_COORDINATE = 255;
 
@@ -961,7 +961,7 @@ public class MinecraftClient extends Comm {
 		int volume = (xmax - xmin + 1) * (ymax - ymin + 1) * (zmax - zmin + 1);
 		if(volume > MAX_VOLUME_READ) {
 			String message = "readCube "+xmin+" "+ymin+" "+zmin+" "+xmax+" "+ymax+" "+zmax+" ";
-			System.out.println("Breaking request for "+volume+" blocks into two requests:\n"+message);
+			System.out.println("Breaking request for "+volume+" > "+MAX_VOLUME_READ+" blocks into two requests:\n"+message);
 			// Request is so big it will overwhelm the server. Break into two requests and combine results.
 
 			int xmin1 = xmin; 
