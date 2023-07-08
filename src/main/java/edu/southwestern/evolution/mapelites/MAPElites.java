@@ -637,6 +637,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				Float[] otherStats = ArrayUtils.toObject(archive.getOtherStatsScores(i));
 				otherStatsLogs[i].log(pseudoGeneration + "\t" + StringUtils.join(otherStats, "\t").replaceAll("-Infinity", "X"));
 				Float maximumFitness = StatisticsUtilities.maximum(otherStats);
+				// TODO: Call the version that takes a base score
 				final double qdScore = calculateQDScore(otherStats);
 				otherStatsFillString = otherStatsFillString + maximumFitness + "\t" + qdScore +"\t";
 //				otherStatsFillLogs[i].log(pseudoGeneration+ "\t" + maximumFitness + "\t" + qdScore);
@@ -726,7 +727,11 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	 * @return returns a double representing the QD score with offset values
 	 */
 	public static double calculateQDScore(Float[] elite) {
-		double base = Parameters.parameters.doubleParameter("mapElitesQDBaseOffset");
+		return calculateQDScore(elite,Parameters.parameters.doubleParameter("mapElitesQDBaseOffset")); 
+	}
+	
+	// TODO
+	public static double calculateQDScore(Float[] elite, double base) {
 		double sum = 0.0;
 		for (float x : elite) {
 			if (x != Float.NEGATIVE_INFINITY) {
