@@ -629,7 +629,8 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			Float[] elite = ArrayUtils.toObject(archive.getEliteScores());
 			final int pseudoGeneration = iterations/individualsPerGeneration;
 			archiveLog.log(pseudoGeneration + "\t" + StringUtils.join(elite, "\t").replaceAll("-Infinity", "X"));
-			
+			// Small amount added to fitness scores to tweak the QD calculation
+			double offsetSoThatOccupiedBinsWithMinFitnessAreBetterThanEmptyBins = Parameters.parameters.doubleParameter("mapElitesQDBaseOffset");
 			//log otherStats
 			int numberOfOtherStats = MMNEAT.getNumberOtherStatsForPopulation(0);
 			String otherStatsFillString = pseudoGeneration + "\t";
@@ -637,10 +638,17 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				Float[] otherStats = ArrayUtils.toObject(archive.getOtherStatsScores(i));
 				otherStatsLogs[i].log(pseudoGeneration + "\t" + StringUtils.join(otherStats, "\t").replaceAll("-Infinity", "X"));
 				Float maximumFitness = StatisticsUtilities.maximum(otherStats);
-				// TODO: Call the version that takes a base score
-				final double qdScore = calculateQDScore(otherStats);
+
+				// It is assumed that each other stat used with MAP Elites is a component from a weighted sum.
+				// However, some component fitnesses have negative minimum values. For proper QD calculation,
+				// the score range has to be shifted up. In addition, the offsetSoThatOccupiedBinsWithMinFitnessAreBetterThanEmptyBins
+				// is used so that even a minimal score is worth more than an empty bin. We add 1 to the index since we
+				// skip over the actual fitness function (just one) and only get other stats.
+				double minFitness = MMNEAT.fitnessFunctionMinScore(1 + i);
+				// minFitness is subtracted since this base value will be added to the actual fitness.
+				// for example, a negative min leads to a positive offset. Either way, want to zero out the min, except for offset.
+				final double qdScore = calculateQDScore(otherStats, offsetSoThatOccupiedBinsWithMinFitnessAreBetterThanEmptyBins - minFitness);
 				otherStatsFillString = otherStatsFillString + maximumFitness + "\t" + qdScore +"\t";
-//				otherStatsFillLogs[i].log(pseudoGeneration+ "\t" + maximumFitness + "\t" + qdScore);
 			}
 			otherStatsFillLog.log(otherStatsFillString);
 			
@@ -726,11 +734,16 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	 * @param elite An elite represented by an Array of floats representing each value
 	 * @return returns a double representing the QD score with offset values
 	 */
-	public static double calculateQDScore(Float[] elite) {
-		return calculateQDScore(elite,Parameters.parameters.doubleParameter("mapElitesQDBaseOffset")); 
+	public static double calculateQDScore(Float[] elites) {
+		return calculateQDScore(elites,Parameters.parameters.doubleParameter("mapElitesQDBaseOffset")); 
 	}
 	
-	// TODO
+	/**
+	 * Like the above, but allows for a specified offset to the min score.
+	 * @param elite Array of elite scores from each bin, where empty bins have a score of negative infinity
+	 * @param base 
+	 * @return
+	 */
 	public static double calculateQDScore(Float[] elite, double base) {
 		double sum = 0.0;
 		for (float x : elite) {
