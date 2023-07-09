@@ -44,8 +44,7 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 	/**
 	 * Constructor for NSGA2
 	 * 
-	 * @param io
-	 *            whether or not to output files
+	 * @param io whether or not to output files
 	 */
 	@SuppressWarnings("unchecked")
 	public NSGA2(boolean io) {
@@ -55,12 +54,9 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 	/**
 	 * Constructor for NSGA2
 	 * 
-	 * @param io
-	 *            whether or not to output files
-	 * @param task
-	 *            task to be evolved
-	 * @param mu
-	 *            Size of parent population
+	 * @param io whether or not to output files
+	 * @param task task to be evolved
+	 * @param mu Size of parent population
 	 *
 	 */
 	public NSGA2(SinglePopulationTask<T> task, int mu, boolean io) {
@@ -73,10 +69,8 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 	 * Generates children genotypes based on NSGA2 evolution scheme and scores
 	 * of parents
 	 * 
-	 * @param numChildren
-	 *            number of children to be created in evolved population
-	 * @param parentScores
-	 *            array list of parent scores
+	 * @param numChildren number of children to be created in evolved population
+	 * @param parentScores array list of parent scores
 	 * @return child genotypes
 	 */
 	@Override
@@ -176,8 +170,7 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 	/**
 	 * gets the NSGA2 modified scores from raw scores
 	 * 
-	 * @param scores
-	 *            list of scores
+	 * @param scores list of scores
 	 * @return modified scores
 	 */
 	public NSGA2Score<T>[] getNSGA2Scores(ArrayList<Score<T>> scores) {
@@ -354,8 +347,7 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 	 * Return just the Pareto front for a given population of scores.
 	 * 
 	 * @param <T> phenotype
-	 * @param scores
-	 *            Multiobjective scores for evaluated individuals.
+	 * @param scores Multiobjective scores for evaluated individuals.
 	 * @return All non-dominated individuals in population: The Pareto front
 	 */
 	public static <T> ArrayList<NSGA2Score<T>> getParetoFront(NSGA2Score<T>[] scores) {
