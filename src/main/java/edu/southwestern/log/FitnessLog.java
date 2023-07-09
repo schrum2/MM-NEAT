@@ -23,6 +23,8 @@ import java.util.ArrayList;
  */
 public class FitnessLog<T> extends StatisticsLog<Score<T>> {
 
+	private static final boolean PLOT_PARETO_FRONT_EVERY_GENERATION = false;
+	
 	private static int fitnessPanels = 0;
 	DrawingPanel[] panels = null;
 
@@ -85,41 +87,43 @@ public class FitnessLog<T> extends StatisticsLog<Score<T>> {
 				extra.close();
 			}
 			
-			// Make a plot file for 2D Pareto fronts (output for 3 or more as well ... useful?)
-			if(scores.get(0).scores.length >= 2) {
-				File plotFile = new File(directory + prefix + "_gen" + generation + ".plt");
-				PrintStream ps;
-				try {
-					// Non-PDF version
-					ps = new PrintStream(plotFile);
-					ps.println("unset key");
-					ps.println("set title \""+prefix + "_gen" + generation+" Pareto Front\"");
-					ps.println("plot \"" + prefix + "_gen" + generation + ".txt\" u 3:4 w linespoints t \"Pareto front\"");
-					ps.close();
+			if(PLOT_PARETO_FRONT_EVERY_GENERATION) {
+				// Make a plot file for 2D Pareto fronts (output for 3 or more as well ... useful?)
+				if(scores.get(0).scores.length >= 2) {
+					File plotFile = new File(directory + prefix + "_gen" + generation + ".plt");
+					PrintStream ps;
+					try {
+						// Non-PDF version
+						ps = new PrintStream(plotFile);
+						ps.println("unset key");
+						ps.println("set title \""+prefix + "_gen" + generation+" Pareto Front\"");
+						ps.println("plot \"" + prefix + "_gen" + generation + ".txt\" u 3:4 w linespoints t \"Pareto front\"");
+						ps.close();
 
-				} catch (FileNotFoundException e) {
-					System.out.println("Error creating plt log file");
-					e.printStackTrace();
-					System.exit(1);
+					} catch (FileNotFoundException e) {
+						System.out.println("Error creating plt log file");
+						e.printStackTrace();
+						System.exit(1);
+					}
 				}
-			}
-			
-			// Make a plot file for other stats 2D Pareto fronts too! (output for 3 or more as well ... useful?)
-			if(scores.get(0).otherStats.length >= 2) {
-				File plotFile = new File(directory + prefix + "_other_scores_gen" + generation + ".plt");
-				PrintStream ps;
-				try {
-					// Non-PDF version
-					ps = new PrintStream(plotFile);
-					ps.println("unset key");
-					ps.println("set title \""+prefix + "_other_scores_gen" + generation+" Pareto Front\"");
-					ps.println("plot \"" + prefix + "_other_scores_gen" + generation + ".txt\" u 3:4 w linespoints t \"Pareto front\" u 3:4");
-					ps.close();
 
-				} catch (FileNotFoundException e) {
-					System.out.println("Error creating plt log file");
-					e.printStackTrace();
-					System.exit(1);
+				// Make a plot file for other stats 2D Pareto fronts too! (output for 3 or more as well ... useful?)
+				if(scores.get(0).otherStats.length >= 2) {
+					File plotFile = new File(directory + prefix + "_other_scores_gen" + generation + ".plt");
+					PrintStream ps;
+					try {
+						// Non-PDF version
+						ps = new PrintStream(plotFile);
+						ps.println("unset key");
+						ps.println("set title \""+prefix + "_other_scores_gen" + generation+" Pareto Front\"");
+						ps.println("plot \"" + prefix + "_other_scores_gen" + generation + ".txt\" u 3:4 w linespoints t \"Pareto front\" u 3:4");
+						ps.close();
+
+					} catch (FileNotFoundException e) {
+						System.out.println("Error creating plt log file");
+						e.printStackTrace();
+						System.exit(1);
+					}
 				}
 			}
 			
