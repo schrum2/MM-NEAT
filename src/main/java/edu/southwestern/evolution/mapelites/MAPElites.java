@@ -67,9 +67,8 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	private MMNEATLog autoencoderLossRange = null;
 	protected MMNEATLog[] emitterIndividualsLogs = null;
 	private MMNEATLog[] otherStatsLogs = null;	//logs the other stats 
-//	private MMNEATLog[] otherStatsFillLogs = null;
 	private MMNEATLog otherStatsFillLog = null;
-//	private MMNEATLog[] otherStatsQDScoreLogs = null;
+	private MMNEATLog otherHypervolumeLog = null;
 	// separate log and plot file for each index in otherStats
 	protected LonerTask<T> task;
 	protected Archive<T> archive;
@@ -123,6 +122,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 					otherStatsLogsList.add(otherStatsLogs[i]);
 				}
 				otherStatsFillLog = new MMNEATLog(infix+"_otherStatsFillLog", false, false, false, true);
+				otherHypervolumeLog = new MMNEATLog(infix+"_otherStatsHypervolumeLog", false, false, false, true);
 			}
 			
 			// Can't check MMNEAT.genotype since MMNEAT.ea is initialized before MMNEAT.genotype
@@ -307,12 +307,25 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 					ps.close();
 
 				}
-//				String prefix = experimentPrefix + "_" + infix;
-//				String outputString = experimentPrefix + "_" + infix + "_otherStatsFillLog";
+				
+				String textHVLogFilename = experimentPrefix + "_" + infix + "_otherStatsHypervolumeLog_log.txt";
+				String plotHVFilename = textHVLogFilename.replace(".txt", ".plt");
+				
+				File plotFileHV = new File(directory + plotHVFilename);
+				ps = new PrintStream(plotFileHV);
+				//ps.println("set term pdf enhanced");
+				ps.println("set key bottom right");
+				// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
+				ps.println("set xrange [0:"+ yrange +"]");
+				ps.println("set title \"" + experimentPrefix + " Hypervolume\"");
+				//ps.println("set output \"" + experimentPrefix + "_otherStatsHypervolumeLog_log.pdf\"");
+				ps.println("plot \"" + textHVLogFilename + "\" u 1:2 w linespoints t \"Hypervolume\"");
+				ps.close();
+				
+				//////////////////////////////////////
+				
 				String textLogFilename = experimentPrefix + "_" + infix + "_otherStatsFillLog_log.txt";
 				String plotFilename = textLogFilename.replace(".txt", ".plt");
-//				String plotPDFFilename = plotFilename.replace(".plt", "_PDF.plt");
-//				String logTitle = textLogFilename.replace(".txt", "");
 				
 				File plotFile = new File(directory + plotFilename);
 				
@@ -322,16 +335,8 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				ps.println("set key bottom right");
 				// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
 				ps.println("set xrange [0:"+ yrange +"]");
-				
-		
-				
-//				String fillPrefix = experimentPrefix + "_" + "Fill";
-//				String fullFillName = directory + fillPrefix + "_log.plt";
-//				File fillPlot = new File(fullFillName);
-				//infix+"_otherStat_"+i+"_" +MMNEAT.getFitnessFunctionName(i+1)
-				//this is for individual
-				//fill log is experimentPrefix + "_" + infix + "_otherStatsFillLog";
-				//whole thing is infix+"_otherStat_"+i+"_" +MMNEAT.getFitnessFunctionName(i+1)_log.txt
+						
+				// Why is this magic number 2?
 				int index = 2;
 				for (int i = 0; i < numberOfOtherStats; i++) {
 					ps.println("set title \"" + experimentPrefix + " " + MMNEAT.getFitnessFunctionName(i+1) + " Max Fitness\"");
@@ -651,6 +656,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 					otherStatsFillString = otherStatsFillString + maximumFitness + "\t" + qdScore +"\t";
 				}
 				otherStatsFillLog.log(otherStatsFillString);
+				otherHypervolumeLog.log(pseudoGeneration + "\t" + archive.getHypervolumeAcrossOtherStats());
 			}
 			
 			Float maximumFitness = StatisticsUtilities.maximum(elite);

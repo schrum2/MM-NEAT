@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.scores.Score;
 import edu.southwestern.util.ClassCreation;
+import edu.southwestern.util.MultiobjectiveUtil;
 import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.file.Serialization;
 import edu.southwestern.util.random.RandomNumbers;
@@ -253,6 +254,23 @@ public class Archive<T> {
 		});
 		// Get the set of all max scores
 		return archive.parallelStream().filter(s -> s != null).filter(s -> s.behaviorIndexScore() == maxScore.get().behaviorIndexScore()).collect(Collectors.toSet());
+	}
+	
+	/**
+	 * Do a hypervolume calculation across the whole archive treating
+	 * the otherStats within each Score instance at the actual objective
+	 * scores for the purpose of the calculation.
+	 * 
+	 * @return resulting hypervolume over otherStats
+	 */
+	public double getHypervolumeAcrossOtherStats() {
+		Set<Score<T>> champions = getChampions();
+		Vector<Score<T>> scoresOfOtherStats = new Vector<>(champions.size());
+		for(Score<T> s : champions) {
+			// Notice that the otherStats of the original Score become the actual objective scores of the new Score instance
+			scoresOfOtherStats.add(new Score<>(s.individual, s.otherStats));
+		}
+		return MultiobjectiveUtil.hypervolumeFromPopulation(scoresOfOtherStats);
 	}
 	
 	/**
