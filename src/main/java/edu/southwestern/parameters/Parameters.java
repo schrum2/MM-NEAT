@@ -981,6 +981,7 @@ public class Parameters {
 		doubleOptions.add("minecraftChangeBlockOrientationMutation", 0.2, "Rate of mutation to change a block orientation");
 		doubleOptions.add("minecraftSwapBlocksMutation", 0.2, "Rate of mutation to swap two blocks");
 		doubleOptions.add("minecraftPercentOfTarget", 1.0, "If percentage of target remaining is less than this, then save the shape");
+		doubleOptions.add("hypervolumeMinimumOffset", 1.0, "Add to all scores before hypervolume calculation so that a min score in one objective is not worthless");
 		
 		// String parameters
 		stringOptions.add("marioTargetLevel", "data\\VGLC\\SuperMarioBrosNewEncoding\\overworld\\mario-1-1.txt", "Relative path to json file with Mario level to target");

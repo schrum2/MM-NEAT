@@ -6,6 +6,7 @@ import java.util.List;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.nsga2.NSGA2;
 import edu.southwestern.evolution.nsga2.NSGA2Score;
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import jmetal.qualityIndicator.Hypervolume;
 import java.util.Arrays;
@@ -45,6 +46,7 @@ public class MultiobjectiveUtil {
 			scoresArrayForHypervolume[i] = Arrays.copyOf(individualScore.scores,individualScore.scores.length);
 			for (int j = 0; j < scoresArrayForHypervolume[i].length; j++) {		//this should subtract the minimum score value for each objective from its score
 				scoresArrayForHypervolume[i][j] -= minScoreForEachObjective[j]; //before passing to hypervolume, adjust scores for the minimum 
+				scoresArrayForHypervolume[i][j] += Parameters.parameters.doubleParameter("hypervolumeMinimumOffset"); // small boost to all scores
 				assert scoresArrayForHypervolume[i][j] >= 0 : "scoresArrayForHypervolume["+i+"]["+j+"]= "+scoresArrayForHypervolume[i][j]+", minScoreForEachObjective="+Arrays.toString(minScoreForEachObjective);
 			}
 			i++;
