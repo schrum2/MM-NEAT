@@ -113,18 +113,17 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			
 			//logging other stats
 			int numberOfOtherStats = MMNEAT.getNumberOtherStatsForPopulation(0);
-			ArrayList<MMNEATLog> otherStatsLogsList = new ArrayList<>();
-			otherStatsLogs = new MMNEATLog[numberOfOtherStats];			
-			//map elites can only have one fitness function, so everything beyond that is an other stat
-			for (int i = 0; i < numberOfOtherStats; i++) {
-				otherStatsLogs[i] = new MMNEATLog(infix+"_otherStat_"+i+"_" +MMNEAT.getFitnessFunctionName(i+1), false, false, false, true);
-				otherStatsLogsList.add(otherStatsLogs[i]);
-//				otherStatsFillLogs[i] = new MMNEATLog(infix+"_otherStat_"+i+"_Fill_" +MMNEAT.getFitnessFunctionName(i), false, false, false, true);
-//				otherStatsLogsList.add(otherStatsFillLogs[i]);
-//				otherStatsQDScoreLogs[i] = new MMNEATLog(infix+"_otherStat_"+i+"_QDScore_" +MMNEAT.getFitnessFunctionName(i), false, false, false, true);
-//				otherStatsLogsList.add(otherStatsQDScoreLogs[i]);
+			ArrayList<MMNEATLog> otherStatsLogsList = null;
+			if(numberOfOtherStats > 0) {
+				otherStatsLogsList = new ArrayList<>();
+				otherStatsLogs = new MMNEATLog[numberOfOtherStats];			
+				//map elites can only have one fitness function, so everything beyond that is an other stat
+				for (int i = 0; i < numberOfOtherStats; i++) {
+					otherStatsLogs[i] = new MMNEATLog(infix+"_otherStat_"+i+"_" +MMNEAT.getFitnessFunctionName(i+1), false, false, false, true);
+					otherStatsLogsList.add(otherStatsLogs[i]);
+				}
+				otherStatsFillLog = new MMNEATLog(infix+"_otherStatsFillLog", false, false, false, true);
 			}
-			otherStatsFillLog = new MMNEATLog(infix+"_otherStatsFillLog", false, false, false, true);
 			
 			// Can't check MMNEAT.genotype since MMNEAT.ea is initialized before MMNEAT.genotype
 			boolean cppnDirLogging = Parameters.parameters.classParameter("genotype").equals(CPPNOrDirectToGANGenotype.class) ||
@@ -633,24 +632,26 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			double offsetSoThatOccupiedBinsWithMinFitnessAreBetterThanEmptyBins = Parameters.parameters.doubleParameter("mapElitesQDBaseOffset");
 			//log otherStats
 			int numberOfOtherStats = MMNEAT.getNumberOtherStatsForPopulation(0);
-			String otherStatsFillString = pseudoGeneration + "\t";
-			for (int i = 0; i < numberOfOtherStats; i++) {
-				Float[] otherStats = ArrayUtils.toObject(archive.getOtherStatsScores(i));
-				otherStatsLogs[i].log(pseudoGeneration + "\t" + StringUtils.join(otherStats, "\t").replaceAll("-Infinity", "X"));
-				Float maximumFitness = StatisticsUtilities.maximum(otherStats);
+			if(numberOfOtherStats > 0) {
+				String otherStatsFillString = pseudoGeneration + "\t";
+				for (int i = 0; i < numberOfOtherStats; i++) {
+					Float[] otherStats = ArrayUtils.toObject(archive.getOtherStatsScores(i));
+					otherStatsLogs[i].log(pseudoGeneration + "\t" + StringUtils.join(otherStats, "\t").replaceAll("-Infinity", "X"));
+					Float maximumFitness = StatisticsUtilities.maximum(otherStats);
 
-				// It is assumed that each other stat used with MAP Elites is a component from a weighted sum.
-				// However, some component fitnesses have negative minimum values. For proper QD calculation,
-				// the score range has to be shifted up. In addition, the offsetSoThatOccupiedBinsWithMinFitnessAreBetterThanEmptyBins
-				// is used so that even a minimal score is worth more than an empty bin. We add 1 to the index since we
-				// skip over the actual fitness function (just one) and only get other stats.
-				double minFitness = MMNEAT.fitnessFunctionMinScore(1 + i);
-				// minFitness is subtracted since this base value will be added to the actual fitness.
-				// for example, a negative min leads to a positive offset. Either way, want to zero out the min, except for offset.
-				final double qdScore = calculateQDScore(otherStats, offsetSoThatOccupiedBinsWithMinFitnessAreBetterThanEmptyBins - minFitness);
-				otherStatsFillString = otherStatsFillString + maximumFitness + "\t" + qdScore +"\t";
+					// It is assumed that each other stat used with MAP Elites is a component from a weighted sum.
+					// However, some component fitnesses have negative minimum values. For proper QD calculation,
+					// the score range has to be shifted up. In addition, the offsetSoThatOccupiedBinsWithMinFitnessAreBetterThanEmptyBins
+					// is used so that even a minimal score is worth more than an empty bin. We add 1 to the index since we
+					// skip over the actual fitness function (just one) and only get other stats.
+					double minFitness = MMNEAT.fitnessFunctionMinScore(1 + i);
+					// minFitness is subtracted since this base value will be added to the actual fitness.
+					// for example, a negative min leads to a positive offset. Either way, want to zero out the min, except for offset.
+					final double qdScore = calculateQDScore(otherStats, offsetSoThatOccupiedBinsWithMinFitnessAreBetterThanEmptyBins - minFitness);
+					otherStatsFillString = otherStatsFillString + maximumFitness + "\t" + qdScore +"\t";
+				}
+				otherStatsFillLog.log(otherStatsFillString);
 			}
-			otherStatsFillLog.log(otherStatsFillString);
 			
 			Float maximumFitness = StatisticsUtilities.maximum(elite);
 			// Exclude negative infinity to find out how many bins are filled
