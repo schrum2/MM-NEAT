@@ -23,10 +23,11 @@ public class MultiobjectiveUtil {
 	 * Turns the list of scores into scoresArrayForHypervolume[number of points][number of objectives].
 	 * calles calculateHypervolume for hypervolume calculations
 	 * Assumes all scores have the same number of objective scores.
+	 * @param <S> any type of Score, whether a regular Score or NSGA2Score
 	 * @param scores the list of scores for a pareto front being evaluated
 	 * @return the hypervolume of the pareto front.
 	 */
-	public static <T> double hypervolumeFromParetoFront(List<Score<T>> scores) {
+	public static <S extends Score<?>> double hypervolumeFromParetoFront(List<S> scores) {
 //		System.out.println("score scores length:" + scores.get(0).scores.length);
 		assert scores.size() > 0 : "scores size is less than 0";
 		if(scores.size() <= 0) {
@@ -40,7 +41,7 @@ public class MultiobjectiveUtil {
 		int i = 0;
 		double[] minScoreForEachObjective = MMNEAT.task.minScores();
 		
-		for (Score<T> individualScore : scores) {		//adds the scores to the double array of scores
+		for (S individualScore : scores) {		//adds the scores to the double array of scores
 			scoresArrayForHypervolume[i] = Arrays.copyOf(individualScore.scores,individualScore.scores.length);
 			for (int j = 0; j < scoresArrayForHypervolume[i].length; j++) {		//this should subtract the minimum score value for each objective from its score
 				scoresArrayForHypervolume[i][j] -= minScoreForEachObjective[j]; //before passing to hypervolume, adjust scores for the minimum 

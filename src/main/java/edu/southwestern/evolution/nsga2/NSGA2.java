@@ -3,6 +3,7 @@ package edu.southwestern.evolution.nsga2;
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.mulambda.MuPlusLambda;
+import edu.southwestern.log.MMNEATLog;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
@@ -12,6 +13,7 @@ import edu.southwestern.scores.ObjectiveComparator;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.NoisyLonerTask;
 import edu.southwestern.tasks.SinglePopulationTask;
+import edu.southwestern.util.MultiobjectiveUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.random.RandomNumbers;
 
@@ -34,6 +36,8 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 	protected boolean mating;// whether or not mating will occur
 	protected double crossoverRate;// rate at which phenotypes are crossed over
 
+	private MMNEATLog hypervolumeLog;
+	
 	/**
 	 * Default constructor
 	 */
@@ -63,6 +67,8 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 		super(task, mu, mu, io);
 		mating = Parameters.parameters.booleanParameter("mating");
 		crossoverRate = Parameters.parameters.doubleParameter("crossoverRate");
+		
+		hypervolumeLog = new MMNEATLog("NSGA2_Hypervolume", false, false, false, true);
 	}
 
 	/**
@@ -84,11 +90,11 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 	 * parent genotypes
 	 * 
      * @param <T> phenotype
-	 * @param numChildren
-	 * @param scoresArray
-	 * @param generation
-	 * @param mating
-	 * @param crossoverRate
+	 * @param numChildren number to generate
+	 * @param scoresArray array of parent scores
+	 * @param generation current generation
+	 * @param mating whether mating is allowed
+	 * @param crossoverRate if mating, what percentage?
 	 * @return list of offspring genotypes from sort
 	 */
 	public static <T> ArrayList<Genotype<T>> generateNSGA2Children(int numChildren, NSGA2Score<T>[] scoresArray,
@@ -203,7 +209,7 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 	 */
 	@Override
 	public ArrayList<Genotype<T>> selection(int numParents, ArrayList<Score<T>> scores) {
-		return staticSelection(numParents, staticNSGA2Scores(scores));
+		return staticSelection(numParents, staticNSGA2Scores(scores), this.currentGeneration(), hypervolumeLog);
 	}
 
 	/**
@@ -215,6 +221,21 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 	 * @return array list of selected genotypes
 	 */
 	public static <T> ArrayList<Genotype<T>> staticSelection(int numParents, NSGA2Score<T>[] scoresArray) {
+		// Do not log hypervolume
+		return staticSelection(numParents, scoresArray, -1, null);
+	}
+	
+	/**
+	 * static version of NSGA2 selection method
+	 * 
+	 * @param <T> phenotype
+	 * @param numParents number of parents to select from
+	 * @param scoresArray array of scores from parents
+	 * @param generation Only matters if log is not null
+	 * @param hypervolumeLog if not null, then log the hypervolume of the Pareto front
+	 * @return array list of selected genotypes
+	 */
+	public static <T> ArrayList<Genotype<T>> staticSelection(int numParents, NSGA2Score<T>[] scoresArray, int generation, MMNEATLog hypervolumeLog) {
 		assignCrowdingDistance(scoresArray);
 		// gets the pareto front of scores using a fast non-dominated sort
 		ArrayList<ArrayList<NSGA2Score<T>>> fronts = fastNonDominatedSort(scoresArray);
@@ -222,7 +243,13 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 		ArrayList<Genotype<T>> newParents = new ArrayList<Genotype<T>>(numParents);
 		int numAdded = 0;
 		int currentFront = 0;
-
+		
+		if(hypervolumeLog != null) {
+			// log the hypervolumes
+			double hypervolume = MultiobjectiveUtil.hypervolumeFromParetoFront(fronts.get(currentFront));
+			hypervolumeLog.log(generation + "\t" + hypervolume);
+		}
+		
 		while (numAdded < numParents) {
 			ArrayList<NSGA2Score<T>> front = fronts.get(currentFront);
                         // necessary if front is bigger than original number of parents
