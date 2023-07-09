@@ -270,7 +270,17 @@ public class Archive<T> {
 			// Notice that the otherStats of the original Score become the actual objective scores of the new Score instance
 			scoresOfOtherStats.add(new Score<>(s.individual, s.otherStats));
 		}
-		return MultiobjectiveUtil.hypervolumeFromPopulation(scoresOfOtherStats);
+		
+		// Assume there is at least one score
+		double[] minObjectiveScores = new double[scoresOfOtherStats.get(0).scores.length];
+		for(int i = 0; i < minObjectiveScores.length; i++) {
+			// It is assumed that each other stat used with MAP Elites is a component from a weighted sum.
+			// However, some component fitnesses have negative minimum values. min scores are needed to shift
+			// the range to start at 0. We add 1 to the index since we
+			// skip over the actual fitness function (just one) and only get other stats.
+			minObjectiveScores[i] = MMNEAT.fitnessFunctionMinScore(1 + i);
+		}
+		return MultiobjectiveUtil.hypervolumeFromPopulation(scoresOfOtherStats, minObjectiveScores);
 	}
 	
 	/**
