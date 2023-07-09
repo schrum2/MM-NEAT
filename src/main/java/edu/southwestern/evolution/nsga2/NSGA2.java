@@ -17,6 +17,9 @@ import edu.southwestern.util.MultiobjectiveUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.random.RandomNumbers;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -68,7 +71,28 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 		mating = Parameters.parameters.booleanParameter("mating");
 		crossoverRate = Parameters.parameters.doubleParameter("crossoverRate");
 		
-		hypervolumeLog = new MMNEATLog("NSGA2_Hypervolume", false, false, false, true);
+		if(io) {
+			// text file with hypervolume scores
+			hypervolumeLog = new MMNEATLog("Hypervolume", false, false, false, true);
+			// plt file to plot them with gnuplot
+			String fileName = hypervolumeLog.getLogTextFilename().replace(".txt", ".plt");
+			try {
+				PrintStream ps = new PrintStream(new File(fileName));
+				ps.println("set style data lines");
+				ps.println("set xlabel \"Generation\"");
+				ps.println("set ylabel \"Hypervolume\"");
+				ps.println("");
+				ps.println("set title \"Hypervolume\"");
+				ps.println("plot \\");
+				ps.println("\""+hypervolumeLog.getLogTextFilename()+"\" u 1:2 t \"Hypervolume\"");
+				ps.close();
+			} catch (FileNotFoundException e) {
+				System.out.println("Could not create hypervolume plot file");
+				e.printStackTrace();
+				System.exit(1);
+			}
+			
+		}
 	}
 
 	/**
