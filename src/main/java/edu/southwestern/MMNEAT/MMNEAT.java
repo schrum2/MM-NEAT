@@ -104,6 +104,8 @@ public class MMNEAT {
 	public static ArrayList<Metaheuristic> metaheuristics;
 	public static ArrayList<ArrayList<String>> fitnessFunctions;
 	public static ArrayList<Statistic> aggregationOverrides;
+	// Most fitness minimums do not need to be stored, but store them here if needed. Mainly for MAP Elites otherStats
+	public static ArrayList<Double> fitnessMinimums;
 	@SuppressWarnings("rawtypes") // applies to any population type
 	public static PerformanceLog performanceLog;
 	private static ArrayList<Integer> actualFitnessFunctions;
@@ -305,7 +307,7 @@ public class MMNEAT {
 	 * @param pop population index (for coevolution)
 	 */
 	public static void registerFitnessFunction(String name, int pop) {
-		registerFitnessFunction(name, null, true, pop);
+		registerFitnessFunction(name, null, true, pop, Double.NaN);
 	}
 
 	public static void registerFitnessFunction(String name, boolean affectsSelection) {
@@ -322,11 +324,11 @@ public class MMNEAT {
 	 * @param pop population index (for coevolution)
 	 */
 	public static void registerFitnessFunction(String name, boolean affectsSelection, int pop) {
-		registerFitnessFunction(name, null, affectsSelection, pop);
+		registerFitnessFunction(name, null, affectsSelection, pop, Double.NaN);
 	}
 
 	public static void registerFitnessFunction(String name, Statistic override, boolean affectsSelection) {
-		registerFitnessFunction(name, override, affectsSelection, 0);
+		registerFitnessFunction(name, override, affectsSelection, 0, Double.NaN);
 	}
 
 	/**
@@ -338,8 +340,9 @@ public class MMNEAT {
 	 * @param override Statistic applied across evaluations (null is default/average)
 	 * @param affectsSelection whether it affects selection
 	 * @param pop population index (for coevolution)
+	 * @param minFitnss smallest possible fitness score (optional, could be NaN)
 	 */
-	public static void registerFitnessFunction(String name, Statistic override, boolean affectsSelection, int pop) {
+	public static void registerFitnessFunction(String name, Statistic override, boolean affectsSelection, int pop, double minFitness) {
 		if(actualFitnessFunctions == null){
 			actualFitnessFunctions = new ArrayList<Integer>();
 		}
@@ -357,6 +360,11 @@ public class MMNEAT {
 		}
 		fitnessFunctions.get(pop).add(name);
 		aggregationOverrides.add(override);
+		fitnessMinimums.add(minFitness);
+	}
+	
+	public static double fitnessFunctionMinScore(int index) {
+		return fitnessMinimums.get(index);
 	}
 	
 	/**
@@ -386,6 +394,7 @@ public class MMNEAT {
 			fitnessFunctions = new ArrayList<ArrayList<String>>();
 			fitnessFunctions.add(new ArrayList<String>());
 			aggregationOverrides = new ArrayList<Statistic>();
+			fitnessMinimums = new ArrayList<Double>();
 
 			boolean loadFrom = !Parameters.parameters.stringParameter("loadFrom").equals("");
 			System.out.println("Init Genotype Ids");
@@ -551,6 +560,7 @@ public class MMNEAT {
 		metaheuristics = null;
 		fitnessFunctions = null;
 		aggregationOverrides = null;
+		fitnessMinimums = null;
 		ea = null;
 		genotype = null;
 		experiment = null;

@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.Vector;
@@ -15,13 +16,14 @@ import java.util.stream.Stream;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.scores.Score;
 import edu.southwestern.util.ClassCreation;
+import edu.southwestern.util.MultiobjectiveUtil;
+import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.file.Serialization;
 import edu.southwestern.util.random.RandomNumbers;
 
 /**
- * TODO: JavaDoc
- * @author 
+ * Archive for MAP Elites
  *
  * @param <T>
  */
@@ -236,7 +238,7 @@ public class Archive<T> {
 	}
 	
 	/**
-	 * Return set of Scores that are tied for highest fitness
+	 * Return set of Scores that are elites (each occupied bin)
 	 * across the whole archive.
 	 * 
 	 * @return Set of champion Score instances containing genotypes
@@ -253,6 +255,28 @@ public class Archive<T> {
 		});
 		// Get the set of all max scores
 		return archive.parallelStream().filter(s -> s != null).filter(s -> s.behaviorIndexScore() == maxScore.get().behaviorIndexScore()).collect(Collectors.toSet());
+	}
+	
+	/**
+	 * Do a hypervolume calculation across the whole archive treating
+	 * the otherStats within each Score instance at the actual objective
+	 * scores for the purpose of the calculation.
+	 * 
+	 * @return resulting hypervolume over otherStats
+	 */
+	public Pair<Double, List<Score<T>>> getHypervolumeAndParetoFrontAcrossOtherStats() {
+		Set<Score<T>> champions = getChampions();
+		List<Score<T>> scoresOfOtherStats = Score.getScoresOfOtherStats(champions);
+		// Assume there is at least one score
+		double[] minObjectiveScores = new double[scoresOfOtherStats.get(0).scores.length];
+		for(int i = 0; i < minObjectiveScores.length; i++) {
+			// It is assumed that each other stat used with MAP Elites is a component from a weighted sum.
+			// However, some component fitnesses have negative minimum values. min scores are needed to shift
+			// the range to start at 0. We add 1 to the index since we
+			// skip over the actual fitness function (just one) and only get other stats.
+			minObjectiveScores[i] = MMNEAT.fitnessFunctionMinScore(1 + i);
+		}
+		return MultiobjectiveUtil.hypervolumeAndParetoFrontFromPopulation(scoresOfOtherStats, minObjectiveScores);
 	}
 	
 	/**
@@ -371,7 +395,7 @@ public class Archive<T> {
 	}
 	
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
-		int runNum = 50; 
+		//int runNum = 50; 
 		//MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" base:nsga2test log:NSG2Test-Test saveTo:Test trackPseudoArchive:true netio:true lambda:37 maxGens:200 task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.SphereFunction genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foBinDimension:500 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
 		//MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" mapElitesQDBaseOffset:525 io:true base:nsga2test log:NSG2Test-MAPElites saveTo:MAPElites netio:false maxGens:10000 ea:edu.southwestern.evolution.mapelites.MAPElites task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.SphereFunction steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foBinDimension:50 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
 		//MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" mapElitesQDBaseOffset:525 base:nsga2test log:NSG2Test-CMAES saveTo:CMAES trackPseudoArchive:true netio:true mu:37 lambda:37 maxGens:200 ea:edu.southwestern.evolution.cmaes.CMAEvolutionStrategyEA task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.SphereFunction genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foBinDimension:500 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));

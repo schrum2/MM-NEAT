@@ -400,7 +400,9 @@ public class Parameters {
 		integerOptions.add("minecraftDelayAfterEvaluation", 0, "If the value is greater than 0 causes the thread to sleep for the amount it is set to");
 		integerOptions.add("minecraftXMovementBetweenEvals", 0, "If the value is greater than 0 it adds it to the x value");
 		integerOptions.add("minecraftMaxXShift", 0, "Max value we can shift X");
-		integerOptions.add("minecraftEmptySpaceBuffer", 22, "Additional space that is cleared around shape on all sides before each evaluation");
+		integerOptions.add("minecraftEmptySpaceBufferX", 22, "Additional space that is cleared around shape on X side before each evaluation");
+		integerOptions.add("minecraftEmptySpaceBufferY", 22, "Additional space that is cleared around shape on Y side before each evaluation");
+		integerOptions.add("minecraftEmptySpaceBufferZ", 22, "Additional space that is cleared around shape on Z side before each evaluation");
 		
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
@@ -979,6 +981,7 @@ public class Parameters {
 		doubleOptions.add("minecraftChangeBlockOrientationMutation", 0.2, "Rate of mutation to change a block orientation");
 		doubleOptions.add("minecraftSwapBlocksMutation", 0.2, "Rate of mutation to swap two blocks");
 		doubleOptions.add("minecraftPercentOfTarget", 1.0, "If percentage of target remaining is less than this, then save the shape");
+		doubleOptions.add("hypervolumeMinimumOffset", 1.0, "Add to all scores before hypervolume calculation so that a min score in one objective is not worthless");
 		
 		// String parameters
 		stringOptions.add("marioTargetLevel", "data\\VGLC\\SuperMarioBrosNewEncoding\\overworld\\mario-1-1.txt", "Relative path to json file with Mario level to target");

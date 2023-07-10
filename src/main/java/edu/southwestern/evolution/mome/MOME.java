@@ -5,8 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Vector;
 import java.util.stream.Stream;
@@ -25,12 +23,12 @@ import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
+import edu.southwestern.util.MultiobjectiveUtil;
 import edu.southwestern.util.PopulationUtil;
 import edu.southwestern.util.PythonUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.file.FileUtilities;
-import edu.southwestern.util.file.Serialization;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.stats.StatisticsUtilities;
 
@@ -82,20 +80,6 @@ public class MOME<T> implements SteadyStateEA<T>{
 	private MMNEATLog[] maxFitnessLogs = null; //creates a log for each objective that contains the max fitness for each bin, logged every generation
 	private MMNEATLog[] minFitnessLogs = null; //creates a log for each objective that contains the min fitness for each bin, logged every generation
 	private MMNEATLog[] rangeFitnessLogs = null; //creates a log for each objective that contains the range from min to max for each bin, logged every generation
-
-	// For sortin gPareto fronts before printing
-	Comparator<Score<T>> paretoScoreComparator = new Comparator<Score<T>>() {
-		// Sort lexicographically: first score, then second score, etc
-		@Override
-		public int compare(Score<T> o1, Score<T> o2) {
-			for(int i = 0; i < o1.scores.length; i++) {
-				if(o1.scores[i] < o2.scores[i]) return -1;
-				if(o1.scores[i] > o2.scores[i]) return 1;
-			}
-			return 0; // All were equal
-		}
-
-	};
 	
 	//CONSTRUCTORS
 	public MOME() {
@@ -384,7 +368,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 				final int pseudoGeneration = individualCreationAttemptsCount/individualsPerGeneration;				
 				System.out.println("generation:"+pseudoGeneration);
 				
-				saveGlobalParetoFront(paretoScoreComparator, "Gen"+pseudoGeneration+"-AggregateFront");
+				saveGlobalParetoFront("Gen"+pseudoGeneration+"-AggregateFront");
 				
 				int numberOfObjectives = MMNEAT.task.numObjectives();
 
@@ -651,7 +635,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 	@Override
 	public void finalCleanup() {
 
-		saveGlobalParetoFront(paretoScoreComparator, "AggregateFront");
+		saveGlobalParetoFront("AggregateFront");
 
 		//setup finalCleanup logging
 		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
@@ -660,128 +644,36 @@ public class MOME<T> implements SteadyStateEA<T>{
 		int iLogs = 0;	//anytime a log is created, increment and check that it's not out of bounds
 
 		//LOGGING FOR BINS
-		PrintStream ps;
-		try {
-			int numberOfOccupiedBins = archive.getNumberOfOccupiedBins();
-			int numberOfObjectives = MMNEAT.task.numObjectives();
-			//goes though all occupied bins I think?
-			for (Vector<Integer> key : archive.archive.keySet()) {
-				if(key.size() > 0) {			//for a bin that has individuals
-
-					//SET UP BIN LOG FILE
-					String binLabel = archive.getBinLabel(key);
-
-					File paretoFrontSingleBinFile = new File(saveDirectoryParetoFronts + "/"+ binLabel+ ".txt");
-
-					ps = new PrintStream(paretoFrontSingleBinFile);
-
-					Vector<Score<T>> scoresForBin = archive.getScoresForBin(key);
-					Collections.sort(scoresForBin, paretoScoreComparator);
-
-					//GET A SINGLE ROW LOGGED
-					//for each score in the bin, log that scores data on one row
-					for (Score<T> score : scoresForBin) {
-						//log this score in the bin for each objective, or create string
-						String scoreString = "";
-						for (int i = 0; i < numberOfObjectives; i++) {
-							//this is objective i ----- adds objective column score to that scores row
-							scoreString = scoreString + score.scores[i] + "\t";
-							//string + score for objective i + tab
-						}
-						ps.println(scoreString);
-					}
-					ps.close();
-				}else {
-					System.out.println("this is an empty bin, I don't think this happens though?");
-				}
-				iLogs++;
-				if(iLogs > numberOfOccupiedBins) {
-					System.out.println("i logs greater than the number of logs " + iLogs + " number of occupied bins:" + numberOfOccupiedBins);
-				}
+		int numberOfOccupiedBins = archive.getNumberOfOccupiedBins();
+		//goes though all occupied bins I think?
+		for (Vector<Integer> key : archive.archive.keySet()) {
+			if(key.size() > 0) {			//for a bin that has individuals
+				//SET UP BIN LOG FILE
+				String binLabel = archive.getBinLabel(key);
+				Vector<Score<T>> scoresForBin = archive.getScoresForBin(key);
+				MultiobjectiveUtil.logParetoFrontGenotypesAndScorePlot(saveDirectoryParetoFronts + "/" + binLabel+"_Front", scoresForBin, null);
+			}else {
+				System.out.println("this is an empty bin, I don't think this happens though?");
+				assert false : "A MOME archive bin that is not null, but has a size of 0 should be impossible";
 			}
-		} catch (FileNotFoundException e) {
-			System.out.println("Logging of bin Pareto fronts failed");
-			e.printStackTrace();
-			System.exit(1);
+			iLogs++;
+			if(iLogs > numberOfOccupiedBins) {
+				System.out.println("i logs greater than the number of logs " + iLogs + " number of occupied bins:" + numberOfOccupiedBins);
+			}
 		}
-
 		task.finalCleanup();
 	}
 
 	/**
-	 * @param paretoScoreComparator
-	 * @param directory
-	 * @return
+	 * Save log, plot, and genotype members of Pareto front
+	 * @param directory where to save the xml genotypes
 	 */
-	private String saveGlobalParetoFront(Comparator<Score<T>> paretoScoreComparator, String fileName) {
-		//this makes the directory folder for pareto fronts
-		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
-		String saveDirectoryParetoFronts = directory + "/ParetoFronts";
-		File directoryParetoFile = new File(saveDirectoryParetoFronts);
-		if(!directoryParetoFile.exists()) {
-			directoryParetoFile.mkdir();
-		}
-		System.out.println("pareto front directory name: "+saveDirectoryParetoFronts);
-
-		//logging aggregate file
-		File paretoFrontAggregateOutput = new File(saveDirectoryParetoFronts + "/"+fileName+".txt");
-
-		PrintStream ps;
-		try {
-			int numberOfObjectives = MMNEAT.task.numObjectives();
-			ps = new PrintStream(paretoFrontAggregateOutput);
-
-			///AGGREGATE LOGGING
-
-			Vector<Score<T>> archiveFinalParetoFront = archive.getCombinedParetoFrontWholeArchive();
-			
-			if(CommonConstants.netio) {
-				// Save global Pareto front at each logging event
-				for(Score<T> candidate : archiveFinalParetoFront) {
-					String path = archive.getArchiveDir();
-					Serialization.save(candidate.individual, path + "/" + fileName + "-elite-"+Arrays.toString(candidate.scores));
-				}
-			}
-
-			Collections.sort(archiveFinalParetoFront, paretoScoreComparator);
-			//go through score for row
-			//column is objectives
-			for (Score<T> score : archiveFinalParetoFront) {
-				String scoreString = "";
-				for (int i = 0; i < numberOfObjectives; i++) {
-					scoreString = scoreString + score.scores[i] + "\t";
-				}
-				ps.println(scoreString);
-			}
-			ps.close();
-		} catch (FileNotFoundException e) {
-			System.out.println("Logging of "+fileName+".txt failed");
-			e.printStackTrace();
-		}
-		System.out.println("about to make aggregate .plt");
-		String logTitle = saveDirectoryParetoFronts+"/"+fileName+".txt";
-		System.out.println("logTitle: " + logTitle);
-		String plotFilename = saveDirectoryParetoFronts+"/"+fileName+".plt";
-		System.out.println("plotFilename: " + plotFilename);
-
-
-		File plotFile = new File(plotFilename);
-		try {
-			// Non-PDF version
-			ps = new PrintStream(plotFile);
-			ps.println("unset key");
-			ps.println("set title \""+fileName+" Pareto Front\"");
-			ps.println("plot \"" + fileName + ".txt" + "\" w linespoints t \"Pareto front\"");
-			ps.close();
-
-		} catch (FileNotFoundException e) {
-			System.out.println("Error creating plt log file");
-			e.printStackTrace();
-			System.exit(1);
-		}
-		return saveDirectoryParetoFronts;
+	private void saveGlobalParetoFront(String fileName) {
+		Vector<Score<T>> paretoFront = archive.getCombinedParetoFrontWholeArchive();
+		String xmlSaveDirectory = archive.getArchiveDir();
+		MultiobjectiveUtil.logParetoFrontGenotypesAndScorePlot(fileName, paretoFront, xmlSaveDirectory);
 	}
-	
+
 //the below methods are just ideas to make plotting more convenient or understandable
 	
 //	/**
