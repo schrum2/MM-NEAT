@@ -178,12 +178,12 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 		// Is problematic. The sufficient distance can't be too big, since a flying machine that leaves blocks behind
 		// actually won't have a center of mass that moves that much. However, keeping the sufficient distance small
 		// is allowing some non-flying machines to sneak by, which is unacceptable.
-		Vertex initialCenterOfMass = MinecraftUtilClass.getCenterOfMass(originalBlocks);
-		Vertex farthestCenterOfMass = this.getFarthestCenterOfMass(history, initialCenterOfMass);
-		double maxMovedDistance = farthestCenterOfMass.distance(initialCenterOfMass);
-		if(CommonConstants.watch) System.out.println("Distance: "+maxMovedDistance+" > sufficient distance = "+sufficientDistanceForFlying());
-		if(CommonConstants.watch) System.out.println("initial: "+initialCenterOfMass+", farthest:"+farthestCenterOfMass+", offsets:"+MinecraftUtilClass.emptySpaceOffsets());
-		boolean considerThisAFlyingMachine1 = maxMovedDistance > sufficientDistanceForFlying();
+//		Vertex initialCenterOfMass = MinecraftUtilClass.getCenterOfMass(originalBlocks);
+//		Vertex farthestCenterOfMass = this.getFarthestCenterOfMass(history, initialCenterOfMass);
+//		double maxMovedDistance = farthestCenterOfMass.distance(initialCenterOfMass);
+//		if(CommonConstants.watch) System.out.println("Distance: "+maxMovedDistance+" > sufficient distance = "+sufficientDistanceForFlying());
+//		if(CommonConstants.watch) System.out.println("initial: "+initialCenterOfMass+", farthest:"+farthestCenterOfMass+", offsets:"+MinecraftUtilClass.emptySpaceOffsets());
+//		boolean considerThisAFlyingMachine1 = maxMovedDistance > sufficientDistanceForFlying();
 		//return considerThisAFlyingMachine1;
 		
 		// Calculation based on what the farthest block from the starting center of mass is
@@ -192,7 +192,8 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 		boolean considerThisAFlyingMachine2 = farthestDistance > sufficientBlockDistanceForFlying();
 		//return considerThisAFlyingMachine2;
 		
-		return considerThisAFlyingMachine1 && considerThisAFlyingMachine2;
+//		return considerThisAFlyingMachine1 && considerThisAFlyingMachine2;
+		return considerThisAFlyingMachine2;
 	}
 
 	/**
@@ -237,6 +238,7 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 	 */
 	private double sufficientBlockDistanceForFlying() {
 		MinecraftCoordinates offsets = MinecraftUtilClass.emptySpaceOffsets();
+		System.out.println("OFFSETS: "+offsets);
 		return Math.min(offsets.x(), Math.min(offsets.y(), offsets.z()))*FARTHEST_BLOCK_PERCENT_TO_EDGE_FOR_FLYING;
 	}
 		
