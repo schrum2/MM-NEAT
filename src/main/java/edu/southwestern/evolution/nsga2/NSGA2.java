@@ -15,6 +15,7 @@ import edu.southwestern.tasks.NoisyLonerTask;
 import edu.southwestern.tasks.SinglePopulationTask;
 import edu.southwestern.util.MultiobjectiveUtil;
 import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.random.RandomNumbers;
 
 import java.io.File;
@@ -77,7 +78,7 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 			// plt file to plot them with gnuplot
 			String fileName = hypervolumeLog.getLogTextFilename().replace(".txt", ".plt");
 			try {
-				PrintStream ps = new PrintStream(new File(fileName));
+				PrintStream ps = new PrintStream(new File(FileUtilities.getSaveDirectory() + "/" + fileName));
 				ps.println("set style data lines");
 				ps.println("set xlabel \"Generation\"");
 				ps.println("set ylabel \"Hypervolume\"");
