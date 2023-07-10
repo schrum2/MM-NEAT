@@ -12,6 +12,7 @@ import edu.southwestern.evolution.nsga2.NSGA2Score;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
+import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.file.Serialization;
 import jmetal.qualityIndicator.Hypervolume;
@@ -113,12 +114,22 @@ public class MultiobjectiveUtil {
 	 * @return hypervolume of Pareto front
 	 */
 	public static <T> double hypervolumeFromPopulation(List<Score<T>> scores, double[] minScoreForEachObjective) {
+		return hypervolumeAndParetoFrontFromPopulation(scores, minScoreForEachObjective).t1;
+	}
+	
+	/**
+	 * Like above, but also returns the Pareto front itself, since it is calculated along the way
+	 * @param scores scores the list of scores being evaluated (may not be Pareto front)
+	 * @param minScoreForEachObjective min scores for each objective
+	 * @return Pair of hypervolume and Pareto front
+	 */
+	public static <T> Pair<Double,List<Score<T>>> hypervolumeAndParetoFrontFromPopulation(List<Score<T>> scores, double[] minScoreForEachObjective) {
 		List<NSGA2Score<T>> paretoFront = NSGA2.getParetoFront(NSGA2.staticNSGA2Scores(scores)); //get pareto front
 		List<Score<T>> scoresParetoList = new ArrayList<Score<T>>(scores.size());
 		for (NSGA2Score<T> score : paretoFront) {		//turn NSGA2Score pareto front into List of Scores
 			scoresParetoList.add(score);
 		}
-		return hypervolumeFromParetoFront(scoresParetoList, minScoreForEachObjective);
+		return new Pair<>(hypervolumeFromParetoFront(scoresParetoList, minScoreForEachObjective),scoresParetoList);
 	}
 
 	

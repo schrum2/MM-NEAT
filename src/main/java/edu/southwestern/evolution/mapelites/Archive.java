@@ -17,6 +17,7 @@ import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.scores.Score;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.MultiobjectiveUtil;
+import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.file.Serialization;
 import edu.southwestern.util.random.RandomNumbers;
@@ -263,10 +264,9 @@ public class Archive<T> {
 	 * 
 	 * @return resulting hypervolume over otherStats
 	 */
-	public double getHypervolumeAcrossOtherStats() {
+	public Pair<Double, List<Score<T>>> getHypervolumeAndParetoFrontAcrossOtherStats() {
 		Set<Score<T>> champions = getChampions();
 		List<Score<T>> scoresOfOtherStats = Score.getScoresOfOtherStats(champions);
-		
 		// Assume there is at least one score
 		double[] minObjectiveScores = new double[scoresOfOtherStats.get(0).scores.length];
 		for(int i = 0; i < minObjectiveScores.length; i++) {
@@ -276,7 +276,7 @@ public class Archive<T> {
 			// skip over the actual fitness function (just one) and only get other stats.
 			minObjectiveScores[i] = MMNEAT.fitnessFunctionMinScore(1 + i);
 		}
-		return MultiobjectiveUtil.hypervolumeFromPopulation(scoresOfOtherStats, minObjectiveScores);
+		return MultiobjectiveUtil.hypervolumeAndParetoFrontFromPopulation(scoresOfOtherStats, minObjectiveScores);
 	}
 	
 	/**

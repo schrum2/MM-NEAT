@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Vector;
 import java.util.stream.Stream;
 
@@ -35,6 +36,7 @@ import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBinLa
 import edu.southwestern.tasks.innovationengines.PictureTargetTask;
 import edu.southwestern.tasks.interactive.picbreeder.PicbreederTask;
 import edu.southwestern.tasks.loderunner.LodeRunnerLevelTask;
+import edu.southwestern.util.MultiobjectiveUtil;
 import edu.southwestern.util.PopulationUtil;
 import edu.southwestern.util.PythonUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
@@ -656,7 +658,9 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 					otherStatsFillString = otherStatsFillString + maximumFitness + "\t" + qdScore +"\t";
 				}
 				otherStatsFillLog.log(otherStatsFillString);
-				otherHypervolumeLog.log(pseudoGeneration + "\t" + archive.getHypervolumeAcrossOtherStats());
+				Pair<Double, List<Score<T>>> volumeAndFront = archive.getHypervolumeAndParetoFrontAcrossOtherStats();
+				otherHypervolumeLog.log(pseudoGeneration + "\t" + volumeAndFront.t1);				
+				MultiobjectiveUtil.logParetoFrontGenotypesAndScorePlot("PseudoGen"+pseudoGeneration+"_ParetoFront", volumeAndFront.t2, null);
 			}
 			
 			Float maximumFitness = StatisticsUtilities.maximum(elite);
