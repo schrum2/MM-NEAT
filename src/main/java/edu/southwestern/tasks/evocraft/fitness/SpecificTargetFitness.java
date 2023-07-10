@@ -12,6 +12,12 @@ import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Vertex;
 
+/**
+ * NOTE: This fitness function seems to not really work. Evaluation freezes, and not sure why.
+ * 
+ * @author schrum2
+ *
+ */
 public class SpecificTargetFitness extends TimedEvaluationMinecraftFitnessFunction {
 	
 	@Override
