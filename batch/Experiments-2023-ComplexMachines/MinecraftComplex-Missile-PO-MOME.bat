@@ -18,7 +18,7 @@ minecraftMandatoryWaitTime:15000 ^
 minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 ^
 minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.ExplosiveBlockSet ^
 spaceBetweenMinecraftShapes:30 ^
-minecraftClearWithGlass:true ^
+minecraftClearWithGlass:false ^
 minecraftAccumulateChangeInCenterOfMass:true minecraftChangeCenterOfMassFitness:true ^
 minecraftMissileFitness:true minecraftCompassMissileTargets:true ^
 minecraftTargetDistancefromShapeX:30 minecraftTargetDistancefromShapeY:0 minecraftTargetDistancefromShapeZ:0 ^
