@@ -1,15 +1,23 @@
 package edu.southwestern.util;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.nsga2.NSGA2;
 import edu.southwestern.evolution.nsga2.NSGA2Score;
+import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
+import edu.southwestern.util.file.FileUtilities;
+import edu.southwestern.util.file.Serialization;
 import jmetal.qualityIndicator.Hypervolume;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Contains methods for computing Pareto fronts. Based on jmetal.qualityIndicator.Hypervolume
@@ -19,6 +27,20 @@ import java.util.Arrays;
  */
 public class MultiobjectiveUtil {
 
+	// For sorting Pareto fronts before printing
+	public static final Comparator<Score<?>> PARETO_SCORE_COMPARATOR = new Comparator<Score<?>>() {
+		// Sort lexicographically: first score, then second score, etc
+		@Override
+		public int compare(Score<?> o1, Score<?> o2) {
+			for(int i = 0; i < o1.scores.length; i++) {
+				if(o1.scores[i] < o2.scores[i]) return -1;
+				if(o1.scores[i] > o2.scores[i]) return 1;
+			}
+			return 0; // All were equal
+		}
+
+	};
+	
 	/**
 	 * Calculates the hypervolume from a list of scores. Assumes that the list is the current pareto front.
 	 * Turns the list of scores into scoresArrayForHypervolume[number of points][number of objectives].
@@ -99,4 +121,81 @@ public class MultiobjectiveUtil {
 		return hypervolumeFromParetoFront(scoresParetoList, minScoreForEachObjective);
 	}
 
+	
+	/**
+	 * Save all scores in Pareto front and a plot file for displaying them,
+	 * along with an xml file of each member of the Pareto front.
+	 * 
+	 * @param PARETO_SCORE_COMPARATOR Comparator that makes sure the scores are sorted for display
+	 * @param scoreFileName Name of text file that will hold the scores
+	 * @param paretoFront List that must contain a Pareto front
+	 * @param xmlSaveDirectory directory where xml files of each genotype are saved
+	 */
+	public static <T> void logParetoFrontGenotypesAndScorePlot(String scoreFileName,
+			List<Score<T>> paretoFront, String xmlSaveDirectory) {
+		//this makes the directory folder for pareto fronts
+		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
+		String saveDirectoryParetoFronts = directory + "/ParetoFronts";
+		File directoryParetoFile = new File(saveDirectoryParetoFronts);
+		if(!directoryParetoFile.exists()) {
+			directoryParetoFile.mkdir();
+		}
+		System.out.println("pareto front directory name: "+saveDirectoryParetoFronts);
+
+		//logging aggregate file
+		File paretoFrontAggregateOutput = new File(saveDirectoryParetoFronts + "/"+scoreFileName+".txt");
+
+		PrintStream ps;
+		try {
+			int numberOfObjectives = MMNEAT.task.numObjectives();
+			ps = new PrintStream(paretoFrontAggregateOutput);
+
+			///AGGREGATE LOGGING
+
+			if(CommonConstants.netio) {
+				// Save global Pareto front at each logging event
+				for(Score<T> candidate : paretoFront) {
+					
+					Serialization.save(candidate.individual, xmlSaveDirectory + "/" + scoreFileName + "-elite-"+Arrays.toString(candidate.scores));
+				}
+			}
+
+			Collections.sort(paretoFront, PARETO_SCORE_COMPARATOR);
+			//go through score for row
+			//column is objectives
+			for (Score<T> score : paretoFront) {
+				String scoreString = "";
+				for (int i = 0; i < numberOfObjectives; i++) {
+					scoreString = scoreString + score.scores[i] + "\t";
+				}
+				ps.println(scoreString);
+			}
+			ps.close();
+		} catch (FileNotFoundException e) {
+			System.out.println("Logging of "+scoreFileName+".txt failed");
+			e.printStackTrace();
+		}
+		System.out.println("about to make aggregate .plt");
+		String logTitle = saveDirectoryParetoFronts+"/"+scoreFileName+".txt";
+		System.out.println("logTitle: " + logTitle);
+		String plotFilename = saveDirectoryParetoFronts+"/"+scoreFileName+".plt";
+		System.out.println("plotFilename: " + plotFilename);
+
+
+		File plotFile = new File(plotFilename);
+		try {
+			// Non-PDF version
+			ps = new PrintStream(plotFile);
+			ps.println("unset key");
+			ps.println("set title \""+scoreFileName+" Pareto Front\"");
+			ps.println("plot \"" + scoreFileName + ".txt" + "\" w linespoints t \"Pareto front\"");
+			ps.close();
+
+		} catch (FileNotFoundException e) {
+			System.out.println("Error creating plt log file");
+			e.printStackTrace();
+			System.exit(1);
+		}
+	}
+	
 }

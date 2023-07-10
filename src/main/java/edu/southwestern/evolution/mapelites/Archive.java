@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.Vector;
@@ -21,8 +22,7 @@ import edu.southwestern.util.file.Serialization;
 import edu.southwestern.util.random.RandomNumbers;
 
 /**
- * TODO: JavaDoc
- * @author 
+ * Archive for MAP Elites
  *
  * @param <T>
  */
@@ -265,11 +265,7 @@ public class Archive<T> {
 	 */
 	public double getHypervolumeAcrossOtherStats() {
 		Set<Score<T>> champions = getChampions();
-		Vector<Score<T>> scoresOfOtherStats = new Vector<>(champions.size());
-		for(Score<T> s : champions) {
-			// Notice that the otherStats of the original Score become the actual objective scores of the new Score instance
-			scoresOfOtherStats.add(new Score<>(s.individual, s.otherStats));
-		}
+		List<Score<T>> scoresOfOtherStats = Score.getScoresOfOtherStats(champions);
 		
 		// Assume there is at least one score
 		double[] minObjectiveScores = new double[scoresOfOtherStats.get(0).scores.length];
