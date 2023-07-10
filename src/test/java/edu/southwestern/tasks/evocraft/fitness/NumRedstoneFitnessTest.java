@@ -32,6 +32,7 @@ public class NumRedstoneFitnessTest {
 	@Test
 	public void testfitnessScore() {
 		MinecraftCoordinates corner = new MinecraftCoordinates(0,5,0); //Initializes corner for testing
+		System.out.println("\n TEST: NumRedstoneFitnessTest: testfitnessScore");
 
 		List<Block> blockSet1 = new ArrayList<>();
 		blockSet1.add(new Block(1,5,1,BlockType.AIR, Orientation.WEST));
@@ -64,11 +65,15 @@ public class NumRedstoneFitnessTest {
 		assertEquals(3,ff.fitnessScore(corner,blockSet1),0);
 		blockSet1.add(new Block(7,6,2,BlockType.REDSTONE_BLOCK, Orientation.WEST));
 		assertEquals(4,ff.fitnessScore(corner,blockSet1),0);
+		System.out.println("\n");
 	}
 
 	@Test
 	public void testMaxFitness() {
+		System.out.println("\n TEST: NumRedstoneFitnessTest: testMaximumFitness");
+
 		assertEquals(1000,ff.maxFitness(),0);
+		System.out.println("\n");
 	}
 
 }

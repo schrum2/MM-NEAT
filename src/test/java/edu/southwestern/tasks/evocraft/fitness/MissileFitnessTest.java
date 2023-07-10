@@ -62,14 +62,24 @@ public class MissileFitnessTest {
 		System.out.println("1");
 		MinecraftCoordinates ranges = MinecraftUtilClass.getRanges();
 		System.out.println("2");
+		
+		System.out.println("trying to sleep");
+		try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("after sleep");
+
 		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,30,-35);
-		MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 50); // Larger buffer is important, but too large and it crashes!
+//		MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 50); // Larger buffer is important, but too large and it crashes!
 		ArrayList<Block> testBlockSet = new ArrayList<>();
 		testBlockSet.add(new Block(-25,30,-35,BlockType.OBSIDIAN, Orientation.WEST));
 		testBlockSet.add(new Block(-24,30,-35,BlockType.REDSTONE_BLOCK, Orientation.EAST));
 		
 		int min = (ranges.x()) * (ranges.z()) * (ranges.y());	
-		//System.out.println("This is Ranges.x:" + ranges.x());
+		System.out.println("This is Ranges.x:" + ranges.x());
 		assertEquals(-min ,testInstance.fitnessScore(testCorner,testBlockSet),0.0);
 		System.out.println("\n");
 	}
