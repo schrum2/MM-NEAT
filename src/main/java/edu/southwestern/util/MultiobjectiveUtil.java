@@ -129,7 +129,8 @@ public class MultiobjectiveUtil {
 	 * @param PARETO_SCORE_COMPARATOR Comparator that makes sure the scores are sorted for display
 	 * @param scoreFileName Name of text file that will hold the scores
 	 * @param paretoFront List that must contain a Pareto front
-	 * @param xmlSaveDirectory directory where xml files of each genotype are saved
+	 * @param xmlSaveDirectory directory where xml files of each genotype are saved.
+	 * 			if xmlSaveDirectory is null, it prevents saving of xml files
 	 */
 	public static <T> void logParetoFrontGenotypesAndScorePlot(String scoreFileName,
 			List<Score<T>> paretoFront, String xmlSaveDirectory) {
@@ -152,7 +153,7 @@ public class MultiobjectiveUtil {
 
 			///AGGREGATE LOGGING
 
-			if(CommonConstants.netio) {
+			if(CommonConstants.netio && xmlSaveDirectory != null) {
 				// Save global Pareto front at each logging event
 				for(Score<T> candidate : paretoFront) {
 					

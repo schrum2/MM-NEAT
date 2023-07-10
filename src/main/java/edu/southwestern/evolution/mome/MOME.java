@@ -5,8 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Vector;
 import java.util.stream.Stream;
@@ -646,51 +644,23 @@ public class MOME<T> implements SteadyStateEA<T>{
 		int iLogs = 0;	//anytime a log is created, increment and check that it's not out of bounds
 
 		//LOGGING FOR BINS
-		PrintStream ps;
-		try {
-			int numberOfOccupiedBins = archive.getNumberOfOccupiedBins();
-			int numberOfObjectives = MMNEAT.task.numObjectives();
-			//goes though all occupied bins I think?
-			for (Vector<Integer> key : archive.archive.keySet()) {
-				if(key.size() > 0) {			//for a bin that has individuals
-
-					//SET UP BIN LOG FILE
-					String binLabel = archive.getBinLabel(key);
-
-					File paretoFrontSingleBinFile = new File(saveDirectoryParetoFronts + "/"+ binLabel+ ".txt");
-
-					ps = new PrintStream(paretoFrontSingleBinFile);
-
-					Vector<Score<T>> scoresForBin = archive.getScoresForBin(key);
-					Collections.sort(scoresForBin, MultiobjectiveUtil.PARETO_SCORE_COMPARATOR);
-
-					//GET A SINGLE ROW LOGGED
-					//for each score in the bin, log that scores data on one row
-					for (Score<T> score : scoresForBin) {
-						//log this score in the bin for each objective, or create string
-						String scoreString = "";
-						for (int i = 0; i < numberOfObjectives; i++) {
-							//this is objective i ----- adds objective column score to that scores row
-							scoreString = scoreString + score.scores[i] + "\t";
-							//string + score for objective i + tab
-						}
-						ps.println(scoreString);
-					}
-					ps.close();
-				}else {
-					System.out.println("this is an empty bin, I don't think this happens though?");
-				}
-				iLogs++;
-				if(iLogs > numberOfOccupiedBins) {
-					System.out.println("i logs greater than the number of logs " + iLogs + " number of occupied bins:" + numberOfOccupiedBins);
-				}
+		int numberOfOccupiedBins = archive.getNumberOfOccupiedBins();
+		//goes though all occupied bins I think?
+		for (Vector<Integer> key : archive.archive.keySet()) {
+			if(key.size() > 0) {			//for a bin that has individuals
+				//SET UP BIN LOG FILE
+				String binLabel = archive.getBinLabel(key);
+				Vector<Score<T>> scoresForBin = archive.getScoresForBin(key);
+				MultiobjectiveUtil.logParetoFrontGenotypesAndScorePlot(saveDirectoryParetoFronts + "/" + binLabel+"_Front", scoresForBin, null);
+			}else {
+				System.out.println("this is an empty bin, I don't think this happens though?");
+				assert false : "A MOME archive bin that is not null, but has a size of 0 should be impossible";
 			}
-		} catch (FileNotFoundException e) {
-			System.out.println("Logging of bin Pareto fronts failed");
-			e.printStackTrace();
-			System.exit(1);
+			iLogs++;
+			if(iLogs > numberOfOccupiedBins) {
+				System.out.println("i logs greater than the number of logs " + iLogs + " number of occupied bins:" + numberOfOccupiedBins);
+			}
 		}
-
 		task.finalCleanup();
 	}
 
