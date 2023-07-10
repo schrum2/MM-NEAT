@@ -22,6 +22,12 @@ import edu.southwestern.util.datastructures.Vertex;
  *
  */
 public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFunction {
+	// Used in sufficientBlockDistanceForFlying. Defines portion of distance to edge of evaluation area that the farthest block
+	// must travel for a shape to be considered flying. Hopefully, a block goes all the way to the edge, but since the timing
+	// of the world reads can be weird, there could be situations where part of the shape goes outside the evaluation area,
+	// and the last reading had a block that was slightly short of reaching the edge. Only one of two checks used to confirm 
+	// the machine is flying.
+	private static final double FARTHEST_BLOCK_PERCENT_TO_EDGE_FOR_FLYING = 0.9;
 	// Used in sufficientDistanceForFlying. Defines portion of distance to edge of evaluation area that center of mass must move
 	// for a shape to be considered flying. Needs to be high enough for there to be real flight, but not so high that blocks left
 	// behind interfere with calculation. Only one of two checks used to confirm the machine is flying.
@@ -231,7 +237,7 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 	 */
 	private double sufficientBlockDistanceForFlying() {
 		MinecraftCoordinates offsets = MinecraftUtilClass.emptySpaceOffsets();
-		return Math.min(offsets.x(), Math.min(offsets.y(), offsets.z()))*0.9;
+		return Math.min(offsets.x(), Math.min(offsets.y(), offsets.z()))*FARTHEST_BLOCK_PERCENT_TO_EDGE_FOR_FLYING;
 	}
 		
 	/**
