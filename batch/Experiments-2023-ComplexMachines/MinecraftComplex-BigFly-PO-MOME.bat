@@ -18,7 +18,7 @@ minecraftMandatoryWaitTime:10000 ^
 minecraftXRange:5 minecraftYRange:5 minecraftZRange:5 ^
 minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet ^
 spaceBetweenMinecraftShapes:22 ^
-minecraftClearWithGlass:true ^
+minecraftClearWithGlass:false ^
 minecraftAccumulateChangeInCenterOfMass:true minecraftChangeCenterOfMassFitness:true minecraftAccumulateNewBlockPositionsFitness:true ^
 base:minecraftcomplex log:MinecraftComplex-POBigFlyMOME saveTo:POBigFlyMOME
 
