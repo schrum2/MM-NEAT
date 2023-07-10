@@ -53,7 +53,7 @@ public class MissileFitnessTest {
 	}
 	@Test
 	public void testNoTNTFitnessScore() {	//TODO: freezing
-		Parameters.initializeParameterCollections(new String[] {"minecraftClearWithGlass:false","watch:true","minecraftXRange:5","minecraftYRange:5","minecraftZRange:5","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.CannonBlockSet", "minecraftTargetDistancefromShapeY:0", "minecraftTargetDistancefromShapeX:-10", "minecraftTargetDistancefromShapeZ:0"});
+		Parameters.initializeParameterCollections(new String[] {"minecraftClearWithGlass:false","watch:false","minecraftXRange:5","minecraftYRange:5","minecraftZRange:5","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.CannonBlockSet", "minecraftTargetDistancefromShapeY:0", "minecraftTargetDistancefromShapeX:-10", "minecraftTargetDistancefromShapeZ:0"});
 		MissileFitness testInstance = new MissileFitness();
 		System.out.println("\n TEST: MissileFitnessTest: testNoTNTFitnessScore");
 
