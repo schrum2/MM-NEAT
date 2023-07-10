@@ -24,5 +24,5 @@ minecraftMissileFitness:false minecraftCompassMissileTargets:true ^
 minecraftWeightedSumsMissileAndChangeCenterOfMassFitness:true ^
 minecraftTargetDistancefromShapeX:30 minecraftTargetDistancefromShapeY:0 minecraftTargetDistancefromShapeZ:0 ^
 minecraftEmptySpaceBufferX:27 minecraftEmptySpaceBufferZ:27 minecraftEmptySpaceBufferY:18 ^
-base:minecraftcomplex log:MinecraftComplex-POMissileMEWS saveTo:POMissileMEWS
+base:minecraftcomplex log:MinecraftComplex-MissilePOMEWS saveTo:MissilePOMEWS
 

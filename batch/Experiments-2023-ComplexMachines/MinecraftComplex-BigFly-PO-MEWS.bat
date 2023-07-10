@@ -21,5 +21,5 @@ spaceBetweenMinecraftShapes:22 ^
 minecraftClearWithGlass:false ^
 minecraftAccumulateChangeInCenterOfMass:true minecraftChangeCenterOfMassFitness:false minecraftAccumulateNewBlockPositionsFitness:false ^
 minecraftWeightedSumsAccumulateNewBlockPositionsAndChangeCenterOfMassFitness:true ^
-base:minecraftcomplex log:MinecraftComplex-POBigFlyMEWS saveTo:POBigFlyMEWS
+base:minecraftcomplex log:MinecraftComplex-BigFlyPOMEWS saveTo:BigFlyPOMEWS
 

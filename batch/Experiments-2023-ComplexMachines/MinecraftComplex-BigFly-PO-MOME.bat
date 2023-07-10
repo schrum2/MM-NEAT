@@ -20,5 +20,5 @@ minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet ^
 spaceBetweenMinecraftShapes:22 ^
 minecraftClearWithGlass:false ^
 minecraftAccumulateChangeInCenterOfMass:true minecraftChangeCenterOfMassFitness:true minecraftAccumulateNewBlockPositionsFitness:true ^
-base:minecraftcomplex log:MinecraftComplex-POBigFlyMOME saveTo:POBigFlyMOME
+base:minecraftcomplex log:MinecraftComplex-BigFlyPOMOME saveTo:BigFlyPOMOME
 

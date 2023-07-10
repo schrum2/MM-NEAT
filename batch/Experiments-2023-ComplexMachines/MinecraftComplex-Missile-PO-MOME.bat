@@ -23,5 +23,5 @@ minecraftAccumulateChangeInCenterOfMass:true minecraftChangeCenterOfMassFitness:
 minecraftMissileFitness:true minecraftCompassMissileTargets:true ^
 minecraftTargetDistancefromShapeX:30 minecraftTargetDistancefromShapeY:0 minecraftTargetDistancefromShapeZ:0 ^
 minecraftEmptySpaceBufferX:27 minecraftEmptySpaceBufferZ:27 minecraftEmptySpaceBufferY:18 ^
-base:minecraftcomplex log:MinecraftComplex-POMissileMOME saveTo:POMissileMOME
+base:minecraftcomplex log:MinecraftComplex-MissilePOMOME saveTo:MissilePOMOME
 
