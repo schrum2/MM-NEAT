@@ -22,6 +22,3 @@ minecraftClearWithGlass:true ^
 minecraftAccumulateChangeInCenterOfMass:true minecraftChangeCenterOfMassFitness:true minecraftAccumulateNewBlockPositionsFitness:true ^
 base:minecraftcomplex log:MinecraftComplex-CBigFlyMOME saveTo:CBigFlyMOME
 
-
-
-
