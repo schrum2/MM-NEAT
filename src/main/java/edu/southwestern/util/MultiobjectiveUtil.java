@@ -159,7 +159,8 @@ public class MultiobjectiveUtil {
 
 		PrintStream ps;
 		try {
-			int numberOfObjectives = MMNEAT.task.numObjectives();
+			// Important to ask the first Score how many scores there are since the otherStats could have been swapped in
+			int numberOfObjectives = paretoFront.get(0).scores.length;
 			ps = new PrintStream(paretoFrontAggregateOutput);
 
 			///AGGREGATE LOGGING
