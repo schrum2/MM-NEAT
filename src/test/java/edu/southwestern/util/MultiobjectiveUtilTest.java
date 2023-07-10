@@ -12,6 +12,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import jmetal.qualityIndicator.Hypervolume;
 
@@ -35,6 +36,9 @@ public class MultiobjectiveUtilTest {
 
 	@Test
 	public <T> void testHypervolumeFromParetoFrontSinglePoint() {
+		Parameters.initializeParameterCollections(new String[] {"hypervolumeMinimumOffset:0"});
+		System.out.println("\n TEST: MultiobjectiveUtilTest: testHypervolumeFromParetoFrontSinglePoint");
+
 		//needs a genotype
 //		Genotype<T> testGenotype = new Genotype<T>();
 		List<Score<T>> testList = new ArrayList<Score<T>>();
@@ -43,13 +47,16 @@ public class MultiobjectiveUtilTest {
 		scores[1] = 2.0;
 		Score<T> testScore = new Score<T>(null, scores);
 		testList.add(testScore);
-		double result = MultiobjectiveUtil.hypervolumeFromParetoFront(testList);
+		double result = MultiobjectiveUtil.hypervolumeFromParetoFront(testList, new double[] {0,0});
 		assertEquals(2, result, 0.0);
-		
-		//fail("Not yet implemented");
+
+		System.out.println("\n");
 	}
 	@Test
 	public <T> void testHypervolumeFromParetoFrontTwoPoints() {
+		Parameters.initializeParameterCollections(new String[] {"hypervolumeMinimumOffset:0"});
+		System.out.println("\n TEST: MultiobjectiveUtilTest: testHypervolumeFromParetoFrontTwoPoints");
+
 		List<Score<T>> testList = new ArrayList<Score<T>>();
 		double[] scores = new double[2];
 		scores[0] = 5.0;
@@ -61,12 +68,16 @@ public class MultiobjectiveUtilTest {
 		Score<T> testScore2 = new Score<T>(null, scores2);
 		testList.add(testScore);
 		testList.add(testScore2);
-		double result = MultiobjectiveUtil.hypervolumeFromParetoFront(testList);
+		double result = MultiobjectiveUtil.hypervolumeFromParetoFront(testList, new double[] {0,0});
 		assertEquals(39, result, 0.0);
+		System.out.println("\n");
 	}
 
 	@Test
 	public <T> void testHypervolumeFromPopulationTwoScoresNeitherDominated() {
+		Parameters.initializeParameterCollections(new String[] {"hypervolumeMinimumOffset:0"});
+		System.out.println("\n TEST: MultiobjectiveUtilTest: testHypervolumeFromPopulationTwoScoresNeitherDominated");
+
 		List<Score<T>> testList = new ArrayList<Score<T>>();
 		//score 1
 		double[] scores = new double[2];
@@ -82,11 +93,15 @@ public class MultiobjectiveUtilTest {
 		testList.add(testScore);
 		testList.add(testScore2);
 		
-		double result = MultiobjectiveUtil.hypervolumeFromParetoFront(testList);
+		double result = MultiobjectiveUtil.hypervolumeFromParetoFront(testList, new double[] {0,0});
 		assertEquals(19, result, 0.0);
+		System.out.println("\n");
 	}
 	@Test
 	public <T> void testHypervolumeFromPopulationThreeScoresOneDominated() {
+		Parameters.initializeParameterCollections(new String[] {"hypervolumeMinimumOffset:0"});
+		System.out.println("\n TEST: MultiobjectiveUtilTest: testHypervolumeFromPopulationThreeScoresOneDominated");
+
 		List<Score<T>> testList = new ArrayList<Score<T>>();
 		//score 1
 		double[] scores = new double[2];
@@ -109,11 +124,15 @@ public class MultiobjectiveUtilTest {
 		testList.add(testScore2);
 		testList.add(testScore3);
 		
-		double result = MultiobjectiveUtil.hypervolumeFromParetoFront(testList);
+		double result = MultiobjectiveUtil.hypervolumeFromParetoFront(testList, new double[] {0,0});
 		assertEquals(19, result, 0.0);
+		System.out.println("\n");
 	}
 	@Test
 	public <T> void testHypervolumeFromPopulationThreeScoresThreeObjectivesNoneDominated() {
+		Parameters.initializeParameterCollections(new String[] {"hypervolumeMinimumOffset:0"});
+		System.out.println("\n TEST: MultiobjectiveUtilTest: testHypervolumeFromPopulationThreeScoresThreeObjectivesNoneDominated");
+
 		List<Score<T>> testList = new ArrayList<Score<T>>();
 		
 		//score 1
@@ -141,7 +160,8 @@ public class MultiobjectiveUtilTest {
 		testList.add(testScore2);
 		testList.add(testScore3);
 		
-		double result = MultiobjectiveUtil.hypervolumeFromParetoFront(testList);
+		double result = MultiobjectiveUtil.hypervolumeFromParetoFront(testList, new double[] {0,0,0});
 		assertEquals(27, result, 0.0);
+		System.out.println("\n");
 	}
 }

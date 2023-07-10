@@ -238,7 +238,7 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 	 */
 	private double sufficientBlockDistanceForFlying() {
 		MinecraftCoordinates offsets = MinecraftUtilClass.emptySpaceOffsets();
-		System.out.println("OFFSETS: "+offsets);
+		if(CommonConstants.watch) System.out.println("OFFSETS: "+offsets);
 		return Math.min(offsets.x(), Math.min(offsets.y(), offsets.z()))*FARTHEST_BLOCK_PERCENT_TO_EDGE_FOR_FLYING;
 	}
 		

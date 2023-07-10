@@ -34,6 +34,9 @@ public class NumPistonsFitnessTest {
 	public void testFitnessFromBlocks() {
 		MinecraftCoordinates corner = new MinecraftCoordinates(0,5,0); //Initializes corner for testing
 
+		System.out.println("\n TEST: NumPistonsFitnessTest: testFitnessFromBlocks");
+
+		
 		List<Block> blockSet1 = new ArrayList<>();
 		blockSet1.add(new Block(1,5,1,BlockType.AIR, Orientation.WEST));
 		assertEquals(0,ff.fitnessScore(corner,blockSet1),0); // Test when nothing
@@ -83,10 +86,13 @@ public class NumPistonsFitnessTest {
 		assertEquals(9,ff.fitnessScore(corner,blockSet1),0);
 		blockSet1.add(new Block(3,7,4,BlockType.PISTON, Orientation.WEST));
 		assertEquals(10,ff.fitnessScore(corner,blockSet1),0);
+		System.out.println("\n");
 	}
 
 	@Test
 	public void testMaxFitness() {
+		System.out.println("\n TEST: NumPistonsFitnessTest: testMaxFitness");
 		assertEquals(1000,ff.maxFitness(),0);
+		System.out.println("\n");
 	}
 }

@@ -48,6 +48,7 @@ public class NegativeSpaceCountFitnessTest {
 	public void testFitnessFromBlocks() {
 		MinecraftCoordinates corner = new MinecraftCoordinates(0,5,0); //Initializes corner for testing
 		//MinecraftClient.getMinecraftClient().clearSpaceForShapes(corner, MinecraftUtilClass.getRanges(), 2, 100);
+		System.out.println("\n TEST: NegativeSpaceCountFitnessTest: testFitnessFromBlocks");
 		
 		ArrayList<Block> blockSet1 = new ArrayList<>();
 		ArrayList<Block> blockSet2 = new ArrayList<>();
@@ -144,11 +145,14 @@ public class NegativeSpaceCountFitnessTest {
 		
 		//Clears space, comment out if need to do testing to see blocks be generated
 		//MinecraftClient.getMinecraftClient().clearSpaceForShapes(corner, ranges, 2, 0);
+		System.out.println("\n");
 	}
 	
 	@Test
 	public void testMaximumFitness() {
+		System.out.println("\n TEST: NegativeSpaceCountFitnessTest: testMaximumFitness");
 		assertEquals(998,ff.maxFitness(),0);
+		System.out.println("\n");
 	}
 
 }

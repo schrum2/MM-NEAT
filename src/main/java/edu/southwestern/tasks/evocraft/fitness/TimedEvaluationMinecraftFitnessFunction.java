@@ -91,7 +91,9 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 		if(CommonConstants.watch) System.out.println("Evaluate at corner: "+evaluationCorner);
 
 		//clear and verify evaluation space
-		MinecraftClient.clearAndVerify(shapeCorner);
+		if(Parameters.parameters.booleanParameter("minecraftClearAndVerify")) {
+			MinecraftClient.clearAndVerify(shapeCorner);
+		}
 
 	////////	creating history 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//history is a list of time stamps with an associated list of blocks read at that time
