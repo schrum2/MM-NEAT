@@ -17,4 +17,3 @@ spaceBetweenMinecraftShapes:22 ^
 minecraftClearWithGlass:false ^
 minecraftAccumulateChangeInCenterOfMass:true minecraftChangeCenterOfMassFitness:true minecraftAccumulateNewBlockPositionsFitness:true ^
 base:minecraftcomplex log:MinecraftComplex-BigFlyNSGA saveTo:BigFlyNSGA
-
