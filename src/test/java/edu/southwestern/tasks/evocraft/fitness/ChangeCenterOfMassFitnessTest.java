@@ -31,10 +31,10 @@ public class ChangeCenterOfMassFitnessTest {
 	public static void setUpBeforeClass() throws Exception {
 		CommonConstants.netio = false;
 		Parameters.initializeParameterCollections(new String[] {"minecraftClearWithGlass:false","minecraftXRange:6","minecraftYRange:6","minecraftZRange:6","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
-		if(!MinecraftServer.serverIsRunner()) {
-			MinecraftServer.launchServer();
-			MinecraftClient.getMinecraftClient();
-		}
+//		if(!MinecraftServer.serverIsRunner()) {
+//			MinecraftServer.launchServer();
+//			MinecraftClient.getMinecraftClient();
+//		}
 		CommonConstants.watch = true; // Displays debugging info
 	}
 
@@ -898,6 +898,36 @@ public class ChangeCenterOfMassFitnessTest {
 		
 		// Earns max fitness since flying
 		assertEquals(60.1, ff.fitnessScore(testCorner,testBlockSet),0.0); 
+		System.out.println("\n");
+	}
+	
+	
+	// Another flying machine that at one point was being classified as flying when really it was not
+	@Test
+	public void disallowCheatingFlyingMachine() {
+		// The shape in this test was originalyl evolved with spaceBetweenMinecraftShapes:10, but changing it to spaceBetweenMinecraftShapes:20 prevents it from cheating
+		Parameters.initializeParameterCollections(new String[] {"watch:false","minecraftAccumulateChangeInCenterOfMass:true","minecraftClearWithGlass:false","minecraftXRange:3","minecraftYRange:3","minecraftZRange:3","spaceBetweenMinecraftShapes:20","minecraftEndEvalNoMovement:true","minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+		CommonConstants.netio = false;
+
+		System.out.println( "\n TEST: ChangeCenterOfMassFitnessTest: disallowCheatingFlyingMachine");
+
+		//set up test corner and clear area
+		MinecraftCoordinates tempTestCorner = new MinecraftCoordinates(-26,27,-35);
+		MinecraftCoordinates testCorner = MinecraftClient.getMinecraftClient().checkForYOutOfBoundsAndShiftUp(tempTestCorner);
+		MinecraftClient.getMinecraftClient().clearEvaluationSpaceForJUnitTests(testCorner);
+
+		//this string is for a machine that explodes, is large, and leaves a few blocks behind
+		String listString = "[PISTON at (-98,35,-196) oriented EAST, PISTON at (-98,36,-198) oriented WEST, SLIME at (-98,36,-197) oriented DOWN, SLIME at (-98,36,-196) oriented DOWN, REDSTONE_BLOCK at (-98,37,-197) oriented UP, STICKY_PISTON at (-98,37,-196) oriented DOWN, STICKY_PISTON at (-97,35,-198) oriented EAST, STICKY_PISTON at (-97,35,-197) oriented NORTH, SLIME at (-97,36,-198) oriented EAST, STICKY_PISTON at (-97,36,-197) oriented NORTH, OBSERVER at (-97,36,-196) oriented UP, REDSTONE_BLOCK at (-97,37,-198) oriented DOWN, QUARTZ_BLOCK at (-97,37,-197) oriented WEST, SLIME at (-96,35,-198) oriented NORTH, REDSTONE_BLOCK at (-96,35,-197) oriented EAST, PISTON at (-96,35,-196) oriented WEST, SLIME at (-96,36,-198) oriented NORTH, STICKY_PISTON at (-96,36,-197) oriented NORTH, STICKY_PISTON at (-96,37,-197) oriented WEST]";
+		List<Block> testBlockSet = MinecraftUtilClass.readMinecraftBlockListFromString(listString);
+
+		//System.out.println("blocklist: " + testBlockSet);
+
+		//shift coordinates based on the testCorner
+		MinecraftCoordinates originalShapeCoordinates = MinecraftUtilClass.minCoordinates(testBlockSet);
+		testBlockSet = MinecraftUtilClass.shiftBlocksBetweenCorners(testBlockSet, originalShapeCoordinates, testCorner);
+
+		// Does not actually fly
+		assertEquals(3, ff.fitnessScore(testCorner,testBlockSet),2.0); 
 		System.out.println("\n");
 	}
 }
