@@ -31,10 +31,10 @@ public class ChangeCenterOfMassFitnessTest {
 	public static void setUpBeforeClass() throws Exception {
 		CommonConstants.netio = false;
 		Parameters.initializeParameterCollections(new String[] {"minecraftClearWithGlass:false","minecraftXRange:6","minecraftYRange:6","minecraftZRange:6","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
-//		if(!MinecraftServer.serverIsRunner()) {
-//			MinecraftServer.launchServer();
-//			MinecraftClient.getMinecraftClient();
-//		}
+		if(!MinecraftServer.serverIsRunner()) {
+			MinecraftServer.launchServer();
+			MinecraftClient.getMinecraftClient();
+		}
 		CommonConstants.watch = true; // Displays debugging info
 	}
 
