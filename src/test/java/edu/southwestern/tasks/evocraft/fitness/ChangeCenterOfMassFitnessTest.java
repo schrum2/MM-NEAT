@@ -31,10 +31,10 @@ public class ChangeCenterOfMassFitnessTest {
 	public static void setUpBeforeClass() throws Exception {
 		CommonConstants.netio = false;
 		Parameters.initializeParameterCollections(new String[] {"minecraftClearWithGlass:false","minecraftXRange:6","minecraftYRange:6","minecraftZRange:6","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
-		if(!MinecraftServer.serverIsRunner()) {
-			MinecraftServer.launchServer();
-			MinecraftClient.getMinecraftClient();
-		}
+//		if(!MinecraftServer.serverIsRunner()) {
+//			MinecraftServer.launchServer();
+//			MinecraftClient.getMinecraftClient();
+//		}
 		CommonConstants.watch = true; // Displays debugging info
 	}
 
@@ -234,10 +234,11 @@ public class ChangeCenterOfMassFitnessTest {
 	// added minecraftRewardFastFlyingMachine parameter, created variables to control expected fitness and wiggle room
 	// created more space between shapes and moved the shape up to keep from going out of bounds
 	// created while testing rewarding flying machine speed functionality
+	//important: minecraftEmptySpaceBuffer=18, minecraftXRange=10, spaceBetweenMinecraftShapes=30
 	//passed
 	@Test
 	public void testFlyingRewardSpeed() throws InterruptedException {
-		Parameters.initializeParameterCollections(new String[] {"minecraftEmptySpaceBufferX:18", "minecraftEmptySpaceBufferY:18", "minecraftEmptySpaceBufferZ:18", "watch:false", "minecraftClearWithGlass:false", "minecraftRewardFastFlyingMachines:true", "minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:30","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L, "minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+		Parameters.initializeParameterCollections(new String[] {"minecraftEmptySpaceBufferX:18", "minecraftEmptySpaceBufferY:18", "minecraftEmptySpaceBufferZ:18", "watch:true", "minecraftRewardFastFlyingMachines:true", "minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:20","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L, "minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
 		CommonConstants.netio = false;
 		MinecraftCoordinates cornerBS2 = new MinecraftCoordinates(0,16,-5);
 		
@@ -275,7 +276,7 @@ public class ChangeCenterOfMassFitnessTest {
 		double wiggleRoom = 15.0;
 		double expected = 80.0;
 		//69.97351321372638 , 70.15409121596679 , 69.55696170066884 , 69.48746633678942
-		assertEquals(expected, ff.fitnessScore(cornerBS2,blockSet2),wiggleRoom);
+		assertEquals(expected, ff.fitnessScore(testCorner,blockSet2),wiggleRoom);
 		System.out.println("\n");
 	}
 	

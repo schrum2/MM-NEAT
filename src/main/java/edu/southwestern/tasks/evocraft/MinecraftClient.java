@@ -636,7 +636,6 @@ public class MinecraftClient extends Comm {
 			return name + " at " + pos + " oriented " + (orientation == null ? "null" : orientation.name());
 		}
 		
-
 	}
 
 	/**
@@ -748,18 +747,6 @@ public class MinecraftClient extends Comm {
 	}
 	
 	/**
-	 * placeholder for a bounds checking 
-	 * @param originalShapeCorner
-	 * @return
-	 */
-	public boolean checkOutOfBoundsY(MinecraftCoordinates originalShapeCorner) {
-		if(originalShapeCorner.y() - Parameters.parameters.integerParameter("minecraftEmptySpaceBufferY") - Parameters.parameters.integerParameter("minecraftExtraClearSpace") <= MinecraftClient.GROUND_LEVEL){
-			return false;
-		}
-		return true;
-	}
-	
-	/**
 	 * this just gives access to the extra clear method
 	 * @param originalShapeCorner
 	 */
@@ -810,6 +797,7 @@ public class MinecraftClient extends Comm {
 	
 	/**
 	 * TODO: this takes a shape corner but frequently is passed an evaluation corner
+	 * This takes shape corner, 
 	 * Make sure the special area for double-checking flying shapes is really clear
 	 * @param shapeCorner of the evaluation area
 	 * @param clearWithGlass - if passed true (only from clearAndVerify) clears with glass first
@@ -825,6 +813,7 @@ public class MinecraftClient extends Comm {
 	}
 	/**
 	 * TODO: takes in a shape corner and changes to evaluation corner, ie input: smallCorner, output: largeCorner
+	 * DOES NOT turn into evaluationCorner, adds minecraftEmptySpaceBuffer
 	 * Checks if the area around a corner is empty
 	 * @param corner the corner coordinates being checked
 	 * @return boolean if space is empty or not
