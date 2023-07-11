@@ -748,6 +748,18 @@ public class MinecraftClient extends Comm {
 	}
 	
 	/**
+	 * placeholder for a bounds checking 
+	 * @param originalShapeCorner
+	 * @return
+	 */
+	public boolean checkOutOfBoundsY(MinecraftCoordinates originalShapeCorner) {
+		if(originalShapeCorner.y() - Parameters.parameters.integerParameter("minecraftEmptySpaceBufferY") - Parameters.parameters.integerParameter("minecraftExtraClearSpace") <= MinecraftClient.GROUND_LEVEL){
+			return false;
+		}
+		return true;
+	}
+	
+	/**
 	 * this just gives access to the extra clear method
 	 * @param originalShapeCorner
 	 */

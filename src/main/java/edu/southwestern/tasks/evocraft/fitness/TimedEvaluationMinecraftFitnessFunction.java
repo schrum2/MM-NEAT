@@ -71,7 +71,7 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 		// schrum2: I think this code is responsible for the weird error of shapes near the ground being stacked vertically.
 		//          When the startY is made large enough, this is not an issue, but making the user set that correctly
 		//          is a hassle.		
-		
+//	PUSH UP FROM GROUND : PUSHUP CODE
 		//if statement checks if the evaluation space plus the space that would be cleared is below the ground level
 		if(evaluationCorner.y() - Parameters.parameters.integerParameter("minecraftEmptySpaceBufferY") <= MinecraftClient.GROUND_LEVEL) { // Push up if close to ground
 			System.out.println("Pushed up from " + evaluationCorner);
