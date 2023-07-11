@@ -14,7 +14,7 @@ mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMA
 mapElitesQDBaseOffset:1 ^
 ea:edu.southwestern.evolution.mome.MOME maximumMOMESubPopulationSize:10 ^
 mu:100 maxGens:60000 ^
-minecraftMandatoryWaitTime:15000 ^
+minecraftMandatoryWaitTime:10000 ^
 minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 ^
 minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.ExplosiveBlockSet ^
 spaceBetweenMinecraftShapes:30 ^
