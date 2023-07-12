@@ -234,11 +234,13 @@ public class ChangeCenterOfMassFitnessTest {
 	// added minecraftRewardFastFlyingMachine parameter, created variables to control expected fitness and wiggle room
 	// created more space between shapes and moved the shape up to keep from going out of bounds
 	// created while testing rewarding flying machine speed functionality
-	//important: minecraftEmptySpaceBuffer=18, minecraftXRange=10, spaceBetweenMinecraftShapes=20
+	//important: minecraftEmptySpaceBuffer=18, minecraftXRange=10, spaceBetweenMinecraftShapes=30
+	//this returns as not flying, but if the spaceBetweenMinecraftShapes is reduced to 20 it will count as flying
+	//this is also testing something we found impossible (moving faster)
 	//passed
 	@Test
 	public void testFlyingRewardSpeed() throws InterruptedException {
-		Parameters.initializeParameterCollections(new String[] {"minecraftEmptySpaceBufferX:18", "minecraftEmptySpaceBufferY:18", "minecraftEmptySpaceBufferZ:18", "watch:true", "minecraftRewardFastFlyingMachines:true", "minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:20","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L, "minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+		Parameters.initializeParameterCollections(new String[] {"minecraftEmptySpaceBufferX:18", "minecraftEmptySpaceBufferY:18", "minecraftEmptySpaceBufferZ:18", "watch:true", "minecraftRewardFastFlyingMachines:true", "minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:30","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L, "minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
 		CommonConstants.netio = false;
 		MinecraftCoordinates cornerBS2 = new MinecraftCoordinates(0,16,-5);
 		

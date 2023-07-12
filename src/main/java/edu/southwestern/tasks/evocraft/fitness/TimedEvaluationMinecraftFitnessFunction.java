@@ -35,6 +35,7 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 		// For a scenario using just one fitness function, put this function in a list by itself and use the multiple evaluation method on the list of one
 		ArrayList<TimedEvaluationMinecraftFitnessFunction> fitnessFunctions = new ArrayList<>(1);
 		fitnessFunctions.add(this);
+		assert shapeCorner.equals( MinecraftUtilClass.minCoordinates(originalBlocks)) : "the passed shape corner (" + shapeCorner+ ") and the actual shape corner ("+ MinecraftUtilClass.minCoordinates(originalBlocks) + ") do not match";
 		double[] scores = multipleFitnessScores(fitnessFunctions, shapeCorner, originalBlocks);
 		return scores[0]; // Only score from list of one fitness function
 	}
@@ -45,7 +46,7 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 	 * for those that wanted to stop until the end, when all remaining fitness scores are calculated in the normal fashion.
 	 * 
 	 * @param fitnessFunctions List of TimedEvaluationMinecraftFitnessFunction type fitness functions
-	 * @param shapeCorner Minimal corner where shape it spawned
+	 * @param shapeCorner Minimal corner where shape it spawned (does not check if the shape is actually in the corner)
 	 * @param originalBlocks Original block configuration of shape before simulation
 	 * @return array where each index if a fitness score for the corresponding fitness function
 	 */
