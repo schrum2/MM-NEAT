@@ -57,7 +57,7 @@ public class MinecraftUtilClass {
 	public static int emptySpaceOffset(int range) {
 		return (int) (((range + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")) / 2.0) - (range/2.0));
 	}
-	
+	//here
 	/**
 	 * How far away in each coordinate the minimal corner of where the shape is generated is
 	 * from the minimal corner of cleared out space reserved for the shape.

@@ -54,7 +54,8 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 		upper = ArrayUtil.doubleSpecified(genotypeLength, 1.0); // upper bounds generic genotype
 		lower = ArrayUtil.doubleSpecified(genotypeLength, 0.0); // lower bounds generic genotype
 	}
-	
+	//TODO: rename and reassess corner usage
+	//currently passed eval corner
 	@Override
 	public List<Block> generateShape(Genotype<ArrayList<Double>> genome, MinecraftCoordinates corner,
 			BlockSet blockSet) {
@@ -102,7 +103,7 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 										
 								blockOrientation = determineOrientation(phenotype, ORIENTATION_INDEX);
 							}
-								
+	//blocks created at evalCorner plus x,y,z
 							b = new Block(corner.add(new MinecraftCoordinates(xi,yi,zi)), blockSet.getPossibleBlocks()[blockTypeIndex], blockOrientation);
 						} // else do not place any block
 					} else { // there will either be one or two numbers per block depending on if orientation is being evolved
@@ -113,7 +114,7 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 								final int ORIENTATION_INDEX = blockHeadIndexCounter+1;
 								blockOrientation = determineOrientation(phenotype, ORIENTATION_INDEX);
 							}
-							
+		//blocks created at evalCorner plus x,y,z			
 							b = new Block(corner.add(new MinecraftCoordinates(xi,yi,zi)), blockSet.getPossibleBlocks()[blockTypeIndex], blockOrientation);
 						}
 					}

@@ -327,6 +327,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		IntStream stream = IntStream.range(0, corners.size());
 		ArrayList<Score<T>> scores = stream.parallel().mapToObj( i -> {
 			MinecraftCoordinates corner = corners.get(i);
+	//middle amounts to an evalCorner
 			MinecraftCoordinates middle = corner.add(MinecraftUtilClass.emptySpaceOffsets());
 			Genotype<T> genome = population.get(i);
 			return evaluateOneShape(genome, middle, fitnessFunctions);
@@ -352,7 +353,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	 * 
 	 * @param <T>
 	 * @param genome Evolved individual that generates a shape
-	 * @param corner Location to generate shape at: minimal coordinate
+	 * @param corner Location to generate shape at: minimal coordinate === is passed the evalCorner
 	 * @param fitnessFunctions List of fitness functions to evaluate the shape on
 	 * @return Score instance containing evaluation information
 	 */
@@ -361,10 +362,11 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		@SuppressWarnings("unchecked")
 		List<Block> blocks = MMNEAT.shapeGenerator.generateShape(genome, corner, MMNEAT.blockSet);
 		//System.out.println(genome.getId() + ":" + blocks);
+//is passed the eval area but uses it above? Creates the shape at the passed evalCorner
 
 		// Clear space around this one shape
 		MinecraftLonerShapeTask.clearBlocksForShape(MinecraftUtilClass.getRanges(), corner.sub(MinecraftUtilClass.emptySpaceOffsets()));
-
+//this does clear an evaluation area around this corner.
 		//MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
 		Pair<double[],double[]> scores = calculateFitnessScores(corner,fitnessFunctions,blocks);
 		double[] fitnessScores = scores.t1;
