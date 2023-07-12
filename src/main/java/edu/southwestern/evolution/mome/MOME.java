@@ -651,7 +651,7 @@ public class MOME<T> implements SteadyStateEA<T>{
 				//SET UP BIN LOG FILE
 				String binLabel = archive.getBinLabel(key);
 				Vector<Score<T>> scoresForBin = archive.getScoresForBin(key);
-				System.out.println("XXX scoreFileName: " + saveDirectoryParetoFronts + "/" + binLabel+"_Front");
+				if(CommonConstants.watch) System.out.println("XXX scoreFileName: " + saveDirectoryParetoFronts + "/" + binLabel+"_Front");
 				MultiobjectiveUtil.logParetoFrontGenotypesAndScorePlot(binLabel+"_Front", scoresForBin, null);
 			}else {
 				System.out.println("this is an empty bin, I don't think this happens though?");
