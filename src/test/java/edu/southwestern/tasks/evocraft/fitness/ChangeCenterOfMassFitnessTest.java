@@ -234,7 +234,7 @@ public class ChangeCenterOfMassFitnessTest {
 	// added minecraftRewardFastFlyingMachine parameter, created variables to control expected fitness and wiggle room
 	// created more space between shapes and moved the shape up to keep from going out of bounds
 	// created while testing rewarding flying machine speed functionality
-	//important: minecraftEmptySpaceBuffer=18, minecraftXRange=10, spaceBetweenMinecraftShapes=30
+	//important: minecraftEmptySpaceBuffer=18, minecraftXRange=10, spaceBetweenMinecraftShapes=20
 	//passed
 	@Test
 	public void testFlyingRewardSpeed() throws InterruptedException {
@@ -267,8 +267,8 @@ public class ChangeCenterOfMassFitnessTest {
 		//MinecraftClient.getMinecraftClient().spawnBlocks(blockSet2);
 
 		//shift coordinates based on the testCorner
-		MinecraftCoordinates originalShapeCoordinates = MinecraftUtilClass.minCoordinates(blockSet2);
-		blockSet2 = MinecraftUtilClass.shiftBlocksBetweenCorners(blockSet2, originalShapeCoordinates, testCorner);
+//		MinecraftCoordinates originalShapeCoordinates = MinecraftUtilClass.minCoordinates(blockSet2);
+//		blockSet2 = MinecraftUtilClass.shiftBlocksBetweenCorners(blockSet2, originalShapeCoordinates, testCorner);
 		
 		//System.out.println("Fitness for the blockSet 2: "+ ff.fitnessScore(cornerBS2));
 		
@@ -276,8 +276,9 @@ public class ChangeCenterOfMassFitnessTest {
 		double wiggleRoom = 15.0;
 		double expected = 80.0;
 		//69.97351321372638 , 70.15409121596679 , 69.55696170066884 , 69.48746633678942
-		assertEquals(expected, ff.fitnessScore(testCorner,blockSet2),wiggleRoom);
+		assertEquals(expected, ff.fitnessScore(cornerBS2,blockSet2),wiggleRoom);
 		System.out.println("\n");
+		//expected 80 was 164
 	}
 	
 	// Notes from Joanna:

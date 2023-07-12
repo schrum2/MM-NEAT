@@ -532,11 +532,11 @@ public class MinecraftUtilClass {
 	/**
 	 * placeholder for a bounds checking for later use
 	 * Might change: calculation, what corner is passed
-	 * @param originalShapeCorner
+	 * @param evaluationCorner
 	 * @return
 	 */
-	public boolean checkOutOfBoundsY(MinecraftCoordinates originalShapeCorner) {
-		if(originalShapeCorner.y() - Parameters.parameters.integerParameter("minecraftEmptySpaceBufferY") - Parameters.parameters.integerParameter("minecraftExtraClearSpace") <= MinecraftClient.GROUND_LEVEL){
+	public static boolean checkOutOfBoundsY(MinecraftCoordinates evaluationCorner) {
+		if(evaluationCorner.y() - Parameters.parameters.integerParameter("minecraftEmptySpaceBufferY") - Parameters.parameters.integerParameter("minecraftExtraClearSpace") <= MinecraftClient.GROUND_LEVEL){
 			return false;
 		}
 		return true;
