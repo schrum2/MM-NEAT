@@ -67,7 +67,7 @@ public class ChangeBlocksFitnessTest {
 	
 	@Test
 	public void testStationaryFitnessScore() {	
-		Parameters.initializeParameterCollections(new String[] {"netio:false", "minecraftClearWithGlass:false","watch:false:true","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet","minecraftChangeBlocksMomentum:" + false});
+		Parameters.initializeParameterCollections(new String[] {"netio:false", "minecraftClearWithGlass:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet","minecraftChangeBlocksMomentum:" + false});
 		
 		System.out.println("\n TEST: ChangeBlocksFitnessTest: testStationaryFitnessScore");
 
@@ -109,6 +109,7 @@ public class ChangeBlocksFitnessTest {
 		assertEquals(500.0,testInstance.fitnessScore(testCorner,testBlockSet),100.0);
 		System.out.println("\n");
 	}
+	//fails sometimes
 	@Test
 	public void testOscillatingMachine() {
 		Parameters.initializeParameterCollections(new String[] {"netio:false", "minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:46","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:false","shortTimeBetweenMinecraftReads:" + 100L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});

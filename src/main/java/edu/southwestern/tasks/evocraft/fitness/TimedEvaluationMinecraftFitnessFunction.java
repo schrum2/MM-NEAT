@@ -68,10 +68,13 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 
 		// Shifts over the corner to the new range with the large space in between shapes
 		MinecraftCoordinates evaluationCorner = shapeCorner.sub(MinecraftUtilClass.emptySpaceOffsets());
+		if(CommonConstants.watch) System.out.println("original shape corner: "+shapeCorner+" evalCorner: "+ evaluationCorner);
+		if(CommonConstants.watch) System.out.println("spaceBetween:"+Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+" emptySpaceOffsets(): "+MinecraftUtilClass.emptySpaceOffsets()+" does it need to be pushed?: "+ MinecraftUtilClass.checkOutOfBoundsY(evaluationCorner));
+
 		// schrum2: I think this code is responsible for the weird error of shapes near the ground being stacked vertically.
 		//          When the startY is made large enough, this is not an issue, but making the user set that correctly
 		//          is a hassle.		
-		
+//	PUSH UP FROM GROUND : PUSHUP CODE
 		//if statement checks if the evaluation space plus the space that would be cleared is below the ground level
 		if(evaluationCorner.y() - Parameters.parameters.integerParameter("minecraftEmptySpaceBufferY") <= MinecraftClient.GROUND_LEVEL) { // Push up if close to ground
 			System.out.println("Pushed up from " + evaluationCorner);

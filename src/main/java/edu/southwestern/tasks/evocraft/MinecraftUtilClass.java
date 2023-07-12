@@ -528,4 +528,27 @@ public class MinecraftUtilClass {
 			System.exit(1);
 		}
 	}
+	
+	/**
+	 * placeholder for a bounds checking for later use
+	 * Might change: calculation, what corner is passed
+	 * @param evaluationCorner
+	 * @return
+	 */
+	public static boolean checkOutOfBoundsY(MinecraftCoordinates evaluationCorner) {
+		if(evaluationCorner.y() - Parameters.parameters.integerParameter("minecraftEmptySpaceBufferY") - Parameters.parameters.integerParameter("minecraftExtraClearSpace") <= MinecraftClient.GROUND_LEVEL){
+			return false;
+		}
+		return true;
+	}
+	/**
+	 * eval area = shapeCorner sub (((ranges + spaceBetweenMinecraftShapes)/2) - (ranges/2))
+	 * xrange= (minecraftXRange+spaceBetweenMinecraftShapes)/2 - minecraftXRange/2
+	 * ranges are coordinates of above done for all
+	 * @param shapeCorner
+	 * @return evaluation corner
+	 */
+	public MinecraftCoordinates getEvaluationCornerFromShapeCorner(MinecraftCoordinates shapeCorner) {
+		return shapeCorner.sub(MinecraftUtilClass.emptySpaceOffsets());
+	}
 }
