@@ -57,7 +57,7 @@ public class MinecraftUtilClass {
 	public static int emptySpaceOffset(int range) {
 		return (int) (((range + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")) / 2.0) - (range/2.0));
 	}
-	
+	//here
 	/**
 	 * How far away in each coordinate the minimal corner of where the shape is generated is
 	 * from the minimal corner of cleared out space reserved for the shape.
@@ -255,6 +255,8 @@ public class MinecraftUtilClass {
 	 * Use EvoCraft client code to call readCube and determine blocks that are
 	 * present in the world.
 	 * calculates range of evaluation area for secondary related function readBlocksFromClient
+	 * Not actual evaluationCorner calculated, or range
+	 * Not called anywhere
 	 * 
 	 * @param corner minimal coordinate of shape being checked
 	 * @return List of blocks occupying the space for the given shape
@@ -271,9 +273,10 @@ public class MinecraftUtilClass {
 	 * Use EvoCraft client code to call readCube and determine blocks that are 
 	 * present in the world.
 	 * Called by readBlocksFromClient 
-	 * uses range previously calculated for evaluation area & uses client code to call readCube
+	 * uses minecraftXRange - 1 to add to the size of area & uses client code to call readCube
 	 * 
 	 * TODO: shouldn't this be moved to MinecraftClients?
+	 * This is never called
 	 * 
 	 * -Joanna
 	 * 
