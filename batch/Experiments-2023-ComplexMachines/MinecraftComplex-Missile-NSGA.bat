@@ -10,7 +10,7 @@ launchMinecraftServerFromJava:false minecraftClearSleepTimer:400 minecraftSkipIn
 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask ^
 minecraftContainsWholeMAPElitesArchive:false forceLinearArchiveLayoutInMinecraft:false interactWithMapElitesInWorld:false ^
 mu:20 maxGens:3005 ^
-minecraftMandatoryWaitTime:15000 ^
+minecraftMandatoryWaitTime:10000 ^
 minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 ^
 minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.ExplosiveBlockSet ^
 spaceBetweenMinecraftShapes:30 ^
