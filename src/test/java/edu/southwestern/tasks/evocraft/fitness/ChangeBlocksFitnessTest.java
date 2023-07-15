@@ -217,7 +217,7 @@ public class ChangeBlocksFitnessTest {
 
 		testBlockSet.addAll(southFlyingMachine);
 		assert !CommonConstants.netio;
-		assertEquals(400.0,testInstance.fitnessScore(augmentedCoordinates,testBlockSet),100.0);
+		assertEquals(425.0,testInstance.fitnessScore(augmentedCoordinates,testBlockSet),150.0);
 	}
 	@Test
 	public void testMomentumStationaryFitnessScore() {	

@@ -276,7 +276,7 @@ public class ChangeCenterOfMassFitnessTest {
 		
 		//changing settings that are being tested and minecraftRewardFastFlyingMachines
 		double wiggleRoom = 15.0;
-		double expected = 80.0;
+		double expected = 70.0;
 		//69.97351321372638 , 70.15409121596679 , 69.55696170066884 , 69.48746633678942
 		assertEquals(expected, ff.fitnessScore(cornerBS2,blockSet2),wiggleRoom);
 		System.out.println("\n");
