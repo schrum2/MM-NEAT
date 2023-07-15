@@ -67,7 +67,7 @@ public class ChangeBlocksFitnessTest {
 	
 	@Test
 	public void testStationaryFitnessScore() {	
-		Parameters.initializeParameterCollections(new String[] {"netio:false", "minecraftClearWithGlass:false","watch:false:true","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet","minecraftChangeBlocksMomentum:" + false});
+		Parameters.initializeParameterCollections(new String[] {"netio:false", "minecraftClearWithGlass:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet","minecraftChangeBlocksMomentum:" + false});
 		
 		System.out.println("\n TEST: ChangeBlocksFitnessTest: testStationaryFitnessScore");
 
@@ -109,6 +109,7 @@ public class ChangeBlocksFitnessTest {
 		assertEquals(500.0,testInstance.fitnessScore(testCorner,testBlockSet),100.0);
 		System.out.println("\n");
 	}
+	//fails sometimes
 	@Test
 	public void testOscillatingMachine() {
 		Parameters.initializeParameterCollections(new String[] {"netio:false", "minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:46","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:false","shortTimeBetweenMinecraftReads:" + 100L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
@@ -136,7 +137,7 @@ public class ChangeBlocksFitnessTest {
 		MinecraftClient.getMinecraftClient().spawnBlocks(oscillatingMachine);
 		double amount = testInstance.fitnessScore(testCorner,oscillatingMachine);
 		System.out.println("movement fitness when oscillating: "+ amount);
-//movement fitness when oscillating: 2.0
+//movement fitness when oscillating: 2.0, 6.0
 		assertTrue(30 <= amount && amount <= 500);
 		System.out.println("\n");
 	}
@@ -177,45 +178,45 @@ public class ChangeBlocksFitnessTest {
 		assertTrue(30 <= amount && amount <= 700);
 		System.out.println("\n");
 	}
-//	@Test
-//	public void testTwoWorkingFlyingMachineSomethingSouth() {	
-//		assert !CommonConstants.netio;
-//		Parameters.initializeParameterCollections(new String[] {"netio:false", "minecraftClearWithGlass:false","watch:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
-//		assert !CommonConstants.netio;
-//
-//		System.out.println("Unit test: testTwoWorkingFlyingMachineSomethingSouth");
-//
-//		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,30,-35);
-//		//set up test corner and clear area
-//		testCorner = MinecraftClient.getMinecraftClient().checkForYOutOfBoundsAndShiftUp(testCorner);
-//		MinecraftClient.getMinecraftClient().clearEvaluationSpaceForJUnitTests(testCorner);	
-//		
-//		//currently from minecraft 2022, MEOriginalVectorPistonOrientation19
-//		String southFlyingMachineString = "[SLIME at (-500,100,501) oriented WEST, STICKY_PISTON at (-500,100,502) oriented NORTH, STICKY_PISTON at (-500,101,501) oriented SOUTH, SLIME at (-500,101,502) oriented WEST, QUARTZ_BLOCK at (-500,102,500) oriented SOUTH, REDSTONE_BLOCK at (-500,102,502) oriented DOWN, SLIME at (-499,100,501) oriented WEST, REDSTONE_BLOCK at (-499,100,502) oriented EAST, QUARTZ_BLOCK at (-499,101,500) oriented EAST, SLIME at (-499,101,501) oriented DOWN, STICKY_PISTON at (-499,102,502) oriented DOWN, QUARTZ_BLOCK at (-498,100,500) oriented DOWN, SLIME at (-498,100,501) oriented NORTH, REDSTONE_BLOCK at (-498,101,502) oriented EAST]";
-//		//currently from minecraft 2022, MEOriginalVectorPistonOrientation0
-//		String unidentifiedDirectionFlyingMachineString = "[STICKY_PISTON at (-160,68,-258) oriented EAST, REDSTONE_BLOCK at (-160,69,-258) oriented SOUTH, STICKY_PISTON at (-160,70,-258) oriented EAST, PISTON at (-159,68,-260) oriented WEST, SLIME at (-159,68,-259) oriented DOWN, REDSTONE_BLOCK at (-159,69,-260) oriented NORTH, SLIME at (-159,69,-259) oriented UP, STICKY_PISTON at (-159,70,-260) oriented SOUTH, SLIME at (-159,70,-259) oriented DOWN, QUARTZ_BLOCK at (-158,68,-260) oriented DOWN, REDSTONE_BLOCK at (-158,69,-260) oriented DOWN, REDSTONE_BLOCK at (-158,69,-259) oriented DOWN, STICKY_PISTON at (-158,70,-260) oriented EAST, STICKY_PISTON at (-158,70,-258) oriented WEST]";
-//		
-//		List<Block> southFlyingMachine = MinecraftUtilClass.readMinecraftBlockListFromString(southFlyingMachineString);
-//		List<Block> unidentifiedDirectionFlyingMachine = MinecraftUtilClass.readMinecraftBlockListFromString(unidentifiedDirectionFlyingMachineString);
-//
-//		//overall test block set
-//		List<Block> testBlockSet = new ArrayList<Block>();
-//
-//		//south flying machine shifted to test corner
-//		MinecraftCoordinates originalShapeCoordinates = MinecraftUtilClass.minCoordinates(southFlyingMachine);
-//		southFlyingMachine = MinecraftUtilClass.shiftBlocksBetweenCorners(southFlyingMachine, originalShapeCoordinates, testCorner);
-//
-//		//augment testcorner by 8 to ensure they do not interfere with each other
-//		MinecraftCoordinates augmentedCoordinates = new MinecraftCoordinates(testCorner);
-//		augmentedCoordinates.t1 = augmentedCoordinates.t1 -8;			//moving only on the x axis
-//
-//		originalShapeCoordinates = MinecraftUtilClass.minCoordinates(unidentifiedDirectionFlyingMachine);
-//		testBlockSet = MinecraftUtilClass.shiftBlocksBetweenCorners(unidentifiedDirectionFlyingMachine, originalShapeCoordinates, augmentedCoordinates);
-//
-//		testBlockSet.addAll(southFlyingMachine);
-//		assert !CommonConstants.netio;
-//		assertEquals(800.0,testInstance.fitnessScore(testCorner,testBlockSet),100.0);
-//	}
+	@Test
+	public void testTwoWorkingFlyingMachineSomethingSouth() {	
+		assert !CommonConstants.netio;
+		Parameters.initializeParameterCollections(new String[] {"netio:false", "minecraftClearWithGlass:false","watch:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
+		assert !CommonConstants.netio;
+
+		System.out.println("Unit test: testTwoWorkingFlyingMachineSomethingSouth");
+
+		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,30,-35);
+		//set up test corner and clear area
+		testCorner = MinecraftClient.getMinecraftClient().checkForYOutOfBoundsAndShiftUp(testCorner);
+		MinecraftClient.getMinecraftClient().clearEvaluationSpaceForJUnitTests(testCorner);	
+		
+		//currently from minecraft 2022, MEOriginalVectorPistonOrientation19
+		String southFlyingMachineString = "[SLIME at (-500,100,501) oriented WEST, STICKY_PISTON at (-500,100,502) oriented NORTH, STICKY_PISTON at (-500,101,501) oriented SOUTH, SLIME at (-500,101,502) oriented WEST, QUARTZ_BLOCK at (-500,102,500) oriented SOUTH, REDSTONE_BLOCK at (-500,102,502) oriented DOWN, SLIME at (-499,100,501) oriented WEST, REDSTONE_BLOCK at (-499,100,502) oriented EAST, QUARTZ_BLOCK at (-499,101,500) oriented EAST, SLIME at (-499,101,501) oriented DOWN, STICKY_PISTON at (-499,102,502) oriented DOWN, QUARTZ_BLOCK at (-498,100,500) oriented DOWN, SLIME at (-498,100,501) oriented NORTH, REDSTONE_BLOCK at (-498,101,502) oriented EAST]";
+		//currently from minecraft 2022, MEOriginalVectorPistonOrientation0
+		String unidentifiedDirectionFlyingMachineString = "[STICKY_PISTON at (-160,68,-258) oriented EAST, REDSTONE_BLOCK at (-160,69,-258) oriented SOUTH, STICKY_PISTON at (-160,70,-258) oriented EAST, PISTON at (-159,68,-260) oriented WEST, SLIME at (-159,68,-259) oriented DOWN, REDSTONE_BLOCK at (-159,69,-260) oriented NORTH, SLIME at (-159,69,-259) oriented UP, STICKY_PISTON at (-159,70,-260) oriented SOUTH, SLIME at (-159,70,-259) oriented DOWN, QUARTZ_BLOCK at (-158,68,-260) oriented DOWN, REDSTONE_BLOCK at (-158,69,-260) oriented DOWN, REDSTONE_BLOCK at (-158,69,-259) oriented DOWN, STICKY_PISTON at (-158,70,-260) oriented EAST, STICKY_PISTON at (-158,70,-258) oriented WEST]";
+		
+		List<Block> southFlyingMachine = MinecraftUtilClass.readMinecraftBlockListFromString(southFlyingMachineString);
+		List<Block> unidentifiedDirectionFlyingMachine = MinecraftUtilClass.readMinecraftBlockListFromString(unidentifiedDirectionFlyingMachineString);
+
+		//overall test block set
+		List<Block> testBlockSet = new ArrayList<Block>();
+
+		//south flying machine shifted to test corner
+		MinecraftCoordinates originalShapeCoordinates = MinecraftUtilClass.minCoordinates(southFlyingMachine);
+		southFlyingMachine = MinecraftUtilClass.shiftBlocksBetweenCorners(southFlyingMachine, originalShapeCoordinates, testCorner);
+
+		//augment testcorner by 8 to ensure they do not interfere with each other
+		MinecraftCoordinates augmentedCoordinates = new MinecraftCoordinates(testCorner);
+		augmentedCoordinates.t1 = augmentedCoordinates.t1 -8;			//moving only on the x axis
+
+		originalShapeCoordinates = MinecraftUtilClass.minCoordinates(unidentifiedDirectionFlyingMachine);
+		testBlockSet = MinecraftUtilClass.shiftBlocksBetweenCorners(unidentifiedDirectionFlyingMachine, originalShapeCoordinates, augmentedCoordinates);
+
+		testBlockSet.addAll(southFlyingMachine);
+		assert !CommonConstants.netio;
+		assertEquals(800.0,testInstance.fitnessScore(testCorner,testBlockSet),100.0);
+	}
 	@Test
 	public void testMomentumStationaryFitnessScore() {	
 		Parameters.initializeParameterCollections(new String[] {"netio:false", "minecraftClearWithGlass:false","watch:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet","minecraftChangeBlocksMomentum:" + true});

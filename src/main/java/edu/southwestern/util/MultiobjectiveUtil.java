@@ -155,6 +155,8 @@ public class MultiobjectiveUtil {
 		System.out.println("pareto front directory name: "+saveDirectoryParetoFronts);
 
 		//logging aggregate file
+		if(CommonConstants.watch) System.out.println("XXX file being made name: "+saveDirectoryParetoFronts+ "/"+scoreFileName+".txt");
+
 		File paretoFrontAggregateOutput = new File(saveDirectoryParetoFronts + "/"+scoreFileName+".txt");
 
 		PrintStream ps;

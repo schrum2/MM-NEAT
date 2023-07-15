@@ -16,5 +16,5 @@ minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet ^
 spaceBetweenMinecraftShapes:22 ^
 minecraftClearWithGlass:false ^
 minecraftAccumulateChangeInCenterOfMass:true minecraftChangeCenterOfMassFitness:false minecraftAccumulateNewBlockPositionsFitness:false ^
-minecraftWeightedSumsAccumulateNewBlockPositionsAndChangeCenterOfMassFitness:true
+minecraftWeightedSumsAccumulateNewBlockPositionsAndChangeCenterOfMassFitness:true ^
 base:minecraftcomplex log:MinecraftComplex-BigFlyWSPF saveTo:BigFlyWSPF

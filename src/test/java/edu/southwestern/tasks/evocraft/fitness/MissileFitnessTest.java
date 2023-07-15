@@ -51,6 +51,7 @@ public class MissileFitnessTest {
 		}
 		CommonConstants.watch = false; // Displays debugging info
 	}
+	//commented out to deal with freezing issue
 	@Test
 	public void testNoTNTFitnessScore() {	//TODO: freezing
 		Parameters.initializeParameterCollections(new String[] {"minecraftClearWithGlass:false","watch:false","minecraftXRange:5","minecraftYRange:5","minecraftZRange:5","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.CannonBlockSet", "minecraftTargetDistancefromShapeY:0", "minecraftTargetDistancefromShapeX:-10", "minecraftTargetDistancefromShapeZ:0"});
@@ -63,14 +64,14 @@ public class MissileFitnessTest {
 		MinecraftCoordinates ranges = MinecraftUtilClass.getRanges();
 		System.out.println("2");
 		
-		System.out.println("trying to sleep");
-		try {
-			Thread.sleep(10000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		System.out.println("after sleep");
+//		System.out.println("trying to sleep");
+//		try {
+//			Thread.sleep(10000);
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		System.out.println("after sleep");
 
 		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,30,-35);
 //		MinecraftClient.getMinecraftClient().clearSpaceForShapes(testCorner, ranges, 1, 50); // Larger buffer is important, but too large and it crashes!
@@ -88,7 +89,7 @@ public class MissileFitnessTest {
 		Parameters.initializeParameterCollections(new String[] {"minecraftClearWithGlass:false","watch:false","minecraftXRange:5","minecraftYRange:5","minecraftZRange:5","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.CannonBlockSet", "minecraftTargetDistancefromShapeY:0", "minecraftTargetDistancefromShapeX:0", "minecraftTargetDistancefromShapeZ:0"});
 		MissileFitness testInstance = new MissileFitness();
 		
-		System.out.println("\n TEST: MissileFitnessTest: testNoTNTFitnessScore");
+		System.out.println("\n TEST: MissileFitnessTest: testdropTNTFitnessScore");
 
 		MinecraftCoordinates ranges = MinecraftUtilClass.getRanges();
 		MinecraftCoordinates testCorner = new MinecraftCoordinates(-26,30,-35);

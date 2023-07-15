@@ -66,7 +66,7 @@ public class IntegersToVolumeGenerator implements ShapeGenerator<ArrayList<Integ
 	 * 	 
 	 * @param phenotype the ArrayList of blocks with associated with this shape, contains all attributes related to each block as numerical data in an array
 	 */
-
+//corner passed is evalCorner as far as I can tell
 	@Override
 	public List<Block> generateShape(Genotype<ArrayList<Integer>> genome, MinecraftCoordinates corner,
 			BlockSet blockSet) {
@@ -106,6 +106,7 @@ public class IntegersToVolumeGenerator implements ShapeGenerator<ArrayList<Integ
 								assert ORIENTATION_INDEX < phenotype.size() : ""+phenotype+" size "+phenotype.size()+"\nx="+xi+",y="+yi+",z="+zi+",blockHeadIndexCounter="+blockHeadIndexCounter+"\n"+Arrays.toString(discreteCeilings)+":"+genotypeLength+":numberOfAttributesPerBlock="+numberOfAttributesPerBlock;
 								blockOrientation = MinecraftUtilClass.getOrientations()[phenotype.get(ORIENTATION_INDEX)];
 							}
+//block generated at evalCorner.add(x,y,z)
 							b = new Block(corner.add(new MinecraftCoordinates(xi,yi,zi)), blockSet.getPossibleBlocks()[blockTypeIndex], blockOrientation);
 						} else {
 							// else do not add a block

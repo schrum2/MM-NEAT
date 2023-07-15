@@ -257,7 +257,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		
 	}
 	
-	
+	//TODO: reasses corner naming scheme, what they represent, and how they are created
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num, HashMap<String, Object> behaviorCharacteristics) {
 		//System.out.println("    Archive "+ Arrays.toString(MMNEAT.getArchive().getArchive().stream().map(s -> s == null ? "X" : ((Score) s).behaviorIndexScore() ).toArray()));
@@ -274,7 +274,8 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		}
 		// Clears specified space for new shape
 		clearBlocksForShape(ranges, corner);
-		
+//the above does not clear the same area as the eval area
+//middle is probably eval area
 		MinecraftCoordinates middle = corner.add(MinecraftUtilClass.emptySpaceOffsets());
 		// Evaluates the shape at the middle of the space defined by the corner, and then adds the corner back to the queue
 		Score<T> score = internalMinecraftShapeTask.evaluateOneShape(individual, middle);

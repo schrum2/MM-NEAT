@@ -16,7 +16,7 @@ minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.ExplosiveBlockSet ^
 spaceBetweenMinecraftShapes:30 ^
 minecraftClearWithGlass:false ^
 minecraftAccumulateChangeInCenterOfMass:true minecraftChangeCenterOfMassFitness:false ^
-minecraftWeightedSumsMissileAndChangeCenterOfMassFitness:true 
+minecraftWeightedSumsMissileAndChangeCenterOfMassFitness:true ^
 minecraftMissileFitness:false minecraftCompassMissileTargets:true ^
 minecraftTargetDistancefromShapeX:30 minecraftTargetDistancefromShapeY:0 minecraftTargetDistancefromShapeZ:0 ^
 minecraftEmptySpaceBufferX:27 minecraftEmptySpaceBufferZ:27 minecraftEmptySpaceBufferY:18 ^
