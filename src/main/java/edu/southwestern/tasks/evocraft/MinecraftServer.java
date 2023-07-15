@@ -59,7 +59,7 @@ public class MinecraftServer {
 	 * @return true if launchServer has been called and terminateServer
 	 * 			has not been called yet.
 	 */
-	public static boolean serverIsRunner() {
+	public static boolean serverIsRunning() {
 		return server != null;
 	}
 	

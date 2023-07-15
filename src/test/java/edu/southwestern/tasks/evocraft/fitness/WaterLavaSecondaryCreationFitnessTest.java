@@ -35,7 +35,7 @@ public class WaterLavaSecondaryCreationFitnessTest {
 	public static void setUpBeforeClass() throws Exception {
 		CommonConstants.netio = false;
 		Parameters.initializeParameterCollections(new String[] {"watch:false","minecraftClearWithGlass:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.WaterAndLavaBlockSet","minecraftAccumulateChangeInCenterOfMass:false"});
-		if(!MinecraftServer.serverIsRunner()) {
+		if(!MinecraftServer.serverIsRunning()) {
 			MinecraftServer.launchServer();
 			MinecraftClient.getMinecraftClient();
 		}

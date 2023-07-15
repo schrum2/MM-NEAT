@@ -36,7 +36,7 @@ public class ChangeBlocksFitnessTest {
 	public static void setUpBeforeClass() throws Exception {
 		CommonConstants.netio = false;
 		Parameters.initializeParameterCollections(new String[] {"netio:false", "watch:false","minecraftClearWithGlass:false","minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L,"minecraftMandatoryWaitTime:" + 10000L,"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet"});
-		if(!MinecraftServer.serverIsRunner()) {
+		if(!MinecraftServer.serverIsRunning()) {
 			MinecraftServer.launchServer();
 			MinecraftClient.getMinecraftClient();
 		}
