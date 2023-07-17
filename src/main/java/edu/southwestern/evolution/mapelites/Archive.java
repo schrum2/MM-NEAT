@@ -223,7 +223,7 @@ public class Archive<T> {
 	private boolean replaceIfBetter(Score<T> candidate, int binIndex, Score<T> currentOccupant) {
 		double candidateScore = candidate.behaviorIndexScore(binIndex);
 		// Score cannot be negative infinity. Next, check if the bin is empty, or the candidate is better than the elite for that bin's score
-		if(candidateScore > Float.NEGATIVE_INFINITY && (currentOccupant == null || candidateScore > currentOccupant.behaviorIndexScore(binIndex))) {
+		if(candidateScore > Float.NEGATIVE_INFINITY && (currentOccupant == null || candidateScoreIsBetterThanCurrentOccupantScore(binIndex, currentOccupant, candidateScore))) {
 			archive.set(binIndex, candidate.copy()); // Replace elite
 			if(currentOccupant == null) { // Size is actually increasing
 				synchronized(this) {
@@ -235,6 +235,21 @@ public class Archive<T> {
 		} else {
 			return false;
 		}
+	}
+
+	/**
+	 * Whether new candidate score is better than the score of a current occupant, which must be non-null.
+	 * A parameter setting can indicate whether strict superiority or soft superiority is required.
+	 * 
+	 * @param binIndex Bin in question
+	 * @param currentOccupant Non-null occupant of that bin
+	 * @param candidateScore Score of a new candidate
+	 * @return Whether the score is better in some sense
+	 */
+	private boolean candidateScoreIsBetterThanCurrentOccupantScore(int binIndex, Score<T> currentOccupant, double candidateScore) {
+		assert currentOccupant != null;
+		// TODO: Add parameter for >= instead of >
+		return candidateScore > currentOccupant.behaviorIndexScore(binIndex);
 	}
 	
 	/**
