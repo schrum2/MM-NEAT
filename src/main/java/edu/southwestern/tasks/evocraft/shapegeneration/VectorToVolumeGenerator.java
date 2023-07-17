@@ -54,11 +54,9 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 		upper = ArrayUtil.doubleSpecified(genotypeLength, 1.0); // upper bounds generic genotype
 		lower = ArrayUtil.doubleSpecified(genotypeLength, 0.0); // lower bounds generic genotype
 	}
-	//TODO: rename and reassess corner usage
-	//currently passed eval corner
+
 	@Override
-	public List<Block> generateShape(Genotype<ArrayList<Double>> genome, MinecraftCoordinates corner,
-			BlockSet blockSet) {
+	public List<Block> generateShape(Genotype<ArrayList<Double>> genome, MinecraftCoordinates shapeCorner, BlockSet blockSet) {
 		MinecraftCoordinates ranges = MinecraftUtilClass.getRanges();
 		boolean evolveOrientation = Parameters.parameters.booleanParameter("minecraftEvolveOrientation");
 		boolean separatePresenceThreshold = Parameters.parameters.booleanParameter("vectorPresenceThresholdForEachBlock");
@@ -104,7 +102,7 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 								blockOrientation = determineOrientation(phenotype, ORIENTATION_INDEX);
 							}
 	//blocks created at evalCorner plus x,y,z
-							b = new Block(corner.add(new MinecraftCoordinates(xi,yi,zi)), blockSet.getPossibleBlocks()[blockTypeIndex], blockOrientation);
+							b = new Block(shapeCorner.add(new MinecraftCoordinates(xi,yi,zi)), blockSet.getPossibleBlocks()[blockTypeIndex], blockOrientation);
 						} // else do not place any block
 					} else { // there will either be one or two numbers per block depending on if orientation is being evolved
 						int blockTypeIndex = (int)(phenotype.get(blockHeadIndexCounter)*(numBlockTypes+1)); // length+1 because there could be airblocks
@@ -115,7 +113,7 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 								blockOrientation = determineOrientation(phenotype, ORIENTATION_INDEX);
 							}
 		//blocks created at evalCorner plus x,y,z			
-							b = new Block(corner.add(new MinecraftCoordinates(xi,yi,zi)), blockSet.getPossibleBlocks()[blockTypeIndex], blockOrientation);
+							b = new Block(shapeCorner.add(new MinecraftCoordinates(xi,yi,zi)), blockSet.getPossibleBlocks()[blockTypeIndex], blockOrientation);
 						}
 					}
 					// Will be null if empty/AIR
