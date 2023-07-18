@@ -887,6 +887,7 @@ public class Parameters {
 		booleanOptions.add("momeUsesCrowdingDistanceToDiscard", true, "If MOME has sub-pop cap, then base discards on crowding distance");
 		booleanOptions.add("minecraftClearAndVerify", true, "uses clear and verify");		
 		booleanOptions.add("mapElitesReplaceOnEquality", false, "An elite can be replaced by a candidate of equal fitness");		
+		booleanOptions.add("mapElitesSoftAnnealingArchive", false, "Archive has gradually increasing acceptance thresholds for each bin");		
 		
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
@@ -984,6 +985,7 @@ public class Parameters {
 		doubleOptions.add("minecraftSwapBlocksMutation", 0.2, "Rate of mutation to swap two blocks");
 		doubleOptions.add("minecraftPercentOfTarget", 1.0, "If percentage of target remaining is less than this, then save the shape");
 		doubleOptions.add("hypervolumeMinimumOffset", 1.0, "Add to all scores before hypervolume calculation so that a min score in one objective is not worthless");
+		doubleOptions.add("mapAnnealingAlpha", 0.5, "Update rate for acceptance thresholds in soft MAP Elites archive, based on Fontaine's work");
 		
 		// String parameters
 		stringOptions.add("marioTargetLevel", "data\\VGLC\\SuperMarioBrosNewEncoding\\overworld\\mario-1-1.txt", "Relative path to json file with Mario level to target");

@@ -31,6 +31,7 @@ import edu.southwestern.util.random.RandomNumbers;
 public class Archive<T> {
 	
 	Vector<Score<T>> archive; // Vector is used because it is thread-safe
+	Vector<Double> softArchiveThresholds = null;
 	private int occupiedBins; 
 	private BinLabels mapping;
 	private boolean saveElites;
@@ -59,6 +60,14 @@ public class Archive<T> {
 		for(int i = 0; i < numBins; i++) {
 			archive.add(null); // Place holder for first individual and future elites
 		}
+		// Based on MAP-Annealing idea from Fontaine
+		if(Parameters.parameters.booleanParameter("mapElitesSoftAnnealingArchive")) {
+			softArchiveThresholds = new Vector<Double>(numBins);
+			double minFitness = MMNEAT.task.minScores()[0]; // There should only be the one fitness
+			for(int i = 0; i < numBins; i++) {
+				softArchiveThresholds.add(minFitness);
+			}			
+		}
 	}
 	
 	/**
@@ -72,6 +81,15 @@ public class Archive<T> {
 		this(other.getArchive(), other.mapping, other.getArchiveDir(), other.saveElites);
 	}
 	
+	/**
+	 * Create a new archive in terms of some other archive. Every element in original Archive (other)
+	 * is re-evaluated before placement. Both old and new archive use same bin mapping.
+	 * 
+	 * @param other Vector of scores from previous archive
+	 * @param otherMapping Mapping used by old AND new archive (?)
+	 * @param otherDir where to save
+	 * @param otherSave whether to save
+	 */
 	public Archive(Vector<Score<T>> other, BinLabels otherMapping, String otherDir, boolean otherSave) {
 		saveElites = false; // Don't save while reorganizing
 		mapping = otherMapping;
@@ -224,7 +242,7 @@ public class Archive<T> {
 	private boolean replaceIfBetter(Score<T> candidate, int binIndex, Score<T> currentOccupant) {
 		double candidateScore = candidate.behaviorIndexScore(binIndex);
 		// Score cannot be negative infinity. Next, check if the bin is empty, or the candidate is better than the elite for that bin's score
-		if(candidateScore > Float.NEGATIVE_INFINITY && (currentOccupant == null || candidateScoreIsBetterThanCurrentOccupantScore(binIndex, currentOccupant, candidateScore))) {
+		if(candidateScore > Float.NEGATIVE_INFINITY && candidateScoreIsBetterThanCurrentOccupantScore(binIndex, currentOccupant, candidateScore)) {
 			archive.set(binIndex, candidate.copy()); // Replace elite
 			if(currentOccupant == null) { // Size is actually increasing
 				synchronized(this) {
@@ -239,21 +257,37 @@ public class Archive<T> {
 	}
 
 	/**
-	 * Whether new candidate score is better than the score of a current occupant, which must be non-null.
+	 * Whether new candidate score is better than the score of a current occupant.
+	 * A null occupant is always replaced.
 	 * A parameter setting can indicate whether strict superiority or soft superiority is required.
 	 * 
 	 * @param binIndex Bin in question
-	 * @param currentOccupant Non-null occupant of that bin
+	 * @param currentOccupant occupant of that bin (possibly null)
 	 * @param candidateScore Score of a new candidate
 	 * @return Whether the score is better in some sense
 	 */
 	private boolean candidateScoreIsBetterThanCurrentOccupantScore(int binIndex, Score<T> currentOccupant, double candidateScore) {
-		assert currentOccupant != null;
-		if(Parameters.parameters.booleanParameter("mapElitesReplaceOnEquality")) {
-			return candidateScore >= currentOccupant.behaviorIndexScore(binIndex);
-		} else {
-			return candidateScore > currentOccupant.behaviorIndexScore(binIndex);
+		boolean insertIntoArchive = false;
+		if(currentOccupant == null) { // If bin is empty, always replace
+			insertIntoArchive = true;
+		} else { // Otherwise, candidate must pass threshold
+			// In a soft archive, threshold could be less than current occupant score
+			double thresholdToBeat = (softArchiveThresholds != null) ? softArchiveThresholds.get(binIndex) : currentOccupant.behaviorIndexScore(binIndex);
+			if(Parameters.parameters.booleanParameter("mapElitesReplaceOnEquality")) {
+				insertIntoArchive = candidateScore >= thresholdToBeat;
+			} else {
+				insertIntoArchive = candidateScore > thresholdToBeat;
+			}
 		}
+		
+		// Now update threshold: Based on MAP-Annealing from Fontaine
+		if(softArchiveThresholds != null) {
+			double t_e = softArchiveThresholds.get(binIndex);
+			double alpha = Parameters.parameters.doubleParameter("mapAnnealingAlpha");
+			double new_t_e = (1 - alpha)*t_e + alpha*candidateScore;
+			softArchiveThresholds.set(binIndex, new_t_e);
+		}	
+		return insertIntoArchive;
 	}
 	
 	/**
