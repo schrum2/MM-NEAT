@@ -14,6 +14,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.MultiobjectiveUtil;
@@ -248,8 +249,11 @@ public class Archive<T> {
 	 */
 	private boolean candidateScoreIsBetterThanCurrentOccupantScore(int binIndex, Score<T> currentOccupant, double candidateScore) {
 		assert currentOccupant != null;
-		// TODO: Add parameter for >= instead of >
-		return candidateScore > currentOccupant.behaviorIndexScore(binIndex);
+		if(Parameters.parameters.booleanParameter("mapElitesReplaceOnEquality")) {
+			return candidateScore >= currentOccupant.behaviorIndexScore(binIndex);
+		} else {
+			return candidateScore > currentOccupant.behaviorIndexScore(binIndex);
+		}
 	}
 	
 	/**

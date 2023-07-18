@@ -886,6 +886,7 @@ public class Parameters {
 		booleanOptions.add("minecraftWeightedSumsAccumulateNewBlockPositionsAndChangeCenterOfMassFitness", false, "uses the WeightedSumsAccumulateNewBlockPositionsAndChangeCenterOfMassFitness function");
 		booleanOptions.add("momeUsesCrowdingDistanceToDiscard", true, "If MOME has sub-pop cap, then base discards on crowding distance");
 		booleanOptions.add("minecraftClearAndVerify", true, "uses clear and verify");		
+		booleanOptions.add("mapElitesReplaceOnEquality", false, "An elite can be replaced by a candidate of equal fitness");		
 		
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
