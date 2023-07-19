@@ -1,9 +1,11 @@
 package edu.southwestern.tasks.evocraft.fitness;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient;
@@ -33,6 +35,8 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 		// For a scenario using just one fitness function, put this function in a list by itself and use the multiple evaluation method on the list of one
 		ArrayList<TimedEvaluationMinecraftFitnessFunction> fitnessFunctions = new ArrayList<>(1);
 		fitnessFunctions.add(this);
+		// BAD ASSERT: The minimum corner of the generated shape could be higher than the shapeCorner in any dimension.
+		// assert shapeCorner.equals( MinecraftUtilClass.minCoordinates(originalBlocks)) : "the passed shape corner (" + shapeCorner+ ") and the actual shape corner ("+ MinecraftUtilClass.minCoordinates(originalBlocks) + ") do not match";
 		double[] scores = multipleFitnessScores(fitnessFunctions, shapeCorner, originalBlocks);
 		return scores[0]; // Only score from list of one fitness function
 	}
@@ -43,7 +47,7 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 	 * for those that wanted to stop until the end, when all remaining fitness scores are calculated in the normal fashion.
 	 * 
 	 * @param fitnessFunctions List of TimedEvaluationMinecraftFitnessFunction type fitness functions
-	 * @param shapeCorner Minimal corner where shape it spawned
+	 * @param shapeCorner Minimal corner where shape it spawned (does not check if the shape is actually in the corner)
 	 * @param originalBlocks Original block configuration of shape before simulation
 	 * @return array where each index if a fitness score for the corresponding fitness function
 	 */
@@ -66,14 +70,17 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 
 		// Shifts over the corner to the new range with the large space in between shapes
 		MinecraftCoordinates evaluationCorner = shapeCorner.sub(MinecraftUtilClass.emptySpaceOffsets());
+		if(CommonConstants.watch) System.out.println("original shape corner: "+shapeCorner+" evalCorner: "+ evaluationCorner);
+		if(CommonConstants.watch) System.out.println("spaceBetween:"+Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+" emptySpaceOffsets(): "+MinecraftUtilClass.emptySpaceOffsets()+" does it need to be pushed?: "+ MinecraftUtilClass.checkOutOfBoundsY(evaluationCorner));
+
 		// schrum2: I think this code is responsible for the weird error of shapes near the ground being stacked vertically.
 		//          When the startY is made large enough, this is not an issue, but making the user set that correctly
 		//          is a hassle.		
-		
+//	PUSH UP FROM GROUND : PUSHUP CODE
 		//if statement checks if the evaluation space plus the space that would be cleared is below the ground level
-		if(evaluationCorner.y() - MinecraftClient.EMPTY_SPACE_SAFETY_BUFFER <= MinecraftClient.GROUND_LEVEL) { // Push up if close to ground
+		if(evaluationCorner.y() - Parameters.parameters.integerParameter("minecraftEmptySpaceBufferY") <= MinecraftClient.GROUND_LEVEL) { // Push up if close to ground
 			System.out.println("Pushed up from " + evaluationCorner);
-			MinecraftCoordinates shiftPoint = new MinecraftCoordinates(0,MinecraftClient.EMPTY_SPACE_SAFETY_BUFFER,0);
+			MinecraftCoordinates shiftPoint = new MinecraftCoordinates(0,Parameters.parameters.integerParameter("minecraftEmptySpaceBufferY"),0);
 			MinecraftCoordinates oldCorner = evaluationCorner;
 			evaluationCorner = evaluationCorner.add(shiftPoint); // move sufficiently above the ground
 			shapeCorner = shapeCorner.add(shiftPoint);			//shifts the shape corner as well
@@ -89,7 +96,9 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 		if(CommonConstants.watch) System.out.println("Evaluate at corner: "+evaluationCorner);
 
 		//clear and verify evaluation space
-		MinecraftClient.clearAndVerify(shapeCorner);
+		if(Parameters.parameters.booleanParameter("minecraftClearAndVerify")) {
+			MinecraftClient.clearAndVerify(shapeCorner);
+		}
 
 	////////	creating history 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//history is a list of time stamps with an associated list of blocks read at that time
@@ -249,5 +258,13 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 	 */
 	protected long minNumberOfShapeReadings() {
 		return Parameters.parameters.longParameter("minecraftMandatoryWaitTime")/Parameters.parameters.longParameter("shortTimeBetweenMinecraftReads");
+	}
+	
+	public static void main(String[] args) {
+		try {   
+			MMNEAT.main("runNumber:1 randomSeed:1 minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftEmptySpaceBufferX:27 minecraftEmptySpaceBufferZ:27 minecraftEmptySpaceBufferY:18 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.DirectRepresentationShapeGenerator trials:1 minecraftMandatoryWaitTime:15000 minecraftContainsWholeMAPElitesArchive:false forceLinearArchiveLayoutInMinecraft:false minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.ExplosiveBlockSet io:true netio:true interactWithMapElitesInWorld:false mating:true spaceBetweenMinecraftShapes:30 launchMinecraftServerFromJava:false task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.tasks.evocraft.genotype.MinecraftShapeGenotype vectorPresenceThresholdForEachBlock:true parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearWithGlass:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true rememberParentScores:true extraSpaceBetweenMinecraftShapes:100 mu:100 maxGens:100000 experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5 minecraftAccumulateChangeInCenterOfMass:true ea:edu.southwestern.evolution.mome.MOME maximumMOMESubPopulationSize:10 minecraftCompassMissileTargets:true minecraftTargetDistancefromShapeX:30 minecraftTargetDistancefromShapeY:0 minecraftTargetDistancefromShapeZ:0 minecraftChangeCenterOfMassFitness:true minecraftMissileFitness:true base:minecraftcomplex log:MinecraftComplex-MissileMOME saveTo:MissileMOME".split(" ")); 
+		} catch (FileNotFoundException | NoSuchMethodException e) {
+			e.printStackTrace();
+		}
 	}
 }

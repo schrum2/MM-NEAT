@@ -2,7 +2,6 @@ package edu.southwestern.tasks.evocraft;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
@@ -10,7 +9,6 @@ import java.lang.ProcessBuilder.Redirect;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.mario.gan.Comm;
 import edu.southwestern.util.PythonUtil;
@@ -18,10 +16,10 @@ import edu.southwestern.util.datastructures.Triple;
 /**
  * MinecraftClient creates A client if one doesn't exist communicates with Python API as a Java interface 
  * to place blocks in their proper positions while also formating the area properly
- * @author raffertyt
- *
  */
 public class MinecraftClient extends Comm {
+	// Max volume of blocks allowed to be read from a readCube command
+	private static final int MAX_VOLUME_READ = 134560; // 110592;
 
 	public static final int MAX_Y_COORDINATE = 255;
 
@@ -40,8 +38,6 @@ public class MinecraftClient extends Comm {
 
 	//a corner that is no where near any other used area meant to evaluate shapes after a completed evolution experiment
 	public static final MinecraftCoordinates POST_EVALUATION_SHAPE_CORNER = new MinecraftCoordinates(-500, 100 + Parameters.parameters.integerParameter("minecraftPostCornerAdjustY"), 500);
-	//An extra amount of empty space that should surround shapes whose evaluation depends on movement.
-	public static final int EMPTY_SPACE_SAFETY_BUFFER = Parameters.parameters.integerParameter("minecraftEmptySpaceBuffer");
 
 	public MinecraftClient() {
 		super();
@@ -640,7 +636,6 @@ public class MinecraftClient extends Comm {
 			return name + " at " + pos + " oriented " + (orientation == null ? "null" : orientation.name());
 		}
 		
-
 	}
 
 	/**
@@ -742,10 +737,10 @@ public class MinecraftClient extends Comm {
 		MinecraftCoordinates newShapeCorner = originalShapeCorner;
 		
 		//check for out of bounds
-		if(originalShapeCorner.y() - EMPTY_SPACE_SAFETY_BUFFER - Parameters.parameters.integerParameter("minecraftExtraClearSpace") <= MinecraftClient.GROUND_LEVEL) { // Push up if close to ground)
+		if(originalShapeCorner.y() - Parameters.parameters.integerParameter("minecraftEmptySpaceBufferY") - Parameters.parameters.integerParameter("minecraftExtraClearSpace") <= MinecraftClient.GROUND_LEVEL) { // Push up if close to ground)
 			System.out.println("Pushed up from " + originalShapeCorner);
 			
-			MinecraftCoordinates shiftPoint = new MinecraftCoordinates(0,MinecraftClient.EMPTY_SPACE_SAFETY_BUFFER,0);
+			MinecraftCoordinates shiftPoint = new MinecraftCoordinates(0,Parameters.parameters.integerParameter("minecraftEmptySpaceBufferY"),0);
 			newShapeCorner = originalShapeCorner.add(shiftPoint);			//shifts the shape corner to a new adjusted corner
 		}
 		return newShapeCorner;
@@ -784,8 +779,9 @@ public class MinecraftClient extends Comm {
 	 */
 	public static void extraClearAreaClearAroundCornerWithGlass (MinecraftCoordinates shapeCorner) {
 		//add a little extra
-		MinecraftCoordinates lowerCoordinates = shapeCorner.sub(Parameters.parameters.integerParameter("minecraftExtraClearSpace") + EMPTY_SPACE_SAFETY_BUFFER);
-		MinecraftCoordinates upperCoordinates = shapeCorner.add(MinecraftUtilClass.getRanges().add(EMPTY_SPACE_SAFETY_BUFFER+Parameters.parameters.integerParameter("minecraftExtraClearSpace")));
+		MinecraftCoordinates minecraftEmptySpaceBuffer = new MinecraftCoordinates(Parameters.parameters.integerParameter("minecraftEmptySpaceBufferX"),Parameters.parameters.integerParameter("minecraftEmptySpaceBufferY"),Parameters.parameters.integerParameter("minecraftEmptySpaceBufferZ"));
+		MinecraftCoordinates lowerCoordinates = shapeCorner.sub(Parameters.parameters.integerParameter("minecraftExtraClearSpace")).sub(minecraftEmptySpaceBuffer);
+		MinecraftCoordinates upperCoordinates = shapeCorner.add(MinecraftUtilClass.getRanges().add(Parameters.parameters.integerParameter("minecraftExtraClearSpace")).add(minecraftEmptySpaceBuffer));
 		getMinecraftClient().clearCube(lowerCoordinates, upperCoordinates, true);
 		List<Block> errorCheck = null;
 		assert areaAroundCornerEmpty(shapeCorner) : "Area not empty after clearing! "+errorCheck;
@@ -801,27 +797,31 @@ public class MinecraftClient extends Comm {
 	
 	/**
 	 * TODO: this takes a shape corner but frequently is passed an evaluation corner
+	 * This takes shape corner, 
 	 * Make sure the special area for double-checking flying shapes is really clear
 	 * @param shapeCorner of the evaluation area
 	 * @param clearWithGlass - if passed true (only from clearAndVerify) clears with glass first
 	 */
 	public static void clearAreaAroundCorner(MinecraftCoordinates shapeCorner, boolean clearWithGlass) {
 		//lower is the min coordinates of the clear space based on the 
-		MinecraftCoordinates lower = shapeCorner.sub(EMPTY_SPACE_SAFETY_BUFFER);
-		MinecraftCoordinates upper = shapeCorner.add(MinecraftUtilClass.getRanges().add(EMPTY_SPACE_SAFETY_BUFFER));
+		MinecraftCoordinates minecraftEmptySpaceBuffer = new MinecraftCoordinates(Parameters.parameters.integerParameter("minecraftEmptySpaceBufferX"),Parameters.parameters.integerParameter("minecraftEmptySpaceBufferY"),Parameters.parameters.integerParameter("minecraftEmptySpaceBufferZ"));
+		MinecraftCoordinates lower = shapeCorner.sub(minecraftEmptySpaceBuffer);
+		MinecraftCoordinates upper = shapeCorner.add(MinecraftUtilClass.getRanges().add(minecraftEmptySpaceBuffer));
 		getMinecraftClient().clearCube(lower, upper, clearWithGlass);
 		List<Block> errorCheck = null;
 		assert areaAroundCornerEmpty(shapeCorner) : "Area not empty after clearing! "+errorCheck;
 	}
 	/**
 	 * TODO: takes in a shape corner and changes to evaluation corner, ie input: smallCorner, output: largeCorner
+	 * DOES NOT turn into evaluationCorner, adds minecraftEmptySpaceBuffer
 	 * Checks if the area around a corner is empty
 	 * @param corner the corner coordinates being checked
 	 * @return boolean if space is empty or not
 	 */
 	public static boolean areaAroundCornerEmpty(MinecraftCoordinates corner) {
-		MinecraftCoordinates lower = corner.sub(EMPTY_SPACE_SAFETY_BUFFER);
-		MinecraftCoordinates upper = corner.add(MinecraftUtilClass.getRanges().add(EMPTY_SPACE_SAFETY_BUFFER));
+		MinecraftCoordinates minecraftEmptySpaceBuffer = new MinecraftCoordinates(Parameters.parameters.integerParameter("minecraftEmptySpaceBufferX"),Parameters.parameters.integerParameter("minecraftEmptySpaceBufferY"),Parameters.parameters.integerParameter("minecraftEmptySpaceBufferZ"));
+		MinecraftCoordinates lower = corner.sub(minecraftEmptySpaceBuffer);
+		MinecraftCoordinates upper = corner.add(MinecraftUtilClass.getRanges().add(minecraftEmptySpaceBuffer));
 		List<Block> errorCheck = MinecraftUtilClass.filterOutBlock(getMinecraftClient().readCube(lower, upper), BlockType.AIR);
 //		if(!errorCheck.isEmpty()) {
 //			System.out.println("NOT EMPTY at corner "+corner+"\n"+errorCheck);
@@ -958,29 +958,84 @@ public class MinecraftClient extends Comm {
 	 * @return List of Blocks between the min and max coordinates (inclusive)
 	 */
 	public synchronized ArrayList<Block> readCube(int xmin, int ymin, int zmin, int xmax, int ymax, int zmax) {
-		String message = "readCube "+xmin+" "+ymin+" "+zmin+" "+xmax+" "+ymax+" "+zmax+" ";
-		checkBlockBounds(xmin, ymin, zmin, xmax, ymax, zmax);
-		try {
-			commSend(message);
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.out.println("Minecraft failed on command "+message);
-			System.exit(1);
+		assert xmin <= xmax && ymin <= ymax && zmin <= zmax: "Min should be less than max in each coordinate: min = ("+xmin+", "+ymin+", "+zmin+"), max = ("+xmax+", "+ymax+", "+zmax+")"; 
+		int volume = (xmax - xmin + 1) * (ymax - ymin + 1) * (zmax - zmin + 1);
+		if(volume > MAX_VOLUME_READ) {
+			String message = "readCube "+xmin+" "+ymin+" "+zmin+" "+xmax+" "+ymax+" "+zmax+" ";
+			System.out.println("Breaking request for "+volume+" > "+MAX_VOLUME_READ+" blocks into two requests:\n"+message);
+			// Request is so big it will overwhelm the server. Break into two requests and combine results.
+
+			int xmin1 = xmin; 
+			int ymin1 = ymin; 
+			int zmin1 = zmin;
+			
+			// One of these must change
+			int xmax1 = xmax; 
+			int ymax1 = ymax;
+			int zmax1 = zmax;
+
+			// One of these must change
+			int xmin2 = xmin; 
+			int ymin2 = ymin; 
+			int zmin2 = zmin;
+			
+			int xdiff = xmax - xmin;
+			int ydiff = ymax - ymin;
+			int zdiff = zmax - zmin;
+			
+			// Choose which dimension to split in half
+			
+			if(xdiff > ydiff && xdiff > zdiff) {
+				// x dim is biggest
+				xmax1 = xmin + xdiff/2;
+				xmin2 = xmax1 + 1;
+			} else if(ydiff > xdiff && ydiff > zdiff) {
+				// y dim is biggest
+				ymax1 = ymin + ydiff/2;
+				ymin2 = ymax1 + 1;				
+			} else {
+				// z dim is biggest, or they are tied
+				zmax1 = zmin + zdiff/2;
+				zmin2 = zmax1 + 1;
+			}
+
+			int xmax2 = xmax; 
+			int ymax2 = ymax;
+			int zmax2 = zmax;
+			
+			// Recursive split and recombine
+			ArrayList<Block> half1 = readCube(xmin1, ymin1, zmin1, xmax1, ymax1, zmax1);
+			ArrayList<Block> half2 = readCube(xmin2, ymin2, zmin2, xmax2, ymax2, zmax2);
+			// Combine all and return
+			half1.addAll(half2);
+			return half1;
+		} else {
+			String message = "readCube "+xmin+" "+ymin+" "+zmin+" "+xmax+" "+ymax+" "+zmax+" ";
+			checkBlockBounds(xmin, ymin, zmin, xmax, ymax, zmax);
+			try {
+				commSend(message);
+			} catch (IOException e) {
+				e.printStackTrace();
+				System.out.println("Minecraft failed on command "+message);
+				System.exit(1);
+			}
+			String response = commRecv();
+			if(response == null) {
+				System.out.println("Python process for interacting with the Minecraft server is not responding.");
+				System.out.println("This likely means the Minecraft server was overwhelmed. Try increasing the \"minecraftClearSleepTimer\"");
+				System.out.println("or reading a smaller area. Requested volume was: "+volume+".Last command was:");
+				System.out.println(message);
+				throw new NullPointerException("Response not received from readCube. Server is probably overwhelmed and crashed from:\n"+message+"\nrequesting volume "+volume);
+			}
+			String[] tokens = response.split(" ");
+			ArrayList<Block> result = new ArrayList<Block>(tokens.length / 4);
+			// Each Block is 4 numbers: x y z type
+			for(int i = 0; i < tokens.length; i += 4) {
+				Block b = new Block(Integer.parseInt(tokens[i]),Integer.parseInt(tokens[i+1]),Integer.parseInt(tokens[i+2]),Integer.parseInt(tokens[i+3]));
+				result.add(b);
+			}
+			return result;
 		}
-		String response = commRecv();
-		if(response == null) {
-			System.out.println("Python process for interacting with the Minecraft server is not responding.");
-			System.out.println("This likely means the Minecraft server was overwhelmed. Try increasing the \"minecraftClearSleepTimer\"");
-			throw new NullPointerException("Response not received from readCube. Server is probably overwhelmed and crashed.");
-		}
-		String[] tokens = response.split(" ");
-		ArrayList<Block> result = new ArrayList<Block>(tokens.length / 4);
-		// Each Block is 4 numbers: x y z type
-		for(int i = 0; i < tokens.length; i += 4) {
-			Block b = new Block(Integer.parseInt(tokens[i]),Integer.parseInt(tokens[i+1]),Integer.parseInt(tokens[i+2]),Integer.parseInt(tokens[i+3]));
-			result.add(b);
-		}
-		return result;
 	}
 	
 
@@ -1047,11 +1102,5 @@ public class MinecraftClient extends Comm {
 			throw new IllegalArgumentException("This version of Minecraft only allows blocks to be generated with y-coordinates between 0 and 255 inclusive.\nTherefore, cannot generate in this range: "+xmin+", "+ymin+", "+zmin+", "+xmax+", "+ymax+", "+zmax);
 		}
 	}
-	public static void main(String[] args) {
-		try {
-			MMNEAT.main("runNumber:4 randomSeed:200 minecraftClearWithGlass:true minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftChangeCenterOfMassFitness:true minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet trials:1 mu:100 maxGens:200 minecraftContainsWholeMAPElitesArchive:false forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:false mating:true fs:false ea:edu.southwestern.evolution.mapelites.MAPElites experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:minecraftaccumulate log:MinecraftAccumulate-MEObserverVectorPistonOrientation saveTo:MEObserverVectorPistonOrientation mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5".split(" ")); 
-		} catch (FileNotFoundException | NoSuchMethodException e) {
-			e.printStackTrace();
-		}
-	}
+
 }

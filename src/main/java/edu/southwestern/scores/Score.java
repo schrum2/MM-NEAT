@@ -2,8 +2,10 @@ package edu.southwestern.scores;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Vector;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.ScoreHistory;
@@ -477,5 +479,24 @@ public class Score<T> {
 	public void assignMAPElitesBinAndScore(int[] binIndices, double score) {
 		oneMAPEliteBinIndex = binIndices;
 		mapElitesSoleBinQualityScore =	score;
+	}
+	
+
+	/**
+	 * Take Scores that have multiple other stats defined, and make a new
+	 * list that has the same individuals as Scores, but replaces their
+	 * fitness scores with the other stats values. The original fitness
+	 * scores are absent in this new list.
+	 * 
+	 * @param evaluatedPopulation Collection of scores with otherStats
+	 * @return list of Scores with the other stats as fitness
+	 */
+	public static <T> List<Score<T>> getScoresOfOtherStats(Collection<Score<T>> evaluatedPopulation) {
+		Vector<Score<T>> scoresOfOtherStats = new Vector<>(evaluatedPopulation.size());
+		for(Score<T> s : evaluatedPopulation) {
+			// Notice that the otherStats of the original Score become the actual objective scores of the new Score instance
+			scoresOfOtherStats.add(new Score<>(s.individual, s.otherStats));
+		}
+		return scoresOfOtherStats;
 	}
 }

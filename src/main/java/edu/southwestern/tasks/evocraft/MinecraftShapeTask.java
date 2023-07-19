@@ -67,7 +67,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 
 	// Visible within package
 	ArrayList<MinecraftFitnessFunction> fitnessFunctions;
-	private ArrayList<MinecraftCoordinates> corners;
+	private ArrayList<MinecraftCoordinates> evaluationCorners;
 	private int startingX;
 	private int startingY;
 	private int startingZ;
@@ -315,8 +315,8 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {
 		//MinecraftClient client = MinecraftClient.getMinecraftClient();		
 		// Avoid recalculating the same corners every time
-		if(corners == null) {
-			corners = getShapeCorners(population.size(), startingX, startingY, startingZ, MinecraftUtilClass.getRanges());
+		if(evaluationCorners == null) {
+			evaluationCorners = getShapeEvaluationCorners(population.size(), startingX, startingY, startingZ, MinecraftUtilClass.getRanges());
 		}
 
 		// Must clear the space where shapes are placed
@@ -324,12 +324,12 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		//client.clearSpaceForShapes(new MinecraftCoordinates(startingX,MinecraftClient.GROUND_LEVEL+1,startingZ), MinecraftUtilClass.getRanges(), population.size(), Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER));
 
 		// Generate and evaluate shapes in parallel
-		IntStream stream = IntStream.range(0, corners.size());
+		IntStream stream = IntStream.range(0, evaluationCorners.size());
 		ArrayList<Score<T>> scores = stream.parallel().mapToObj( i -> {
-			MinecraftCoordinates corner = corners.get(i);
-			MinecraftCoordinates middle = corner.add(MinecraftUtilClass.emptySpaceOffsets());
+			MinecraftCoordinates evaluationCorner = evaluationCorners.get(i);
+			MinecraftCoordinates shapeCorner = evaluationCorner.add(MinecraftUtilClass.emptySpaceOffsets());
 			Genotype<T> genome = population.get(i);
-			return evaluateOneShape(genome, middle, fitnessFunctions);
+			return evaluateOneShape(genome, shapeCorner, fitnessFunctions);
 		}).collect(Collectors.toCollection(ArrayList::new));
 		System.out.println("Finished collecting");
 		return scores;
@@ -352,21 +352,17 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	 * 
 	 * @param <T>
 	 * @param genome Evolved individual that generates a shape
-	 * @param corner Location to generate shape at: minimal coordinate
+	 * @param shapeCorner Location to generate shape at
 	 * @param fitnessFunctions List of fitness functions to evaluate the shape on
 	 * @return Score instance containing evaluation information
 	 */
-
-	public static <T> Score<T> evaluateOneShape(Genotype<T> genome, MinecraftCoordinates corner, ArrayList<MinecraftFitnessFunction> fitnessFunctions) {
+	public static <T> Score<T> evaluateOneShape(Genotype<T> genome, MinecraftCoordinates shapeCorner, ArrayList<MinecraftFitnessFunction> fitnessFunctions) {
 		@SuppressWarnings("unchecked")
-		List<Block> blocks = MMNEAT.shapeGenerator.generateShape(genome, corner, MMNEAT.blockSet);
-		//System.out.println(genome.getId() + ":" + blocks);
+		List<Block> blocks = MMNEAT.shapeGenerator.generateShape(genome, shapeCorner, MMNEAT.blockSet);
 
-		// Clear space around this one shape
-		MinecraftLonerShapeTask.clearBlocksForShape(MinecraftUtilClass.getRanges(), corner.sub(MinecraftUtilClass.emptySpaceOffsets()));
-
-		//MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
-		Pair<double[],double[]> scores = calculateFitnessScores(corner,fitnessFunctions,blocks);
+		// This clear command not needed. Each timed eval fitness clears before evaluation
+		//MinecraftLonerShapeTask.clearBlocksForShape(MinecraftUtilClass.getRanges(), shapeCorner.sub(MinecraftUtilClass.emptySpaceOffsets()));
+		Pair<double[],double[]> scores = calculateFitnessScores(shapeCorner,fitnessFunctions,blocks);
 		double[] fitnessScores = scores.t1;
 		double[] otherScores = scores.t2;
 		
@@ -377,41 +373,24 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
 			// It is important to note that the original blocks from the CPPN are used here rather than the blocks
 			// read from the world. So, any properties collected will be before movement due to machine parts.
-			double[] propertyScores = calculateFitnessScores(corner,minecraftBinLabels.properties(), blocks).t1; // t1 since no "other" scores are used here
+			double[] propertyScores = calculateFitnessScores(shapeCorner,minecraftBinLabels.properties(), blocks).t1; // t1 since no "other" scores are used here
 			// Map contains all required properties now
 			HashMap<String,Object> behaviorMap = minecraftBinLabels.behaviorMapFromScores(propertyScores);
 
 			double binScore = qualityScore(fitnessScores); 
 			behaviorMap.put("binScore", binScore); // Quality Score!				
 
-			assert !behaviorMap.containsKey("WidthFitness") || ((Double) behaviorMap.get("WidthFitness")).doubleValue() <= Parameters.parameters.integerParameter("minecraftXRange") : genome.getId() +":"+ behaviorMap + ":" + blocks + ":" + corner;
+			assert !behaviorMap.containsKey("WidthFitness") || ((Double) behaviorMap.get("WidthFitness")).doubleValue() <= Parameters.parameters.integerParameter("minecraftXRange") : genome.getId() +":"+ behaviorMap + ":" + blocks + ":" + shapeCorner;
 
 			// Do this last
 			int dim1D = minecraftBinLabels.oneDimensionalIndex(behaviorMap);
 			behaviorMap.put("dim1D", dim1D); // Save so it does not need to be computed again
 			score.assignMAPElitesBehaviorMapAndScore(behaviorMap);
 
-			//if(genome.getId()  == 91) System.out.println(genome.getId() + ":" + blocks + ":" + behaviorMap);
 			assert !(minecraftBinLabels instanceof MinecraftMAPElitesBlockCountBinLabels) || ((Integer) behaviorMap.get("dim1D")).intValue() == (int) ((Double) behaviorMap.get("OccupiedCountFitness")).doubleValue() - 1 : behaviorMap + ":" + blocks;
 			assert !(minecraftBinLabels instanceof MinecraftMAPElitesBlockCountBinLabels) || blocks.size() == (int) ((Double) behaviorMap.get("OccupiedCountFitness")).doubleValue() : behaviorMap + ":" + blocks;
 		} 
 
-		//TODO: calls certainFlying and saves the shapes
-		// If the new shapeIsWorthSaving method in TimedEvaluationMinecraftFitnessFunction works, then the code below is not needed,
-		// since we don't need to save shapes twice.
-		
-		//makes a directory, and writes block list
-//		if(CommonConstants.netio && Parameters.parameters.booleanParameter("minecraftChangeCenterOfMassFitness") && certainFlying(fitnessFunctions, fitnessScores[0])) {
-//			// Assuming that change in center of mass is at index 0, and that 5 is a suitable threshold for penalties to the max fitness
-//			String flyingDir = FileUtilities.getSaveDirectory() + "/flyingMachines";
-//			File dir = new File(flyingDir);	// Create dir
-//			if (!dir.exists()) {
-//				dir.mkdir();
-//			}
-//			//Orientation flyingDirection = directionOfMaximumDisplacement(deltaX,deltaY,deltaZ);
-//			//String gen = "GEN"+(MMNEAT.ea instanceof GenerationalEA ? ((GenerationalEA) MMNEAT.ea).currentGeneration() : "ME");
-//			MinecraftUtilClass.writeBlockListFile(blocks, flyingDir + File.separator + "ID"+genome.getId(), ".txt");
-//		}
 		if(Parameters.parameters.integerParameter("minecraftDelayAfterEvaluation")> 0) {
 			try {
 				Thread.sleep(Parameters.parameters.integerParameter("minecraftDelayAfterEvaluation"));
@@ -527,7 +506,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	 * @param startingZ z-coordinate of corner for first shape
 	 * @param ranges size of generated shapes in x/y/z dimensions
 	 */
-	public static ArrayList<MinecraftCoordinates> getShapeCorners(int size, int startingX, int startingY, int startingZ, MinecraftCoordinates ranges) {
+	public static ArrayList<MinecraftCoordinates> getShapeEvaluationCorners(int size, int startingX, int startingY, int startingZ, MinecraftCoordinates ranges) {
 		ArrayList<MinecraftCoordinates> corners = new ArrayList<>(size);
 		int extraSpace = Parameters.parameters.integerParameter("extraSpaceBetweenMinecraftShapes");
 		int totalSpaceBetweenShapes = Math.max(Math.max(ranges.x(), ranges.y()), ranges.z()) + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes") + extraSpace;

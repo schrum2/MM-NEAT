@@ -40,11 +40,11 @@ public interface ShapeGenerator<T> {
 	 * to the coordinates in the corner parameter.
 	 * 
 	 * @param genome Evolved genome
-	 * @param corner Location in world to generate the shape
+	 * @param shapeCorner Location in world to generate the shape
 	 * @param blockSet possible blocks that can be generated
 	 * @return List of Blocks to generate
 	 */
-	public List<Block> generateShape(Genotype<T> genome, MinecraftCoordinates corner, BlockSet blockSet);
+	public List<Block> generateShape(Genotype<T> genome, MinecraftCoordinates shapeCorner, BlockSet blockSet);
 
 	/**
 	 * Array of the names of the CPPN output neurons

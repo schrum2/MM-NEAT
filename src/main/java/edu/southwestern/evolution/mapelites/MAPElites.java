@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Vector;
 import java.util.stream.Stream;
 
@@ -35,6 +36,7 @@ import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBinLa
 import edu.southwestern.tasks.innovationengines.PictureTargetTask;
 import edu.southwestern.tasks.interactive.picbreeder.PicbreederTask;
 import edu.southwestern.tasks.loderunner.LodeRunnerLevelTask;
+import edu.southwestern.util.MultiobjectiveUtil;
 import edu.southwestern.util.PopulationUtil;
 import edu.southwestern.util.PythonUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
@@ -67,9 +69,8 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	private MMNEATLog autoencoderLossRange = null;
 	protected MMNEATLog[] emitterIndividualsLogs = null;
 	private MMNEATLog[] otherStatsLogs = null;	//logs the other stats 
-//	private MMNEATLog[] otherStatsFillLogs = null;
 	private MMNEATLog otherStatsFillLog = null;
-//	private MMNEATLog[] otherStatsQDScoreLogs = null;
+	private MMNEATLog otherHypervolumeLog = null;
 	// separate log and plot file for each index in otherStats
 	protected LonerTask<T> task;
 	protected Archive<T> archive;
@@ -113,18 +114,18 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			
 			//logging other stats
 			int numberOfOtherStats = MMNEAT.getNumberOtherStatsForPopulation(0);
-			ArrayList<MMNEATLog> otherStatsLogsList = new ArrayList<>();
-			otherStatsLogs = new MMNEATLog[numberOfOtherStats];			
-			//map elites can only have one fitness function, so everything beyond that is an other stat
-			for (int i = 0; i < numberOfOtherStats; i++) {
-				otherStatsLogs[i] = new MMNEATLog(infix+"_otherStat_"+i+"_" +MMNEAT.getFitnessFunctionName(i+1), false, false, false, true);
-				otherStatsLogsList.add(otherStatsLogs[i]);
-//				otherStatsFillLogs[i] = new MMNEATLog(infix+"_otherStat_"+i+"_Fill_" +MMNEAT.getFitnessFunctionName(i), false, false, false, true);
-//				otherStatsLogsList.add(otherStatsFillLogs[i]);
-//				otherStatsQDScoreLogs[i] = new MMNEATLog(infix+"_otherStat_"+i+"_QDScore_" +MMNEAT.getFitnessFunctionName(i), false, false, false, true);
-//				otherStatsLogsList.add(otherStatsQDScoreLogs[i]);
+			ArrayList<MMNEATLog> otherStatsLogsList = null;
+			if(numberOfOtherStats > 0) {
+				otherStatsLogsList = new ArrayList<>();
+				otherStatsLogs = new MMNEATLog[numberOfOtherStats];			
+				//map elites can only have one fitness function, so everything beyond that is an other stat
+				for (int i = 0; i < numberOfOtherStats; i++) {
+					otherStatsLogs[i] = new MMNEATLog(infix+"_otherStat_"+i+"_" +MMNEAT.getFitnessFunctionName(i+1), false, false, false, true);
+					otherStatsLogsList.add(otherStatsLogs[i]);
+				}
+				otherStatsFillLog = new MMNEATLog(infix+"_otherStatsFillLog", false, false, false, true);
+				otherHypervolumeLog = new MMNEATLog(infix+"_otherStatsHypervolumeLog", false, false, false, true);
 			}
-			otherStatsFillLog = new MMNEATLog(infix+"_otherStatsFillLog", false, false, false, true);
 			
 			// Can't check MMNEAT.genotype since MMNEAT.ea is initialized before MMNEAT.genotype
 			boolean cppnDirLogging = Parameters.parameters.classParameter("genotype").equals(CPPNOrDirectToGANGenotype.class) ||
@@ -308,12 +309,25 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 					ps.close();
 
 				}
-//				String prefix = experimentPrefix + "_" + infix;
-//				String outputString = experimentPrefix + "_" + infix + "_otherStatsFillLog";
+				
+				String textHVLogFilename = experimentPrefix + "_" + infix + "_otherStatsHypervolumeLog_log.txt";
+				String plotHVFilename = textHVLogFilename.replace(".txt", ".plt");
+				
+				File plotFileHV = new File(directory + plotHVFilename);
+				ps = new PrintStream(plotFileHV);
+				//ps.println("set term pdf enhanced");
+				ps.println("set key bottom right");
+				// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
+				ps.println("set xrange [0:"+ yrange +"]");
+				ps.println("set title \"" + experimentPrefix + " Hypervolume\"");
+				//ps.println("set output \"" + experimentPrefix + "_otherStatsHypervolumeLog_log.pdf\"");
+				ps.println("plot \"" + textHVLogFilename + "\" u 1:2 w linespoints t \"Hypervolume\"");
+				ps.close();
+				
+				//////////////////////////////////////
+				
 				String textLogFilename = experimentPrefix + "_" + infix + "_otherStatsFillLog_log.txt";
 				String plotFilename = textLogFilename.replace(".txt", ".plt");
-//				String plotPDFFilename = plotFilename.replace(".plt", "_PDF.plt");
-//				String logTitle = textLogFilename.replace(".txt", "");
 				
 				File plotFile = new File(directory + plotFilename);
 				
@@ -323,16 +337,8 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				ps.println("set key bottom right");
 				// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
 				ps.println("set xrange [0:"+ yrange +"]");
-				
-		
-				
-//				String fillPrefix = experimentPrefix + "_" + "Fill";
-//				String fullFillName = directory + fillPrefix + "_log.plt";
-//				File fillPlot = new File(fullFillName);
-				//infix+"_otherStat_"+i+"_" +MMNEAT.getFitnessFunctionName(i+1)
-				//this is for individual
-				//fill log is experimentPrefix + "_" + infix + "_otherStatsFillLog";
-				//whole thing is infix+"_otherStat_"+i+"_" +MMNEAT.getFitnessFunctionName(i+1)_log.txt
+						
+				// Why is this magic number 2?
 				int index = 2;
 				for (int i = 0; i < numberOfOtherStats; i++) {
 					ps.println("set title \"" + experimentPrefix + " " + MMNEAT.getFitnessFunctionName(i+1) + " Max Fitness\"");
@@ -629,19 +635,33 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			Float[] elite = ArrayUtils.toObject(archive.getEliteScores());
 			final int pseudoGeneration = iterations/individualsPerGeneration;
 			archiveLog.log(pseudoGeneration + "\t" + StringUtils.join(elite, "\t").replaceAll("-Infinity", "X"));
-			
+			// Small amount added to fitness scores to tweak the QD calculation
+			double offsetSoThatOccupiedBinsWithMinFitnessAreBetterThanEmptyBins = Parameters.parameters.doubleParameter("mapElitesQDBaseOffset");
 			//log otherStats
 			int numberOfOtherStats = MMNEAT.getNumberOtherStatsForPopulation(0);
-			String otherStatsFillString = pseudoGeneration + "\t";
-			for (int i = 0; i < numberOfOtherStats; i++) {
-				Float[] otherStats = ArrayUtils.toObject(archive.getOtherStatsScores(i));
-				otherStatsLogs[i].log(pseudoGeneration + "\t" + StringUtils.join(otherStats, "\t").replaceAll("-Infinity", "X"));
-				Float maximumFitness = StatisticsUtilities.maximum(otherStats);
-				final double qdScore = calculateQDScore(otherStats);
-				otherStatsFillString = otherStatsFillString + maximumFitness + "\t" + qdScore +"\t";
-//				otherStatsFillLogs[i].log(pseudoGeneration+ "\t" + maximumFitness + "\t" + qdScore);
+			if(numberOfOtherStats > 0) {
+				String otherStatsFillString = pseudoGeneration + "\t";
+				for (int i = 0; i < numberOfOtherStats; i++) {
+					Float[] otherStats = ArrayUtils.toObject(archive.getOtherStatsScores(i));
+					otherStatsLogs[i].log(pseudoGeneration + "\t" + StringUtils.join(otherStats, "\t").replaceAll("-Infinity", "X"));
+					Float maximumFitness = StatisticsUtilities.maximum(otherStats);
+
+					// It is assumed that each other stat used with MAP Elites is a component from a weighted sum.
+					// However, some component fitnesses have negative minimum values. For proper QD calculation,
+					// the score range has to be shifted up. In addition, the offsetSoThatOccupiedBinsWithMinFitnessAreBetterThanEmptyBins
+					// is used so that even a minimal score is worth more than an empty bin. We add 1 to the index since we
+					// skip over the actual fitness function (just one) and only get other stats.
+					double minFitness = MMNEAT.fitnessFunctionMinScore(1 + i);
+					// minFitness is subtracted since this base value will be added to the actual fitness.
+					// for example, a negative min leads to a positive offset. Either way, want to zero out the min, except for offset.
+					final double qdScore = calculateQDScore(otherStats, offsetSoThatOccupiedBinsWithMinFitnessAreBetterThanEmptyBins - minFitness);
+					otherStatsFillString = otherStatsFillString + maximumFitness + "\t" + qdScore +"\t";
+				}
+				otherStatsFillLog.log(otherStatsFillString);
+				Pair<Double, List<Score<T>>> volumeAndFront = archive.getHypervolumeAndParetoFrontAcrossOtherStats();
+				otherHypervolumeLog.log(pseudoGeneration + "\t" + volumeAndFront.t1);				
+				MultiobjectiveUtil.logParetoFrontGenotypesAndScorePlot("PseudoGen"+pseudoGeneration+"_ParetoFront", volumeAndFront.t2, null);
 			}
-			otherStatsFillLog.log(otherStatsFillString);
 			
 			Float maximumFitness = StatisticsUtilities.maximum(elite);
 			// Exclude negative infinity to find out how many bins are filled
@@ -725,8 +745,17 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	 * @param elite An elite represented by an Array of floats representing each value
 	 * @return returns a double representing the QD score with offset values
 	 */
-	public static double calculateQDScore(Float[] elite) {
-		double base = Parameters.parameters.doubleParameter("mapElitesQDBaseOffset");
+	public static double calculateQDScore(Float[] elites) {
+		return calculateQDScore(elites,Parameters.parameters.doubleParameter("mapElitesQDBaseOffset")); 
+	}
+	
+	/**
+	 * Like the above, but allows for a specified offset to the min score.
+	 * @param elite Array of elite scores from each bin, where empty bins have a score of negative infinity
+	 * @param base 
+	 * @return
+	 */
+	public static double calculateQDScore(Float[] elite, double base) {
 		double sum = 0.0;
 		for (float x : elite) {
 			if (x != Float.NEGATIVE_INFINITY) {

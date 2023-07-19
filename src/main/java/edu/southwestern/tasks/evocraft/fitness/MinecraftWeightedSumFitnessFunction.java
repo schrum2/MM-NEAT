@@ -59,7 +59,8 @@ public abstract class MinecraftWeightedSumFitnessFunction extends MinecraftFitne
 		
 		for(MinecraftFitnessFunction ff : fitnessFunctions) {
 			// register the function for tracking/logging, but it does not affect selection
-			MMNEAT.registerFitnessFunction(ff.getClass().getSimpleName(), false);
+			// MMNEAT.registerFitnessFunction(ff.getClass().getSimpleName(), false);
+			MMNEAT.registerFitnessFunction(ff.getClass().getSimpleName(), null, false, 0, ff.minFitness());
 		}
 	}
 	

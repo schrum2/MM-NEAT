@@ -25,7 +25,7 @@ public class ChangeBlocksFitness extends TimedEvaluationMinecraftFitnessFunction
 			ArrayList<Pair<Long, List<Block>>> history, List<Block> newShapeBlockList) {
 		
 		int numReadings = history.size();
-		if(history.get(numReadings - 1).t2.equals(history.get(numReadings - 2).t2)) {
+		if(Parameters.parameters.booleanParameter("minecraftEndEvalNoMovement") && history.get(numReadings - 1).t2.equals(history.get(numReadings - 2).t2)) {
 			// Shape is not changing, so just compute the final score already
 			return this.calculateFinalScore(history, corner, originalBlocks);
 		}

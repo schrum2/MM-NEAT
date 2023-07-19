@@ -331,16 +331,11 @@ public class PopulationUtil {
 	 * tournament selection to choose individuals and/or parents for creating an
 	 * offspring population.
 	 *
-	 * @param numChildren
-	 *            children to generate
-	 * @param parentScores
-	 *            scores of parents, plus genotypes
-	 * @param judge
-	 *            means of comparing two parents
-	 * @param mating
-	 *            whether to mate or not
-	 * @param crossoverRate
-	 *            crossover rate if mating
+	 * @param numChildren children to generate
+	 * @param parentScores scores of parents, plus genotypes
+	 * @param judge means of comparing two parents
+	 * @param mating whether to mate or not
+	 * @param crossoverRate crossover rate if mating
 	 * @return population of children
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -394,12 +389,9 @@ public class PopulationUtil {
 	/**
 	 * Modifies population sent in so it contains only members of Pareto front
 	 *
-	 * @param <T>
-	 *            Type of phenotype
-	 * @param population
-	 *            full population to be reduced to Pareto front
-	 * @param scores
-	 *            loaded scores corresponding to individuals in population
+	 * @param <T> Type of phenotype
+	 * @param population full population to be reduced to Pareto front
+	 * @param scores loaded scores corresponding to individuals in population
 	 */
 	public static <T> void pruneDownToParetoFront(ArrayList<Genotype<T>> population, NSGA2Score<T>[] scores) {
 		pruneDownToTopParetoLayers(population, scores, 1);
@@ -408,14 +400,10 @@ public class PopulationUtil {
 	/**
 	 * Modifies population so it contains only top Pareto layers
 	 *
-	 * @param <T>
-	 *            Phenotype
-	 * @param population
-	 *            genotypes to prune
-	 * @param scores
-	 *            scores corresponding to genotypes
-	 * @param layers
-	 *            How many layers to keep
+	 * @param <T> Phenotype
+	 * @param population genotypes to prune
+	 * @param scores scores corresponding to genotypes
+	 * @param layers How many layers to keep
 	 */
 	public static <T> void pruneDownToTopParetoLayers(ArrayList<Genotype<T>> population, NSGA2Score<T>[] scores, int layers) {
 		assert layers > 0;
@@ -448,10 +436,8 @@ public class PopulationUtil {
 	/**
 	 * Load all genotypes that are xml files in the given directory
 	 *
-	 * @param <T>
-	 *            Phenotype
-	 * @param directory
-	 *            directory to load from
+	 * @param <T> Phenotype
+	 * @param directory directory to load from
 	 * @return loaded population of genotypes
 	 */
 	public static <T> ArrayList<Genotype<T>> load(String directory) {
@@ -494,11 +480,9 @@ public class PopulationUtil {
 	 * generation. Only works for score files saved by single-population
 	 * experiments.
 	 *
-	 * @param <T>
-	 *            phenotype of saved individuals: irrelevant because scores
+	 * @param <T> phenotype of saved individuals: irrelevant because scores
 	 *            contain anonymous dummy individuals
-	 * @param generation
-	 *            generation to load scores for
+	 * @param generation generation to load scores for
 	 * @return Array of NSGA2Scores for given generation
 	 * @throws FileNotFoundException
 	 *             if score file does not exist
@@ -517,10 +501,8 @@ public class PopulationUtil {
 	/**
 	 * Same as above, but for coevolution
 	 *
-	 * @param generation
-	 *            generation to load from
-	 * @param pop
-	 *            subpopulation index
+	 * @param generation generation to load from
+	 * @param pop subpopulation index
 	 * @return scores of subpop in designated generation
 	 * @throws FileNotFoundException
 	 */
@@ -540,10 +522,8 @@ public class PopulationUtil {
 	 * Loads scores from a specific filename and creates score entries with
 	 * dummy individuals to return.
 	 *
-	 * @param <T>
-	 *            phenotype: irrelevant since anonymous dummy individuals are used
-	 * @param filename
-	 *            file to load scores from
+	 * @param <T> phenotype: irrelevant since anonymous dummy individuals are used
+	 * @param filename file to load scores from
 	 * @return array of scores
 	 * @throws FileNotFoundException
 	 *             if filename does not exist
@@ -589,10 +569,8 @@ public class PopulationUtil {
 	 * attempt to use any other methods defined by Genotype will lead to
 	 * exceptions.
 	 *
-	 * @param <T>
-	 *            phenotype of genotype: irrelevant in dummy individual.
-	 * @param offspringId
-	 *            genotype id of individual
+	 * @param <T> phenotype of genotype: irrelevant in dummy individual.
+	 * @param offspringId genotype id of individual
 	 * @return Genotype where only the id is accessible.
 	 */
 	public static <T> Genotype<T> anonymousIdIndividual(final long offspringId) {
@@ -731,10 +709,8 @@ public class PopulationUtil {
 	 * as Genotypes instances. Also, each subdir should have the same number
 	 * of xml files to create equal sized subpops.
 	 *
-	 * @param directory
-	 *            directory where subdirs containing xml files for subpops are.
-	 * @param numPops
-	 *            number of subpops to load.
+	 * @param directory directory where subdirs containing xml files for subpops are.
+	 * @param numPops number of subpops to load.
 	 * @return vector of loaded subpopulations, each stored in a vector of
 	 *         genotypes
 	 */
@@ -809,10 +785,8 @@ public class PopulationUtil {
 	 * Finds the index in the subpopulation of the genotype with a specified id.
 	 * Returns -1 if no such genotype is found.
 	 *
-	 * @param subpopulation
-	 *            array of genotypes
-	 * @param id
-	 *            genotype id that might be in subpopulation
+	 * @param subpopulation array of genotypes
+	 * @param id genotype id that might be in subpopulation
 	 * @return index of genotype with id, or -1
 	 */
 	@SuppressWarnings("rawtypes")
@@ -839,10 +813,8 @@ public class PopulationUtil {
 	 * members are in one but not the other.
 	 *
 	 * @param <T> phenotype
-	 * @param lhs
-	 *            pop 1
-	 * @param rhs
-	 *            pop 2
+	 * @param lhs pop 1
+	 * @param rhs pop 2
 	 * @return The first member of the pair contains individuals in lhs but not
 	 *         in rhs, while the second is members of rhs that are not in lhs
 	 */
@@ -856,12 +828,9 @@ public class PopulationUtil {
 	 * From an array of scores, return the one whose embedded individual has a
 	 * designated id
 	 *
-	 * @param <T>
-	 *            type of phenotype
-	 * @param id
-	 *            id of genotype
-	 * @param staticScores
-	 *            scores to search, each containing a genotype
+	 * @param <T> type of phenotype
+	 * @param id id of genotype
+	 * @param staticScores scores to search, each containing a genotype
 	 * @return the score matching the id
 	 */
 	public static <T> NSGA2Score<T> scoreWithId(long id, NSGA2Score<T>[] staticScores) {

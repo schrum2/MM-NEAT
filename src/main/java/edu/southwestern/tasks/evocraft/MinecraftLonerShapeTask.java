@@ -72,7 +72,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		championCoords = new HashSet<Pair<MinecraftCoordinates,Integer>>();
 		
 		// Generates the corners for all of the shapes and then adds them into the blocking queue
-		parallelShapeCorners = MinecraftShapeTask.getShapeCorners(Parameters.parameters.integerParameter("threads"),internalMinecraftShapeTask.getStartingX(),internalMinecraftShapeTask.getStartingY(),internalMinecraftShapeTask.getStartingZ(),MinecraftUtilClass.getRanges());
+		parallelShapeCorners = MinecraftShapeTask.getShapeEvaluationCorners(Parameters.parameters.integerParameter("threads"),internalMinecraftShapeTask.getStartingX(),internalMinecraftShapeTask.getStartingY(),internalMinecraftShapeTask.getStartingZ(),MinecraftUtilClass.getRanges());
 		for(MinecraftCoordinates corner : parallelShapeCorners) {
 			try {
 				coordinateQueue.put(corner);
@@ -159,7 +159,6 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 						try {
 							Thread.sleep(Parameters.parameters.integerParameter("interactiveSleepTimer"));
 						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 
@@ -257,33 +256,34 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		
 	}
 	
-	
+	//TODO: reasses corner naming scheme, what they represent, and how they are created
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num, HashMap<String, Object> behaviorCharacteristics) {
 		//System.out.println("    Archive "+ Arrays.toString(MMNEAT.getArchive().getArchive().stream().map(s -> s == null ? "X" : ((Score) s).behaviorIndexScore() ).toArray()));
 		
 		MinecraftCoordinates ranges = MinecraftUtilClass.getRanges();
 		// Corner to clear and then place is taken from the queue. If the queue is empty, it waits until something is added in
-		MinecraftCoordinates corner=null;
+		MinecraftCoordinates evaluationCorner=null;
 		try {
-			corner = coordinateQueue.take();
+			evaluationCorner = coordinateQueue.take();
 		} catch (InterruptedException e) {
 			System.out.println("Error with queue");
 			e.printStackTrace();
 			System.exit(1);
 		}
-		// Clears specified space for new shape
-		clearBlocksForShape(ranges, corner);
-		
-		MinecraftCoordinates middle = corner.add(MinecraftUtilClass.emptySpaceOffsets());
+		// This clear command not needed. Each timed eval fitness function clears the space.
+		//clearBlocksForShape(ranges, corner);
+
+		MinecraftCoordinates shapeCorner = evaluationCorner.add(MinecraftUtilClass.emptySpaceOffsets());
 		// Evaluates the shape at the middle of the space defined by the corner, and then adds the corner back to the queue
-		Score<T> score = internalMinecraftShapeTask.evaluateOneShape(individual, middle);
+		Score<T> score = internalMinecraftShapeTask.evaluateOneShape(individual, shapeCorner);
 		try {
+			// Purpose of this code is to keep evaluating in new locations and not the same ones back to back
 			if(Parameters.parameters.integerParameter("minecraftXMovementBetweenEvals") != 0 && Parameters.parameters.integerParameter("minecraftMaxXShift") != 0) {
-				int shiftValue = (corner.x() + Parameters.parameters.integerParameter("minecraftXMovementBetweenEvals")) % Parameters.parameters.integerParameter("minecraftMaxXShift");
-				coordinateQueue.put(new MinecraftCoordinates(shiftValue, corner.y(), corner.z()));
+				int shiftValue = (evaluationCorner.x() + Parameters.parameters.integerParameter("minecraftXMovementBetweenEvals")) % Parameters.parameters.integerParameter("minecraftMaxXShift");
+				coordinateQueue.put(new MinecraftCoordinates(shiftValue, evaluationCorner.y(), evaluationCorner.z()));
 			}else {
-				coordinateQueue.put(new MinecraftCoordinates(corner));
+				coordinateQueue.put(new MinecraftCoordinates(evaluationCorner));
 			}
 		} catch (InterruptedException e) {
 			System.out.println("Error with queue");
@@ -419,26 +419,26 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		
 		List<Block> blocks = null;
 		Pair<MinecraftCoordinates,MinecraftCoordinates> corners = configureStartPosition(ranges, behaviorCharacteristics);
+		MinecraftCoordinates evaluationCorner = corners.t1;
+		MinecraftCoordinates shapeCorner = corners.t2;
 		synchronized(blocksToMonitor) {
-
 			// Clears old shape if there was one
-			Pair<MinecraftCoordinates,MinecraftCoordinates> cleared = clearBlocksForShape(ranges, corners.t1);
-			assert cleared.t1.equals(corners.t1) : "Cleared space does not start at right location: "+cleared.t1+" vs "+corners.t1;
-			// Could do more checking here
+			Pair<MinecraftCoordinates,MinecraftCoordinates> cleared = clearBlocksForShape(ranges, evaluationCorner);
+			assert cleared.t1.equals(evaluationCorner) : "Cleared space does not start at right location: "+cleared.t1+" vs "+evaluationCorner;
 
 			// Generates the new shape
-			blocks = MMNEAT.shapeGenerator.generateShape(individual, corners.t2, MMNEAT.blockSet);
+			blocks = MMNEAT.shapeGenerator.generateShape(individual, shapeCorner, MMNEAT.blockSet);
 
 			// Spawning shapes is disabled during initialization
 			if(spawnShapesInWorld) {
 				MinecraftClient.getMinecraftClient().spawnBlocks(blocks); // Spawns shapes
 				if(Parameters.parameters.booleanParameter("interactWithMapElitesInWorld")) {
 					List<Block> interactive = new ArrayList<>(); //Spawning control blocks
-					MinecraftCoordinates diamondBlock = corners.t2.sub(new MinecraftCoordinates(1,1,1));
+					MinecraftCoordinates diamondBlock = shapeCorner.sub(new MinecraftCoordinates(1,1,1));
 					interactive.add(new Block(diamondBlock,BlockType.DIAMOND_BLOCK, Orientation.WEST));
-					MinecraftCoordinates emeraldBlock = corners.t2.add(new MinecraftCoordinates(MinecraftUtilClass.getRanges().x(),-1,-1));
+					MinecraftCoordinates emeraldBlock = shapeCorner.add(new MinecraftCoordinates(MinecraftUtilClass.getRanges().x(),-1,-1));
 					interactive.add(new Block(emeraldBlock,BlockType.EMERALD_BLOCK, Orientation.WEST));
-					MinecraftCoordinates obsidianBlock = corners.t2.sub(new MinecraftCoordinates(1,1,-MinecraftUtilClass.getRanges().z()));
+					MinecraftCoordinates obsidianBlock = shapeCorner.sub(new MinecraftCoordinates(1,1,-MinecraftUtilClass.getRanges().z()));
 					interactive.add(new Block(obsidianBlock,BlockType.OBSIDIAN, Orientation.WEST));
 					blocksToMonitor.add(new ControlBlocks(diamondBlock,emeraldBlock,obsidianBlock,index1D)); // Adds to the set that loops to check them
 					MinecraftClient.getMinecraftClient().spawnBlocks(interactive);
@@ -495,23 +495,24 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	 * @return Pair of the corner of the space to clear followed by the corner within that space to place the shape
 	 */
 	public static Pair<MinecraftCoordinates,MinecraftCoordinates> configureStartPosition(MinecraftCoordinates ranges, int[] multiDimIndex, int dim1D) {
-		MinecraftCoordinates startPosition;
+		MinecraftCoordinates evaluationCorner;
 		MinecraftCoordinates offset;
 		int spaceBetween = Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes");
 		// Location in multi-dimensional archive
 		if(multiDimIndex.length==1 || multiDimIndex.length > 3 || Parameters.parameters.booleanParameter("forceLinearArchiveLayoutInMinecraft")) {
 			// Derive 1D location from multi-dimensional location
-			startPosition = new MinecraftCoordinates(dim1D*(spaceBetween+ranges.x()),MinecraftClient.GROUND_LEVEL+1,0);				
+			evaluationCorner = new MinecraftCoordinates(dim1D*(spaceBetween+ranges.x()),MinecraftClient.GROUND_LEVEL+1,0);				
 		} else if(multiDimIndex.length==2){
 			// Ground level fixed, but expand second coordinate in z dimension
-			startPosition = new MinecraftCoordinates(multiDimIndex[0]*(spaceBetween+ranges.x()),MinecraftClient.GROUND_LEVEL+1,multiDimIndex[1]*(spaceBetween+ranges.z()));
+			evaluationCorner = new MinecraftCoordinates(multiDimIndex[0]*(spaceBetween+ranges.x()),MinecraftClient.GROUND_LEVEL+1,multiDimIndex[1]*(spaceBetween+ranges.z()));
 		} else if(multiDimIndex.length==3) {
-			startPosition = new MinecraftCoordinates(multiDimIndex[0]*(spaceBetween+ranges.x()),MinecraftClient.GROUND_LEVEL+1+multiDimIndex[1]*(spaceBetween+ranges.y()),multiDimIndex[2]*(spaceBetween+ranges.z()));
+			evaluationCorner = new MinecraftCoordinates(multiDimIndex[0]*(spaceBetween+ranges.x()),MinecraftClient.GROUND_LEVEL+1+multiDimIndex[1]*(spaceBetween+ranges.y()),multiDimIndex[2]*(spaceBetween+ranges.z()));
 		} else {
 			throw new IllegalArgumentException("This should be impossible to reach: "+Arrays.toString(multiDimIndex));
 		}
 		offset = MinecraftUtilClass.emptySpaceOffsets();
-		return new Pair<MinecraftCoordinates,MinecraftCoordinates>(startPosition, startPosition.add(offset));
+		MinecraftCoordinates shapeCorner = evaluationCorner.add(offset);
+		return new Pair<MinecraftCoordinates,MinecraftCoordinates>(evaluationCorner, shapeCorner);
 	}
 
 	/**
@@ -604,39 +605,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		if(!Parameters.parameters.booleanParameter("interactWithMinecraftForever")) {
 			running = false; // Stop the interactive loop
 		}
-	
-		// The individual fitness functions should save flying machines as they are created,
-		// and the whole archive should be saved at the end of execution
-//		if(Parameters.parameters.booleanParameter("minecraftChangeCenterOfMassFitness") && MMNEAT.usingDiversityBinningScheme && CommonConstants.netio) {
-//			System.out.println("Write block lists for all flying elites to finalFlyingMachines");
-//			
-//			//final flying machines directory is created
-//			String flyingDir = FileUtilities.getSaveDirectory() + "/finalFlyingMachines";
-//			File dir = new File(flyingDir);
-//			// Create dir
-//			if (!dir.exists()) {
-//				dir.mkdir();
-//			}
-//			@SuppressWarnings("unchecked")
-//			Archive<T> archive = MMNEAT.getArchive();
-//			Vector<Score<T>> archiveVector = archive.getArchive();
-//			MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
-//			for(int i = 0; i < archiveVector.size(); i++) {
-//				Score<T> score = archiveVector.get(i);
-//				//if there is a fitness score related to this bin (ie. there exists a shape)
-//				if(score != null) {
-//					double fitness = score.behaviorIndexScore();
-//					//TODO: this deals with saving shapes
-//					if(this.internalMinecraftShapeTask.certainFlying(fitness)) {
-//						@SuppressWarnings("unchecked")
-//						List<Block> blocks = MMNEAT.shapeGenerator.generateShape(score.individual, MinecraftClient.POST_EVALUATION_SHAPE_CORNER, MMNEAT.blockSet);
-//						String label = minecraftBinLabels.binLabels().get(i);
-//						MinecraftUtilClass.writeBlockListFile(blocks, flyingDir + File.separator + label+"ID"+score.individual.getId(), "FITNESS"+fitness+".txt");			
-//					}
-//				}
-//			}			
-//		}
-		
+			
 		while(!interactiveLoopFinished) {
 			// Let interactive loop finish
 			try {
