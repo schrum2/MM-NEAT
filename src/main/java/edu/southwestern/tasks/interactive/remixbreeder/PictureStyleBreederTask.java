@@ -23,12 +23,16 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.interactive.picbreeder.PicbreederTask;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.graphics.GraphicsUtil;
-import edu.southwestern.util.graphics.NeuralStyleTransfer;
 import edu.southwestern.util.graphics.PythonNeuralStyleTransfer;
 
 /**
  * Remixes an input image using the Neural Style Transfer Algorithm.
  * The style images are CPPN generated/evolved images.
+ * 
+ * This doesn't really work any more. There was a Java version of Neural Style Transfer that
+ * relied on DL4J, but I removed that since it bloated the codebase. The Python version can be
+ * used instead, but it relies on obsolete versions of tensor-flow and other libraries, so
+ * it has been hard to maintain.
  * 
  * @author Jacob
  *
@@ -36,11 +40,6 @@ import edu.southwestern.util.graphics.PythonNeuralStyleTransfer;
  */
 public class PictureStyleBreederTask<T extends Network> extends PicbreederTask<T> {
 
-	// Whether to run the Python version of Neural Style Transfer (instead of the Java version)
-	// Note: The Python version of NST only works if obsolete versions of tensor-flow and other libraries
-	//       are used. Therefore, the default is to use the Java version, despite it being slower.
-	private static final boolean USE_PYTHON = false;
-	
 	private static final int FILE_LOADER_CHECKBOX_INDEX = CHECKBOX_IDENTIFIER_START - CPPN_NUM_INPUTS;
 
 	private static final int MIN_STYLE_ITERATIONS = 1;
@@ -50,20 +49,12 @@ public class PictureStyleBreederTask<T extends Network> extends PicbreederTask<T
 	
 	protected JSlider styleIterations;	
 	protected JSlider styleWeight;	
-	
-	private NeuralStyleTransfer nst;
-	
+		
 	public PictureStyleBreederTask() throws IllegalAccessException {
 		String contentImagePath = Parameters.parameters.stringParameter("matchImageFile");	
 		System.out.println("Load content file: "+contentImagePath);
-		if(USE_PYTHON) {
-			// Boot up the Python program for Neural Style transfer
-			PythonNeuralStyleTransfer.initiateNeuralStyleTransferProcess(contentImagePath);
-		} else {
-			// Java/DL4J version of Neural Style Transfer
-			nst = new NeuralStyleTransfer();
-			nst.setContentImage(contentImagePath);
-		}
+		// Boot up the Python program for Neural Style transfer
+		PythonNeuralStyleTransfer.initiateNeuralStyleTransferProcess(contentImagePath);
 		
 		styleIterations = new JSlider(JSlider.HORIZONTAL, MIN_STYLE_ITERATIONS, MAX_STYLE_ITERATIONS, Parameters.parameters.integerParameter("neuralStyleIterations"));
 		Hashtable<Integer,JLabel> labels = new Hashtable<>();
@@ -132,15 +123,10 @@ public class PictureStyleBreederTask<T extends Network> extends PicbreederTask<T
 	public void resetButtons(boolean hardReset) {
 		if(hardReset) {
 			String contentImagePath = Parameters.parameters.stringParameter("matchImageFile");
-			if(USE_PYTHON) {
-				// End the process
-				PythonNeuralStyleTransfer.terminatePythonProcess();
-				// Re-launch process using content image (some parameters probably changed if hard reset is being called)
-				PythonNeuralStyleTransfer.initiateNeuralStyleTransferProcess(contentImagePath);
-			} else {
-				// Change Java/DL4J neural style content image
-				nst.setContentImage(contentImagePath);
-			}
+			// End the process
+			PythonNeuralStyleTransfer.terminatePythonProcess();
+			// Re-launch process using content image (some parameters probably changed if hard reset is being called)
+			PythonNeuralStyleTransfer.initiateNeuralStyleTransferProcess(contentImagePath);
 		}
 		super.resetButtons(hardReset);
 	}
@@ -155,9 +141,7 @@ public class PictureStyleBreederTask<T extends Network> extends PicbreederTask<T
 		// Standard CPPN image will be the style for the Neural Style Transfer Algorithm
 		BufferedImage styleImage = super.getButtonImage(phenotype, width, height, inputMultipliers);
 		// Content image with new style from CPPN image
-		BufferedImage comboImage = USE_PYTHON ? 
-				PythonNeuralStyleTransfer.sendStyleImage(styleImage) : // Python version
-				nst.getTransferredResultForStyleImage(styleImage, Parameters.parameters.integerParameter("neuralStyleIterations"), false); // DL4J
+		BufferedImage comboImage = PythonNeuralStyleTransfer.sendStyleImage(styleImage);
 		return comboImage;
 	}
 

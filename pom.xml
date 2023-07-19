@@ -19,7 +19,6 @@
         <unirest.version>1.4.9</unirest.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <nd4j.version>1.0.0-beta7</nd4j.version>
-        <dl4j.version>1.0.0-beta7</dl4j.version>
         <javacv.version>1.4.1</javacv.version>
         <javacpp.version>1.4.1</javacpp.version>
         <javacpp-presets.version>1.4.1</javacpp-presets.version>
@@ -86,28 +85,8 @@
         <name>project</name>
         <url>file:${project.basedir}/libs</url>
     </repository>
-
-	<!-- For Pogamut -->
-	<!--  
-	<repository>
-    	<id>amis-artifactory</id>
-		<name>AMIS Artifactory</name>
-		<url>http://diana.ms.mff.cuni.cz:8081/artifactory/repo</url>
-    </repository>
-    -->
     
-    <!-- For DL4J and RL4J -->
-    <repository>
-    	<id>snapshots-repo</id>
-        <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        <releases>
-        	<enabled>false</enabled>
-        </releases>
-        <snapshots>
-        	<enabled>true</enabled>
-        </snapshots>
-     </repository>
-     
+    <!-- For DL4J and RL4J -->    
      <repository>
 	  <id>jitpack.io</id>
 	  <url>https://jitpack.io</url>
@@ -134,15 +113,6 @@
                 <artifactId>${nd4j.backend}</artifactId>
                 <version>${nd4j.version}</version>
             </dependency>
-
-        <!-- Does some other DL4J dependency import the correct version of this? -->
-        <!--
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>${slf4j.version}</version>
-            </dependency>
-         -->
         </dependencies>
     </dependencyManagement>
 
@@ -156,23 +126,6 @@
     <version>3.12.0</version>
 </dependency>
 
-<!-- https://mvnrepository.com/artifact/commons-codec/commons-codec -->
-<!-- Needed for DL4J? Why is it not brought in as dependency? -->
-<!--  
-<dependency>
-    <groupId>commons-codec</groupId>
-    <artifactId>commons-codec</artifactId>
-    <version>1.9</version>
-</dependency>
-
-
-        <dependency>
-            <groupId>org.jfree</groupId>
-            <artifactId>jcommon</artifactId>
-            <version>${jcommon.version}</version>
-        </dependency>
--->
-  
     <dependency>
 	  <groupId>com.github.trystan</groupId>
 	  <artifactId>AsciiPanel</artifactId>
@@ -204,45 +157,6 @@
             <artifactId>${nd4j.backend}</artifactId>
             <version>${nd4j.version}</version>
         </dependency>
-        <dependency>
-    <groupId>org.deeplearning4j</groupId>
-    	<artifactId>deeplearning4j-datasets</artifactId>
-    	<version>${dl4j.version}</version>
-	</dependency>
-		<dependency>
-    		<groupId>org.deeplearning4j</groupId>
-    		<artifactId>deeplearning4j-zoo</artifactId>
-    		<version>${dl4j.version}</version>
-		</dependency>
-<!--  Not in the latest version? Or do I just not need it?
-		<dependency>
-    		<groupId>org.deeplearning4j</groupId>
-    		<artifactId>deeplearning4j-modelimport</artifactId>
-    		<version>${dl4j.version}</version>
-		</dependency>
--->
-
-
-        <!-- CUDA: to use GPU for training (CUDA) instead of CPU, uncomment this, and remove nd4j-native-platform -->
-        <!-- Requires CUDA to be installed to use. Change the version (8.0, 9.0, 9.1) to change the CUDA version -->
-        <!--
-        <dependency>
-            <groupId>org.nd4j</groupId>
-            <artifactId>nd4j-cuda-9.2-platform</artifactId>
-            <version>${dl4j-master.version}</version>
-        </dependency>
-        -->
-
-        <!-- Optional, but recommended: if you use CUDA, also use CuDNN. To use this, CuDNN must also be installed -->
-        <!-- See: https://deeplearning4j.konduit.ai/config/backends/config-cudnn#using-deeplearning-4-j-with-cudnn -->
-        <!--
-        <dependency>
-            <groupId>org.deeplearning4j</groupId>
-            <artifactId>deeplearning4j-cuda-9.2</artifactId>
-            <version>${dl4j-master.version}</version>
-        </dependency>
-        -->
-
 
         <dependency>
             <groupId>ch.qos.logback</groupId>
@@ -256,7 +170,6 @@
             <artifactId>a-javabeans</artifactId>
             <version>1.0.4</version>
         </dependency>
-
 
 	<!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
 	<dependency>
@@ -294,15 +207,6 @@
     	<version>1.2.3</version>
 	</dependency>
 	
-	<!-- https://mvnrepository.com/artifact/commons-codec/commons-codec -->
-	<!-- Also for RL Glue -->
-	<!--  
-	<dependency>
-    	<groupId>commons-codec</groupId>
-    	<artifactId>commons-codec</artifactId>
-    	<version>1.3</version>
-	</dependency>
-	-->
 	<!--  sound processing library -->
 	<dependency>
     	<groupId>javazoom</groupId>
