@@ -17,16 +17,6 @@ public class ZeldaVGLCUtil {
 	public static final int ZELDA_ROOM_COLUMNS = 16; // This is actually the room height from the original game, since VGLC rotates rooms
 	public static final int ZELDA_ROOM_ROWS = 11; // Equivalent to width in original game
 	public static final boolean USE_OLD_ENCODING = false;
-	/**
-	 * Get converted VGLC -> GVG-AI level by specifying file name of source VGLC level
-	 * @param fileName
-	 * @param startLocation This location is replaced with the 'A' tile for the avatar, unless it is null
-	 * @return
-	 */
-	public static String[] convertZeldaLevelFileVGLCtoGVGAI(String fileName, Point startLocation) {
-		String[] level = new IO().readFile(fileName);
-		return convertZeldaLevelVGLCtoGVGAI(level, startLocation);
-	}
 
 	/**
 	 * Takes VGLC text file for a single dungeon, identifies the individual rooms of the dungeon,
@@ -36,6 +26,7 @@ public class ZeldaVGLCUtil {
 	 * @return
 	 */
 	public static List<List<List<Integer>>> convertZeldaLevelFileVGLCtoListOfRooms(String fileName) {
+		// This IO class comes from GVG-AI util classes
 		String[] level = new IO().readFile(fileName);
 		List<List<List<Integer>>> rooms = new ArrayList<>();
 		// Parse out rooms
