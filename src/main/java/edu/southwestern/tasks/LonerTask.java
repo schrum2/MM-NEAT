@@ -17,7 +17,6 @@ import java.util.concurrent.Future;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
-import edu.southwestern.evolution.genotypes.HyperNEATCPPNforDL4JGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.metaheuristics.Metaheuristic;
 import edu.southwestern.evolution.mulambda.MuLambda;
@@ -152,7 +151,7 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 			// print fitness score and genotype information then dispose the
 			// panel, releasing system resources
 			if (panel != null) {
-				TWEANNGenotype genotype = score.individual instanceof HyperNEATCPPNforDL4JGenotype ? ((HyperNEATCPPNforDL4JGenotype) score.individual).getCPPN() : (TWEANNGenotype) score.individual;
+				TWEANNGenotype genotype = (TWEANNGenotype) score.individual;
 				System.out.println("Module Usage: " + Arrays.toString(genotype.getModuleUsage()));
 				System.out.println("Fitness: " + score.toString());
 				panel.dispose();

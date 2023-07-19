@@ -14,29 +14,15 @@ import org.rlcommunity.rlglue.codec.types.Observation;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.nsga2.bd.characterizations.RemembersObservations;
 import edu.southwestern.networks.Network;
-import edu.southwestern.networks.dl4j.DL4JNetworkWrapper;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.rlglue.RLGlueAgent;
 import edu.southwestern.tasks.rlglue.RLGlueTask;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Pair;
-import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.stats.StatisticsUtilities;
 
-
 public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
-
-	// Used for TD learning
-	private boolean backprop;
-	private double gamma;
-	private int minibatchSize;
-	// Used for TD learning to collect history into learning batches
-	private double[][] batchInputs;
-	private double[][] batchOutputs;
-	private int currentBatchPointer;
-	private boolean rlEpsilonGreedy;
-	private double rlEpsilon;
 	
 	// Saved in order to replay actions to a desired afterstate. Gets refilled
 	// once the list of actions run out.
@@ -47,14 +33,6 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 	public TetrisAfterStateAgent() {
 		super();
 		currentActionList = new LinkedList<Integer>();
-		backprop = Parameters.parameters.booleanParameter("rlBackprop");
-		gamma = Parameters.parameters.doubleParameter("rlGamma");
-		minibatchSize = Parameters.parameters.integerParameter("rlBatchSize");
-		rlEpsilonGreedy = Parameters.parameters.booleanParameter("rlEpsilonGreedy");
-		rlEpsilon = Parameters.parameters.doubleParameter("rlEpsilon");
-		batchInputs = new double[minibatchSize][];
-		batchOutputs = new double[minibatchSize][];
-		currentBatchPointer = 0;
 	}
 
 	/**
@@ -97,15 +75,7 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 			
 			// call obs to ts
 			TetrisState tempState = observationToTetrisState(o);
-			// For TD: network inputs in the current state.
-			// Not used for decision making ... only for learning updates with backprop.
-			double[] inputsInS = RLGlueTask.rlGlueExtractor.extract(tempState.get_observation(false));
 			
-			// System.out.println("Start state");
-			// System.out.println(tempState);
-			// ArrayList<TetrisStateActionPair> forDebugging = new
-			// ArrayList<TetrisStateActionPair>();
-
 			boolean currentWatch = CommonConstants.watch;
 			CommonConstants.watch = false;
 
@@ -138,34 +108,7 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 			}
 
 			// Stores index of move to take
-			int index;
-			if(rlEpsilonGreedy && RandomNumbers.randomCoin(rlEpsilon)) { // Explore random action
-				index = RandomNumbers.randomGenerator.nextInt(outputForArgmax.length);
-			} else { // Exploit best known action
-				index = StatisticsUtilities.argmax(outputForArgmax); // action = argmax(list)
-			}
-			
-			double valueOfSPrime = outputPairs.get(index).t1;
-			
-			if(backprop) {
-				// TD learning target:
-				// V(s) should equal (r + gamma*V(s'))
-				double backpropTarget = r + gamma*valueOfSPrime;
-				// Input features
-				batchInputs[currentBatchPointer] = inputsInS;
-				// and associated target
-				batchOutputs[currentBatchPointer] = new double[]{backpropTarget};
-				currentBatchPointer++;
-				
-				// Full batch of experience accumulated
-				if(currentBatchPointer == minibatchSize) {
-					// Unwrap the network from the policy and call fit method to do backprop
-					DL4JNetworkWrapper dl4jNet = (DL4JNetworkWrapper) policy; // Policy must be DL4JNetworkWrapper if backprop is used
-					dl4jNet.fit(batchInputs, batchOutputs);
-					// Reset pointer afterward
-					currentBatchPointer = 0;
-				}
-			}
+			int index = StatisticsUtilities.argmax(outputForArgmax); // action = argmax(list)
 			
 			List<Integer> moveSequence = outputPairs.get(index).t2;
 			currentActionList.addAll(moveSequence);

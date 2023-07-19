@@ -18,7 +18,6 @@ import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.CombinedGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype;
-import edu.southwestern.evolution.genotypes.HyperNEATCPPNforDL4JGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNPlusParametersGenotype;
 import edu.southwestern.evolution.halloffame.HallOfFame;
@@ -218,8 +217,7 @@ public class MMNEAT {
 				genotype instanceof TWEANNPlusParametersGenotype ||
 				genotype instanceof CombinedGenotype || // Assume first member of pair is TWEANNGenotype
 				genotype instanceof CPPNOrDirectToGANGenotype || // Assume first form is TWEANNGenotype
-				genotype instanceof CPPNOrBlockVectorGenotype || // Assume first form is TWEANNGenotype
-				genotype instanceof HyperNEATCPPNforDL4JGenotype) { // Contains CPPN that is TWEANNGenotype
+				genotype instanceof CPPNOrBlockVectorGenotype) { // Assume first form is TWEANNGenotype
 			if (Parameters.parameters.booleanParameter("io")
 					&& Parameters.parameters.booleanParameter("logTWEANNData")) {
 				System.out.println("Init TWEANN Log");
@@ -238,9 +236,7 @@ public class MMNEAT {
 											((TWEANNGenotype) ((CPPNOrBlockVectorGenotype) genotype).getCurrentGenotype()).biggestInnovation():
 												(genotype instanceof CombinedGenotype ? 
 														((TWEANNGenotype) ((CombinedGenotype) genotype).t1).biggestInnovation() :
-															(genotype instanceof HyperNEATCPPNforDL4JGenotype ?
-																	((HyperNEATCPPNforDL4JGenotype) genotype).getCPPN().biggestInnovation()	:
-																		((TWEANNGenotype) genotype).biggestInnovation())));
+															((TWEANNGenotype) genotype).biggestInnovation()));
 					
 			if (biggestInnovation > EvolutionaryHistory.largestUnusedInnovationNumber) {
 					EvolutionaryHistory.setInnovation(biggestInnovation + 1);
