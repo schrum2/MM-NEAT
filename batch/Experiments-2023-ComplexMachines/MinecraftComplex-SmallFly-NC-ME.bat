@@ -10,7 +10,7 @@ launchMinecraftServerFromJava:false minecraftClearSleepTimer:400 minecraftSkipIn
 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask ^
 minecraftContainsWholeMAPElitesArchive:false forceLinearArchiveLayoutInMinecraft:false interactWithMapElitesInWorld:false ^
 experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 ^
-mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5 ^
+mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBlockCountEmptyCountBinLabels ^
 mapElitesQDBaseOffset:1 ^
 ea:edu.southwestern.evolution.mapelites.MAPElites ^
 mu:100 maxGens:60000 ^
@@ -21,4 +21,4 @@ spaceBetweenMinecraftShapes:22 ^
 minecraftClearWithGlass:false ^
 minecraftAccumulateChangeInCenterOfMass:true minecraftChangeCenterOfMassFitness:true ^
 minecraftWeightedSumsAccumulateNewBlockPositionsAndChangeCenterOfMassFitness:false ^
-base:minecraftcomplex log:MinecraftComplex-SmallFlyPOME saveTo:SmallFlyPOME
+base:minecraftcomplex log:MinecraftComplex-SmallFlyNCME saveTo:SmallFlyNCME
