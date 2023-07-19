@@ -18,7 +18,6 @@
   
         <unirest.version>1.4.9</unirest.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <nd4j.version>1.0.0-beta7</nd4j.version>
         <javacv.version>1.4.1</javacv.version>
         <javacpp.version>1.4.1</javacpp.version>
         <javacpp-presets.version>1.4.1</javacpp-presets.version>
@@ -31,15 +30,6 @@
         <lombok.version>1.16.16</lombok.version>
   		<jcommon.version>1.0.23</jcommon.version>
     
-        <!-- Change the nd4j.backend property to nd4j-cuda-7.5-platform or nd4j-cuda-8.0-platform to use CUDA GPUs -->
-        <!-- <nd4j.backend>nd4j-cuda-10.2-platform</nd4j.backend> -->
-        <nd4j.backend>nd4j-native</nd4j.backend>
-        <!-- <nd4j.backend>nd4j-cuda-8.0-platform</nd4j.backend> -->
-
-		<!-- Change these below? -->
-        <datavec.version>1.0.0-beta7</datavec.version>
-        <arbiter.version>1.0.0-beta7</arbiter.version>
-
   </properties>
 
   <build>
@@ -105,17 +95,6 @@
             <url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.nd4j</groupId>
-                <artifactId>${nd4j.backend}</artifactId>
-                <version>${nd4j.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
   <dependencies>
   
 <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
@@ -124,6 +103,12 @@
     <groupId>org.apache.commons</groupId>
     <artifactId>commons-lang3</artifactId>
     <version>3.12.0</version>
+</dependency>
+
+<dependency>
+  <groupId>commons-io</groupId>
+  <artifactId>commons-io</artifactId>
+  <version>2.13.0</version>
 </dependency>
 
     <dependency>
@@ -139,31 +124,7 @@
     	<artifactId>xalan</artifactId>
     	<version>2.7.3</version>
 	</dependency>
-  
-<dependency>
-    <groupId>org.datavec</groupId>
-    <artifactId>datavec-api</artifactId>
-    <version>${datavec.version}</version>
-</dependency>
-<dependency>
-    <groupId>org.datavec</groupId>
-    <artifactId>datavec-data-image</artifactId>
-    <version>${datavec.version}</version>
-</dependency>
-  
-  	<!-- DL4J and RL4J -->
-        <dependency>
-            <groupId>org.nd4j</groupId>
-            <artifactId>${nd4j.backend}</artifactId>
-            <version>${nd4j.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>${logback.version}</version>
-        </dependency>
-
+    
 <!-- This is part of Java, but the latest versions restrict it as "not API" -->
         <dependency>
             <groupId>com.github.demidenko05</groupId>
