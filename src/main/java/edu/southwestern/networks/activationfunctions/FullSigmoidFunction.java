@@ -1,7 +1,5 @@
 package edu.southwestern.networks.activationfunctions;
 
-import org.nd4j.linalg.activations.Activation;
-
 public class FullSigmoidFunction extends SigmoidFunction {
 
 	/**
@@ -16,11 +14,6 @@ public class FullSigmoidFunction extends SigmoidFunction {
 		return (2 * super.f(x)) - 1;
 	}
 	
-	@Override
-	public Activation equivalentDL4JFunction() {
-		throw new UnsupportedOperationException("No corresponding DL4J function for " + name());
-	}
-
 	@Override
 	public String name() {
 		return "sigmoid-full"; //"Full Sigmoid";

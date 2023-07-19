@@ -13,8 +13,6 @@ import javax.imageio.ImageIO;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.nd4j.linalg.api.ndarray.INDArray;
-import org.nd4j.linalg.cpu.nativecpu.NDArray;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.EvolutionaryHistory;
@@ -461,65 +459,6 @@ public class GraphicsUtilTest {
 		}
 	}
 
-	@Test
-	public void testImageFromINDArray() {
-		// RGB of every pixel laid out linearly. Each goes from 0 to 255
-		double[] imageData = new double[SIDE_LENGTH*SIDE_LENGTH*3];
-		int count = 0;
-		// Loop to fill in imageData
-		for(int x = 0; x < checkeredBlackAndWhite.getWidth(); x++) {
-			for(int y = 0; y < checkeredBlackAndWhite.getHeight(); y++) {
-				int rgb = checkeredBlackAndWhite.getRGB(x, y);
-				Color c = new Color(rgb);
-				int red = c.getRed();
-				int green = c.getGreen();
-				int blue = c.getBlue();
-				imageData[count++] = red;
-				imageData[count++] = blue;
-				imageData[count++] = green;
-			}
-		}
-		int[] shape = new int[] {1,3,SIDE_LENGTH,SIDE_LENGTH};
-		char order = 'f'; // Not sure what this means. Should it be 'c'?
-		INDArray imageArray = new NDArray(imageData, shape, order);
-		
-		for(int x = 0; x < checkeredBlackAndWhite.getWidth(); x++) {
-			for(int y = 0; y < checkeredBlackAndWhite.getHeight(); y++) {
-				assertEquals(checkeredBlackAndWhite.getRGB(x, y), GraphicsUtil.imageFromINDArray(imageArray).getRGB(x, y));
-			}
-		}
-	}
-
-	// Not testing things involving drawing panels
-//	@Test
-//	public void testLinePlotDrawingPanelDoubleDoubleArrayListOfDoubleColor() {
-//		fail("Not yet implemented");
-//	}
-//
-	// Not testing things involving drawing panels
-//	@Test
-//	public void testLinePlotImage() {
-//		fail("Not yet implemented");
-//	}
-//
-	// Not testing things involving drawing panels
-//	@Test
-//	public void testLinePlotGraphicsDoubleDoubleIntIntArrayListOfDoubleColor() {
-//		fail("Not yet implemented");
-//	}
-
-	// Currently too hard to test
-//	@Test
-//	public void testWavePlotFromFile() {
-//		fail("Not yet implemented");
-//	}
-//
-	// Currently too hard to test
-//	@Test
-//	public void testWavePlotFromDoubleArray() {
-//		fail("Not yet implemented");
-//	}
-//
 //	// hard code numbers, assert with numeric result
 //	// far left, far right, center
 	@Test
