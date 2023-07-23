@@ -99,6 +99,8 @@ public class MMNEAT {
 	public static ArrayList<Genotype> genotypeExamples;
 	@SuppressWarnings("rawtypes") // can crossover any type, depending on command line
 	public static Crossover crossoverOperator;
+	@SuppressWarnings("rawtypes") // can crossover any type, depending on command line
+	public static Crossover arrayCrossoverOperator;
 	@SuppressWarnings("rawtypes") // depends on genotypes
 	public static ArrayList<Metaheuristic> metaheuristics;
 	public static ArrayList<ArrayList<String>> fitnessFunctions;
@@ -180,6 +182,7 @@ public class MMNEAT {
 		// Crossover operator
 		if (Parameters.parameters.booleanParameter("mating")) {
 			crossoverOperator = (Crossover) ClassCreation.createObject("crossover");
+			arrayCrossoverOperator = (Crossover) ClassCreation.createObject("arrayCrossover");
 		}
 	}
 

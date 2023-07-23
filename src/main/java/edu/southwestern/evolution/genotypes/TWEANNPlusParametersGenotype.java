@@ -52,6 +52,7 @@ public class TWEANNPlusParametersGenotype<E> implements Genotype<NetworkPlusPara
 
 	@Override
 	public Genotype<NetworkPlusParameters<TWEANN,E>> crossover(Genotype<NetworkPlusParameters<TWEANN,E>> g) {
+		@SuppressWarnings("unchecked")
 		CombinedGenotype<TWEANN,E> child = (CombinedGenotype<TWEANN, E>) combined.crossover(((TWEANNPlusParametersGenotype<E>) g).combined);
 		return new TWEANNPlusParametersGenotype<E>((TWEANNGenotype) child.t1, child.t2);
 	}

@@ -9,6 +9,7 @@ import java.util.Scanner;
 import java.util.StringTokenizer;
 
 import competition.cig.robinbaumgarten.AStarAgent;
+import edu.southwestern.evolution.crossover.ArrayCrossover;
 import edu.southwestern.evolution.crossover.network.TWEANNCrossover;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.nsga2.NSGA2;
@@ -1047,7 +1048,8 @@ public class Parameters {
 		classOptions.add("zeldaGraphBackBone", HumanSubjectStudy2019Graph.class, "Constructs the graph for the rules of the ZeldaGraphGrammar");
 		classOptions.add("behaviorCharacterization", DomainSpecificCharacterization.class, "Type of behavior characterization used for Behavioral Diversity calculation");
 		classOptions.add("imageFitness", RandomImageFitness.class, "Fitness function for evaluating images");
-		classOptions.add("crossover", TWEANNCrossover.class, "Crossover operator to use if mating is used");
+		classOptions.add("crossover", TWEANNCrossover.class, "Default crossover operator to use if mating is used with most genotypes");
+		classOptions.add("arrayCrossover", ArrayCrossover.class, "Crossover used on array genotypes");
 		classOptions.add("directionalSafetyFunction", null, "Function that decides if CheckEach agent bothers to consider a direction");
 		classOptions.add("ea", NSGA2.class, "A subclass for the evolutionary algorithm to run");
 		classOptions.add("experiment", LimitedSinglePopulationGenerationalEAExperiment.class, "A subclass of Experiment to execute");
