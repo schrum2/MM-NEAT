@@ -2205,7 +2205,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN>, Serializable {
 	 * @return String of the contents in GraphViz file
 	 */
 	public String toGraphViz(String[] inputs, String[] outputs) {
-		if(this.numModules > 1) throw new UnsupportedOperationException("Saving of Graph Viz networks does not work with multi-module networks yet.");
+		if(this.numModules > 1) throw new UnsupportedOperationException("Saving of Graph Viz networks does not work with multi-module networks yet.\nHowever, visualization of the network will not be interrupted.");
 		StringBuilder string = new StringBuilder();
 		string.append("digraph {\nnode[fontsize=9 height=0.2 shape=circle width=0.2]");
 		
