@@ -342,6 +342,7 @@ public class MMNEAT {
 	 * @param minFitnss smallest possible fitness score (optional, could be NaN)
 	 */
 	public static void registerFitnessFunction(String name, Statistic override, boolean affectsSelection, int pop, double minFitness) {
+		//System.out.println(name + " does " + (!affectsSelection ? "NOT" : "") + " affect fitness.");
 		if(actualFitnessFunctions == null){
 			actualFitnessFunctions = new ArrayList<Integer>();
 		}
@@ -372,6 +373,8 @@ public class MMNEAT {
 	 * @return number of other stats
 	 */
 	public static int getNumberOtherStatsForPopulation(int pop) {
+		//System.out.println("fitnessFunctions:" + fitnessFunctions.get(pop) + ":" + fitnessFunctions.get(pop).size());
+		//System.out.println("actualFitnessFunctions:" + actualFitnessFunctions.get(pop) + ":" + actualFitnessFunctions);
 		return fitnessFunctions.get(pop).size() - actualFitnessFunctions.get(pop);
 	}
 

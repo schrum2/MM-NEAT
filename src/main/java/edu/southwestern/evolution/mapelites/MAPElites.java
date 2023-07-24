@@ -658,9 +658,11 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 					otherStatsFillString = otherStatsFillString + maximumFitness + "\t" + qdScore +"\t";
 				}
 				otherStatsFillLog.log(otherStatsFillString);
-				Pair<Double, List<Score<T>>> volumeAndFront = archive.getHypervolumeAndParetoFrontAcrossOtherStats();
-				otherHypervolumeLog.log(pseudoGeneration + "\t" + volumeAndFront.t1);				
-				MultiobjectiveUtil.logParetoFrontGenotypesAndScorePlot("PseudoGen"+pseudoGeneration+"_ParetoFront", volumeAndFront.t2, null);
+				if(Parameters.parameters.booleanParameter("mapElitesLogsOtherScoreHypervolume")) {
+					Pair<Double, List<Score<T>>> volumeAndFront = archive.getHypervolumeAndParetoFrontAcrossOtherStats();
+					otherHypervolumeLog.log(pseudoGeneration + "\t" + volumeAndFront.t1);				
+					MultiobjectiveUtil.logParetoFrontGenotypesAndScorePlot("PseudoGen"+pseudoGeneration+"_ParetoFront", volumeAndFront.t2, null);
+				}
 			}
 			
 			Float maximumFitness = StatisticsUtilities.maximum(elite);

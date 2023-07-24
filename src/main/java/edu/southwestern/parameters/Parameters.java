@@ -884,6 +884,7 @@ public class Parameters {
 		booleanOptions.add("minecraftClearAndVerify", true, "uses clear and verify");		
 		booleanOptions.add("mapElitesReplaceOnEquality", false, "An elite can be replaced by a candidate of equal fitness");		
 		booleanOptions.add("mapElitesSoftAnnealingArchive", false, "Archive has gradually increasing acceptance thresholds for each bin");		
+		booleanOptions.add("mapElitesLogsOtherScoreHypervolume", true, "Treat other scores as components of main objective and plot hypervolume");		
 		
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
