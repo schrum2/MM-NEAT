@@ -124,7 +124,9 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 					otherStatsLogsList.add(otherStatsLogs[i]);
 				}
 				otherStatsFillLog = new MMNEATLog(infix+"_otherStatsFillLog", false, false, false, true);
-				otherHypervolumeLog = new MMNEATLog(infix+"_otherStatsHypervolumeLog", false, false, false, true);
+				if(Parameters.parameters.booleanParameter("mapElitesLogsOtherScoreHypervolume")) {
+					otherHypervolumeLog = new MMNEATLog(infix+"_otherStatsHypervolumeLog", false, false, false, true);
+				}
 			}
 			
 			// Can't check MMNEAT.genotype since MMNEAT.ea is initialized before MMNEAT.genotype
