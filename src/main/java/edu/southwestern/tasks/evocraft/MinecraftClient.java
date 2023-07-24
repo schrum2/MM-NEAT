@@ -13,8 +13,13 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.mario.gan.Comm;
 import edu.southwestern.util.PythonUtil;
 import edu.southwestern.util.datastructures.Triple;
-
+/**
+ * MinecraftClient creates A client if one doesn't exist communicates with Python API as a Java interface 
+ * to place blocks in their proper positions while also formating the area properly
+ */
 public class MinecraftClient extends Comm {
+	// Max volume of blocks allowed to be read from a readCube command
+	private static final int MAX_VOLUME_READ = 134560; // 110592;
 
 	public static final int MAX_Y_COORDINATE = 255;
 
@@ -29,12 +34,19 @@ public class MinecraftClient extends Comm {
 	public static final String PYTHON_BASE_PATH = "." + File.separator + "src" + File.separator + "main" + File.separator + "python" + File.separator + "EvoCraft" + File.separator;
 	// Python script to interact with a Minecraft server on the localhost
 	public static final String CLIENT_PATH = PYTHON_BASE_PATH + "ServerSendReceive.py";
+	
+
+	//a corner that is no where near any other used area meant to evaluate shapes after a completed evolution experiment
+	public static final MinecraftCoordinates POST_EVALUATION_SHAPE_CORNER = new MinecraftCoordinates(-500, 100 + Parameters.parameters.integerParameter("minecraftPostCornerAdjustY"), 500);
 
 	public MinecraftClient() {
 		super();
-		// More?
 	}
 
+	public static boolean clientRunning() {
+		return client != null;
+	}
+	
 	@Override
 	public void initBuffers() {
 		//Initialize input and output
@@ -46,7 +58,10 @@ public class MinecraftClient extends Comm {
 			printErrorMsg("MinecraftServerUtil:initBuffers:Null process!");
 		}
 	}
-
+	/**
+	 * Creates new client if one does not exist returns client if it already exists
+	 * @return client MinecraftClient();
+	 */
 	public static MinecraftClient getMinecraftClient() {
 		if(client == null) {
 			PythonUtil.setPythonProgram();
@@ -71,7 +86,9 @@ public class MinecraftClient extends Comm {
 			e.printStackTrace();
 		}
 	}
-
+	/**
+	 * Launches client script and checks to see if builder can build
+	 */
 	public void launchClientScript() {
 		PythonUtil.checkPython();
 		// Run script for communicating with Minecraft Server
@@ -84,7 +101,9 @@ public class MinecraftClient extends Comm {
 			e.printStackTrace();
 		}
 	}
-
+	/**
+	 * destroys Client process and sets it equal to null
+	 */
 	public static void terminateClientScriptProcess() {
 		if(client != null) {
 			client.process.destroy();
@@ -96,15 +115,17 @@ public class MinecraftClient extends Comm {
 
 	// Block orientation. Compare with src\main\python\EvoCraft\minecraft_pb2.py
 	public enum Orientation {
-		NORTH,
-		WEST,
-		SOUTH,
-		EAST,
-		UP,
-		DOWN
+		NORTH,	//0
+		WEST,	//1
+		SOUTH,	//2
+		EAST,	//3
+		UP,		//4
+		DOWN	//5
 	}
 
-	// Block type. Compare with src\main\python\EvoCraft\minecraft_pb2.py
+	// Block type. Compare with src\main\python\EvoCraft\minecraft_pb2.py to find index of block
+	// MM-NEAT\src\main\python\EvoCraft>python ServerSendReceive.py
+	// spawnBlocks x y z type# orientation#
 	public enum BlockType {
 		ACACIA_DOOR, 		// 0
 		ACACIA_FENCE,		// 1
@@ -151,7 +172,7 @@ public class MinecraftClient extends Comm {
 		COBBLESTONE_WALL,	// 42
 		COCOA,				// 43
 		COMMAND_BLOCK,		// 44
-		CONCRETE,
+		CONCRETE,			
 		CONCRETE_POWDER,
 		CRAFTING_TABLE,
 		CYAN_GLAZED_TERRACOTTA,
@@ -368,20 +389,43 @@ public class MinecraftClient extends Comm {
 	 *
 	 */
 	public static class MinecraftCoordinates extends Triple<Integer,Integer,Integer> {
+		/**
+		 * sets Integers within this MinecraftCoordinates equal to size
+		 * @param size value of each coordinate (x, y, and z)
+		 */
 		public MinecraftCoordinates(int size) {
 			this(size,size,size);
 		}
-		
+		/**
+		 * constructs a new coordinate with X, Y and Z values
+		 * @param x specific coordinate for x 
+		 * @param y specific coordinate for y
+		 * @param z specific coordinate for z
+		 */
 		public MinecraftCoordinates(int x, int y, int z) {
 			super(x, y, z);
 		}
-		
+		/**
+		 * gets proper coordinates from original
+		 * @param original
+		 */
 		public MinecraftCoordinates(MinecraftCoordinates original) { // copy constructor
 			super(original.x(), original.y(), original.z());
 		}
-		
+		/**
+		 * 
+		 * @return t1 which is the proper coordinate for x
+		 */
 		public int x() { return t1; }
+		/**
+		 * 
+		 * @return t1 which is the proper coordinate for y
+		 */
 		public int y() { return t2; }
+		/**
+		 * 
+		 * @return t1 which is the proper coordinate for z
+		 */
 		public int z() { return t3; }
 		
 		/**
@@ -484,7 +528,9 @@ public class MinecraftClient extends Comm {
 				return false;
 			}
 		}
-
+		/**
+		 * uses values from orientationMatters compared with object to narrow down flying machines that are identical.
+		 */
 		@Override
 		public boolean equals(Object obj) {
 			if (this == obj) {
@@ -561,7 +607,10 @@ public class MinecraftClient extends Comm {
 		public int z() {
 			return position.z();
 		}
-
+		public MinecraftCoordinates blockPosition() {
+			return position;
+		}
+		
 		/**
 		 * Get type index of the type that will be recognized by Python
 		 * @return Type index/number for type
@@ -587,7 +636,6 @@ public class MinecraftClient extends Comm {
 			return name + " at " + pos + " oriented " + (orientation == null ? "null" : orientation.name());
 		}
 		
-
 	}
 
 	/**
@@ -613,6 +661,227 @@ public class MinecraftClient extends Comm {
 				System.exit(1);
 			}
 		}
+	}
+	
+	/**
+	 * TODO: this is an auto call, passes true, auto sets y to stopAtGround -ground level?
+	 * Clear a large enough space in the world for a population of shapes.
+	 * 
+	 * @param start Start coordinates where shapes are generated
+	 * @param ranges Size of each shape space
+	 * @param numShapes Number of generated shapes
+	 * @param buffer Buffer distance between shapes
+	 */
+	public void clearSpaceForShapes(MinecraftCoordinates start, MinecraftCoordinates ranges, int numShapes, int buffer) {
+		clearSpaceForShapes(start, ranges, numShapes, buffer, true);
+	}
+	
+	/**(
+	 * Clear a large enough space in the world for up to a population of shapes. This
+	 * is a separate method that is called by a method of the same name, however, this 
+	 * method allows for toggling whether or not the y is set at ground level
+	 * 
+	 * @param start Start coordinates where shapes are generated
+	 * @param ranges Size of each shape space
+	 * @param numShapes Number of generated shapes
+	 * @param buffer Buffer distance between shapes
+	 * @param stopAtGround Whether or not the y axis is set at ground level
+	 */
+	public void clearSpaceForShapes(MinecraftCoordinates start, MinecraftCoordinates ranges, int numShapes, int buffer, boolean stopAtGround) {
+		MinecraftCoordinates groundStart = new MinecraftCoordinates(start.x()-buffer, stopAtGround ? GROUND_LEVEL : start.y()-buffer, start.z()-buffer);
+		//System.out.println("Starts:"+groundStart);
+		MinecraftCoordinates end = new MinecraftCoordinates(start.x() + numShapes*(ranges.x() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")) + buffer, start.y() + ranges.y() + buffer, start.z() + (int)(ranges.z()*Math.sqrt(numShapes)) + buffer);
+		//System.out.println("ENDS:"+end);
+		
+		
+		// If cleared space isn't very large, just clear that space
+		int clearSize = (end.x()-groundStart.x())*(end.y()-groundStart.y())*(end.z()-groundStart.z());
+		if( clearSize<=MAX_CLEAR_WITHOUT_LOOP) {
+			clearCube(groundStart, end); // Calls clear cube, which checks coordinates
+		}else {
+			int counter=50000000; // Don't need gradual clear messages for small clear sizes
+			// Otherwise, clears out large block sections one at a time to ensure the server isn't overloaded
+			int fillSize = Parameters.parameters.integerParameter("minecraftClearDimension");
+			System.out.println("*WARNING* The size that needs to be cleared out is over "+MAX_CLEAR_WITHOUT_LOOP+" blocks, this may take a while to clear");
+			System.out.println("Size neededing to be cleared: "+clearSize+" blocks"); // Prints to warn user
+			System.out.println("From "+groundStart+" to "+end);
+			for(int x=groundStart.x();x<=end.x();x+=fillSize) {
+				for(int z=groundStart.z();z<=end.z();z+=fillSize) {
+					for(int y=GROUND_LEVEL;y<=end.y();y+=fillSize) {
+						//System.out.println("clearing "+counter);
+						counter++;
+						clearCube(x,y,z,x+fillSize,y+fillSize,z+fillSize);
+						//System.out.println(x+fillSize+" "+(y+fillSize)+" "+(z+fillSize));
+						if((x+fillSize)*(y+fillSize)*(z+fillSize)>counter) {
+							System.out.println("Blocks cleared = "+((x+fillSize)*(y+fillSize)*(z+fillSize)));
+							counter+=50000000; // Gradual prints to let the user know it's still running
+						}
+						try {
+							Thread.sleep(Parameters.parameters.integerParameter("minecraftClearSleepTimer"));
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			}	
+			System.out.println("Clearing done");
+		}
+	}
+	/**
+	 * This checks some coordinates to see if the evaluation space for them would go below ground level
+	 * It then shifts the coordinates if necessary and then returns the shifted (or not shifted) coordinates
+	 * @param originalShapeCorner the shape corner that was passed for evaluation
+	 * @return the new shifted coordinates if they needed to be shifter, or the old coordinates if not
+	 */
+	public MinecraftCoordinates checkForYOutOfBoundsAndShiftUp (MinecraftCoordinates originalShapeCorner) {
+		MinecraftCoordinates newShapeCorner = originalShapeCorner;
+		
+		//check for out of bounds
+		if(originalShapeCorner.y() - Parameters.parameters.integerParameter("minecraftEmptySpaceBufferY") - Parameters.parameters.integerParameter("minecraftExtraClearSpace") <= MinecraftClient.GROUND_LEVEL) { // Push up if close to ground)
+			System.out.println("Pushed up from " + originalShapeCorner);
+			
+			MinecraftCoordinates shiftPoint = new MinecraftCoordinates(0,Parameters.parameters.integerParameter("minecraftEmptySpaceBufferY"),0);
+			newShapeCorner = originalShapeCorner.add(shiftPoint);			//shifts the shape corner to a new adjusted corner
+		}
+		return newShapeCorner;
+	}
+	
+	/**
+	 * this just gives access to the extra clear method
+	 * @param originalShapeCorner
+	 */
+	public void clearEvaluationSpaceForJUnitTests(MinecraftCoordinates originalShapeCorner) {
+		//clear this area
+		extraClearAreaClearAroundCornerWithGlass(originalShapeCorner);
+	}
+	
+	/**
+	 * Clears an area and verifies that it is clear
+	 * called if you need to make sure it is clear
+	 * makes use of clearWithGlass if the minecraftClearWithGlass parameter is set to true
+	 * clears larger area than what is passed
+	 * @param shapeCornerCoordinates corner that the shape is occupying 
+	 */
+	public static void clearAndVerify(MinecraftCoordinates shapeCornerCoordinates) {
+		boolean empty = false;
+		int clearAttempt = 0;
+		do {
+			clearAreaAroundCorner(shapeCornerCoordinates, true);
+			empty = areaAroundCornerEmpty(shapeCornerCoordinates);
+			if(!empty) System.out.println("Cleared "+(++clearAttempt)+" times: empty?: "+empty);
+		} while(!empty);
+	}
+	
+	/**
+	 * same as clearAreaAroundCorner, but adds the extra clear space
+	 * always clears with glass
+	 * @param shapeCorner the original min coordinates of the shape
+	 */
+	public static void extraClearAreaClearAroundCornerWithGlass (MinecraftCoordinates shapeCorner) {
+		//add a little extra
+		MinecraftCoordinates minecraftEmptySpaceBuffer = new MinecraftCoordinates(Parameters.parameters.integerParameter("minecraftEmptySpaceBufferX"),Parameters.parameters.integerParameter("minecraftEmptySpaceBufferY"),Parameters.parameters.integerParameter("minecraftEmptySpaceBufferZ"));
+		MinecraftCoordinates lowerCoordinates = shapeCorner.sub(Parameters.parameters.integerParameter("minecraftExtraClearSpace")).sub(minecraftEmptySpaceBuffer);
+		MinecraftCoordinates upperCoordinates = shapeCorner.add(MinecraftUtilClass.getRanges().add(Parameters.parameters.integerParameter("minecraftExtraClearSpace")).add(minecraftEmptySpaceBuffer));
+		getMinecraftClient().clearCube(lowerCoordinates, upperCoordinates, true);
+		List<Block> errorCheck = null;
+		assert areaAroundCornerEmpty(shapeCorner) : "Area not empty after clearing! "+errorCheck;
+	}
+	
+	/**
+	 * TODO: need to change to shape corner of post evaluation corner or modify clearAreaAroundCorner
+	 * Normal case of not using the clear with glass option, only clears with air
+	 */
+	public static void clearAreaAroundPostEvaluationCorner() {
+		clearAreaAroundCorner(POST_EVALUATION_SHAPE_CORNER, false);
+	}
+	
+	/**
+	 * TODO: this takes a shape corner but frequently is passed an evaluation corner
+	 * This takes shape corner, 
+	 * Make sure the special area for double-checking flying shapes is really clear
+	 * @param shapeCorner of the evaluation area
+	 * @param clearWithGlass - if passed true (only from clearAndVerify) clears with glass first
+	 */
+	public static void clearAreaAroundCorner(MinecraftCoordinates shapeCorner, boolean clearWithGlass) {
+		//lower is the min coordinates of the clear space based on the 
+		MinecraftCoordinates minecraftEmptySpaceBuffer = new MinecraftCoordinates(Parameters.parameters.integerParameter("minecraftEmptySpaceBufferX"),Parameters.parameters.integerParameter("minecraftEmptySpaceBufferY"),Parameters.parameters.integerParameter("minecraftEmptySpaceBufferZ"));
+		MinecraftCoordinates lower = shapeCorner.sub(minecraftEmptySpaceBuffer);
+		MinecraftCoordinates upper = shapeCorner.add(MinecraftUtilClass.getRanges().add(minecraftEmptySpaceBuffer));
+		getMinecraftClient().clearCube(lower, upper, clearWithGlass);
+		List<Block> errorCheck = null;
+		assert areaAroundCornerEmpty(shapeCorner) : "Area not empty after clearing! "+errorCheck;
+	}
+	/**
+	 * TODO: takes in a shape corner and changes to evaluation corner, ie input: smallCorner, output: largeCorner
+	 * DOES NOT turn into evaluationCorner, adds minecraftEmptySpaceBuffer
+	 * Checks if the area around a corner is empty
+	 * @param corner the corner coordinates being checked
+	 * @return boolean if space is empty or not
+	 */
+	public static boolean areaAroundCornerEmpty(MinecraftCoordinates corner) {
+		MinecraftCoordinates minecraftEmptySpaceBuffer = new MinecraftCoordinates(Parameters.parameters.integerParameter("minecraftEmptySpaceBufferX"),Parameters.parameters.integerParameter("minecraftEmptySpaceBufferY"),Parameters.parameters.integerParameter("minecraftEmptySpaceBufferZ"));
+		MinecraftCoordinates lower = corner.sub(minecraftEmptySpaceBuffer);
+		MinecraftCoordinates upper = corner.add(MinecraftUtilClass.getRanges().add(minecraftEmptySpaceBuffer));
+		List<Block> errorCheck = MinecraftUtilClass.filterOutBlock(getMinecraftClient().readCube(lower, upper), BlockType.AIR);
+//		if(!errorCheck.isEmpty()) {
+//			System.out.println("NOT EMPTY at corner "+corner+"\n"+errorCheck);
+//			MiscUtil.waitForReadStringAndEnterKeyPress();
+//		}
+		return errorCheck.isEmpty();
+	}
+	
+	/**
+	 * TODO: clears cube no glass
+	 * clears cubes by replacing all cubes with log and then replacing with air
+	 * log chosen arbitrarily
+	 * this forcefully replaces all blocks that might be misinterpreted as air into log and then replaces them with air
+	 * uses fillCube to fill the space
+	 * this forces a call where glass is not used and is the default all used
+	 * 
+	 * @param min Minimal coordinates in each dimension (each min coordinate must be <= max coordinate)
+	 * @param max Maximal coordinates in each dimension
+	 */
+	public void clearCube(MinecraftCoordinates min, MinecraftCoordinates max) {
+		clearCube(min, max, false);
+	}
+	
+	/**
+	 * TODO: min max of area being cleared
+	 * @param min
+	 * @param max
+	 * @param clearWithGlass
+	 */
+	public synchronized void clearCube(MinecraftCoordinates min, MinecraftCoordinates max, boolean clearWithGlass) {
+		//clears with glass before air if parameter is set, this makes sure all blocks get set
+		//glass should only be cleared from clear and verify
+		if (clearWithGlass && Parameters.parameters.booleanParameter("minecraftClearWithGlass")) {
+			fillCube(min, max, BlockType.GLASS);
+		}
+		fillCube(min, max, BlockType.AIR);
+	}
+	
+	/**
+	 * Fill all space in the specified range with the provided type. The
+	 * rectangular prism defined in the world spawns from the
+	 * (xmin,ymin,zmin) coordinates to the (xmax,ymax,zmax) coordinates.
+	 * 
+	 * first fills with log to clear out any blocks incorrectly registered as air, then replaces with the desired type
+	 * uses fillCube to fill the space
+	 * 
+	 * @param xmin Minimal x coordinate. xmin <= xmax
+	 * @param ymin Minimal y coordinate. ymin <= ymax
+	 * @param zmin Minimal z coordinate. zmin <= zmax
+	 * @param xmax Maximal x coordinate
+	 * @param ymax Maximal y coordinate
+	 * @param zmax Maximal z coordinate
+	 * @param type Type to fill the space with
+	 */
+	public synchronized void clearCube(int xmin, int ymin, int zmin, int xmax, int ymax, int zmax) {
+		//clears with glass before air if parameter is set, this makes sure all blocks get cleared
+		if (Parameters.parameters.booleanParameter("minecraftClearWithGlass")) {
+			fillCube(xmin, ymin, zmin, xmax, ymax, zmax, BlockType.GLASS);
+		}	
+		fillCube(xmin, ymin, zmin, xmax, ymax, zmax, BlockType.AIR);
 	}
 	
 	/**
@@ -643,7 +912,7 @@ public class MinecraftClient extends Comm {
 	public synchronized void fillCube(int xmin, int ymin, int zmin, int xmax, int ymax, int zmax, BlockType type) {
 		checkBlockBounds(xmin, ymin, zmin, xmax, ymax, zmax);
 		String message = "fillCube "+xmin+" "+ymin+" "+zmin+" "+xmax+" "+ymax+" "+zmax+" "+type.ordinal()+" ";
-		
+		//System.out.println(message);
 		try {
 			commSend(message);
 		} catch (IOException e) {
@@ -654,7 +923,7 @@ public class MinecraftClient extends Comm {
 	}
 	
 	/**
-	 * Over loaded method, retreives list of singular block at a specified coordinate
+	 * Over loaded method, retrieves list of a singular block at a specified coordinate
 	 * 
 	 * @param pos Singular coordinate to read in from
 	 * @return List of Blocks at the singular coordinate
@@ -689,93 +958,87 @@ public class MinecraftClient extends Comm {
 	 * @return List of Blocks between the min and max coordinates (inclusive)
 	 */
 	public synchronized ArrayList<Block> readCube(int xmin, int ymin, int zmin, int xmax, int ymax, int zmax) {
-		String message = "readCube "+xmin+" "+ymin+" "+zmin+" "+xmax+" "+ymax+" "+zmax+" ";
-		checkBlockBounds(xmin, ymin, zmin, xmax, ymax, zmax);
-		try {
-			commSend(message);
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.out.println("Minecraft failed on command "+message);
-			System.exit(1);
+		assert xmin <= xmax && ymin <= ymax && zmin <= zmax: "Min should be less than max in each coordinate: min = ("+xmin+", "+ymin+", "+zmin+"), max = ("+xmax+", "+ymax+", "+zmax+")"; 
+		int volume = (xmax - xmin + 1) * (ymax - ymin + 1) * (zmax - zmin + 1);
+		if(volume > MAX_VOLUME_READ) {
+			String message = "readCube "+xmin+" "+ymin+" "+zmin+" "+xmax+" "+ymax+" "+zmax+" ";
+			System.out.println("Breaking request for "+volume+" > "+MAX_VOLUME_READ+" blocks into two requests:\n"+message);
+			// Request is so big it will overwhelm the server. Break into two requests and combine results.
+
+			int xmin1 = xmin; 
+			int ymin1 = ymin; 
+			int zmin1 = zmin;
+			
+			// One of these must change
+			int xmax1 = xmax; 
+			int ymax1 = ymax;
+			int zmax1 = zmax;
+
+			// One of these must change
+			int xmin2 = xmin; 
+			int ymin2 = ymin; 
+			int zmin2 = zmin;
+			
+			int xdiff = xmax - xmin;
+			int ydiff = ymax - ymin;
+			int zdiff = zmax - zmin;
+			
+			// Choose which dimension to split in half
+			
+			if(xdiff > ydiff && xdiff > zdiff) {
+				// x dim is biggest
+				xmax1 = xmin + xdiff/2;
+				xmin2 = xmax1 + 1;
+			} else if(ydiff > xdiff && ydiff > zdiff) {
+				// y dim is biggest
+				ymax1 = ymin + ydiff/2;
+				ymin2 = ymax1 + 1;				
+			} else {
+				// z dim is biggest, or they are tied
+				zmax1 = zmin + zdiff/2;
+				zmin2 = zmax1 + 1;
+			}
+
+			int xmax2 = xmax; 
+			int ymax2 = ymax;
+			int zmax2 = zmax;
+			
+			// Recursive split and recombine
+			ArrayList<Block> half1 = readCube(xmin1, ymin1, zmin1, xmax1, ymax1, zmax1);
+			ArrayList<Block> half2 = readCube(xmin2, ymin2, zmin2, xmax2, ymax2, zmax2);
+			// Combine all and return
+			half1.addAll(half2);
+			return half1;
+		} else {
+			String message = "readCube "+xmin+" "+ymin+" "+zmin+" "+xmax+" "+ymax+" "+zmax+" ";
+			checkBlockBounds(xmin, ymin, zmin, xmax, ymax, zmax);
+			try {
+				commSend(message);
+			} catch (IOException e) {
+				e.printStackTrace();
+				System.out.println("Minecraft failed on command "+message);
+				System.exit(1);
+			}
+			String response = commRecv();
+			if(response == null) {
+				System.out.println("Python process for interacting with the Minecraft server is not responding.");
+				System.out.println("This likely means the Minecraft server was overwhelmed. Try increasing the \"minecraftClearSleepTimer\"");
+				System.out.println("or reading a smaller area. Requested volume was: "+volume+".Last command was:");
+				System.out.println(message);
+				throw new NullPointerException("Response not received from readCube. Server is probably overwhelmed and crashed from:\n"+message+"\nrequesting volume "+volume);
+			}
+			String[] tokens = response.split(" ");
+			ArrayList<Block> result = new ArrayList<Block>(tokens.length / 4);
+			// Each Block is 4 numbers: x y z type
+			for(int i = 0; i < tokens.length; i += 4) {
+				Block b = new Block(Integer.parseInt(tokens[i]),Integer.parseInt(tokens[i+1]),Integer.parseInt(tokens[i+2]),Integer.parseInt(tokens[i+3]));
+				result.add(b);
+			}
+			return result;
 		}
-		String response = commRecv();
-		if(response == null) {
-			System.out.println("Python process for interacting with the Minecraft server is not responding.");
-			System.out.println("This likely means the Minecraft server was overwhelmed. Try increasing the \"minecraftClearSleepTimer\"");
-			throw new NullPointerException("Response not received from readCube. Server is probably overwhelmed and crashed.");
-		}
-		String[] tokens = response.split(" ");
-		ArrayList<Block> result = new ArrayList<Block>(tokens.length / 4);
-		// Each Block is 4 numbers: x y z type
-		for(int i = 0; i < tokens.length; i += 4) {
-			Block b = new Block(Integer.parseInt(tokens[i]),Integer.parseInt(tokens[i+1]),Integer.parseInt(tokens[i+2]),Integer.parseInt(tokens[i+3]));
-			result.add(b);
-		}
-		return result;
 	}
 	
-	/**
-	 * Clear a large enough space in the world for a population of shapes.
-	 * 
-	 * @param start Start coordinates where shapes are generated
-	 * @param ranges Size of each shape space
-	 * @param numShapes Number of generated shapes
-	 * @param buffer Buffer distance between shapes
-	 */
-	public void clearSpaceForShapes(MinecraftCoordinates start, MinecraftCoordinates ranges, int numShapes, int buffer) {
-		clearSpaceForShapes(start, ranges, numShapes, buffer, true);
-	}
-	
-	/**(
-	 * Clear a large enough space in the world for up to a population of shapes. This
-	 * is a separate method that is called by a method of the same name, however, this 
-	 * method allows for toggling whether or not the y is set at ground level
-	 * 
-	 * @param start Start coordinates where shapes are generated
-	 * @param ranges Size of each shape space
-	 * @param numShapes Number of generated shapes
-	 * @param buffer Buffer distance between shapes
-	 * @param stopAtGround Whether or not the y axis is set at ground level
-	 */
-	public void clearSpaceForShapes(MinecraftCoordinates start, MinecraftCoordinates ranges, int numShapes, int buffer, boolean stopAtGround) {
-		MinecraftCoordinates groundStart = new MinecraftCoordinates(start.x()-buffer, stopAtGround ? GROUND_LEVEL : start.y()-buffer, start.z()-buffer);
-		//System.out.println("Starts:"+groundStart);
-		MinecraftCoordinates end = new MinecraftCoordinates(start.x() + numShapes*(ranges.x() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")) + buffer, start.y() + ranges.y() + buffer, start.z() + (int)(ranges.z()*Math.sqrt(numShapes)) + buffer);
-		//System.out.println("ENDS:"+end);
-		
-		// If cleared space isn't very large, just clear that space
-		int clearSize = (end.x()-groundStart.x())*(end.y()-groundStart.y())*(end.z()-groundStart.z());
-		if( clearSize<=MAX_CLEAR_WITHOUT_LOOP) {
-			fillCube(groundStart, end, BlockType.AIR); // Calls clear cube, which checks coordinates
-		}else {
-			int counter=50000000; // Don't need gradual clear messages for small clear sizes
-			// Otherwise, clears out large block sections one at a time to ensure the server isn't overloaded
-			int fillSize = Parameters.parameters.integerParameter("minecraftClearDimension");
-			System.out.println("*WARNING* The size that needs to be cleared out is over "+MAX_CLEAR_WITHOUT_LOOP+" blocks, this may take a while to clear");
-			System.out.println("Size neededing to be cleared: "+clearSize+" blocks"); // Prints to warn user
-			System.out.println("From "+groundStart+" to "+end);
-			for(int x=groundStart.x();x<=end.x();x+=fillSize) {
-				for(int z=groundStart.z();z<=end.z();z+=fillSize) {
-					for(int y=GROUND_LEVEL;y<=end.y();y+=fillSize) {
-						//System.out.println("clearing "+counter);
-						counter++;
-						fillCube(x,y,z,x+fillSize,y+fillSize,z+fillSize, BlockType.AIR);
-						//System.out.println(x+fillSize+" "+(y+fillSize)+" "+(z+fillSize));
-						if((x+fillSize)*(y+fillSize)*(z+fillSize)>counter) {
-							System.out.println("Blocks cleared = "+((x+fillSize)*(y+fillSize)*(z+fillSize)));
-							counter+=50000000; // Gradual prints to let the user know it's still running
-						}
-						try {
-							Thread.sleep(Parameters.parameters.integerParameter("minecraftClearSleepTimer"));
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-					}
-				}
-			}	
-			System.out.println("Clearing done");
-		}
-	}
+
 	
 	/**
 	 * Represent a list of Minecraft blocks as a 3D array where the given corner is the
@@ -839,4 +1102,5 @@ public class MinecraftClient extends Comm {
 			throw new IllegalArgumentException("This version of Minecraft only allows blocks to be generated with y-coordinates between 0 and 255 inclusive.\nTherefore, cannot generate in this range: "+xmin+", "+ymin+", "+zmin+", "+xmax+", "+ymax+", "+zmax);
 		}
 	}
+
 }

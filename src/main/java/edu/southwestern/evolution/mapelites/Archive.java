@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.Vector;
@@ -13,15 +14,24 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.util.ClassCreation;
+import edu.southwestern.util.MultiobjectiveUtil;
+import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.file.Serialization;
 import edu.southwestern.util.random.RandomNumbers;
 
+/**
+ * Archive for MAP Elites
+ *
+ * @param <T>
+ */
 public class Archive<T> {
 	
 	Vector<Score<T>> archive; // Vector is used because it is thread-safe
+	Vector<Double> softArchiveThresholds = null;
 	private int occupiedBins; 
 	private BinLabels mapping;
 	private boolean saveElites;
@@ -43,12 +53,20 @@ public class Archive<T> {
 		occupiedBins = 0;
 		// Archive directory
 		String experimentDir = FileUtilities.getSaveDirectory();
-		archiveDir = experimentDir + File.separator + archiveDirectoryName;
+		setArchiveDir(experimentDir + File.separator + archiveDirectoryName);
 		if(saveElites) {
-			new File(archiveDir).mkdirs(); // make directory
+			new File(getArchiveDir()).mkdirs(); // make directory
 		}
 		for(int i = 0; i < numBins; i++) {
 			archive.add(null); // Place holder for first individual and future elites
+		}
+		// Based on MAP-Annealing idea from Fontaine
+		if(Parameters.parameters.booleanParameter("mapElitesSoftAnnealingArchive")) {
+			softArchiveThresholds = new Vector<Double>(numBins);
+			double minFitness = MMNEAT.task.minScores()[0]; // There should only be the one fitness
+			for(int i = 0; i < numBins; i++) {
+				softArchiveThresholds.add(minFitness);
+			}			
 		}
 	}
 	
@@ -60,16 +78,25 @@ public class Archive<T> {
 	 * @param other Archive to draw contents from
 	 */
 	public Archive(Archive<T> other) {
-		this(other.getArchive(), other.mapping, other.archiveDir, other.saveElites);
+		this(other.getArchive(), other.mapping, other.getArchiveDir(), other.saveElites);
 	}
 	
+	/**
+	 * Create a new archive in terms of some other archive. Every element in original Archive (other)
+	 * is re-evaluated before placement. Both old and new archive use same bin mapping.
+	 * 
+	 * @param other Vector of scores from previous archive
+	 * @param otherMapping Mapping used by old AND new archive (?)
+	 * @param otherDir where to save
+	 * @param otherSave whether to save
+	 */
 	public Archive(Vector<Score<T>> other, BinLabels otherMapping, String otherDir, boolean otherSave) {
 		saveElites = false; // Don't save while reorganizing
 		mapping = otherMapping;
 		int numBins = otherMapping.binLabels().size();
 		archive = new Vector<Score<T>>(numBins);
 		occupiedBins = 0;
-		archiveDir = otherDir; // Will save in the same place!
+		setArchiveDir(otherDir); // Will save in the same place!
 
 		// Fill with null values before actually selecting individuals to copy over
 		for(int i = 0; i < numBins; i++) {
@@ -123,11 +150,29 @@ public class Archive<T> {
 	}
 	
 	/**
+	 * gets the scores in the otherStats index for each bin
+	 * instead of getting the fitness score for each bin, it gets the score in a specific otherStats
+	 * Also casts down to float
+	 * based on getEliteScores()
+	 * @param index the index in Score.otherScores that is being retrieved
+	 * @return list of scores within the Scores otherStats at given index for each bin
+	 */
+	public float[] getOtherStatsScores(int index) {
+		float[] result = new float[archive.size()];
+		for(int i = 0; i < result.length; i++) {	//i retrieves Score from archive
+			Score<T> score = archive.get(i);		//index is for the otherStat being retrieved
+			result[i] = score == null ? Float.NEGATIVE_INFINITY : new Double(score.otherStats[index]).floatValue();
+//			System.out.println("result[i]:"+result[i]);
+		}
+		return result;
+	}
+	
+	/**
 	 * Directory where the archive is being saved on disk
 	 * @return Path to directory
 	 */
 	public String getArchiveDirectory() {
-		return archiveDir;
+		return getArchiveDir();
 	}
 	
 	/**
@@ -168,6 +213,9 @@ public class Archive<T> {
 				result = replaceIfBetter(candidate, oneD, currentBinOccupant);
 			}
 			return result;
+			
+			
+			// TODO: Why are we inserting if the binning scheme says to discard it?
 		} else if(candidate.usesMAPElitesBinSpecification()) {
 			int[] candidateBinIndices = candidate.MAPElitesBinIndex();
 			int oneD = this.getBinMapping().oneDimensionalIndex(candidateBinIndices);
@@ -194,7 +242,7 @@ public class Archive<T> {
 	private boolean replaceIfBetter(Score<T> candidate, int binIndex, Score<T> currentOccupant) {
 		double candidateScore = candidate.behaviorIndexScore(binIndex);
 		// Score cannot be negative infinity. Next, check if the bin is empty, or the candidate is better than the elite for that bin's score
-		if(candidateScore > Float.NEGATIVE_INFINITY && (currentOccupant == null || candidateScore > currentOccupant.behaviorIndexScore(binIndex))) {
+		if(candidateScore > Float.NEGATIVE_INFINITY && candidateScoreIsBetterThanCurrentOccupantScore(binIndex, currentOccupant, candidateScore)) {
 			archive.set(binIndex, candidate.copy()); // Replace elite
 			if(currentOccupant == null) { // Size is actually increasing
 				synchronized(this) {
@@ -207,9 +255,43 @@ public class Archive<T> {
 			return false;
 		}
 	}
+
+	/**
+	 * Whether new candidate score is better than the score of a current occupant.
+	 * A null occupant is always replaced.
+	 * A parameter setting can indicate whether strict superiority or soft superiority is required.
+	 * 
+	 * @param binIndex Bin in question
+	 * @param currentOccupant occupant of that bin (possibly null)
+	 * @param candidateScore Score of a new candidate
+	 * @return Whether the score is better in some sense
+	 */
+	private boolean candidateScoreIsBetterThanCurrentOccupantScore(int binIndex, Score<T> currentOccupant, double candidateScore) {
+		boolean insertIntoArchive = false;
+		if(currentOccupant == null) { // If bin is empty, always replace
+			insertIntoArchive = true;
+		} else { // Otherwise, candidate must pass threshold
+			// In a soft archive, threshold could be less than current occupant score
+			double thresholdToBeat = (softArchiveThresholds != null) ? softArchiveThresholds.get(binIndex) : currentOccupant.behaviorIndexScore(binIndex);
+			if(Parameters.parameters.booleanParameter("mapElitesReplaceOnEquality")) {
+				insertIntoArchive = candidateScore >= thresholdToBeat;
+			} else {
+				insertIntoArchive = candidateScore > thresholdToBeat;
+			}
+		}
+		
+		// Now update threshold: Based on MAP-Annealing from Fontaine
+		if(softArchiveThresholds != null) {
+			double t_e = softArchiveThresholds.get(binIndex);
+			double alpha = Parameters.parameters.doubleParameter("mapAnnealingAlpha");
+			double new_t_e = (1 - alpha)*t_e + alpha*candidateScore;
+			softArchiveThresholds.set(binIndex, new_t_e);
+		}	
+		return insertIntoArchive;
+	}
 	
 	/**
-	 * Return set of Scores that are tied for highest fitness
+	 * Return set of Scores that are elites (each occupied bin)
 	 * across the whole archive.
 	 * 
 	 * @return Set of champion Score instances containing genotypes
@@ -226,6 +308,28 @@ public class Archive<T> {
 		});
 		// Get the set of all max scores
 		return archive.parallelStream().filter(s -> s != null).filter(s -> s.behaviorIndexScore() == maxScore.get().behaviorIndexScore()).collect(Collectors.toSet());
+	}
+	
+	/**
+	 * Do a hypervolume calculation across the whole archive treating
+	 * the otherStats within each Score instance at the actual objective
+	 * scores for the purpose of the calculation.
+	 * 
+	 * @return resulting hypervolume over otherStats
+	 */
+	public Pair<Double, List<Score<T>>> getHypervolumeAndParetoFrontAcrossOtherStats() {
+		Set<Score<T>> champions = getChampions();
+		List<Score<T>> scoresOfOtherStats = Score.getScoresOfOtherStats(champions);
+		// Assume there is at least one score
+		double[] minObjectiveScores = new double[scoresOfOtherStats.get(0).scores.length];
+		for(int i = 0; i < minObjectiveScores.length; i++) {
+			// It is assumed that each other stat used with MAP Elites is a component from a weighted sum.
+			// However, some component fitnesses have negative minimum values. min scores are needed to shift
+			// the range to start at 0. We add 1 to the index since we
+			// skip over the actual fitness function (just one) and only get other stats.
+			minObjectiveScores[i] = MMNEAT.fitnessFunctionMinScore(1 + i);
+		}
+		return MultiobjectiveUtil.hypervolumeAndParetoFrontFromPopulation(scoresOfOtherStats, minObjectiveScores);
 	}
 	
 	/**
@@ -251,7 +355,7 @@ public class Archive<T> {
 		// Need to save all elites so that re-load on resume works
 		if(saveElites) {
 			// Easier to reload on resume if file name is uniform. Will also save space by overwriting
-			String binPath = archiveDir + File.separator + mapping.binLabels().get(binIndex);
+			String binPath = getArchiveDir() + File.separator + mapping.binLabels().get(binIndex);
 			Serialization.save(candidate.individual, binPath + "-elite");
 			// Write scores as simple text file (less to write than xml)
 			try {
@@ -344,10 +448,21 @@ public class Archive<T> {
 	}
 	
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
-		int runNum = 50; 
+		//int runNum = 50; 
 		//MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" base:nsga2test log:NSG2Test-Test saveTo:Test trackPseudoArchive:true netio:true lambda:37 maxGens:200 task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.SphereFunction genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foBinDimension:500 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
-		MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" mapElitesQDBaseOffset:525 io:true base:nsga2test log:NSG2Test-MAPElites saveTo:MAPElites netio:false maxGens:10000 ea:edu.southwestern.evolution.mapelites.MAPElites task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.SphereFunction steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foBinDimension:50 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
+		//MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" mapElitesQDBaseOffset:525 io:true base:nsga2test log:NSG2Test-MAPElites saveTo:MAPElites netio:false maxGens:10000 ea:edu.southwestern.evolution.mapelites.MAPElites task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.SphereFunction steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foBinDimension:50 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
 		//MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" mapElitesQDBaseOffset:525 base:nsga2test log:NSG2Test-CMAES saveTo:CMAES trackPseudoArchive:true netio:true mu:37 lambda:37 maxGens:200 ea:edu.southwestern.evolution.cmaes.CMAEvolutionStrategyEA task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.SphereFunction genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foBinDimension:500 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
-		 
+		
+		MMNEAT.main(("runNumber:1 randomSeed:1 minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.DirectRepresentationShapeGenerator minecraftChangeCenterOfMassFitness:false minecraftMaximizeVolumeFitness:false minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.ExplosiveBlockSet trials:1 mu:100 maxGens:60000 launchMinecraftServerFromJava:false io:true netio:true mating:true fs:false spaceBetweenMinecraftShapes:22 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.tasks.evocraft.genotype.MinecraftShapeGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:minecraftmoo log:MinecraftMOO-MEWSFlyVsMissileDirectSmallPOCappedCompass saveTo:MEWSFlyVsMissileDirectSmallPOCappedCompass extraSpaceBetweenMinecraftShapes:100 minecraftTargetDistancefromShapeY:0 minecraftTargetDistancefromShapeX:25 minecraftTargetDistancefromShapeZ:0 minecraftMissileFitness:false rememberParentScores:true minecraftContainsWholeMAPElitesArchive:false experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 rememberParentScores:true minecraftContainsWholeMAPElitesArchive:false interactWithMapElitesInWorld:false ea:edu.southwestern.evolution.mapelites.MAPElites mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5 minecraftClearWithGlass:false maximumMOMESubPopulationSize:10 minecraftCompassMissileTargets:true parallelMAPElitesInitialize:true minecraftWeightedSumsMissileAndChangeCenterOfMassFitness:true").split(" "));
+		//the above parameters run minecraftWeightedSumsMissileAndChangeCenterOfMassFitness:true with mu:100 maxGens:60000 steadyStateIndividualsPerGeneration:100
+		//for testing weighted sums with timed evaluations
+	}
+
+	public String getArchiveDir() {
+		return archiveDir;
+	}
+
+	public void setArchiveDir(String archiveDir) {
+		this.archiveDir = archiveDir;
 	}
 }

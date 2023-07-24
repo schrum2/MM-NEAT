@@ -15,7 +15,7 @@ public class NSGA2Score<T> extends MultiObjectiveScore<T> {
 	private ArrayList<NSGA2Score<T>> dominatedSet;
 	public boolean isAssigned;
 	public boolean processed;
-	protected double crowdingDistance;
+	protected double crowdingDistance = Double.NaN; // Needs to be set later
 	protected int rank;
 
 	public NSGA2Score(Genotype<T> individual, double[] scores, ArrayList<Double> behaviorVector, double[] otherStats) {
@@ -25,7 +25,9 @@ public class NSGA2Score<T> extends MultiObjectiveScore<T> {
 
 	public NSGA2Score(Score<T> s) {
 		this(s.individual, s.scores, s.usesTraditionalBehaviorVector() ? s.getTraditionalDomainSpecificBehaviorVector() : null, s.otherStats);
-	}
+		if(s.usesMAPElitesBinSpecification()) this.assignMAPElitesBinAndScore(s.MAPElitesBinIndex(), s.behaviorIndexScore());
+		else if(s.usesMAPElitesMapSpecification()) this.assignMAPElitesBehaviorMapAndScore(s.MAPElitesBehaviorMap());
+	}//added some code as it was losing characterization information, which was necessary for other uses
 
 	@Override
 	public String toString() {
@@ -69,6 +71,7 @@ public class NSGA2Score<T> extends MultiObjectiveScore<T> {
 	}
 
 	public double getCrowdingDistance() {
+		if(Double.isNaN(crowdingDistance)) throw new IllegalStateException("Trying to access crowding distance before it is initialized");
 		return this.crowdingDistance;
 	}
 

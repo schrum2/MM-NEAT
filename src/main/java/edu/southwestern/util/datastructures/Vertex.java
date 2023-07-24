@@ -48,7 +48,13 @@ public class Vertex extends Vector3d {
 		return copy.length(); // distance of result vector
 	}
 	
-	
+	/**
+	 * If any component of the vertex is NaN
+	 * @return true if any are NaN
+	 */
+	public boolean anyNaN() {
+		return Double.isNaN(x) || Double.isNaN(y) || Double.isNaN(z);
+	}
 }
 
 

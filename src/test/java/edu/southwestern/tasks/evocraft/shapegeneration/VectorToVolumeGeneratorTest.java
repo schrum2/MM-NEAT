@@ -28,6 +28,7 @@ public class VectorToVolumeGeneratorTest {
 		MMNEAT.fitnessFunctions = new ArrayList<ArrayList<String>>();
 		MMNEAT.fitnessFunctions.add(new ArrayList<String>());
 		MMNEAT.aggregationOverrides = new ArrayList<Statistic>();
+		MMNEAT.fitnessMinimums = new ArrayList<>();
 		MMNEAT.task = new MinecraftLonerShapeTask();
 		
 		int perBlock = 3;

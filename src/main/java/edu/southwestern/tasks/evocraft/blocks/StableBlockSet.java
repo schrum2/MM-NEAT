@@ -1,7 +1,11 @@
 package edu.southwestern.tasks.evocraft.blocks;
 
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
-
+/**
+ * types of blocks that have no movement
+ * @author raffertyt
+ *
+ */
 public class StableBlockSet implements BlockSet{
 
 	@Override

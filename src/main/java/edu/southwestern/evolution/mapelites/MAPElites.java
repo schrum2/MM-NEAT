@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Vector;
 import java.util.stream.Stream;
 
@@ -35,6 +36,7 @@ import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBinLa
 import edu.southwestern.tasks.innovationengines.PictureTargetTask;
 import edu.southwestern.tasks.interactive.picbreeder.PicbreederTask;
 import edu.southwestern.tasks.loderunner.LodeRunnerLevelTask;
+import edu.southwestern.util.MultiobjectiveUtil;
 import edu.southwestern.util.PopulationUtil;
 import edu.southwestern.util.PythonUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
@@ -66,6 +68,10 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	private MMNEATLog cppnVsDirectFitnessLog = null;
 	private MMNEATLog autoencoderLossRange = null;
 	protected MMNEATLog[] emitterIndividualsLogs = null;
+	private MMNEATLog[] otherStatsLogs = null;	//logs the other stats 
+	private MMNEATLog otherStatsFillLog = null;
+	private MMNEATLog otherHypervolumeLog = null;
+	// separate log and plot file for each index in otherStats
 	protected LonerTask<T> task;
 	protected Archive<T> archive;
 	private boolean mating;
@@ -85,6 +91,13 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		this(Parameters.parameters.stringParameter("archiveSubDirectoryName"), Parameters.parameters.booleanParameter("io"), Parameters.parameters.booleanParameter("netio"), true);
 	}
 	
+	/**
+	 * TODO: JavaDoc
+	 * @param archiveSubDirectoryName
+	 * @param ioOption
+	 * @param netioOption
+	 * @param createLogs
+	 */
 	@SuppressWarnings("unchecked")
 	public MAPElites(String archiveSubDirectoryName, boolean ioOption, boolean netioOption, boolean createLogs) {
 		MMNEAT.usingDiversityBinningScheme = true;
@@ -94,9 +107,26 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		if(io && createLogs) {
 			int numLabels = archive.getBinMapping().binLabels().size();
 			String infix = "MAPElites";
+			
 			// Logging in RAW mode so that can append to log file on experiment resume
 			archiveLog = new MMNEATLog(infix, false, false, false, true); 
 			fillLog = new MMNEATLog("Fill", false, false, false, true);
+			
+			//logging other stats
+			int numberOfOtherStats = MMNEAT.getNumberOtherStatsForPopulation(0);
+			ArrayList<MMNEATLog> otherStatsLogsList = null;
+			if(numberOfOtherStats > 0) {
+				otherStatsLogsList = new ArrayList<>();
+				otherStatsLogs = new MMNEATLog[numberOfOtherStats];			
+				//map elites can only have one fitness function, so everything beyond that is an other stat
+				for (int i = 0; i < numberOfOtherStats; i++) {
+					otherStatsLogs[i] = new MMNEATLog(infix+"_otherStat_"+i+"_" +MMNEAT.getFitnessFunctionName(i+1), false, false, false, true);
+					otherStatsLogsList.add(otherStatsLogs[i]);
+				}
+				otherStatsFillLog = new MMNEATLog(infix+"_otherStatsFillLog", false, false, false, true);
+				otherHypervolumeLog = new MMNEATLog(infix+"_otherStatsHypervolumeLog", false, false, false, true);
+			}
+			
 			// Can't check MMNEAT.genotype since MMNEAT.ea is initialized before MMNEAT.genotype
 			boolean cppnDirLogging = Parameters.parameters.classParameter("genotype").equals(CPPNOrDirectToGANGenotype.class) ||
 									 Parameters.parameters.classParameter("genotype").equals(CPPNOrBlockVectorGenotype.class);
@@ -109,7 +139,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 					+ Parameters.parameters.integerParameter("runNumber");
 			individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
 			int yrange = Parameters.parameters.integerParameter("maxGens")/individualsPerGeneration;
-			setUpLogging(numLabels, infix, experimentPrefix, yrange, cppnDirLogging, individualsPerGeneration, archive.getBinMapping().binLabels().size());
+			setUpLogging(numLabels, infix, experimentPrefix, yrange, cppnDirLogging, individualsPerGeneration, otherStatsLogsList);
 		}
 		this.mating = Parameters.parameters.booleanParameter("mating");
 		this.crossoverRate = Parameters.parameters.doubleParameter("crossoverRate");
@@ -118,7 +148,18 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		this.iterationsWithoutElite = 0; // Not accurate on resume		
 	}
 
-	public static void setUpLogging(int numLabels, String infix, String experimentPrefix, int yrange, boolean cppnDirLogging, int individualsPerGeneration, int archiveSize) {
+	/**
+	 * TODO: JavaDoc
+	 * This seems to be all the set up necessary for the GNU Plot related files
+	 * @param numLabels
+	 * @param infix
+	 * @param experimentPrefix
+	 * @param yrange
+	 * @param cppnDirLogging
+	 * @param individualsPerGeneration
+	 * @param archiveSize
+	 */
+	public static void setUpLogging(int numLabels, String infix, String experimentPrefix, int yrange, boolean cppnDirLogging, int individualsPerGeneration, ArrayList<MMNEATLog> otherStatsLogsList) {
 		
 		String prefix = experimentPrefix + "_" + infix;
 		String fillPrefix = experimentPrefix + "_" + "Fill";
@@ -137,9 +178,11 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		String fullQDName = directory + qdPrefix + "_log.plt";
 		String maxFitnessName = directory + maxPrefix + "_log.plt";
 		String reconstructionLossName = directory + lossPrefix + "_log.plt";
+		
 		File pdfPlot = new File(fullPDFName);
 		File plot = new File(fullName); // for archive log plot file
 		File fillPlot = new File(fullFillName);
+
 		// Write to file
 		try {
 			// Archive PDF plot
@@ -149,7 +192,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			ps.println("unset key");
 			// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
 			ps.println("set yrange [0:"+ yrange +"]");
-			ps.println("set xrange [0:"+ archiveSize + "]");
+			ps.println("set xrange [1:"+ numLabels + "]");
 			ps.println("set title \"" + experimentPrefix + " Archive Performance\"");
 			ps.println("set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");
 			// The :1 is for skipping the "generation" number logged in the file
@@ -161,7 +204,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			ps.println("unset key");
 			// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
 			ps.println("set yrange [0:"+ yrange +"]");
-			ps.println("set xrange [0:"+ archiveSize + "]");
+			ps.println("set xrange [1:"+ numLabels + "]");
 			ps.println("set title \"" + experimentPrefix + " Archive Performance\"");
 			//ps.println("set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");
 			// The :1 is for skipping the "generation" number logged in the file
@@ -176,6 +219,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			ps.println("set key bottom right");
 			// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
 			ps.println("set xrange [0:"+ yrange +"]");
+			
 			ps.println("set title \"" + experimentPrefix + " Archive Filled Bins\"");
 			ps.println("set output \"" + fullFillDiscardedName.substring(fullFillDiscardedName.lastIndexOf('/')+1, fullFillDiscardedName.lastIndexOf('.')) + ".pdf\"");
 			String name = fullFillName.substring(fullFillName.lastIndexOf('/')+1, fullFillName.lastIndexOf('.'));
@@ -207,21 +251,112 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			ps.println("set output \"" + fullQDName.substring(fullQDName.lastIndexOf('/')+1, fullQDName.lastIndexOf('.')) + ".pdf\"");
 			ps.println("plot \"" + name + ".txt\" u 1:3 w linespoints t \"QD Score\", \\");
 			ps.println("     \"" + name + ".txt\" u 1:7 w linespoints t \"Restricted QD Score\"");
-			
+
 			ps.println("set title \"" + experimentPrefix + " Maximum individual fitness score");
 			ps.println("set output \"" + maxFitnessName.substring(maxFitnessName.lastIndexOf('/')+1, maxFitnessName.lastIndexOf('.')) + ".pdf\"");
 			ps.println("plot \"" + name + ".txt\" u 1:4 w linespoints t \"Maximum Fitness Score\", \\");
 			ps.println("     \"" + name + ".txt\" u 1:8 w linespoints t \"Restricted Maximum Fitness Score\"");
-			
+
 			if(Parameters.parameters.booleanParameter("dynamicAutoencoderIntervals")) {
 				ps.println("set title \"" + experimentPrefix + " Reconstruction Loss Range");
 				ps.println("set output \"" + reconstructionLossName.substring(reconstructionLossName.lastIndexOf('/')+1, reconstructionLossName.lastIndexOf('.')) + ".pdf\"");
 				ps.println("plot \"" + name.replace("_Fill_", "_autoencoderLossRange_") + ".txt\" u 1:2 w linespoints t \"Min Loss\", \\");
 				ps.println("     \"" + name.replace("_Fill_", "_autoencoderLossRange_") + ".txt\" u 1:3 w linespoints t \"Max Loss\"");
 			}
-			
+
 			ps.close();
+
+			//creating other stat logs
+			//separate log and plot file for each index in otherStats
+			int numberOfOtherStats = MMNEAT.getNumberOtherStatsForPopulation(0);
 			
+//			int otherStatIndex = 1;
+			if (otherStatsLogsList != null) {
+				for (MMNEATLog log : otherStatsLogsList) {
+					String textLogFilename = log.getLogTextFilename();
+					String plotFilename = textLogFilename.replace(".txt", ".plt");
+					String plotPDFFilename = plotFilename.replace(".plt", "_PDF.plt");
+					String logTitle = textLogFilename.replace(".txt", "");
+					String pdfFilename = textLogFilename.replace(".txt", ".pdf");
+
+					File plotFile = new File(directory + plotFilename);
+					File plotPDFFile = new File(directory + plotPDFFilename);
+
+					//log and plot each other stat
+					// The PDF version
+					ps = new PrintStream(plotPDFFile);
+					ps.println("set term pdf enhanced");
+					ps.println("unset key");
+					// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
+					ps.println("set yrange [0:"+ yrange +"]");
+					ps.println("set xrange [1:"+ numLabels + "]");
+					ps.println("set title \"" + logTitle + "\"");
+					ps.println("set output \"" + pdfFilename + "\"");				
+					// The :1 is for skipping the "generation" number logged in the file
+					ps.println("plot \"" + textLogFilename + "\" matrix every ::1 with image");
+					ps.close();
+
+					// Non-PDF version
+					ps = new PrintStream(plotFile);
+					ps.println("unset key");
+					// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
+					ps.println("set yrange [0:"+ yrange +"]");
+					ps.println("set xrange [1:"+ numLabels + "]");
+					ps.println("set title \"" + logTitle.replace("_", " ") + "\"");
+					// The :1 is for skipping the "generation" number logged in the file
+					ps.println("plot \"" + textLogFilename + "\" matrix every ::1 with image");
+					// ps.println("pause -1"); // Not needed when only one item is plotted?
+					ps.close();
+
+				}
+				
+				String textHVLogFilename = experimentPrefix + "_" + infix + "_otherStatsHypervolumeLog_log.txt";
+				String plotHVFilename = textHVLogFilename.replace(".txt", ".plt");
+				
+				File plotFileHV = new File(directory + plotHVFilename);
+				ps = new PrintStream(plotFileHV);
+				//ps.println("set term pdf enhanced");
+				ps.println("set key bottom right");
+				// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
+				ps.println("set xrange [0:"+ yrange +"]");
+				ps.println("set title \"" + experimentPrefix + " Hypervolume\"");
+				//ps.println("set output \"" + experimentPrefix + "_otherStatsHypervolumeLog_log.pdf\"");
+				ps.println("plot \"" + textHVLogFilename + "\" u 1:2 w linespoints t \"Hypervolume\"");
+				ps.close();
+				
+				//////////////////////////////////////
+				
+				String textLogFilename = experimentPrefix + "_" + infix + "_otherStatsFillLog_log.txt";
+				String plotFilename = textLogFilename.replace(".txt", ".plt");
+				
+				File plotFile = new File(directory + plotFilename);
+				
+				ps = new PrintStream(plotFile);
+				ps.println("set term pdf enhanced");
+				//ps.println("unset key");
+				ps.println("set key bottom right");
+				// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
+				ps.println("set xrange [0:"+ yrange +"]");
+						
+				// Why is this magic number 2?
+				int index = 2;
+				for (int i = 0; i < numberOfOtherStats; i++) {
+					ps.println("set title \"" + experimentPrefix + " " + MMNEAT.getFitnessFunctionName(i+1) + " Max Fitness\"");
+					ps.println("set output \"" + experimentPrefix + "_otherStatsFillLog_"+ MMNEAT.getFitnessFunctionName(i+1) + "_MaxFitness.pdf\"");
+					ps.println("plot \"" + textLogFilename + "\" u 1:"+ (i+index) +" w linespoints t \"Max Fitness\"");
+
+					index++;
+		
+					ps.println("set title \"" + experimentPrefix + " " + MMNEAT.getFitnessFunctionName(i+1) + " QD Score\"");
+					ps.println("set output \"" + experimentPrefix + "_otherStatsFillLog_"+ MMNEAT.getFitnessFunctionName(i+1) + "_QDScore.pdf\"");
+					ps.println("plot \"" + textLogFilename + "\" u 1:"+ (i+index) +" w linespoints t \"QD Score\"");
+//					index++;
+				}
+			}
+			
+
+			ps.close();
+
 		} catch (FileNotFoundException e) {
 			System.out.println("Could not create plot file: " + plot.getName());
 			e.printStackTrace();
@@ -229,6 +364,11 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		}
 	}
 
+	/**
+	 * TODO: JavaDoc
+	 * @param bins
+	 * @throws FileNotFoundException
+	 */
 	private void setupArchiveVisualizer(BinLabels bins) throws FileNotFoundException {
 		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
 		directory += (directory.equals("") ? "" : "/");
@@ -286,6 +426,17 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		}
 	}
 
+	/**
+	 * TODO: JavaDoc
+	 * I think this creates the .bat file?
+	 * @param directory
+	 * @param prefix
+	 * @param fullName
+	 * @param dimensionNames
+	 * @param dimensionSizes
+	 * @param ps
+	 * @param finalLine
+	 */
 	private void writeScriptLauncher(String directory, String prefix, String fullName, String[] dimensionNames,
 			int[] dimensionSizes, PrintStream ps, String finalLine) {
 		ps.println("cd ..");
@@ -318,6 +469,14 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void initialize(Genotype<T> example) {	
+		
+		if(MMNEAT.task.numObjectives() > 1) {
+			throw new IllegalStateException("MAP Elites is not equipped to handle multiple fitness functions: "+MMNEAT.fitnessFunctions.get(0)+
+						". If you want multiple fitness functions, consider using MOME or NSGA2.");
+		} else if(MMNEAT.task.numObjectives() == 0) {
+			throw new IllegalStateException("MAP Elites still needs an objective/fitness to work.");
+		}
+		
 		if (this instanceof CMAME && MMNEAT.genotype instanceof RealValuedGenotype) {
 			emitterMeanLog = new MMNEATLog("EmitterMeans", false, false, false, true);
 		}
@@ -332,7 +491,9 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			Parameters.parameters.setBoolean("discardFromBinOutsideRestrictedRange", false);
 		}	
 		
-		if(iterations > 0) {
+		// logLock generally means we are doing a post experiment evaluation rather than attempting
+		// to resume an experiment, so loading results is ok if logLock is true
+		if(!Parameters.parameters.booleanParameter("logLock") && iterations > 0) {
 			
 			System.out.println("It is not safe to resume MAP-Elites runs that crash.");
 			System.out.println("Because logging is periodic, the state of the archive may not reflect the state of the logs.");
@@ -467,13 +628,41 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		}
 		if(io && iterations % individualsPerGeneration == 0) {
 			int numCPPN = 0;
-			int numDirect = 0;
+			int numDirect = 0;	//cppn related variable
 			// When all iterations were logged, the file got too large
 			//log.log(iterations + "\t" + iterationsWithoutElite + "\t" + StringUtils.join(ArrayUtils.toObject(archive.getEliteScores()), "\t"));
 			// Just log every "generation" instead
 			Float[] elite = ArrayUtils.toObject(archive.getEliteScores());
 			final int pseudoGeneration = iterations/individualsPerGeneration;
 			archiveLog.log(pseudoGeneration + "\t" + StringUtils.join(elite, "\t").replaceAll("-Infinity", "X"));
+			// Small amount added to fitness scores to tweak the QD calculation
+			double offsetSoThatOccupiedBinsWithMinFitnessAreBetterThanEmptyBins = Parameters.parameters.doubleParameter("mapElitesQDBaseOffset");
+			//log otherStats
+			int numberOfOtherStats = MMNEAT.getNumberOtherStatsForPopulation(0);
+			if(numberOfOtherStats > 0) {
+				String otherStatsFillString = pseudoGeneration + "\t";
+				for (int i = 0; i < numberOfOtherStats; i++) {
+					Float[] otherStats = ArrayUtils.toObject(archive.getOtherStatsScores(i));
+					otherStatsLogs[i].log(pseudoGeneration + "\t" + StringUtils.join(otherStats, "\t").replaceAll("-Infinity", "X"));
+					Float maximumFitness = StatisticsUtilities.maximum(otherStats);
+
+					// It is assumed that each other stat used with MAP Elites is a component from a weighted sum.
+					// However, some component fitnesses have negative minimum values. For proper QD calculation,
+					// the score range has to be shifted up. In addition, the offsetSoThatOccupiedBinsWithMinFitnessAreBetterThanEmptyBins
+					// is used so that even a minimal score is worth more than an empty bin. We add 1 to the index since we
+					// skip over the actual fitness function (just one) and only get other stats.
+					double minFitness = MMNEAT.fitnessFunctionMinScore(1 + i);
+					// minFitness is subtracted since this base value will be added to the actual fitness.
+					// for example, a negative min leads to a positive offset. Either way, want to zero out the min, except for offset.
+					final double qdScore = calculateQDScore(otherStats, offsetSoThatOccupiedBinsWithMinFitnessAreBetterThanEmptyBins - minFitness);
+					otherStatsFillString = otherStatsFillString + maximumFitness + "\t" + qdScore +"\t";
+				}
+				otherStatsFillLog.log(otherStatsFillString);
+				Pair<Double, List<Score<T>>> volumeAndFront = archive.getHypervolumeAndParetoFrontAcrossOtherStats();
+				otherHypervolumeLog.log(pseudoGeneration + "\t" + volumeAndFront.t1);				
+				MultiobjectiveUtil.logParetoFrontGenotypesAndScorePlot("PseudoGen"+pseudoGeneration+"_ParetoFront", volumeAndFront.t2, null);
+			}
+			
 			Float maximumFitness = StatisticsUtilities.maximum(elite);
 			// Exclude negative infinity to find out how many bins are filled
 			final int numFilledBins = elite.length - ArrayUtil.countOccurrences(Float.NEGATIVE_INFINITY, elite);
@@ -556,8 +745,17 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	 * @param elite An elite represented by an Array of floats representing each value
 	 * @return returns a double representing the QD score with offset values
 	 */
-	public static double calculateQDScore(Float[] elite) {
-		double base = Parameters.parameters.doubleParameter("mapElitesQDBaseOffset");
+	public static double calculateQDScore(Float[] elites) {
+		return calculateQDScore(elites,Parameters.parameters.doubleParameter("mapElitesQDBaseOffset")); 
+	}
+	
+	/**
+	 * Like the above, but allows for a specified offset to the min score.
+	 * @param elite Array of elite scores from each bin, where empty bins have a score of negative infinity
+	 * @param base 
+	 * @return
+	 */
+	public static double calculateQDScore(Float[] elite, double base) {
 		double sum = 0.0;
 		for (float x : elite) {
 			if (x != Float.NEGATIVE_INFINITY) {
@@ -609,9 +807,9 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			// Replace child2 with a crossover result, and modify child1 in the process (two new children)
 			child2 = child1.crossover(child2);
 			child2.mutate(); // Probabilistic mutation of child
-			child2.addParent(parent2.getId());
-			child2.addParent(parent1.getId());
-			child1.addParent(parent2.getId());
+			child2.addParent(parentId2);
+			child2.addParent(parentId1);
+			child1.addParent(parentId2);
 			EvolutionaryHistory.logLineageData(parentId1,parentId2,child2);
 			// Evaluate and add child to archive
 			Score<T> s2 = task.evaluate(child2);

@@ -8,7 +8,7 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 
 public class MinecraftServer {
 	// Give the server this much time to start before connecting the client
-	public static final int SERVER_START_DELAY = 25000;
+	public static final int SERVER_START_STOP_DELAY = 40000;
 	public static final String SERVER_PATH = "data" + File.separator + "EvoCraft-py" + File.separator;
 	public static final String SERVER_JAR = "spongevanilla-1.12.2-7.3.0.jar";
 	
@@ -23,7 +23,7 @@ public class MinecraftServer {
 		try {
 			System.out.println(pb.command());
 			server = pb.start();
-			Thread.sleep(SERVER_START_DELAY); // Give server chance to launch
+			Thread.sleep(SERVER_START_STOP_DELAY); // Give server chance to launch
 		} catch (IOException e) {
 			System.out.println("Exception setting up the Minecraft process:");
 			e.printStackTrace();
@@ -42,6 +42,12 @@ public class MinecraftServer {
 		if(server != null) {
 			server.destroyForcibly();
 			server = null;
+			// Give server chance to die
+			try {
+				Thread.sleep(SERVER_START_STOP_DELAY);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -53,7 +59,7 @@ public class MinecraftServer {
 	 * @return true if launchServer has been called and terminateServer
 	 * 			has not been called yet.
 	 */
-	public static boolean serverIsRunner() {
+	public static boolean serverIsRunning() {
 		return server != null;
 	}
 	

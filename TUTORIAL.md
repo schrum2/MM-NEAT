@@ -35,39 +35,44 @@ pip install -r requirements.txt
 
 1. Start by downloading and installing the latest version of Maven: https://maven.apache.org/
 2. Once Maven is installed, you can clone/fork the MM-NEAT project and download it to your machine.
-3. In the main project directory (MM-NEAT) use a console/terminal to execute: mvn -U install  
-   Lots of text should scroll across the screen, and some graphics windows will pop up, 
-   but near the end should be a result of BUILD SUCCESS
+3. In the main project directory (MM-NEAT) use a console/terminal to execute: 
+   ```
+   mvn install -DskipTests
+   ```  
+   Wait for the message `BUILD SUCCESS`
+
+(Note: `mvn install` will run unit tests before installation, but properly doing this requires Python, a properly configured Minecraft installation, and other settings. So, it is expected that only developers will run these tests.)
 
 It is recommended that you use a modern IDE to work on this code. Most recent development on the
 code was accomplished using Eclipse. Eclipse is integrated with Maven via the m2 plugin, so that the
-project can also be built with Maven directly in Eclipse. Many other IDEs also have Maven integration.
+project can also be built with Maven directly in Eclipse (it is recommended that you configure the Maven installation to skip tests). 
+Many other IDEs also have Maven integration.
 
 ## RUNNING
 
 The main class of the project is 
 [edu.southwestern.mmneat.MMNEAT.java](src/main/java/edu/southwestern/MMNEAT/MMNEAT.java),
 but this class requires many command line parameters to function correctly.
-When you execute "mvn -U install" an executable uber jar file will be created in
-the "target" sub-directory: MM-NEAT-0.0.1-SNAPSHOT.jar
+When you execute the Maven install an executable uber jar file will be created in
+the "target" sub-directory: `MM-NEAT-0.0.1-SNAPSHOT.jar`
 
 Once the jar file is created, the code can be launched by running 
 java with the jar file and appropriate command-line arguments. 
-The general form is:
+The general form for simple (mu+lambda) population-based evolution is:
 
 ```
 java -jar target/MM-NEAT-0.0.1-SNAPSHOT.jar runNumber:<int> randomSeed:<int> base:<experiment directory> maxGens:<int> mu:<int> io:true netio:true task:<java class> log:<experiment string>-<evaluation method string> saveTo:<evaluation method directory>
 ```
 Here is a brief description of each of these key parameters.
 
-* runNumber:	An identifying number for the experimental run. Used in directory names and filenames.
-* randomSeed:	Should generally be the same as runNumber. Specifies seed for random number generator.
-* base:		Directory that will be created to store data from all experiments to be compared.
-* maxGens:	Number of generations before evolution stops (alternate stop conditions can be defined).
-* mu:		Population size (because (mu+lambda) evolution is assumed, mu is the number of parents).
-* task:		Java class that implements the Task interface.
-* log:		Prefix that will be used in all filenames. Recommended format above.
-* saveTo:		Sub-directory within the base directory where data will be saved (must match portion of log name after the hyphen).
+* `runNumber`:	An identifying number for the experimental run. Used in directory names and filenames.
+* `randomSeed`:	Should generally be the same as runNumber. Specifies seed for random number generator.
+* `base`:		Directory that will be created to store data from all experiments to be compared.
+* `maxGens`:	Number of generations before evolution stops (alternate stop conditions can be defined).
+* `mu`:		Population size (because (mu+lambda) evolution is assumed, mu is the number of parents).
+* `task`:		Java class that implements the Task interface.
+* `log`:		Prefix that will be used in all filenames. Recommended format above.
+* `saveTo`:		Sub-directory within the base directory where data will be saved (must match portion of log name after the hyphen).
 
 Other parameters may need to be set as well, depending on the 
 type of the experiment, and whether you are ok with the default

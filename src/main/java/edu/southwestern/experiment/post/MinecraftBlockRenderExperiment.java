@@ -2,6 +2,7 @@ package edu.southwestern.experiment.post;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -11,7 +12,6 @@ import edu.southwestern.tasks.evocraft.MinecraftClient;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
-import edu.southwestern.tasks.evocraft.fitness.ChangeCenterOfMassFitness;
 import edu.southwestern.util.MiscUtil;
 
 /**
@@ -38,6 +38,7 @@ public class MinecraftBlockRenderExperiment implements Experiment {
 	public void run() {
 		try {
 			seen = new HashSet<>();
+			HashMap<List<Block>, String> fileNames = new HashMap<>();
 			File file = new File(dir);
 			if(file.isDirectory()) {
 				int count = 0;
@@ -49,6 +50,7 @@ public class MinecraftBlockRenderExperiment implements Experiment {
 						try {
 							List<Block> shiftedBlocks = shiftBlocks(new File(dir + File.separator + individual));
 							seen.add(shiftedBlocks); // Won't add duplicates
+							fileNames.put(shiftedBlocks, individual);
 						} catch(Exception e) {
 							System.out.println("Error adding/reading "+individual);
 							e.printStackTrace();
@@ -66,8 +68,9 @@ public class MinecraftBlockRenderExperiment implements Experiment {
 					do {
 						try {
 							System.out.println(i + " of " + seenList.length);
-							if(clear) ChangeCenterOfMassFitness.clearAreaAroundSpecialCorner();
+							if(clear) MinecraftClient.clearAreaAroundPostEvaluationCorner();
 							MinecraftClient.getMinecraftClient().spawnBlocks(shiftedBlocks);
+							System.out.println("Currently watching: "+fileNames.get(seenList[i]));
 							System.out.println("Press enter to continue, 'b' to go back, 'r' to repeat, 'k' proceed without clearing");
 							String input = MiscUtil.waitForReadStringAndEnterKeyPress();
 							if(input.equals("b")) i-=2;
@@ -82,7 +85,7 @@ public class MinecraftBlockRenderExperiment implements Experiment {
 				}
 			} else {
 				// Is a single text file
-				ChangeCenterOfMassFitness.clearAreaAroundSpecialCorner();
+				MinecraftClient.clearAreaAroundPostEvaluationCorner();
 				generateOneShapeFromFile(file);
 			}
 		} catch (FileNotFoundException e) {
@@ -91,18 +94,24 @@ public class MinecraftBlockRenderExperiment implements Experiment {
 	}
 
 	/**
-	 * @param blockTextFile
+	 * generates a shape using blockTextFile
+	 * @param blockTextFile text file that holds a shape
 	 * @throws FileNotFoundException
 	 */
-	public void generateOneShapeFromFile(File blockTextFile) throws FileNotFoundException {
+	static public void generateOneShapeFromFile(File blockTextFile) throws FileNotFoundException {
 		List<Block> shiftedBlocks = shiftBlocks(blockTextFile);
 		MinecraftClient.getMinecraftClient().spawnBlocks(shiftedBlocks); // spawn blocks in minecraft world
 	}
-
-	private List<Block> shiftBlocks(File blockTextFile) throws FileNotFoundException {
+	/**
+	 * Shifts blocks to POST_EVALUATION_CORNER 
+	 * @param blockTextFile text file that holds a shape
+	 * @return list of the same blocks at the POST_EVALUATION_CORNER
+	 * @throws FileNotFoundException
+	 */
+	static List<Block> shiftBlocks(File blockTextFile) throws FileNotFoundException {
 		List<Block> blocks = MinecraftUtilClass.loadMAPElitesOutputFile(blockTextFile); // get block list from output file
-		MinecraftCoordinates corner = MinecraftUtilClass.minCoordinates(blocks); // Original corner (or close to it)
-		List<Block> shiftedBlocks = MinecraftUtilClass.shiftBlocksBetweenCorners(blocks, corner, ChangeCenterOfMassFitness.SPECIAL_CORNER);
+		MinecraftCoordinates shapeCorner = MinecraftUtilClass.minCoordinates(blocks); // Original corner (or close to it) -shape corner
+		List<Block> shiftedBlocks = MinecraftUtilClass.shiftBlocksBetweenCorners(blocks, shapeCorner, MinecraftClient.POST_EVALUATION_SHAPE_CORNER);
 		
 //		System.out.println("Spawning " + shiftedBlocks.size() + " blocks from " + dir);
 //		for(Block b: shiftedBlocks) {

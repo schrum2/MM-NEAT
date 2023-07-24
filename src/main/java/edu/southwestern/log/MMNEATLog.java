@@ -54,14 +54,10 @@ public class MMNEATLog {
 	 * Constructor for file log. Sets up a new file that logs data from task.
 	 * Also saves old data if present
 	 * 
-	 * @param infix
-	 *            name of log file
-	 * @param batches
-	 *            whether or not each generation contains a batch of lines
-	 * @param unlimited
-	 *            true if there may be an excessive number of entries
-	 * @param restricted
-	 *            true if there may be an unusually small number of entries per generation
+	 * @param infix name of log file
+	 * @param batches whether or not each generation contains a batch of lines
+	 * @param unlimited true if there may be an excessive number of entries
+	 * @param restricted true if there may be an unusually small number of entries per generation
 	 */
 	public MMNEATLog(String infix, boolean batches, boolean unlimited, boolean restricted) {
 		this(infix, batches, unlimited, restricted, false); // Default value of "false" for raw logging
@@ -201,6 +197,13 @@ public class MMNEATLog {
 	 * @return log file
 	 */
 	public File getFile() {
-		return new File(directory + prefix + "_log.txt");
+		return new File(directory + getLogTextFilename());
+	}
+
+	/**
+	 * @return Just the name of the textfile for logging
+	 */
+	public String getLogTextFilename() {
+		return prefix + "_log.txt";
 	}
 }

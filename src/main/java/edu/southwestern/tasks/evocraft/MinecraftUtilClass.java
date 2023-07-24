@@ -2,18 +2,27 @@ package edu.southwestern.tasks.evocraft;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
 import cern.colt.Arrays;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
+import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBinLabels;
 import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.datastructures.Vertex;
+import edu.southwestern.util.file.FileUtilities;
+import edu.southwestern.util.random.RandomNumbers;
 
 /**
  * Some commonly used methods for dealing with the Minecraft world
@@ -25,6 +34,7 @@ import edu.southwestern.util.datastructures.ArrayUtil;
  */
 public class MinecraftUtilClass {
 
+	//empty space is all the space between shape evaluation areas
 	public static int emptySpaceOffsetX() {
 		return emptySpaceOffset(Parameters.parameters.integerParameter("minecraftXRange"));
 	}
@@ -47,7 +57,7 @@ public class MinecraftUtilClass {
 	public static int emptySpaceOffset(int range) {
 		return (int) (((range + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")) / 2.0) - (range/2.0));
 	}
-	
+	//here
 	/**
 	 * How far away in each coordinate the minimal corner of where the shape is generated is
 	 * from the minimal corner of cleared out space reserved for the shape.
@@ -67,10 +77,30 @@ public class MinecraftUtilClass {
 				Parameters.parameters.integerParameter("minecraftYRange"),
 				Parameters.parameters.integerParameter("minecraftZRange"));
 	}
+	
+	/**
+	 * Generates random coordinates within the shape ranges
+	 * @return random coordinates
+	 */
+	public static MinecraftCoordinates randomCoordinatesInShapeRange() {
+		return new MinecraftCoordinates(
+				RandomNumbers.randomGenerator.nextInt(Parameters.parameters.integerParameter("minecraftXRange")),
+				RandomNumbers.randomGenerator.nextInt(Parameters.parameters.integerParameter("minecraftYRange")),
+				RandomNumbers.randomGenerator.nextInt(Parameters.parameters.integerParameter("minecraftZRange")));
+	}
+	
+	/**
+	 * Number of blocks that are reserved for each generated shape
+	 * @return total number of blocks
+	 */
+	public static int numberOfBlocksPossibleInShape() {
+		MinecraftCoordinates ranges = getRanges();
+		return ranges.x() * ranges.y() * ranges.z();
+	}
 
 	/**
 	 * Size of space around each shape, which includes all the empty space between shapes
-	 * @return Save of space including empty space between shapes
+	 * @return Size of space including empty space between shapes
 	 */
 	public static MinecraftCoordinates reservedSpace() {
 		final int SPACE_BETWEEN = Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes");
@@ -131,6 +161,29 @@ public class MinecraftUtilClass {
 		}
 		return result;
 	}
+	/**
+	 * For two points, get one point that has the maximum coordinate across all listed points
+	 * @param c1 point 
+	 * @param c2 other point
+	 * @return maximum point
+	 */
+	public static MinecraftCoordinates maxCoordinates(MinecraftCoordinates c1, MinecraftCoordinates c2) {
+		return new MinecraftCoordinates(Math.max(c1.x(), c2.x()), Math.max(c1.y(), c2.y()), Math.max(c1.z(), c2.z()));
+	}
+	
+	/**
+	 * Across a list of blocks, find the maximum coordinate across all of their positions
+	 * @param blocks List of blocks
+	 * @return Corner that they were generated at
+	 */
+	public static MinecraftCoordinates maxCoordinates(List<Block> blocks) {
+		MinecraftCoordinates result = blocks.get(0).position;
+		for(int i = 1; i < blocks.size(); i++) {
+			result = maxCoordinates(result, blocks.get(i).position);
+		}
+		return result;
+	}
+	
 	
 	/**
 	 * Remove all blocks of a given type from a list of blocks
@@ -152,6 +205,17 @@ public class MinecraftUtilClass {
 	 */
 	public static List<Block> getDesiredBlocks(List<Block> blocks, BlockType[] typesToKeep) {
 		return blocks.stream().filter(b -> ArrayUtil.contains(typesToKeep, BlockType.values()[b.type()])  ).collect(Collectors.toList());
+	}
+	
+	/**
+	 * Check if any blocks of the specified type are in the shape
+	 * 
+	 * @param blocks collection of blocks in a shape
+	 * @param type block type to look for
+	 * @return true if type is in the list of blocks, false otherwise
+	 */
+	public static boolean containsBlockType(List<Block> blocks, BlockType type) {
+		return !getDesiredBlocks(blocks, new BlockType[] {type}).isEmpty();
 	}
 	
 	/** 
@@ -190,6 +254,9 @@ public class MinecraftUtilClass {
 	/**
 	 * Use EvoCraft client code to call readCube and determine blocks that are
 	 * present in the world.
+	 * calculates range of evaluation area for secondary related function readBlocksFromClient
+	 * Not actual evaluationCorner calculated, or range
+	 * Not called anywhere
 	 * 
 	 * @param corner minimal coordinate of shape being checked
 	 * @return List of blocks occupying the space for the given shape
@@ -202,6 +269,21 @@ public class MinecraftUtilClass {
 		return readBlocksFromClient(corner, ranges);
 	}
 	
+	/**
+	 * Use EvoCraft client code to call readCube and determine blocks that are 
+	 * present in the world.
+	 * Called by readBlocksFromClient 
+	 * uses minecraftXRange - 1 to add to the size of area & uses client code to call readCube
+	 * 
+	 * TODO: shouldn't this be moved to MinecraftClients?
+	 * This is never called
+	 * 
+	 * -Joanna
+	 * 
+	 * @param corner minimal coordinates of shape being checked
+	 * @param ranges coordinates or passed for space to evaluate
+	 * @return list of blocks occupying the space for the given shape
+	 */
 	public static List<Block> readBlocksFromClient(MinecraftCoordinates corner, MinecraftCoordinates ranges) {
 		MinecraftClient client = MinecraftClient.getMinecraftClient();
 		List<Block> blocks = client.readCube(corner, corner.add(ranges));
@@ -211,18 +293,18 @@ public class MinecraftUtilClass {
 	/**
 	 * Block orientations cannot be read from the world, so they are always null when read. 
 	 * To compare against such lists, it might be necessary to take a list with non-null
-	 * block orientations and set them to null. This means there is no certainty as you
+	 * block orientations and set them to null. This means there is no certainty as to
 	 * what the orientations are, but it gives some means of comparison.
 	 * 
 	 * @param originalBlocks Blocks from a generator, that still have orientations
 	 * @return block list with only null orientations, but otherwise the same
 	 */
 	public static List<Block> wipeOrientations(List<Block> originalBlocks) {
-		ArrayList<Block> result = new ArrayList<>(originalBlocks.size());
+		ArrayList<Block> blockListWithoutOrientation = new ArrayList<>(originalBlocks.size());
 		for(Block b : originalBlocks) {
-			result.add(new Block(b.x(), b.y(), b.z(),b.type()));
+			blockListWithoutOrientation.add(new Block(b.x(), b.y(), b.z(),b.type()));
 		}
-		return result;
+		return blockListWithoutOrientation;
 	}
 	
 	/**
@@ -234,8 +316,34 @@ public class MinecraftUtilClass {
 	 * @throws FileNotFoundException
 	 */
 	public static List<Block> loadMAPElitesOutputFile(File f) throws FileNotFoundException {
-		List<Block> blocks = new ArrayList<Block>();
 		Scanner s = new Scanner(f);
+		List<Block> blocks = readMinecraftBlockListFromScanner(s);
+		s.close(); // close the scanner
+		// System.out.println(blocks);
+		return blocks;
+	}
+
+	/**
+	 * Read String containing a Minecraft block list and construct the corresponding block list
+	 * 
+	 * @param s string describing list of Minecraft blocks
+	 * @return the list of blocks
+	 */
+	public static List<Block> readMinecraftBlockListFromString(String s){
+		Scanner scan = new Scanner(s);
+		List<Block> blocks = readMinecraftBlockListFromScanner(scan);
+		scan.close();
+		return blocks;
+	}
+	
+	/**
+	 * Read output containing a Minecraft block list from a Scanner and construct the corresponding block list
+	 * 
+	 * @param s Scanner of raw text that describes a list of Minecrafy blocks in a shape
+	 * @return Corresponding list of Minecraft blocks
+	 */
+	public static List<Block> readMinecraftBlockListFromScanner(Scanner s) {
+		List<Block> blocks = new ArrayList<Block>();
 		boolean start = true; // used because fencepost problem when parsing (starting "[" and ending "]" cause issues since this extra output is only at the beginning and end)
 		while(s.hasNext()) {
 			String line = ""; // empty string to begin with, will have 5 tokens per block (based on file output)
@@ -275,11 +383,10 @@ public class MinecraftUtilClass {
 				System.out.println(line);
 				System.out.println(Arrays.toString(blockVals));
 				System.out.println(Arrays.toString(coordinates));
+				s.close(); // closes the scanner
 				throw e;
 			}
 		}
-		s.close(); // close the scanner
-		// System.out.println(blocks);
 		return blocks;
 	}
 
@@ -299,5 +406,152 @@ public class MinecraftUtilClass {
 			result.add(new Block(newCoordinates, b.type, b.orientation));
 		}
 		return result;
+	}
+	
+	/**
+	 * Calculate center of mass for a list of blocks in a shape by averaging the 
+	 * x, y, and z coordinates across all non-AIR blocks in the shape.
+	 * 
+	 * @param blocks List of blocks in a shape
+	 * @return Center of mass of the shape (assumes all blocks have uniform mass)
+	 */
+	public static Vertex getCenterOfMass(List<Block> blocks) {
+		double x = 0;
+		double y = 0;
+		double z = 0;
+
+		List<Block> filteredBlocks = MinecraftUtilClass.filterOutBlock(blocks,BlockType.AIR);
+
+		for(Block b : filteredBlocks) {
+			x += b.x();
+			y += b.y();
+			z += b.z();
+		}
+
+		double avgX = x/filteredBlocks.size();
+		double avgY = y/filteredBlocks.size();
+		double avgZ = z/filteredBlocks.size();
+
+		Vertex centerOfMass = new Vertex(avgX,avgY,avgZ);
+
+		return centerOfMass;
+	}	
+	
+	/**
+	 * Get all the blocks that are in Shape 1 but not in Shape 2.
+	 * Blocks are only considered the same if they match in terms of position,
+	 * type, and orientation.
+	 * 
+	 * @param shape1 A list of blocks representing a shape
+	 * @param shape2 A list of blocks representing a shape
+	 * @return A list of blocks from shape 1, but excluding shared/common blocks with shape 2
+	 */
+	public static List<Block> shapeListDifference(List<Block> shape1, List<Block> shape2) {
+		HashSet<Block> shape1Blocks = new HashSet<>();
+		for(Block b : shape1) shape1Blocks.add(b); // Get all blocks from Shape 1
+		for(Block b : shape2) {
+			// Remove all blocks from Shape 2 from the set of Shape 1 blocks.
+			// If block is not present, then attempt simply returns false and does nothing.
+			shape1Blocks.remove(b);
+		}
+		// Put remaining blocks back in a List
+		ArrayList<Block> result = new ArrayList<>(shape1Blocks.size());
+		for(Block b : shape1Blocks) {
+			result.add(b);
+		}
+		return result;
+	}
+	
+	//TODO: general shape saving function
+	//makes a directory
+	//need to pass in Score<T>/genome/fitness score
+	public static <T> void saveShapes(Genotype<T> genome, List<Block> shapeToSaveBlockList , String directoryNameString, Score<T> score) {
+		//make the directory first
+		String directoryString = FileUtilities.getSaveDirectory() + directoryNameString;
+		File directoryFile = new File(directoryString);
+		if(!directoryFile.exists() ) {
+			directoryFile.mkdir();
+		}
+		double fitness = score.behaviorIndexScore();
+		MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
+		String label = minecraftBinLabels.binLabels().get(0/*this needs to be the shape id*/);
+		MinecraftUtilClass.writeBlockListFile(shapeToSaveBlockList, directoryString + File.separator + label+"ID"+score.individual.getId(), "FITNESS"+fitness+".txt");
+		//save block list?
+		/**
+		 * 	String flyingDir = FileUtilities.getSaveDirectory() + "/flyingMachines";
+			File dir = new File(flyingDir);	// Create dir
+			if (!dir.exists()) {
+				dir.mkdir();
+			}
+			//Orientation flyingDirection = directionOfMaximumDisplacement(deltaX,deltaY,deltaZ);
+			//String gen = "GEN"+(MMNEAT.ea instanceof GenerationalEA ? ((GenerationalEA) MMNEAT.ea).currentGeneration() : "ME");
+			MinecraftLonerShapeTask.writeBlockListFile(blocks, flyingDir + File.separator + "ID"+genome.getId(), ".txt");
+			
+			
+		
+			@SuppressWarnings("unchecked")
+			Archive<T> archive = MMNEAT.getArchive();
+			Vector<Score<T>> archiveVector = archive.getArchive();
+			MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
+			for(int i = 0; i < archiveVector.size(); i++) {
+				Score<T> score = archiveVector.get(i);
+				//if there is a fitness score related to this bin (ie. there exists a shape)
+				if(score != null) {
+					double fitness = score.behaviorIndexScore();
+					//TODO: this deals with saving shapes
+					if(this.internalMinecraftShapeTask.certainFlying(fitness)) {
+						@SuppressWarnings("unchecked")
+						List<Block> blocks = MMNEAT.shapeGenerator.generateShape(score.individual, MinecraftClient.POST_EVALUATION_SHAPE_CORNER, MMNEAT.blockSet);
+						String label = minecraftBinLabels.binLabels().get(i);
+						MinecraftLonerShapeTask.writeBlockListFile(blocks, flyingDir + File.separator + label+"ID"+score.individual.getId(), "FITNESS"+fitness+".txt");			
+					}
+				}
+			}			
+		 */
+		
+	}
+
+	/** 
+	 * TODO: why not just pass fullName?
+	 * Write block list text file to specified location
+	 * @param blocks The blocks to write
+	 * @param pathAndPrefix Path plus first part of filename. Will be followed by _ before the fileSuffix
+	 * @param fileSuffix Last part of filename
+	 */
+	public static void writeBlockListFile(List<Block> blocks, String pathAndPrefix, String fileSuffix) {
+		String fullName = pathAndPrefix + "_" + fileSuffix;
+		System.out.println(fullName);
+		try {
+			PrintStream outputFile = new PrintStream(new File(fullName));
+			outputFile.println(blocks);
+			outputFile.close();
+		} catch (FileNotFoundException e) {
+			System.out.println("Error writing file "+fullName);
+			e.printStackTrace();
+			System.exit(1);
+		}
+	}
+	
+	/**
+	 * placeholder for a bounds checking for later use
+	 * Might change: calculation, what corner is passed
+	 * @param evaluationCorner
+	 * @return
+	 */
+	public static boolean checkOutOfBoundsY(MinecraftCoordinates evaluationCorner) {
+		if(evaluationCorner.y() - Parameters.parameters.integerParameter("minecraftEmptySpaceBufferY") - Parameters.parameters.integerParameter("minecraftExtraClearSpace") <= MinecraftClient.GROUND_LEVEL){
+			return false;
+		}
+		return true;
+	}
+	/**
+	 * eval area = shapeCorner sub (((ranges + spaceBetweenMinecraftShapes)/2) - (ranges/2))
+	 * xrange= (minecraftXRange+spaceBetweenMinecraftShapes)/2 - minecraftXRange/2
+	 * ranges are coordinates of above done for all
+	 * @param shapeCorner
+	 * @return evaluation corner
+	 */
+	public MinecraftCoordinates getEvaluationCornerFromShapeCorner(MinecraftCoordinates shapeCorner) {
+		return shapeCorner.sub(MinecraftUtilClass.emptySpaceOffsets());
 	}
 }

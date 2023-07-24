@@ -32,8 +32,11 @@ import edu.southwestern.evolution.metaheuristics.LinkPenalty;
 import edu.southwestern.evolution.metaheuristics.MaxModulesFitness;
 import edu.southwestern.evolution.metaheuristics.Metaheuristic;
 import edu.southwestern.evolution.metaheuristics.SubstrateLinkPenalty;
+import edu.southwestern.evolution.mome.MOME;
 import edu.southwestern.evolution.mulambda.MuLambda;
 import edu.southwestern.experiment.Experiment;
+import edu.southwestern.experiment.post.MinecraftBlockCompareExperiment;
+import edu.southwestern.experiment.post.MinecraftBlockEvaluateExperiment;
 import edu.southwestern.experiment.post.MinecraftBlockRenderExperiment;
 import edu.southwestern.log.EvalLog;
 import edu.southwestern.log.MMNEATLog;
@@ -101,6 +104,8 @@ public class MMNEAT {
 	public static ArrayList<Metaheuristic> metaheuristics;
 	public static ArrayList<ArrayList<String>> fitnessFunctions;
 	public static ArrayList<Statistic> aggregationOverrides;
+	// Most fitness minimums do not need to be stored, but store them here if needed. Mainly for MAP Elites otherStats
+	public static ArrayList<Double> fitnessMinimums;
 	@SuppressWarnings("rawtypes") // applies to any population type
 	public static PerformanceLog performanceLog;
 	private static ArrayList<Integer> actualFitnessFunctions;
@@ -127,8 +132,10 @@ public class MMNEAT {
 			return pseudoArchive.getBinMapping();
 		} else if (ea instanceof MAPElites) {
 			return ((MAPElites) ea).getBinLabelsClass();
+		} else if (ea instanceof MOME) {
+			return ((MOME) ea).getBinLabelsClass();
 		}
-		throw new IllegalStateException("Attempted to get archive bin label class without using MAP Elites or a psuedo-archive");
+		throw new IllegalStateException("Attempted to get archive bin label class without using MAP Elites, MOME, or a psuedo-archive");
 	}
 	
 	@SuppressWarnings("rawtypes")
@@ -274,8 +281,23 @@ public class MMNEAT {
 		Parameters.initializeParameterCollections(parameterFile);
 	}
 
+	/**
+	 * Add the name of a fitness function to the list used by the main (possibly only) population.
+	 * @param name Name of fitness function
+	 */
 	public static void registerFitnessFunction(String name) {
 		registerFitnessFunction(name, 0);
+	}
+	
+	/**
+	 * When only one population is being used (no co-evolution), get the
+	 * name of the fitness function at the designated index.
+	 * 
+	 * @param index of fitness function
+	 * @return name of fitness function
+	 */
+	public static String getFitnessFunctionName(int index) {
+		return fitnessFunctions.get(0).get(index);
 	}
 
 	/**
@@ -285,7 +307,7 @@ public class MMNEAT {
 	 * @param pop population index (for coevolution)
 	 */
 	public static void registerFitnessFunction(String name, int pop) {
-		registerFitnessFunction(name, null, true, pop);
+		registerFitnessFunction(name, null, true, pop, Double.NaN);
 	}
 
 	public static void registerFitnessFunction(String name, boolean affectsSelection) {
@@ -302,11 +324,11 @@ public class MMNEAT {
 	 * @param pop population index (for coevolution)
 	 */
 	public static void registerFitnessFunction(String name, boolean affectsSelection, int pop) {
-		registerFitnessFunction(name, null, affectsSelection, pop);
+		registerFitnessFunction(name, null, affectsSelection, pop, Double.NaN);
 	}
 
 	public static void registerFitnessFunction(String name, Statistic override, boolean affectsSelection) {
-		registerFitnessFunction(name, override, affectsSelection, 0);
+		registerFitnessFunction(name, override, affectsSelection, 0, Double.NaN);
 	}
 
 	/**
@@ -318,8 +340,9 @@ public class MMNEAT {
 	 * @param override Statistic applied across evaluations (null is default/average)
 	 * @param affectsSelection whether it affects selection
 	 * @param pop population index (for coevolution)
+	 * @param minFitnss smallest possible fitness score (optional, could be NaN)
 	 */
-	public static void registerFitnessFunction(String name, Statistic override, boolean affectsSelection, int pop) {
+	public static void registerFitnessFunction(String name, Statistic override, boolean affectsSelection, int pop, double minFitness) {
 		if(actualFitnessFunctions == null){
 			actualFitnessFunctions = new ArrayList<Integer>();
 		}
@@ -337,6 +360,20 @@ public class MMNEAT {
 		}
 		fitnessFunctions.get(pop).add(name);
 		aggregationOverrides.add(override);
+		fitnessMinimums.add(minFitness);
+	}
+	
+	public static double fitnessFunctionMinScore(int index) {
+		return fitnessMinimums.get(index);
+	}
+	
+	/**
+	 * Number of otherStats being tracked for all members of specified population
+	 * @param pop Index for population (is 0, unless coevolution is being used)
+	 * @return number of other stats
+	 */
+	public static int getNumberOtherStatsForPopulation(int pop) {
+		return fitnessFunctions.get(pop).size() - actualFitnessFunctions.get(pop);
 	}
 
 	/**
@@ -357,13 +394,12 @@ public class MMNEAT {
 			fitnessFunctions = new ArrayList<ArrayList<String>>();
 			fitnessFunctions.add(new ArrayList<String>());
 			aggregationOverrides = new ArrayList<Statistic>();
+			fitnessMinimums = new ArrayList<Double>();
 
 			boolean loadFrom = !Parameters.parameters.stringParameter("loadFrom").equals("");
 			System.out.println("Init Genotype Ids");
 			EvolutionaryHistory.initGenotypeIds();
 			weightPerturber = (RandomGenerator) ClassCreation.createObject("weightPerturber");
-
-			setupCrossover();
 
 			// A task is always required
 			System.out.println("Set Task");
@@ -375,6 +411,9 @@ public class MMNEAT {
 			
 			task = (Task) ClassCreation.createObject("task");
 			System.out.println("Load task: " + task);
+
+			// SBX crossover needs the bounds from the BoundedTask after it is instantiated
+			setupCrossover();
 			
 			// For all types of Ms Pac-Man tasks
 			if (Parameters.parameters.booleanParameter("scalePillsByGen")
@@ -521,6 +560,7 @@ public class MMNEAT {
 		metaheuristics = null;
 		fitnessFunctions = null;
 		aggregationOverrides = null;
+		fitnessMinimums = null;
 		ea = null;
 		genotype = null;
 		experiment = null;
@@ -734,6 +774,20 @@ public class MMNEAT {
 			System.arraycopy(args, 1, reducedArgs, 0, reducedArgs.length);
 			Parameters.initializeParameterCollections(reducedArgs);
 			MinecraftBlockRenderExperiment experiment = new MinecraftBlockRenderExperiment();
+			experiment.init();
+			experiment.run();
+		} else if(args[0].equals("minecraftEvaluate")){
+			String[] reducedArgs = new String[args.length - 1];
+			System.arraycopy(args, 1, reducedArgs, 0, reducedArgs.length);
+			Parameters.initializeParameterCollections(reducedArgs);
+			MinecraftBlockEvaluateExperiment experiment = new MinecraftBlockEvaluateExperiment();
+			experiment.init();
+			experiment.run();
+		} else if(args[0].equals("minecraftRaceFlyingMachines")){
+			String[] reducedArgs = new String[args.length - 1];
+			System.arraycopy(args, 1, reducedArgs, 0, reducedArgs.length);
+			Parameters.initializeParameterCollections(reducedArgs);
+			MinecraftBlockCompareExperiment experiment = new MinecraftBlockCompareExperiment();
 			experiment.init();
 			experiment.run();
 		} else if(args[0].equals("binMario")){
