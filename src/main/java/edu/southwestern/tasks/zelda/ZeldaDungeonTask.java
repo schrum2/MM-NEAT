@@ -274,7 +274,6 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 					System.out.println("Number of backtracked rooms: "+numBackTrackRooms);
 					System.out.println("Number of distinct rooms: "+numDistinctRooms);
 
-
 					// View whole dungeon layout
 					BufferedImage image = DungeonUtil.viewDungeon(dungeon, mostRecentVisited, solutionPath);
 					String saveDir = FileUtilities.getSaveDirectory(); //save directory
