@@ -116,7 +116,7 @@
 			<version>ac179b1</version>
 		</dependency>
 
-		<!-- for WFC -->
+		<!-- for WFC: do NOT upgrade past 2.7.2, will break xml serialization -->
 		<!-- https://mvnrepository.com/artifact/xalan/xalan -->
 		<dependency>
 			<groupId>xalan</groupId>
