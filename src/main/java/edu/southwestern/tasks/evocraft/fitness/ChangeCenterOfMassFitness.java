@@ -8,6 +8,7 @@ import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
+import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 import edu.southwestern.util.datastructures.Pair;
@@ -313,6 +314,13 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 		double totalChangeDistance = 0;
 
 		for(int i = 1; i < history.size(); i++) {
+			
+			if(Parameters.parameters.booleanParameter("changeCenterOfMassFiltersBlocks")) {
+				// Only keep blocks of a certain type
+				BlockType[] typesToKeep = new BlockType[] {BlockType.values()[Parameters.parameters.integerParameter("changeCenterOfMassBlockType")]};
+				history.get(i).t2 = MinecraftUtilClass.getDesiredBlocks(history.get(i).t2, typesToKeep);
+			}
+			
 			Vertex nextCenterOfMass = MinecraftUtilClass.getCenterOfMass(history.get(i).t2);
 			
 			// Vertex will have NaN components if the shape was empty, in which case we want the 

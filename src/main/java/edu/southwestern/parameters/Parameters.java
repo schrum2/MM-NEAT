@@ -402,6 +402,7 @@ public class Parameters {
 		integerOptions.add("minecraftEmptySpaceBufferX", 22, "Additional space that is cleared around shape on X side before each evaluation");
 		integerOptions.add("minecraftEmptySpaceBufferY", 22, "Additional space that is cleared around shape on Y side before each evaluation");
 		integerOptions.add("minecraftEmptySpaceBufferZ", 22, "Additional space that is cleared around shape on Z side before each evaluation");
+		integerOptions.add("changeCenterOfMassBlockType", MinecraftClient.BlockType.TNT.ordinal(), "If changeCenterOfMassFiltersBlocks is true, then this is the one block type to keep");
 		
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
@@ -885,6 +886,7 @@ public class Parameters {
 		booleanOptions.add("mapElitesReplaceOnEquality", false, "An elite can be replaced by a candidate of equal fitness");		
 		booleanOptions.add("mapElitesSoftAnnealingArchive", false, "Archive has gradually increasing acceptance thresholds for each bin");		
 		booleanOptions.add("mapElitesLogsOtherScoreHypervolume", true, "Treat other scores as components of main objective and plot hypervolume");		
+		booleanOptions.add("changeCenterOfMassFiltersBlocks", false, "Minecraft Change Center of Mass Fitness only looks at blocks of one type");		
 		
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
@@ -1027,7 +1029,6 @@ public class Parameters {
 		stringOptions.add("LodeRunnerGANModel", "LodeRunnerAllGround100LevelsEpoch200000_10_7.pth", "File name of GAN model to use for LodeRunner GAN level evolution");
 		stringOptions.add("MegaManGANModel", "MegaManOneGANWith12Tiles_5_Epoch5000.pth", "File name of GAN model to use for MegaMan GAN level evolution");
 		stringOptions.add("mostRecentAutoEncoder", "", "The full path to the most recently trained autoencoder for PictureTargetTask.");
-		
 		stringOptions.add("MegaManGANHorizontalModel", "MegaManSevenGANHorizontalNoWater9_5_Epoch5000.pth", "File name of Horizontal GAN model to use for MegaMan GAN level evolution");
 		stringOptions.add("MegaManGANUpModel", "MegaManSevenGANUpNoWater9_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");
 		stringOptions.add("MegaManGANDownModel", "MegaManSevenGANDownNoWater9_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");
@@ -1040,7 +1041,6 @@ public class Parameters {
 		stringOptions.add("mapElitesArchiveFile", "", "File name of MAPElites level we want to look at from an experiment");
 		stringOptions.add("archiveSubDirectoryName", "archive", "Directory name to store archive files in a MAP Elites run");
 		stringOptions.add("latestIterationSaved", "iterationX", "The last iteration of PictureTargetTask to be saved.");
-		
 		stringOptions.add("minecraftBlockListTextFile", "", "The file name of a MAPElite shape from that archive that is going to be spawned.");
 		stringOptions.add("minecraftBlockListTextFileSecond", "", "the file name of a second MAPElite shape from that archive that is going to be spawned.");
 		
