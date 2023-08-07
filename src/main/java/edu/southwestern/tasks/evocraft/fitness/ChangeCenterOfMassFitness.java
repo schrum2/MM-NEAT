@@ -31,7 +31,7 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 	// Used in sufficientDistanceForFlying. Defines portion of distance to edge of evaluation area that center of mass must move
 	// for a shape to be considered flying. Needs to be high enough for there to be real flight, but not so high that blocks left
 	// behind interfere with calculation. Only one of two checks used to confirm the machine is flying.
-	private static final double CENTER_OF_MASS_PERCENT_TO_EDGE_FOR_FLYING = 0.6;
+	//private static final double CENTER_OF_MASS_PERCENT_TO_EDGE_FOR_FLYING = 0.6; // NOT NEEDED
 	// Assume that the remaining block penalty will not be greater than this (should actually be much less)
 	public static final double FLYING_PENALTY_BUFFER = 5;
 	// At least this many blocks must depart to count as flying
