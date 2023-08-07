@@ -222,15 +222,21 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 	
 	/**
 	 * Minimum distance that center of mass must move to count a machine as flying
+	 * 
+	 * THIS IS NOT USED: There are too many cases where a flying machine leaves a large
+	 * number of blocks behind, which greatly skews the location of its center of mass.
+	 * As a result, successfully flying machines would be disqualified by reasonable
+	 * settings for this distance check.
+	 * 
 	 * @return minimum flying distance
 	 */
-	private double sufficientDistanceForFlying() {
-		MinecraftCoordinates offsets = MinecraftUtilClass.emptySpaceOffsets();
-		// Recently reduced this to 0.6 from 0.75. Since this check is used in conjunction with
-		// the farthest block check, I hope it won't allow false positives, but there is a risk
-		// of that.
-		return Math.min(offsets.x(), Math.min(offsets.y(), offsets.z()))*CENTER_OF_MASS_PERCENT_TO_EDGE_FOR_FLYING;
-	}
+//	private double sufficientDistanceForFlying() {
+//		MinecraftCoordinates offsets = MinecraftUtilClass.emptySpaceOffsets();
+//		// Recently reduced this to 0.6 from 0.75. Since this check is used in conjunction with
+//		// the farthest block check, I hope it won't allow false positives, but there is a risk
+//		// of that.
+//		return Math.min(offsets.x(), Math.min(offsets.y(), offsets.z()))*CENTER_OF_MASS_PERCENT_TO_EDGE_FOR_FLYING;
+//	}
 
 	/**
 	 * Minimum distance that center of mass must move to count a machine as flying
