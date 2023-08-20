@@ -887,6 +887,7 @@ public class Parameters {
 		booleanOptions.add("mapElitesSoftAnnealingArchive", false, "Archive has gradually increasing acceptance thresholds for each bin");		
 		booleanOptions.add("mapElitesLogsOtherScoreHypervolume", true, "Treat other scores as components of main objective and plot hypervolume");		
 		booleanOptions.add("changeCenterOfMassFiltersBlocks", false, "Minecraft Change Center of Mass Fitness only looks at blocks of one type");		
+		booleanOptions.add("minecraftSequentialChangeCenterOfMassThenMissileFitness", false, "Uses ChangeCenterOfMass, but adds Missile once shapes can fly");
 		
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
