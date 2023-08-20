@@ -149,6 +149,22 @@ public class ArrayUtil {
 		}
 		return spec;
 	}
+	
+	/**
+	 * Return object Double array of given size containing only
+	 * copies of the specified value.
+	 * 
+	 * @param size Desired size of array
+	 * @param num Specified number to fill array
+	 * @return Array of Doubles of size 'size', all of which are 'num'
+	 */
+	public static Double[] objectDoubleSpecified(int size, double num) {
+		Double[] spec = new Double[size];
+		for (int i = 0; i < spec.length; i++) {
+			spec[i] = num;
+		}
+		return spec;
+	}
 
 	/**
 	 * Return primitive int array of given size containing all ones
