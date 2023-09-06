@@ -1,3 +1,0 @@
-cd ..
-cd ..
-java -jar target/MM-NEAT-0.0.1-SNAPSHOT.jar runNumber:%1 randomSeed:%1 base:zeldagan log:ZeldaGAN-Dungeon01Latent10 saveTo:Dungeon01Latent10 trials:1 mu:16 maxGens:500 io:true netio:true GANInputSize:10 mating:true fs:false task:edu.southwestern.tasks.interactive.gvgai.ZeldaGANLevelBreederTask genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype watch:false cleanFrequency:-1 simplifiedInteractiveInterface:false saveAllChampions:true cleanOldNetworks:false ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA imageWidth:2000 imageHeight:2000 imageSize:200 zeldaGANModel:ZeldaDungeon01_5000_10.pth

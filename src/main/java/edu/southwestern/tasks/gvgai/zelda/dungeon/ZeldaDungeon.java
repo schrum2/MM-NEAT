@@ -1,8 +1,5 @@
 package edu.southwestern.tasks.gvgai.zelda.dungeon;
 
-import java.awt.Color;
-import java.awt.GridLayout;
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,7 +14,6 @@ import java.util.UUID;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -28,19 +24,14 @@ import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.tasks.gvgai.GVGAIUtil;
-import edu.southwestern.tasks.gvgai.GVGAIUtil.GameBundle;
 import edu.southwestern.tasks.gvgai.zelda.ZeldaVGLCUtil;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
-import edu.southwestern.tasks.interactive.gvgai.ZeldaGANLevelBreederTask;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.search.AStarSearch;
 import edu.southwestern.util.search.Search;
-import gvgai.core.game.BasicGame;
-import gvgai.tracks.singlePlayer.tools.human.Agent;
 import me.jakerg.rougelike.RougelikeApp;
 import me.jakerg.rougelike.Tile;
 import me.jakerg.rougelike.TileUtil;
@@ -48,11 +39,6 @@ import me.jakerg.rougelike.TileUtil;
 
 public abstract class ZeldaDungeon<T> {
 	
-	// Only used for visualization in this class
-	private static final int ZELDA_HEIGHT = (176/11)*16;//Parameters.parameters.integerParameter("zeldaImageHeight");
-	private static final int ZELDA_WIDTH = 176;//Parameters.parameters.integerParameter("zeldaImageWidth");\
-
-
 	private Level[][] dungeon = null;
 	protected Dungeon dungeonInstance = null;
 	JPanel dungeonGrid;
@@ -281,24 +267,13 @@ public abstract class ZeldaDungeon<T> {
 				if(result != null)
 					for(GridAction a : result)
 						System.out.println(a.getD().toString());
-				//				
-				if(!Parameters.parameters.booleanParameter("gvgAIForZeldaGAN")) {
-					new Thread() {
-						@Override
-						public void run() {
-							RougelikeApp.startDungeon(dungeonInstance);
-						}
-					}.start();
-				} else {
-					GameBundle bundle = ZeldaGANLevelBreederTask.setUpGameWithDungeon(dungeonInstance);
-					new Thread() {
-						@Override
-						public void run() {
-							// True is to watch the game being played
-							GVGAIUtil.runDungeon(bundle, true, dungeonInstance);
-						}
-					}.start();
-				}
+
+				new Thread() {
+					@Override
+					public void run() {
+						RougelikeApp.startDungeon(dungeonInstance);
+					}
+				}.start();
 				Parameters.parameters.setBoolean("netio", false);
 			}
 
@@ -333,22 +308,6 @@ public abstract class ZeldaDungeon<T> {
 		buttons.add(newDungeon);
 
 		if(Parameters.parameters.booleanParameter("dungeonizeAdvancedOptions")) {
-
-			JCheckBox useGvg = new JCheckBox("Use GVG-AI", Parameters.parameters.booleanParameter("gvgAIForZeldaGAN"));
-			useGvg.addActionListener(new ActionListener() {
-
-				@Override
-				public void actionPerformed(ActionEvent arg0) {
-					Parameters.parameters.changeBoolean("gvgAIForZeldaGAN");
-					container.remove(dungeonGrid); 
-					dungeonGrid = getDungeonGrid(numRooms);
-					container.add(dungeonGrid);
-					frame.validate();
-					frame.repaint();
-				}
-
-			});
-			buttons.add(useGvg);
 
 			JButton saveDungeon = new JButton("Save Dungeon");
 			saveDungeon.addActionListener(new ActionListener() {
@@ -441,35 +400,10 @@ public abstract class ZeldaDungeon<T> {
 	protected JPanel getDungeonGrid(int numRooms) {
 		JPanel panel = new JPanel();
 
-		if(!Parameters.parameters.booleanParameter("gvgAIForZeldaGAN")) {
-			dungeonInstance.markReachableRooms();
-			BufferedImage image = DungeonUtil.imageOfDungeon(dungeonInstance);
-			JLabel label = new JLabel(new ImageIcon(image));
-			panel.add(label);
-		} else {
-			panel.setLayout(new GridLayout(numRooms, numRooms));
-			String[][] levelThere = dungeonInstance.getLevelThere();
-			for(int i = 0; i < levelThere.length; i++) {
-				for(int j = 0; j < levelThere[i].length; j++) {
-					if(levelThere[i][j] != null) {
-						//System.out.println("GETLEVELS !"+dungeonInstance.getLevels().toString());
-						Node n = dungeonInstance.getNodeAt(j, i);
-						
-						BufferedImage level = getButtonImage(n, ZELDA_WIDTH * 3 / 4, ZELDA_HEIGHT * 3 / 4); //creates image rep. of level)
-						ImageIcon img = new ImageIcon(level.getScaledInstance(level.getWidth(), level.getHeight(), Image.SCALE_FAST)); //creates image of level
-						JLabel imageLabel = new JLabel(img); // places level on label
-						panel.add(imageLabel); //add label to panel
-					} else {
-						JLabel blankText = new JLabel("");
-						blankText.setForeground(Color.WHITE);
-						JPanel blankBack = new JPanel();
-						blankBack.setBackground(Color.BLACK);
-						blankBack.add(blankText);
-						panel.add(blankBack);
-					}
-				}
-			}
-		}
+		dungeonInstance.markReachableRooms();
+		BufferedImage image = DungeonUtil.imageOfDungeon(dungeonInstance);
+		JLabel label = new JLabel(new ImageIcon(image));
+		panel.add(label);
 
 		return panel;
 	}
@@ -547,25 +481,6 @@ public abstract class ZeldaDungeon<T> {
 		if(dungeon[y][x] == null) return false;
 
 		return true;
-	}
-
-	/**
-	 * Helper funciton to get the button image for the dungeon viewer
-	 * @param n Level to get the image for
-	 * @param width Width of image in pixels
-	 * @param height Height of image in pixels
-	 * @return BufferedImage for Image label
-	 */
-	private BufferedImage getButtonImage(Node n, int width, int height) {
-		if(Parameters.parameters.booleanParameter("gvgAIForZeldaGAN")) {
-			Level level = n.level;
-			List<List<Integer>> list = level.getLevel();
-			GameBundle bundle = ZeldaGANLevelBreederTask.setUpGameWithLevelFromList(list);
-			return GVGAIUtil.getLevelImage(((BasicGame) bundle.game), bundle.level, (Agent) bundle.agent, width, height, bundle.randomSeed);
-		} else {
-			return DungeonUtil.getLevelImage(n, dungeonInstance);
-		}
-
 	}
 
 	/**
