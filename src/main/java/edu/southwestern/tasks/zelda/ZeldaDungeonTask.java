@@ -44,6 +44,9 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 	private int numObjectives;
 	
 	public ZeldaDungeonTask() {
+		// The other scores for this task are not objectives, and necessary information for calculation is not tracked
+		Parameters.parameters.setBoolean("mapElitesLogsOtherScoreHypervolume", false);
+		
 		// Objective functions
 		numObjectives = 0;
 		if(Parameters.parameters.booleanParameter("zeldaDungeonDistanceFitness")) {
@@ -83,6 +86,8 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 		MMNEAT.registerFitnessFunction("NumSearchStatesVisited",false);
 		MMNEAT.registerFitnessFunction("NumBackTrackRooms",false);
 		MMNEAT.registerFitnessFunction("NumDistinctRooms",false);
+		
+		assert (MMNEAT.getNumberOtherStatsForPopulation(0) == 6) : "Problem setting up other stats: number = "+MMNEAT.getNumberOtherStatsForPopulation(0)+" instead of 6";
 	}
 	
 	@Override
@@ -269,7 +274,6 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 					System.out.println("Number of backtracked rooms: "+numBackTrackRooms);
 					System.out.println("Number of distinct rooms: "+numDistinctRooms);
 
-
 					// View whole dungeon layout
 					BufferedImage image = DungeonUtil.viewDungeon(dungeon, mostRecentVisited, solutionPath);
 					String saveDir = FileUtilities.getSaveDirectory(); //save directory
@@ -363,8 +367,7 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 		if(Parameters.parameters.booleanParameter("zeldaDungeonBackTrackRoomFitness")) 
 			fitness.add(new Double(numBackTrackRooms));
 		if(Parameters.parameters.booleanParameter("zeldaDungeonDistinctRoomFitness")) 
-			fitness.add(new Double(numDistinctRooms));
-		
+			fitness.add(new Double(numDistinctRooms));		
 		
 		double[] scores = new double[fitness.size()];
 		//stores the scores from the fitness at the index
@@ -372,7 +375,8 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 			scores[i] = fitness.get(i);
 		}
 
-		double[] other = new double[] {numRooms, numRoomsTraversed, numRoomsReachable, searchStatesVisited};
+		double[] other = new double[] {numRooms, numRoomsTraversed, numRoomsReachable, searchStatesVisited, numBackTrackRooms, numDistinctRooms};
+		assert other.length == MMNEAT.getNumberOtherStatsForPopulation(0) : "Incorrect number of other scores";
 		Score<T> result = new Score<>(individual, scores, null, other);
 		result.assignMAPElitesBehaviorMapAndScore(behaviorMap);
 		return result;

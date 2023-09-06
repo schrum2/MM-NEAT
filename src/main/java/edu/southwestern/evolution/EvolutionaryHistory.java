@@ -12,7 +12,6 @@ import edu.southwestern.evolution.genotypes.CPPNOrBlockVectorGenotype;
 import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.CombinedGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
-import edu.southwestern.evolution.genotypes.HyperNEATCPPNforDL4JGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype.NodeGene;
 import edu.southwestern.evolution.genotypes.TWEANNPlusParametersGenotype;
@@ -202,10 +201,8 @@ public class EvolutionaryHistory {
 												((TWEANNGenotype) ((CPPNOrBlockVectorGenotype) MMNEAT.genotype).getCurrentGenotype()) :
 													MMNEAT.genotype instanceof CombinedGenotype ? 
 															((CombinedGenotype) MMNEAT.genotype).t1 : // Assume firsts of pair is TWEANNGenotype 
-																MMNEAT.genotype instanceof HyperNEATCPPNforDL4JGenotype ?
-																		((HyperNEATCPPNforDL4JGenotype) MMNEAT.genotype).getCPPN() :
-																			MMNEAT.genotype.copy() : // Assume it is a TWEANNGenotype 
-																				MMNEAT.genotypeExamples.get(populationIndex).copy()); // First population from coevolution
+																MMNEAT.genotype.copy() : // Assume it is a TWEANNGenotype 
+																	MMNEAT.genotypeExamples.get(populationIndex).copy()); // First population from coevolution
 		initArchetype(populationIndex, loadedArchetype, tg);
 	}
 

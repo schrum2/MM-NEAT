@@ -26,7 +26,6 @@ import edu.southwestern.evolution.genotypes.CombinedGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.HyperNEATCPPNAndSubstrateArchitectureGenotype;
 import edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype;
-import edu.southwestern.evolution.genotypes.HyperNEATCPPNforDL4JGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNPlusParametersGenotype;
 import edu.southwestern.evolution.lineage.Offspring;
@@ -273,11 +272,6 @@ public class PopulationUtil {
 					// TWEANNGenotype is the first form of this genotype
 					for (int i = 0; i < size; i++) {
 						afrr.mutate((Genotype<TWEANN>) ((CPPNOrBlockVectorGenotype) parents.get(i)).getCurrentGenotype());
-					}	
-				} else if(parents.get(0) instanceof HyperNEATCPPNforDL4JGenotype) {
-					// Mutate the CPPN within the HyperNEATCPPNforDL4JGenotype
-					for (int i = 0; i < size; i++) {
-						afrr.mutate(((HyperNEATCPPNforDL4JGenotype) parents.get(i)).getCPPN());
 					}	
 				} else {
 					throw new IllegalArgumentException("Cannot change activation function of genotype that has no network: " + parents.get(0).getClass().getName());

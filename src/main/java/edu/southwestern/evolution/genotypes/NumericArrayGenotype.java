@@ -54,7 +54,7 @@ public abstract class NumericArrayGenotype<T> implements Genotype<ArrayList<T>> 
 	 */
 	@SuppressWarnings("unchecked")
 	public Genotype<ArrayList<T>> crossover(Genotype<ArrayList<T>> g) {
-		return MMNEAT.crossoverOperator.crossover(this, g);
+		return MMNEAT.arrayCrossoverOperator.crossover(this, g);
 	}
 
 	/**

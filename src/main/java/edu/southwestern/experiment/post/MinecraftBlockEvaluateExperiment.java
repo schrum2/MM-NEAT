@@ -75,7 +75,7 @@ public class MinecraftBlockEvaluateExperiment implements Experiment{
 					List<Block> shiftedBlocks = seenList[i];
 					boolean tryAgain = false;
 					do {
-						System.out.println("Evaluate shape");
+						System.out.println("Evaluate shape " + i + " of " + seenList.length);
 						double[] fitnessScores = MinecraftShapeTask.calculateFitnessScores(MinecraftClient.POST_EVALUATION_SHAPE_CORNER, fitnessFunctions, shiftedBlocks).t1;
 
 						for(int j = 0; j < fitnessFunctions.size(); j++) {
