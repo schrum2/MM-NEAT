@@ -1,5 +1,7 @@
 package com.aqwis.models;
 
+//From: https://github.com/trygvebw/JavaWaveFunctionCollapse
+
 import java.awt.image.BufferedImage;
 import java.util.Random;
 import java.util.stream.DoubleStream;

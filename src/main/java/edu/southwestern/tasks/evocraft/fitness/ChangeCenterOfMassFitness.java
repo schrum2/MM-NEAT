@@ -8,6 +8,7 @@ import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
+import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 import edu.southwestern.util.datastructures.Pair;
@@ -31,7 +32,7 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 	// Used in sufficientDistanceForFlying. Defines portion of distance to edge of evaluation area that center of mass must move
 	// for a shape to be considered flying. Needs to be high enough for there to be real flight, but not so high that blocks left
 	// behind interfere with calculation. Only one of two checks used to confirm the machine is flying.
-	private static final double CENTER_OF_MASS_PERCENT_TO_EDGE_FOR_FLYING = 0.6;
+	//private static final double CENTER_OF_MASS_PERCENT_TO_EDGE_FOR_FLYING = 0.6; // NOT NEEDED
 	// Assume that the remaining block penalty will not be greater than this (should actually be much less)
 	public static final double FLYING_PENALTY_BUFFER = 5;
 	// At least this many blocks must depart to count as flying
@@ -222,15 +223,21 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 	
 	/**
 	 * Minimum distance that center of mass must move to count a machine as flying
+	 * 
+	 * THIS IS NOT USED: There are too many cases where a flying machine leaves a large
+	 * number of blocks behind, which greatly skews the location of its center of mass.
+	 * As a result, successfully flying machines would be disqualified by reasonable
+	 * settings for this distance check.
+	 * 
 	 * @return minimum flying distance
 	 */
-	private double sufficientDistanceForFlying() {
-		MinecraftCoordinates offsets = MinecraftUtilClass.emptySpaceOffsets();
-		// Recently reduced this to 0.6 from 0.75. Since this check is used in conjunction with
-		// the farthest block check, I hope it won't allow false positives, but there is a risk
-		// of that.
-		return Math.min(offsets.x(), Math.min(offsets.y(), offsets.z()))*CENTER_OF_MASS_PERCENT_TO_EDGE_FOR_FLYING;
-	}
+//	private double sufficientDistanceForFlying() {
+//		MinecraftCoordinates offsets = MinecraftUtilClass.emptySpaceOffsets();
+//		// Recently reduced this to 0.6 from 0.75. Since this check is used in conjunction with
+//		// the farthest block check, I hope it won't allow false positives, but there is a risk
+//		// of that.
+//		return Math.min(offsets.x(), Math.min(offsets.y(), offsets.z()))*CENTER_OF_MASS_PERCENT_TO_EDGE_FOR_FLYING;
+//	}
 
 	/**
 	 * Minimum distance that center of mass must move to count a machine as flying
@@ -307,6 +314,13 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 		double totalChangeDistance = 0;
 
 		for(int i = 1; i < history.size(); i++) {
+			
+			if(Parameters.parameters.booleanParameter("changeCenterOfMassFiltersBlocks")) {
+				// Only keep blocks of a certain type
+				BlockType[] typesToKeep = new BlockType[] {BlockType.values()[Parameters.parameters.integerParameter("changeCenterOfMassBlockType")]};
+				history.get(i).t2 = MinecraftUtilClass.getDesiredBlocks(history.get(i).t2, typesToKeep);
+			}
+			
 			Vertex nextCenterOfMass = MinecraftUtilClass.getCenterOfMass(history.get(i).t2);
 			
 			// Vertex will have NaN components if the shape was empty, in which case we want the 
@@ -414,7 +428,7 @@ public class ChangeCenterOfMassFitness extends TimedEvaluationMinecraftFitnessFu
 		try {
 			//MMNEAT.main("runNumber:5 randomSeed:5 minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftRewardFastFlyingMachines:true minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftChangeCenterOfMassFitness:true minecraftNorthSouthOnly:false minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet trials:1 mu:10 maxGens:60000 minecraftContainsWholeMAPElitesArchive:true forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:true mating:true fs:false ea:edu.southwestern.evolution.mapelites.MAPElites experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:10 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:minecraftaccumulate log:MinecraftAccumulate-TESTING saveTo:TESTING mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5".split(" ")); 
 
-			//MMNEAT.main("runNumber:95 randomSeed:98 minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftChangeCenterOfMassFitness:true minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.ExplosiveBlockSet trials:1 mu:10 maxGens:60000 minecraftContainsWholeMAPElitesArchive:false forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:false mating:true fs:false ea:edu.southwestern.evolution.mapelites.MAPElites experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:true saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:1 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:missileminecraft log:MissileMinecraft-MEObserverExplosiveVectorPistonOrientation saveTo:MEObserverExplosiveVectorPistonOrientation mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5 crossover:edu.southwestern.evolution.crossover.ArrayCrossover watch:true minecraftXMovementBetweenEvals:50 minecraftMaxXShift:1000 minecraftClearAfterEvaluation:true".split(" ")); 
+			//MMNEAT.main("runNumber:95 randomSeed:98 minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftChangeCenterOfMassFitness:true minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.ExplosiveBlockSet trials:1 mu:10 maxGens:60000 minecraftContainsWholeMAPElitesArchive:false forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:false mating:true fs:false ea:edu.southwestern.evolution.mapelites.MAPElites experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:true saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:1 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:missileminecraft log:MissileMinecraft-MEObserverExplosiveVectorPistonOrientation saveTo:MEObserverExplosiveVectorPistonOrientation mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5 arrayCrossover:edu.southwestern.evolution.crossover.ArrayCrossover watch:true minecraftXMovementBetweenEvals:50 minecraftMaxXShift:1000 minecraftClearAfterEvaluation:true".split(" ")); 
 			MMNEAT.main("runNumber:95 randomSeed:98 minecraftXRange:3 minecraftYRange:3 minecraftZRange:3 minecraftRewardFastFlyingMachines:true minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftChangeCenterOfMassFitness:true minecraftNorthSouthOnly:false minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet trials:1 mu:100 maxGens:60000 minecraftContainsWholeMAPElitesArchive:true forceLinearArchiveLayoutInMinecraft:false launchMinecraftServerFromJava:false io:true netio:true interactWithMapElitesInWorld:true mating:true fs:false ea:edu.southwestern.evolution.mapelites.MAPElites experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 spaceBetweenMinecraftShapes:10 task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask watch:false saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype vectorPresenceThresholdForEachBlock:true voxelExpressionThreshold:0.5 minecraftAccumulateChangeInCenterOfMass:true parallelEvaluations:true threads:10 parallelMAPElitesInitialize:true minecraftClearSleepTimer:400 minecraftSkipInitialClear:true base:minecraftaccumulate log:MinecraftAccumulate-TESTING saveTo:TESTING mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesPistonOrientationCountBinLabels minecraftPistonLabelSize:5".split(" ")); 
 			//MMNEAT.main("minecraftEvaluate minecraftBlockListTextFile:BROKEN watch:true netio:false spaceBetweenMinecraftShapes:10 minecraftChangeCenterOfMassFitness:true minecraftAccumulateChangeInCenterOfMass:true".split(" ")); 
 		} catch (FileNotFoundException | NoSuchMethodException e) {

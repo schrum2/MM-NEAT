@@ -124,7 +124,9 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 					otherStatsLogsList.add(otherStatsLogs[i]);
 				}
 				otherStatsFillLog = new MMNEATLog(infix+"_otherStatsFillLog", false, false, false, true);
-				otherHypervolumeLog = new MMNEATLog(infix+"_otherStatsHypervolumeLog", false, false, false, true);
+				if(Parameters.parameters.booleanParameter("mapElitesLogsOtherScoreHypervolume")) {
+					otherHypervolumeLog = new MMNEATLog(infix+"_otherStatsHypervolumeLog", false, false, false, true);
+				}
 			}
 			
 			// Can't check MMNEAT.genotype since MMNEAT.ea is initialized before MMNEAT.genotype
@@ -310,19 +312,21 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 
 				}
 				
-				String textHVLogFilename = experimentPrefix + "_" + infix + "_otherStatsHypervolumeLog_log.txt";
-				String plotHVFilename = textHVLogFilename.replace(".txt", ".plt");
-				
-				File plotFileHV = new File(directory + plotHVFilename);
-				ps = new PrintStream(plotFileHV);
-				//ps.println("set term pdf enhanced");
-				ps.println("set key bottom right");
-				// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
-				ps.println("set xrange [0:"+ yrange +"]");
-				ps.println("set title \"" + experimentPrefix + " Hypervolume\"");
-				//ps.println("set output \"" + experimentPrefix + "_otherStatsHypervolumeLog_log.pdf\"");
-				ps.println("plot \"" + textHVLogFilename + "\" u 1:2 w linespoints t \"Hypervolume\"");
-				ps.close();
+				if(Parameters.parameters.booleanParameter("mapElitesLogsOtherScoreHypervolume")) {
+					String textHVLogFilename = experimentPrefix + "_" + infix + "_otherStatsHypervolumeLog_log.txt";
+					String plotHVFilename = textHVLogFilename.replace(".txt", ".plt");
+
+					File plotFileHV = new File(directory + plotHVFilename);
+					ps = new PrintStream(plotFileHV);
+					//ps.println("set term pdf enhanced");
+					ps.println("set key bottom right");
+					// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
+					ps.println("set xrange [0:"+ yrange +"]");
+					ps.println("set title \"" + experimentPrefix + " Hypervolume\"");
+					//ps.println("set output \"" + experimentPrefix + "_otherStatsHypervolumeLog_log.pdf\"");
+					ps.println("plot \"" + textHVLogFilename + "\" u 1:2 w linespoints t \"Hypervolume\"");
+					ps.close();
+				}
 				
 				//////////////////////////////////////
 				
@@ -658,9 +662,11 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 					otherStatsFillString = otherStatsFillString + maximumFitness + "\t" + qdScore +"\t";
 				}
 				otherStatsFillLog.log(otherStatsFillString);
-				Pair<Double, List<Score<T>>> volumeAndFront = archive.getHypervolumeAndParetoFrontAcrossOtherStats();
-				otherHypervolumeLog.log(pseudoGeneration + "\t" + volumeAndFront.t1);				
-				MultiobjectiveUtil.logParetoFrontGenotypesAndScorePlot("PseudoGen"+pseudoGeneration+"_ParetoFront", volumeAndFront.t2, null);
+				if(Parameters.parameters.booleanParameter("mapElitesLogsOtherScoreHypervolume")) {
+					Pair<Double, List<Score<T>>> volumeAndFront = archive.getHypervolumeAndParetoFrontAcrossOtherStats();
+					otherHypervolumeLog.log(pseudoGeneration + "\t" + volumeAndFront.t1);				
+					MultiobjectiveUtil.logParetoFrontGenotypesAndScorePlot("PseudoGen"+pseudoGeneration+"_ParetoFront", volumeAndFront.t2, null);
+				}
 			}
 			
 			Float maximumFitness = StatisticsUtilities.maximum(elite);

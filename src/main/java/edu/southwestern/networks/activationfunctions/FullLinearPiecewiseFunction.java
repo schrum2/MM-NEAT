@@ -1,7 +1,5 @@
 package edu.southwestern.networks.activationfunctions;
 
-import org.nd4j.linalg.activations.Activation;
-
 public class FullLinearPiecewiseFunction implements ActivationFunction {
 
 	/**
@@ -24,11 +22,6 @@ public class FullLinearPiecewiseFunction implements ActivationFunction {
 		return Math.max(-1, Math.min(1, x));
 	}
 	
-	@Override
-	public Activation equivalentDL4JFunction() {
-		throw new UnsupportedOperationException("No corresponding DL4J function for " + name());
-	}
-
 	@Override
 	public String name() {
 		return "piecewise-full"; //"Full Piecewise";

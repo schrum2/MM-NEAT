@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.nd4j.linalg.activations.Activation;
-
 import edu.southwestern.networks.activationfunctions.ActivationFunction;
 import edu.southwestern.networks.activationfunctions.*;
 import edu.southwestern.parameters.CommonConstants;
@@ -195,18 +193,6 @@ public class ActivationFunctions {
 	 */
 	public static String activationName(int ftype) { 
 		return functionMap.get(ftype).name();
-	}
-	
-	/**
-	 * Return an instance of Activation, which is an activation function used
-	 * by DL4J/ND4J. Activation functions that do not have DL4J equivalents will
-	 * through exceptions.
-	 * 
-	 * @param ftype Unique identifier for activation function in MM-NEAT
-	 * @return Enum instance from DL4J for corresponding activation function.
-	 */
-	public static Activation getDL4JEquivalent(int ftype) {
-		return functionMap.get(ftype).equivalentDL4JFunction();
 	}
 	
 	/**

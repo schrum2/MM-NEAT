@@ -9,6 +9,7 @@ import java.util.Scanner;
 import java.util.StringTokenizer;
 
 import competition.cig.robinbaumgarten.AStarAgent;
+import edu.southwestern.evolution.crossover.ArrayCrossover;
 import edu.southwestern.evolution.crossover.network.TWEANNCrossover;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.nsga2.NSGA2;
@@ -17,13 +18,11 @@ import edu.southwestern.experiment.evolution.LimitedSinglePopulationGenerational
 import edu.southwestern.gridTorus.controllers.AggressivePredatorController;
 import edu.southwestern.gridTorus.controllers.PreyFleeClosestPredatorController;
 import edu.southwestern.networks.ActivationFunctions;
-import edu.southwestern.networks.dl4j.VGG19Wrapper;
 import edu.southwestern.networks.hyperneat.CenteredSubstrateMapping;
 import edu.southwestern.tasks.evocraft.MinecraftClient;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.blocks.MachineBlockSet;
 import edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGenerator;
-import edu.southwestern.tasks.gvgai.player.GVGAIOneStepNNPlayer;
 import edu.southwestern.tasks.gvgai.zelda.level.SimpleLoader;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaHumanSubjectStudy2019GraphGrammar;
 import edu.southwestern.tasks.gvgai.zelda.level.graph.HumanSubjectStudy2019Graph;
@@ -403,6 +402,7 @@ public class Parameters {
 		integerOptions.add("minecraftEmptySpaceBufferX", 22, "Additional space that is cleared around shape on X side before each evaluation");
 		integerOptions.add("minecraftEmptySpaceBufferY", 22, "Additional space that is cleared around shape on Y side before each evaluation");
 		integerOptions.add("minecraftEmptySpaceBufferZ", 22, "Additional space that is cleared around shape on Z side before each evaluation");
+		integerOptions.add("changeCenterOfMassBlockType", MinecraftClient.BlockType.TNT.ordinal(), "If changeCenterOfMassFiltersBlocks is true, then this is the one block type to keep");
 		
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
@@ -441,7 +441,6 @@ public class Parameters {
 		booleanOptions.add("showLatentSpaceOptions", true, "Interactive GAN evolution includes latent space exploration and interpolation");
 		booleanOptions.add("allowInteractiveEvolution", true, "Interactive evolution actually allows evolution");
 		booleanOptions.add("showKLOptions", false, "Interactive GAN evolution displays KL measurements");
-		booleanOptions.add("gvgAIForZeldaGAN", false, "Use GVG-AI representation of Zelda game");
 		booleanOptions.add("starkPicbreeder", false, "Picbreeder only uses two extreme brightness levels");
 		booleanOptions.add("blackAndWhitePicbreeder", false, "Picbreeder only uses black and white (possible gray)");
 		booleanOptions.add("averageScoreHistory", false, "Surviving parent fitness averaged across generations");
@@ -770,8 +769,6 @@ public class Parameters {
 		booleanOptions.add("gvgaiScore", false, "Use the GVGAI Score as a Selection Function");
 		booleanOptions.add("gvgaiTimestep", false, "Use the GVGAI Timestep as a Selection Function");
 		booleanOptions.add("gvgaiVictory", true, "Use the GVGAI Victory as a Selection Function");
-		booleanOptions.add("rlBackprop", false, "Whether to do backprop learning updates during reinforcement learning");
-		booleanOptions.add("rlEpsilonGreedy", false, "Whether to use an epsilon greedy policy when using reinforcement learning");
 		booleanOptions.add("simplifiedInteractiveInterface", true, "Determines how many buttons to show on the interactive evolution interfaces");
 		booleanOptions.add("utBotKilledAtEnd", true, "True if UT2004 bots are forcibly killed at time limit (instead of running until server dies)");
 		booleanOptions.add("zeldaGANUsesOriginalEncoding", true, "True if the number of tiles for the GAN is 4, otherwise 10.");
@@ -888,6 +885,9 @@ public class Parameters {
 		booleanOptions.add("minecraftClearAndVerify", true, "uses clear and verify");		
 		booleanOptions.add("mapElitesReplaceOnEquality", false, "An elite can be replaced by a candidate of equal fitness");		
 		booleanOptions.add("mapElitesSoftAnnealingArchive", false, "Archive has gradually increasing acceptance thresholds for each bin");		
+		booleanOptions.add("mapElitesLogsOtherScoreHypervolume", true, "Treat other scores as components of main objective and plot hypervolume");		
+		booleanOptions.add("changeCenterOfMassFiltersBlocks", false, "Minecraft Change Center of Mass Fitness only looks at blocks of one type");		
+		booleanOptions.add("minecraftSequentialChangeCenterOfMassThenMissileFitness", false, "Uses ChangeCenterOfMass, but adds Missile once shapes can fly");
 		
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
@@ -939,8 +939,6 @@ public class Parameters {
 		doubleOptions.add("meLineMutationRate", 0.0, "Mutation rate of MAP Elites line mutation");
 		doubleOptions.add("redirectLinkRate", 0.0, "Mutation rate for redirecting network links");
 		doubleOptions.add("remainingTUGGoalRatio", 1.0,"What portion of TUG goal remains when objective is active (positive objectives only!)");
-		doubleOptions.add("rlEpsilon", 0.1, "Frequency of completely random actions during Reinforcement Learning");
-		doubleOptions.add("rlGamma", 0.99, "Discount factor used for Reinforcement Learning");
 		doubleOptions.add("scentDecay", 0.99, "Portion of scent remaining after each time step");
 		doubleOptions.add("syllabusChangeProbability", .01, "The probability that a vector will be swapped out for another in the syllabus for intelligent vectors with Behavioral Diversity");
 		doubleOptions.add("foUpperBounds", Double.MAX_VALUE, "The upper bounds for the genotype of a functin optimization problem");
@@ -1032,7 +1030,6 @@ public class Parameters {
 		stringOptions.add("LodeRunnerGANModel", "LodeRunnerAllGround100LevelsEpoch200000_10_7.pth", "File name of GAN model to use for LodeRunner GAN level evolution");
 		stringOptions.add("MegaManGANModel", "MegaManOneGANWith12Tiles_5_Epoch5000.pth", "File name of GAN model to use for MegaMan GAN level evolution");
 		stringOptions.add("mostRecentAutoEncoder", "", "The full path to the most recently trained autoencoder for PictureTargetTask.");
-		
 		stringOptions.add("MegaManGANHorizontalModel", "MegaManSevenGANHorizontalNoWater9_5_Epoch5000.pth", "File name of Horizontal GAN model to use for MegaMan GAN level evolution");
 		stringOptions.add("MegaManGANUpModel", "MegaManSevenGANUpNoWater9_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");
 		stringOptions.add("MegaManGANDownModel", "MegaManSevenGANDownNoWater9_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");
@@ -1045,7 +1042,6 @@ public class Parameters {
 		stringOptions.add("mapElitesArchiveFile", "", "File name of MAPElites level we want to look at from an experiment");
 		stringOptions.add("archiveSubDirectoryName", "archive", "Directory name to store archive files in a MAP Elites run");
 		stringOptions.add("latestIterationSaved", "iterationX", "The last iteration of PictureTargetTask to be saved.");
-		
 		stringOptions.add("minecraftBlockListTextFile", "", "The file name of a MAPElite shape from that archive that is going to be spawned.");
 		stringOptions.add("minecraftBlockListTextFileSecond", "", "the file name of a second MAPElite shape from that archive that is going to be spawned.");
 		
@@ -1054,7 +1050,8 @@ public class Parameters {
 		classOptions.add("zeldaGraphBackBone", HumanSubjectStudy2019Graph.class, "Constructs the graph for the rules of the ZeldaGraphGrammar");
 		classOptions.add("behaviorCharacterization", DomainSpecificCharacterization.class, "Type of behavior characterization used for Behavioral Diversity calculation");
 		classOptions.add("imageFitness", RandomImageFitness.class, "Fitness function for evaluating images");
-		classOptions.add("crossover", TWEANNCrossover.class, "Crossover operator to use if mating is used");
+		classOptions.add("crossover", TWEANNCrossover.class, "Default crossover operator to use if mating is used with most genotypes");
+		classOptions.add("arrayCrossover", ArrayCrossover.class, "Crossover used on array genotypes");
 		classOptions.add("directionalSafetyFunction", null, "Function that decides if CheckEach agent bothers to consider a direction");
 		classOptions.add("ea", NSGA2.class, "A subclass for the evolutionary algorithm to run");
 		classOptions.add("experiment", LimitedSinglePopulationGenerationalEAExperiment.class, "A subclass of Experiment to execute");
@@ -1062,10 +1059,8 @@ public class Parameters {
 		classOptions.add("foFunction", null, "Specific function to be used with function optimization");
 		classOptions.add("genotype", TWEANNGenotype.class, "A subclass defining the genotype to evolve with");
 		classOptions.add("ghostTeam", Legacy.class, "Ghost team in new version of Ms. Pac-Man code");
-		classOptions.add("gvgaiPlayer", GVGAIOneStepNNPlayer.class, "GVGAI Player to be used");
 		classOptions.add("hyperNEATSeedTask", null, "HyperNEAT task that seeds a standard NEAT task");
 		classOptions.add("hyperNEATCustomArchitecture", null, "Custom substrate architecture for a HyperNEAT task (overrides HNProcessDepth and HNProcessWidth)");
-		classOptions.add("imageNetModel", VGG19Wrapper.class, "DL4J model that was trained on ImageNet to classify images");
 		classOptions.add("mapElitesBinLabels", null, "class containing way of putting genotypes in bins of the MAP Elites archive");
 		classOptions.add("marioLevelAgent", AStarAgent.class, "Agent that plays evolved Mario levels");
 		classOptions.add("nicheDefinition", null, "Method for getting the niche of an individual for local competition");
