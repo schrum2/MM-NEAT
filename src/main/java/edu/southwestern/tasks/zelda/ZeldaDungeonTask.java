@@ -87,7 +87,7 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 		MMNEAT.registerFitnessFunction("NumBackTrackRooms",false);
 		MMNEAT.registerFitnessFunction("NumDistinctRooms",false);
 		
-		assert (MMNEAT.getNumberOtherStatsForPopulation(0) == 6) : "Problem setting up other stats: number = "+MMNEAT.getNumberOtherStatsForPopulation(0)+" instead of 6";
+		assert (MMNEAT.getNumberOtherStatsForPopulation(0) == 6) : "Problem setting up other stats: number = "+MMNEAT.getNumberOtherStatsForPopulation(0)+" instead of 6: " + MMNEAT.fitnessFunctions + ":" + MMNEAT.actualFitnessFunctions;
 	}
 	
 	@Override
