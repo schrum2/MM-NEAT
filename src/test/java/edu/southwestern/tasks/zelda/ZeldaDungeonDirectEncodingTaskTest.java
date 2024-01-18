@@ -30,7 +30,7 @@ public class ZeldaDungeonDirectEncodingTaskTest {
 		// TODO: Set the initial parameters here, as in the main method of ZeldaDungeonDirectEncodingTask
 		MMNEAT mmneat = new MMNEAT("runNumber:0 randomSeed:0 watch:false zeldaCPPN2GANSparseKeys:true trackPseudoArchive:false zeldaDungeonDistanceFitness:false zeldaDungeonFewRoomFitness:false zeldaDungeonTraversedRoomFitness:false zeldaPercentDungeonTraversedRoomFitness:false zeldaDungeonRandomFitness:false zeldaDungeonBackTrackRoomFitness:true trials:1 mu:10 io:false netio:false cleanOldNetworks:false zeldaGANUsesOriginalEncoding:false task:edu.southwestern.tasks.zelda.ZeldaDungeonDirectEncodingTask".split(" "));
 		
-		mmneat.loadClasses();
+		MMNEAT.loadClasses();
 //		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false"});//TODO
 //		MMNEAT.loadClasses();
 	}
