@@ -223,20 +223,6 @@ public class GANProcess extends Comm {
 		}
 	}
 
-	/**
-	 * Buffers used for communicating with process via stdin and stdout
-	 */
-	@Override
-	public void initBuffers() {
-		//Initialize input and output
-		if (this.process != null) {
-			this.reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-			this.writer = new PrintStream(this.process.getOutputStream());
-			System.out.println("Process buffers initialized");
-		} else {
-			printErrorMsg("GANProcess:initBuffers:Null process!");
-		}
-	}
 
 	/**
 	 * GAN process running in background, ready to accept latent vectors
