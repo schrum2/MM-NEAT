@@ -6,6 +6,7 @@ import java.lang.ProcessBuilder.Redirect;
 
 import edu.southwestern.tasks.mario.gan.Comm;
 import edu.southwestern.util.PythonUtil;
+import edu.southwestern.util.random.RandomNumbers;
 
 /**
  * This code launches and manages an external executable's input/output in a manner similar
@@ -59,16 +60,14 @@ public class MoleculeProcess extends Comm {
 	public static void main(String[] args) throws IOException {
 		MoleculeProcess mutate = new MoleculeProcess("SMILESMutate.exe");
 		mutate.start();
-
-		String exampleSMILES = "C-C-N-C(=C)-O";
-		int mutationNumber = 3;
+		mutate.commSend(RandomNumbers.randomGenerator.nextInt()+" "+RandomNumbers.randomGenerator.nextInt()); // Two random seeds
 		
-		mutate.commSend("131 246"); // Two random seeds
-		mutate.commSend(exampleSMILES.length()+" "+mutationNumber);    // Input string length and mutation type
-		mutate.commSend(exampleSMILES);
-		
-		System.out.println(mutate.commRecv()); // Result length
-		System.out.println(mutate.commRecv()); // Result string
+		String exampleSMILES = "C1-C-N-C(=C1)-O"; // "C-C-N-C(=C)-O";
+		for(int mutationNumber = 1; mutationNumber <= 7; mutationNumber++) {
+			mutate.commSend(exampleSMILES.length()+" "+mutationNumber);    // Input string length and mutation type
+			mutate.commSend(exampleSMILES);
+			System.out.println(mutationNumber +". " + mutate.commRecv()); // Result string
+		}
 		
 		mutate.commSend("-1 -1"); // special inputs to terminate process
 		
