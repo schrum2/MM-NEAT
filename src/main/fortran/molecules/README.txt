@@ -17,7 +17,7 @@ C-C-N-C(=C)-O
 
 which represents:
 
-<random seed> <???>
+<random seed 1> <random seed 2>
 <input string length> <[1-7] to determine mutation operator>
 <input string>
 
