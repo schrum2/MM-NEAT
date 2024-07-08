@@ -5,15 +5,30 @@ C INITALIZE THE RANDOM NUMBER GENERATOR
 C READ THE NUMBER OF CHARACTERS IN THE STRING AND MUTATION NUMBER
 C
       READ(5,*) ISEED1,ISEED2
-      WRITE(6,*) ISEED1,ISEED2
+C   JACOB: I commented out the echoing of the input values
+C      WRITE(6,*) ISEED1,ISEED2
       CALL RSEED(ISEED1,ISEED2)
-      READ(5,*) MAX,IMUT
-      WRITE(6,*) MAX,IMUT
+
+C JACOB: Added loop until quit with negative mutation number
+C JACOB: Input string length and mutation number
+
+10      READ(5,*) MAX,IMUT
+C   JACOB: I commented out the echoing of the input values
+C      WRITE(6,*) MAX,IMUT
+
+C JACOB: apparently I have to use a nastly GOTO rather than a while loop?
+
+      IF (IMUT .LE. 0) GO TO 20  ! Exit loop if IMUT <= 0
+
+
+C JACOB: Input SMILES String
       READ(5,'(100A1)') (CSTRING(J),J=1,MAX)
-      WRITE(6,'(100A1)') (CSTRING(J),J=1,MAX)
+C   JACOB: I commented out the echoing of the input values
+C      WRITE(6,'(100A1)') (CSTRING(J),J=1,MAX)
 C
 C GENERATE NEW MOLECULES FROM THE CURRENT MOLECULE
 C
+
       IF(IMUT.EQ.1) CALL MUTATE1(CSTRING,MAX)
       IF(IMUT.EQ.2) CALL MUTATE2(CSTRING,MAX)
       IF(IMUT.EQ.3) CALL MUTATE3(CSTRING,MAX)
@@ -21,6 +36,11 @@ C
       IF(IMUT.EQ.5) CALL MUTATE5(CSTRING,MAX)
       IF(IMUT.EQ.6) CALL MUTATE6(CSTRING,MAX)
       IF(IMUT.EQ.7) CALL MUTATE7(CSTRING,MAX)
+      
+C JACOB: Ending the "loop" that uses GOTO
+      GO TO 10  ! Loop back to the beginning
+20    CONTINUE  ! End of loop
+      
       END
 C
 C COMPILE WITH /CHECK=NOOVER ON VAX
@@ -233,7 +253,7 @@ C CHECK IF WE HAVE A VALID MOLECULE
 C
       MAX=MAX+2
       CALL PROCESS(MAX,XSTRING,VAL)
-      WRITE(6,*) "IN MUT2",VAL
+C      WRITE(6,*) "IN MUT2",VAL
       IF(VAL.LT.999.9) THEN
         WRITE(6,*) MAX
         WRITE(6,'(100A1)') (XSTRING(J),J=1,MAX)
