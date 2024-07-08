@@ -23,7 +23,6 @@ which represents:
 
 Output is:
 
-<output string length>
 <mutated output string>
 
 ===================================================================

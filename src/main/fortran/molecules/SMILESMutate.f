@@ -178,7 +178,7 @@ C
 C
       CALL FINDB(XSTRING,MAX,JTEMP)
       IF(JTEMP.GT.MAX) THEN
-        WRITE(6,*) 1
+C        WRITE(6,*) 1
         WRITE(6,'(100A1)') "X"
         RETURN
       ENDIF
@@ -202,10 +202,10 @@ C CHECK IF WE HAVE A VALID MOLECULE
 C
       CALL PROCESS(MAX,XSTRING,VAL)
       IF(VAL.LT.999.9) THEN
-        WRITE(6,*) MAX
+C        WRITE(6,*) MAX
         WRITE(6,'(100A1)') (XSTRING(J),J=1,MAX)
       ELSE
-        WRITE(6,*) 1
+C        WRITE(6,*) 1
         WRITE(6,'(100A1)') "X"
       ENDIF
       RETURN
@@ -231,7 +231,7 @@ C FIX#1
       CALL FINDC(XSTRING,MAX,JTEMP)
 C      CALL FINDA(XSTRING,MAX,JTEMP)
       IF(JTEMP.GT.MAX) THEN
-        WRITE(6,*) 1
+C        WRITE(6,*) 1
         WRITE(6,'(100A1)') "X"
         RETURN
       ENDIF
@@ -255,10 +255,10 @@ C
       CALL PROCESS(MAX,XSTRING,VAL)
 C      WRITE(6,*) "IN MUT2",VAL
       IF(VAL.LT.999.9) THEN
-        WRITE(6,*) MAX
+C        WRITE(6,*) MAX
         WRITE(6,'(100A1)') (XSTRING(J),J=1,MAX)
       ELSE
-        WRITE(6,*) 1
+C        WRITE(6,*) 1
         WRITE(6,'(100A1)') "X"
       ENDIF
       RETURN
@@ -283,7 +283,7 @@ C FIX#2
       CALL FINDC(XSTRING,MAX,JTEMP)
 C      CALL FINDA(XSTRING,MAX,JTEMP)
       IF(JTEMP.GT.MAX) THEN
-        WRITE(6,*) 1
+C        WRITE(6,*) 1
         WRITE(6,'(100A1)') "X"
         RETURN
       ENDIF
@@ -309,10 +309,10 @@ C
 C      WRITE(12,'(100A1)') (XSTRING(JJJ),JJJ=1,MAX)
       CALL PROCESS(MAX,XSTRING,VAL)
       IF(VAL.LT.999.9) THEN
-        WRITE(6,*) MAX
+C        WRITE(6,*) MAX
         WRITE(6,'(100A1)') (XSTRING(J),J=1,MAX)
       ELSE
-        WRITE(6,*) 1
+C        WRITE(6,*) 1
         WRITE(6,'(100A1)') "X"
       ENDIF
       RETURN
@@ -361,10 +361,10 @@ C CHECK IF WE HAVE A VALID MOLECULE
 C      WRITE(6,'(100A1)') (XSTRING(J),J=1,MAX)
       CALL PROCESS(MAX,XSTRING,VAL)
       IF(VAL.LT.999.9) THEN
-        WRITE(6,*) MAX
+C        WRITE(6,*) MAX
         WRITE(6,'(100A1)') (XSTRING(J),J=1,MAX)
       ELSE
-        WRITE(6,*) 1
+C        WRITE(6,*) 1
         WRITE(6,'(100A1)') "X"
       ENDIF
       RETURN
@@ -391,7 +391,7 @@ C
 10    CONTINUE
       IF(NRING.EQ.0) THEN
 C        WRITE(6,*) "THERE ARE NO RINGS IN THIS MOLECULE"
-        WRITE(6,*) 1
+C        WRITE(6,*) 1
         WRITE(6,'(100A1)') "X"
         RETURN
       ENDIF
@@ -417,10 +417,10 @@ C CHECK IF WE HAVE A VALID MOLECULE
 C      WRITE(12,'(100A1)') (XSTRING(JJJ),JJJ=1,MAX)
       CALL PROCESS(MAX,XSTRING,VAL)
       IF(VAL.LT.999.9) THEN
-        WRITE(6,*) MAX
+C        WRITE(6,*) MAX
         WRITE(6,'(100A1)') (XSTRING(J),J=1,MAX)
       ELSE
-        WRITE(6,*) 1
+C        WRITE(6,*) 1
         WRITE(6,'(100A1)') "X"
       ENDIF
       RETURN
@@ -468,7 +468,7 @@ C
 C      WRITE(6,*) "AFTER FINDC",JTEMP
       IF(JTEMP.GT.MAX) THEN
 C        WRITE(6,*) "JTEMP > MAX"
-        WRITE(6,*) 1
+C        WRITE(6,*) 1
         WRITE(6,'(100A1)') "X"
       ENDIF
 C
@@ -547,10 +547,10 @@ C
 C      WRITE(12,'(100A1)') (XSTRING(J),J=1,MAX)
       CALL PROCESS(MAX,XSTRING,VAL)
       IF(VAL.LT.999.9) THEN
-        WRITE(6,*) MAX
+C        WRITE(6,*) MAX
         WRITE(6,'(100A1)') (XSTRING(J),J=1,MAX)
       ELSE
-        WRITE(6,*) 1
+C        WRITE(6,*) 1
         WRITE(6,'(100A1)') "X"
       ENDIF
       RETURN
@@ -582,13 +582,13 @@ C
 C      WRITE(12,*) "NRING =",NRING
       IF(NRING.EQ.0) THEN
 C        WRITE(12,*) "NO RINGS FOUND"
-        WRITE(6,*) 1
+C        WRITE(6,*) 1
         WRITE(6,'(100A1)') "X"
         RETURN
       ENDIF
       IF(NRING.GT.3) THEN
 C        WRITE(12,*) "TOO MANY RINGS"
-        WRITE(6,*) 1
+C        WRITE(6,*) 1
         WRITE(6,'(100A1)') "X"
         RETURN
       ENDIF
@@ -632,10 +632,10 @@ C
 C      WRITE(12,'(100A1)') (XSTRING(J),J=1,MAX)
       CALL PROCESS(MAX,XSTRING,VAL)
       IF(VAL.LT.999.9) THEN
-        WRITE(6,*) MAX
+C        WRITE(6,*) MAX
         WRITE(6,'(100A1)') (XSTRING(J),J=1,MAX)
       ELSE
-        WRITE(6,*) 1
+C        WRITE(6,*) 1
         WRITE(6,'(100A1)') "X"
       ENDIF
       RETURN
