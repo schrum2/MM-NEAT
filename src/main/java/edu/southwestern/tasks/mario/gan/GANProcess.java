@@ -5,11 +5,8 @@ import static edu.southwestern.tasks.gvgai.zelda.ZeldaGANUtil.ZELDA_GAN_EXPANDED
 import static edu.southwestern.tasks.gvgai.zelda.ZeldaGANUtil.ZELDA_GAN_ORIGINAL_TILE_NUMBER;
 import static edu.southwestern.tasks.gvgai.zelda.ZeldaGANUtil.ZELDA_GAN_REDUCED_TILE_NUMBER;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
 import java.lang.ProcessBuilder.Redirect;
 
 import edu.southwestern.parameters.Parameters;
