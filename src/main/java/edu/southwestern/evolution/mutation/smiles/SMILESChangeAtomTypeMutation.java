@@ -4,7 +4,10 @@ import edu.southwestern.parameters.Parameters;
 
 /**
  * Mutates SMILES string by changing a random atom
- * to one of the other available atoms. C, O, N are allowed (Anything else?)
+ * to one of the other available atoms. C, O, N are allowed.
+ * 
+ * Example mutation:
+ * C=C-N-O becomes C=C-N-C
  */
 public class SMILESChangeAtomTypeMutation extends SMILESMutation {
 

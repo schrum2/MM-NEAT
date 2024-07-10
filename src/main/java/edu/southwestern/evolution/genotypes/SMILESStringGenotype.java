@@ -3,6 +3,7 @@ package edu.southwestern.evolution.genotypes;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.mutation.smiles.*;
 
 /**
@@ -10,12 +11,28 @@ import edu.southwestern.evolution.mutation.smiles.*;
  * SMILES = Simplified Molecular-Input Line-Entry System
  * All mutations are based on an external Fortran program
  * developed by Steve Alexander.
+ * 
+ * Some notes on SMILES string formatting from Alexander's paper:
+ * Generating Molecules with Specific Boiling Points and Melting Points: Acyclic Molecules
+ * MATCH Commun. Math. Comput. Chem.
+ * 
+ * Strings can only contain C = carbon, O = oxygen, and N = nitrogen.
+ * Hydrogen is also present in the compounds, but are implicit in SMILES strings.
+ * "The implicit number of hydrogen atoms attached to other atoms is the
+ * difference between the atom’s valence and the number of bonds assigned
+ * to the atom."
+ * Single, double, and triple bonds are represented with -, =, and # respectively
+ * Parentheses are for branches:
+ * "These parentheses are placed directly after the symbol for the atom on the 
+ * main sequence to which it is connected."
  */
 public class SMILESStringGenotype implements Genotype<String> {
 
 	private static final int NUM_SMILES_MUTATION_TYPES = 7;
 	private String smilesString;
 	private ArrayList<Long> parents;
+	private long id = EvolutionaryHistory.nextGenotypeId();
+	
 	private static ArrayList<SMILESMutation> mutationOperators;
 	
 	static {
@@ -84,8 +101,7 @@ public class SMILESStringGenotype implements Genotype<String> {
 
 	@Override
 	public long getId() {
-		// TODO Auto-generated method stub
-		return 0;
+		return id;
 	}
 
 	public String toString() {
