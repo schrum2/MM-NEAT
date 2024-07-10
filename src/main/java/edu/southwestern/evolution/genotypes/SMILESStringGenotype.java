@@ -3,6 +3,8 @@ package edu.southwestern.evolution.genotypes;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.southwestern.evolution.mutation.smiles.*;
+
 /**
  * A SMILES string is a representation for molecules:
  * SMILES = Simplified Molecular-Input Line-Entry System
@@ -11,8 +13,21 @@ import java.util.List;
  */
 public class SMILESStringGenotype implements Genotype<String> {
 
+	private static final int NUM_SMILES_MUTATION_TYPES = 7;
 	private String smilesString;
 	private ArrayList<Long> parents;
+	private static ArrayList<SMILESMutation> mutationOperators;
+	
+	static {
+		mutationOperators = new ArrayList<>(NUM_SMILES_MUTATION_TYPES);
+		mutationOperators.add(new SMILESChangeBondTypeMutation());
+		mutationOperators.add(new SMILESInsertNewAtomMutation());
+		mutationOperators.add(new SMILESBranchNewAtomMutation());
+		mutationOperators.add(new SMILESDeleteAtomMutation());
+		mutationOperators.add(new SMILESChangeAtomTypeMutation());
+		mutationOperators.add(new SMILESDeleteRingMutation());
+		mutationOperators.add(new SMILESAddRingMutation());
+	}
 	
 	public SMILESStringGenotype(String smiles) {
 		smilesString = smiles;
@@ -40,8 +55,14 @@ public class SMILESStringGenotype implements Genotype<String> {
 
 	@Override
 	public void mutate() {
-		// TODO Auto-generated method stub
-		
+
+		StringBuilder sb = new StringBuilder();
+		sb.append(this.getId());
+		sb.append(" ");
+
+		for(SMILESMutation mut : mutationOperators) {
+			mut.go(this, sb);
+		}
 	}
 
 	@Override
