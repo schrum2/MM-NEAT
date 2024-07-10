@@ -19,6 +19,10 @@ public class SMILESStringGenotype implements Genotype<String> {
 		parents = new ArrayList<Long>();
 	}
 	
+	public void updateSMILESString(String newString) {
+		smilesString = newString;
+	}
+	
 	@Override
 	public void addParent(long id) {
 		parents.add(id);

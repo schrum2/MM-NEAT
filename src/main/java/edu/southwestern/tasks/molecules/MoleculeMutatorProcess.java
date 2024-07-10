@@ -3,6 +3,8 @@ package edu.southwestern.tasks.molecules;
 import java.io.IOException;
 
 import edu.southwestern.evolution.genotypes.SMILESStringGenotype;
+import edu.southwestern.evolution.mutation.smiles.*;
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.random.RandomNumbers;
 
 /**
@@ -39,44 +41,8 @@ public class MoleculeMutatorProcess extends MoleculeProcess {
 	private MoleculeMutatorProcess() {
 		super("SMILESMutate.exe");
 	}
-
-	public static final int SMILES_MUTATION_TYPE_CHANGE_BOND_TYPE = 1;
-	public static final int SMILES_MUTATION_TYPE_INSERT_NEW_ATOM = 2;
-	public static final int SMILES_MUTATION_TYPE_BRANCH_NEW_ATOM = 3;
-	public static final int SMILES_MUTATION_TYPE_DELETE_ATOM = 4;
-	public static final int SMILES_MUTATION_TYPE_CHANGE_ATOM_TYPE = 5;
-	public static final int SMILES_MUTATION_TYPE_DELETE_RING = 6;
-	public static final int SMILES_MUTATION_TYPE_ADD_RING = 7;
-
-	public static SMILESStringGenotype smilesMutationChangeBondType(SMILESStringGenotype smiles) {
-		return smilesMutation(smiles,SMILES_MUTATION_TYPE_CHANGE_BOND_TYPE);
-	}
-	
-	public static SMILESStringGenotype smilesMutationInsertNewAtom(SMILESStringGenotype smiles) {
-		return smilesMutation(smiles,SMILES_MUTATION_TYPE_INSERT_NEW_ATOM);
-	}
-	
-	public static SMILESStringGenotype smilesMutationBranchNewAtom(SMILESStringGenotype smiles) {
-		return smilesMutation(smiles,SMILES_MUTATION_TYPE_BRANCH_NEW_ATOM);
-	}
-	
-	public static SMILESStringGenotype smilesMutationDeleteAtom(SMILESStringGenotype smiles) {
-		return smilesMutation(smiles,SMILES_MUTATION_TYPE_DELETE_ATOM);
-	}
-	
-	public static SMILESStringGenotype smilesMutationChangeAtomType(SMILESStringGenotype smiles) {
-		return smilesMutation(smiles,SMILES_MUTATION_TYPE_CHANGE_ATOM_TYPE);
-	}
-	
-	public static SMILESStringGenotype smilesMutationDeleteRing(SMILESStringGenotype smiles) {
-		return smilesMutation(smiles,SMILES_MUTATION_TYPE_DELETE_RING);
-	}
-	
-	public static SMILESStringGenotype smilesMutationAddRing(SMILESStringGenotype smiles) {
-		return smilesMutation(smiles,SMILES_MUTATION_TYPE_ADD_RING);
-	}
-	
-	private static SMILESStringGenotype smilesMutation(SMILESStringGenotype smiles, int mutationNumber) {
+		
+	public static void smilesMutation(SMILESStringGenotype smiles, int mutationNumber) {
 		MoleculeMutatorProcess temp = getMoleculeMutatorProcess();
 		String smilesString = smiles.getPhenotype();
 		try {
@@ -88,20 +54,31 @@ public class MoleculeMutatorProcess extends MoleculeProcess {
 			System.exit(1);
 		}    // Input string length and mutation type
 		String resultString = temp.commRecv();
-		return new SMILESStringGenotype(resultString);
+		if(!resultString.equals("X")) {
+			smiles.updateSMILESString(resultString);
+		}
 	}
 	
 	public static void main(String[] args) {
-		String exampleSMILES = "C1-C-N-C(=C1)-O";
+		Parameters.initializeParameterCollections(new String[0]);
+		String exampleSMILES = "C-C-N-C(=C)-O";
 		SMILESStringGenotype smiles = new SMILESStringGenotype(exampleSMILES);
 		
-		System.out.println(smilesMutationChangeBondType(smiles));
-		System.out.println(smilesMutationInsertNewAtom(smiles));
-		System.out.println(smilesMutationBranchNewAtom(smiles));
-		System.out.println(smilesMutationDeleteAtom(smiles));
-		System.out.println(smilesMutationChangeAtomType(smiles));
-		System.out.println(smilesMutationDeleteRing(smiles));
-		System.out.println(smilesMutationAddRing(smiles));
+		System.out.println("      Start: "+ exampleSMILES);
+		new SMILESChangeBondTypeMutation().mutate(smiles);
+		System.out.println("Change Bond: "+ smiles);
+		new SMILESInsertNewAtomMutation().mutate(smiles);
+		System.out.println("Insert Atom: "+ smiles);
+		new SMILESBranchNewAtomMutation().mutate(smiles);
+		System.out.println("Branch Atom: "+ smiles);
+		new SMILESDeleteAtomMutation().mutate(smiles);
+		System.out.println("Delete Atom: "+ smiles);
+		new SMILESChangeAtomTypeMutation().mutate(smiles);
+		System.out.println("Change Atom: "+ smiles);
+		new SMILESDeleteRingMutation().mutate(smiles);
+		System.out.println("Delete Ring: "+ smiles);
+		new SMILESAddRingMutation().mutate(smiles);
+		System.out.println("   Add Ring: "+ smiles);
 		
 		terminateMutatorProcess();
 	}

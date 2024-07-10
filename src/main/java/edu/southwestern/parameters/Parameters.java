@@ -890,6 +890,13 @@ public class Parameters {
 		booleanOptions.add("minecraftSequentialChangeCenterOfMassThenMissileFitness", false, "Uses ChangeCenterOfMass, but adds Missile once shapes can fly");
 		
 		// Double parameters
+		doubleOptions.add("smilesBondTypeMutationRate", 0.1, "SMILES rate for changing a bond type (e.g. single to double or double to single)");
+		doubleOptions.add("smilesInsertNewAtomMutationRate", 0.1, "SMILES rate for inserting a new random atom along the main backbone of the string");
+		doubleOptions.add("smilesBranchNewAtomMutationRate", 0.1, "SMILES rate for inserting a new random atom on a branch off of the main backbone");
+		doubleOptions.add("smilesDeleteAtomMutationRate", 0.1, "SMILES rate for deleting an atom from the string");
+		doubleOptions.add("smilesAtomTypeMutationRate", 0.1, "SMILES rate for changing an atom type");
+		doubleOptions.add("smilesDeleteRingMutationRate", 0.1, "SMILES rate for deleting a ring from a string");
+		doubleOptions.add("smilesAddRingMutationRate", 0.1, "SMILES rate for adding a ring to a string");
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
 		doubleOptions.add("backpropLearningRate", 0.1, "Rate backprop learning for neural networks");
 		doubleOptions.add("campPercentOfTrials", 1.0, "What percentage trials should be based on camps");
