@@ -84,8 +84,7 @@ public class SMILESStringGenotype implements Genotype<String> {
 
 	@Override
 	public Genotype<String> crossover(Genotype<String> g) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("No crossover for SMILES strings yet");
 	}
 
 	@Override
