@@ -54,6 +54,10 @@ public class SMILESStringGenotype implements Genotype<String> {
 		mutationOperators.add(new SMILESAddRingMutation());
 	}
 	
+	public SMILESStringGenotype() {
+		this(staticNewSMILESString());
+	}
+	
 	public SMILESStringGenotype(String smiles) {
 		smilesString = smiles;
 		parents = new ArrayList<Long>();
@@ -100,23 +104,28 @@ public class SMILESStringGenotype implements Genotype<String> {
 		return smilesString;
 	}
 
+	// Make these be parameters
 	private static final int MIN_STARTING_ATOMS = 2;
 	private static final int MAX_STARTING_ATOMS = 7;
 	
+	@Override
+	public Genotype<String> newInstance() {
+		return new SMILESStringGenotype(staticNewSMILESString());
+	}
+
 	/**
 	 * New SMILES strings consist only of a random number of C atoms
 	 * with single bonds, so mutations are needed to explore the 
 	 * addition of more interesting structures and atoms.
 	 */
-	@Override
-	public Genotype<String> newInstance() {
+	private static String staticNewSMILESString() {
 		StringBuilder str = new StringBuilder();
 		int cCount = RandomNumbers.randomGenerator.nextInt((1 + MAX_STARTING_ATOMS) - MIN_STARTING_ATOMS) + MIN_STARTING_ATOMS;
 		str.append("C");
 		for(int i = 1; i < cCount; i++) {
 			str.append("-C");
 		}
-		return new SMILESStringGenotype(str.toString());
+		return str.toString();
 	}
 
 	@Override
