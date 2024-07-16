@@ -87,7 +87,8 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> implements J
 			MMNEAT.registerFitnessFunction("numUpSegments", false);
 			MMNEAT.registerFitnessFunction("numDownSegments",false);
 			MMNEAT.registerFitnessFunction("numCornerSegments", false);
-			MMNEAT.registerFitnessFunction("numDistinctSegments", false);		}
+			MMNEAT.registerFitnessFunction("numDistinctSegments", false);		
+		}
 	}
 	@Override
 	/**
