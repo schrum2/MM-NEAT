@@ -41,7 +41,7 @@ public class SMILESStringGenotype implements Genotype<String> {
 	private ArrayList<Long> parents;
 	private long id = EvolutionaryHistory.nextGenotypeId();
 	
-	private static ArrayList<SMILESMutation> mutationOperators = null;
+	private static transient ArrayList<SMILESMutation> mutationOperators = null;
 	
 	private static ArrayList<SMILESMutation> getMutationOperators() {
 		if(mutationOperators == null) {
@@ -137,7 +137,7 @@ public class SMILESStringGenotype implements Genotype<String> {
 	}
 
 	public String toString() {
-		return smilesString;
+		return getId() + ":" + smilesString;
 	}
 	
 }
