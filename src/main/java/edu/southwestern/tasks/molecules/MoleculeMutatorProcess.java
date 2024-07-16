@@ -33,7 +33,13 @@ public class MoleculeMutatorProcess extends MoleculeProcess {
 	
 	public static void terminateMutatorProcess() {
 		if(mutatorProcess != null) {
-			mutatorProcess.process.destroy();
+			try {
+				// Should exit gracefully
+				mutatorProcess.commSend("-1 -1");
+			} catch (IOException e) {
+				// Kill otherwise
+				mutatorProcess.process.destroy(); 
+			} 
 			mutatorProcess = null;
 		}
 	}
