@@ -411,6 +411,7 @@ public class Parameters {
 		longOptions.add("shortTimeBetweenMinecraftReads", 1000L, "The amount of time that change center of mass fitness function waits before reading in the area again");
 
 		// Boolean parameters 
+		booleanOptions.add("moleculeTargetMeltingAndBoilingPointFitness", true, "Use Steve Alexander's original fitness based on target melting and boiling points");
 		booleanOptions.add("turnOffRestrictionsDuringInit", true, "Whether MAP Elites should turn off restricted bin ranges during initialization.");
 		booleanOptions.add("discardFromBinOutsideRestrictedRange", false, "Whether MAP Elites should do range checks on bins to see if an elite should be discarded.");
 		booleanOptions.add("steadyStateArchetypeSaving", true, "Steady state evolution updates the NN archetype. Turn off to increase speed, but lose ability to resume from crash.");
@@ -890,6 +891,8 @@ public class Parameters {
 		booleanOptions.add("minecraftSequentialChangeCenterOfMassThenMissileFitness", false, "Uses ChangeCenterOfMass, but adds Missile once shapes can fly");
 		
 		// Double parameters
+		doubleOptions.add("smilesTargetMeltingPoint", 179.44000148773193, "Target melting point for fitness calculation");
+		doubleOptions.add("smilesTargetBoilingPoint", 379.65999603271484, "Target boiling point for fitness calculation");
 		doubleOptions.add("smilesBondTypeMutationRate", 0.1, "SMILES rate for changing a bond type (e.g. single to double or double to single)");
 		doubleOptions.add("smilesInsertNewAtomMutationRate", 0.1, "SMILES rate for inserting a new random atom along the main backbone of the string");
 		doubleOptions.add("smilesBranchNewAtomMutationRate", 0.1, "SMILES rate for inserting a new random atom on a branch off of the main backbone");
