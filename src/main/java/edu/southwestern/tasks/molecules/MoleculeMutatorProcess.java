@@ -60,7 +60,12 @@ public class MoleculeMutatorProcess extends MoleculeProcess {
 			System.exit(1);
 		}    // Input string length and mutation type
 		String resultString = temp.commRecv();
-		if(!resultString.equals("X")) {
+		if(resultString.trim().contains(" ")) {
+			System.out.println("The mutation process returned bad results");
+			System.out.println("resultString = "+resultString);
+			// Need more error information here
+			System.exit(1);
+		} else if(!resultString.equals("X")) {
 			smiles.updateSMILESString(resultString);
 		}
 	}
