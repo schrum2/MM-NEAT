@@ -48,7 +48,7 @@ public class MoleculeMutatorProcess extends MoleculeProcess {
 		super("SMILESMutate.exe");
 	}
 		
-	public static void smilesMutation(SMILESStringGenotype smiles, int mutationNumber) {
+	public static synchronized void smilesMutation(SMILESStringGenotype smiles, int mutationNumber) {
 		MoleculeMutatorProcess temp = getMoleculeMutatorProcess();
 		String smilesString = smiles.getPhenotype();
 		try {
