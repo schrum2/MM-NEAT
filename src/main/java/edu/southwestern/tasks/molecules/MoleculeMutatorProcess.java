@@ -14,6 +14,7 @@ import edu.southwestern.util.random.RandomNumbers;
 public class MoleculeMutatorProcess extends MoleculeProcess {
 
 	private static MoleculeMutatorProcess mutatorProcess;
+	private static final boolean DEBUG = true;
 	
 	private static synchronized MoleculeMutatorProcess getMoleculeMutatorProcess() {
 		if(mutatorProcess == null) {
@@ -22,7 +23,9 @@ public class MoleculeMutatorProcess extends MoleculeProcess {
 			
 			try {
 				// Send two random seeds that are themselves random numbers (change to be parameters?)
-				mutatorProcess.commSend(RandomNumbers.randomGenerator.nextInt()+" "+RandomNumbers.randomGenerator.nextInt());
+				String seeds = RandomNumbers.randomGenerator.nextInt()+" "+RandomNumbers.randomGenerator.nextInt();
+				if(DEBUG) System.out.println("seeds are: "+seeds);
+				mutatorProcess.commSend(seeds);
 			} catch (IOException e) {
 				e.printStackTrace();
 				System.out.println("Mutator process initialization failed to accept random seeds");
@@ -85,7 +88,7 @@ public class MoleculeMutatorProcess extends MoleculeProcess {
 		System.out.println("Branch Atom: "+ smiles);
 		new SMILESDeleteAtomMutation().mutate(smiles);
 		System.out.println("Delete Atom: "+ smiles);
-		new SMILESChangeAtomTypeMutation().mutate(smiles);
+		new SMILESChangeAtomTypeMutation().mutate(smiles);  // Is this the problem?
 		System.out.println("Change Atom: "+ smiles);
 		new SMILESDeleteRingMutation().mutate(smiles);
 		System.out.println("Delete Ring: "+ smiles);
