@@ -7,6 +7,7 @@ import java.util.HashMap;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.SMILESStringGenotype;
+import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.NoisyLonerTask;
 import edu.southwestern.util.datastructures.ArrayUtil;
@@ -62,6 +63,7 @@ public class MoleculeTask<T> extends NoisyLonerTask<T> {
 		
 		// Get melting point and boiling point first
 		Pair<Double, Double> pair = MoleculeMeltingAndBoilingPointProcess.smilesMeltingAndBoilingPoints((SMILESStringGenotype) individual);
+		//System.out.println(pair);
 		double meltingPoint = pair.t1;
 		double boilingPoint = pair.t2;
 		
@@ -78,14 +80,25 @@ public class MoleculeTask<T> extends NoisyLonerTask<T> {
 		
 		double[] otherScores = new double[] {meltingPoint, boilingPoint};
 		
+		if(CommonConstants.watch) {
+			System.out.println(individual + " has MP " + meltingPoint + " and BP " + boilingPoint + " and fitness " + fitnesses);
+		}
+		
 		return new Pair<double[],double[]>(ArrayUtil.doubleArrayFromList(fitnesses), otherScores);
 	}
 	
+	public void finalCleanup() {
+		// Close the Fortran programs running in the background
+		MoleculeMutatorProcess.terminateMutatorProcess();
+		MoleculeMeltingAndBoilingPointProcess.terminateMelingBoilingPointProcess();
+	}
+	
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
-		MMNEAT.main(("runNumber:1 randomSeed:1 watch:false trials:1 mu:100 base:molecules log:Molecules-TargetMeltingBoiling "+
-					 "saveTo:TargetMeltingBoiling maxGens:500 io:true netio:true mating:false "+
+		MMNEAT.main(("runNumber:1 randomSeed:1 watch:true trials:1 mu:10 base:molecules log:Molecules-TargetMeltingBoiling "+
+					 "saveTo:TargetMeltingBoiling maxGens:3 io:true netio:true mating:false "+
 				 	 "task:edu.southwestern.tasks.molecules.MoleculeTask cleanFrequency:-1 saveAllChampions:true "+
 					 "genotype:edu.southwestern.evolution.genotypes.SMILESStringGenotype "+
-				 	 "smilesTargetMeltingPoint:179.44000148773193 smilesTargetBoilingPoint:379.65999603271484").split(" "));
+				 	 "smilesTargetMeltingPoint:179.44000148773193 smilesTargetBoilingPoint:379.65999603271484 "+
+					 "moleculeTargetMeltingAndBoilingPointFitness:true").split(" "));
 	}
 }
