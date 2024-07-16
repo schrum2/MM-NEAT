@@ -15,7 +15,8 @@ import edu.southwestern.util.datastructures.Pair;
 public class MoleculeTask<T> extends NoisyLonerTask<T> {
 
 	private int numFitnessFunctions;
-
+	private static final int NUM_OTHER_SCORES = 2;
+	
 	public MoleculeTask() {
 		numFitnessFunctions = 0;
 		if(Parameters.parameters.booleanParameter("moleculeTargetMeltingAndBoilingPointFitness")) {
@@ -30,6 +31,17 @@ public class MoleculeTask<T> extends NoisyLonerTask<T> {
 	@Override
 	public void postConstructionInitialization() {
 		// Nothing
+	}
+	
+	public double[] minScores() {
+		if(Parameters.parameters.booleanParameter("moleculeTargetMeltingAndBoilingPointFitness")) {
+			return new double[] {-1500};
+		}
+		throw new IllegalStateException("No fitness defined");
+	}
+
+	public int numOtherScores() {
+		return NUM_OTHER_SCORES;
 	}
 	
 	@Override
@@ -59,9 +71,9 @@ public class MoleculeTask<T> extends NoisyLonerTask<T> {
 			
 			double meltDifference = targetMeltingPoint - meltingPoint;
 			double boilDifference = targetBoilingPoint - boilingPoint;
-			double fitness = Math.sqrt(meltDifference*meltDifference + boilDifference*boilDifference);
-			
-			fitnesses.add(fitness);
+			double differenceFromTarget = Math.sqrt(meltDifference*meltDifference + boilDifference*boilDifference);
+			// Negated since the goal is a value of 0
+			fitnesses.add(-differenceFromTarget);
 		}
 		
 		double[] otherScores = new double[] {meltingPoint, boilingPoint};
