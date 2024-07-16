@@ -45,10 +45,9 @@ public class MoleculeMeltingAndBoilingPointProcess extends MoleculeProcess {
 	 * @param smiles Genotype with a SMILES string
 	 * @return Pair of melting point followed by boiling point
 	 */
-	public static Pair<Double,Double> smilesMeltingAndBoilingPoints(SMILESStringGenotype smiles) {
+	public static synchronized Pair<Double,Double> smilesMeltingAndBoilingPoints(SMILESStringGenotype smiles) {
 		MoleculeMeltingAndBoilingPointProcess process = getMeltingBoilingPointProcess();
 		String smilesString = smiles.getPhenotype();
-
 		try {
 			process.commSend(""+smilesString.length());
 			process.commSend(smilesString);	
@@ -57,7 +56,21 @@ public class MoleculeMeltingAndBoilingPointProcess extends MoleculeProcess {
 			System.out.println("MoleculeMeltingAndBoilingPointProcess failed");
 			System.exit(1);
 		}
-		double melting = Double.parseDouble(process.commRecv());
+		String meltingResult = process.commRecv();
+		if(meltingResult.trim().contains(" ")) {
+			System.out.println("The melting point process returned bad results");
+			System.out.println("meltingResult = "+meltingResult);
+			// Need more error information here
+			System.exit(1);
+		}
+		double melting = Double.parseDouble(meltingResult);
+		String boilingResult = process.commRecv();
+		if(boilingResult.trim().contains(" ")) {
+			System.out.println("The boiling point process returned bad results");
+			System.out.println("boilingResult = "+boilingResult);
+			// Need more error information here
+			System.exit(1);
+		}
 		double boiling = Double.parseDouble(process.commRecv());
 		assert melting < boiling;
 		return new Pair<Double,Double>(melting, boiling);
