@@ -4,7 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.southwestern.evolution.EvolutionaryHistory;
-import edu.southwestern.evolution.mutation.smiles.*;
+import edu.southwestern.evolution.mutation.smiles.SMILESAddRingMutation;
+import edu.southwestern.evolution.mutation.smiles.SMILESBranchNewAtomMutation;
+import edu.southwestern.evolution.mutation.smiles.SMILESChangeAtomTypeMutation;
+import edu.southwestern.evolution.mutation.smiles.SMILESChangeBondTypeMutation;
+import edu.southwestern.evolution.mutation.smiles.SMILESDeleteAtomMutation;
+import edu.southwestern.evolution.mutation.smiles.SMILESDeleteRingMutation;
+import edu.southwestern.evolution.mutation.smiles.SMILESInsertNewAtomMutation;
+import edu.southwestern.evolution.mutation.smiles.SMILESMutation;
+import edu.southwestern.util.random.RandomNumbers;
 
 /**
  * A SMILES string is a representation for molecules:
@@ -92,10 +100,23 @@ public class SMILESStringGenotype implements Genotype<String> {
 		return smilesString;
 	}
 
+	private static final int MIN_STARTING_ATOMS = 2;
+	private static final int MAX_STARTING_ATOMS = 7;
+	
+	/**
+	 * New SMILES strings consist only of a random number of C atoms
+	 * with single bonds, so mutations are needed to explore the 
+	 * addition of more interesting structures and atoms.
+	 */
 	@Override
 	public Genotype<String> newInstance() {
-		// TODO Auto-generated method stub
-		return null;
+		StringBuilder str = new StringBuilder();
+		int cCount = RandomNumbers.randomGenerator.nextInt((1 + MAX_STARTING_ATOMS) - MIN_STARTING_ATOMS) + MIN_STARTING_ATOMS;
+		str.append("C");
+		for(int i = 1; i < cCount; i++) {
+			str.append("-C");
+		}
+		return new SMILESStringGenotype(str.toString());
 	}
 
 	@Override
@@ -106,4 +127,5 @@ public class SMILESStringGenotype implements Genotype<String> {
 	public String toString() {
 		return smilesString;
 	}
+	
 }

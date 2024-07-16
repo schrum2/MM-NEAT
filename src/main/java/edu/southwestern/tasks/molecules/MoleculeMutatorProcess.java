@@ -3,8 +3,8 @@ package edu.southwestern.tasks.molecules;
 import java.io.IOException;
 
 import edu.southwestern.evolution.genotypes.SMILESStringGenotype;
-import edu.southwestern.evolution.mutation.smiles.*;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.random.RandomNumbers;
 
 /**
@@ -65,27 +65,42 @@ public class MoleculeMutatorProcess extends MoleculeProcess {
 		}
 	}
 	
+//	public static void main(String[] args) {
+//		Parameters.initializeParameterCollections(new String[0]);
+//		String exampleSMILES = "C-C-N-C(=C)-O";
+//		SMILESStringGenotype smiles = new SMILESStringGenotype(exampleSMILES);
+//		
+//		System.out.println("      Start: "+ exampleSMILES);
+//		new SMILESChangeBondTypeMutation().mutate(smiles);
+//		System.out.println("Change Bond: "+ smiles);
+//		new SMILESInsertNewAtomMutation().mutate(smiles);
+//		System.out.println("Insert Atom: "+ smiles);
+//		new SMILESBranchNewAtomMutation().mutate(smiles);
+//		System.out.println("Branch Atom: "+ smiles);
+//		new SMILESDeleteAtomMutation().mutate(smiles);
+//		System.out.println("Delete Atom: "+ smiles);
+//		new SMILESChangeAtomTypeMutation().mutate(smiles);
+//		System.out.println("Change Atom: "+ smiles);
+//		new SMILESDeleteRingMutation().mutate(smiles);
+//		System.out.println("Delete Ring: "+ smiles);
+//		new SMILESAddRingMutation().mutate(smiles);
+//		System.out.println("   Add Ring: "+ smiles);
+//		
+//		terminateMutatorProcess();
+//	}
+	
 	public static void main(String[] args) {
 		Parameters.initializeParameterCollections(new String[0]);
-		String exampleSMILES = "C-C-N-C(=C)-O";
-		SMILESStringGenotype smiles = new SMILESStringGenotype(exampleSMILES);
+		SMILESStringGenotype smiles = (SMILESStringGenotype) new SMILESStringGenotype("").newInstance();
+		System.out.println(smiles);
+		for(int i = 0; i < 10; i++) {
+			smiles.mutate();
+		}
 		
-		System.out.println("      Start: "+ exampleSMILES);
-		new SMILESChangeBondTypeMutation().mutate(smiles);
-		System.out.println("Change Bond: "+ smiles);
-		new SMILESInsertNewAtomMutation().mutate(smiles);
-		System.out.println("Insert Atom: "+ smiles);
-		new SMILESBranchNewAtomMutation().mutate(smiles);
-		System.out.println("Branch Atom: "+ smiles);
-		new SMILESDeleteAtomMutation().mutate(smiles);
-		System.out.println("Delete Atom: "+ smiles);
-		new SMILESChangeAtomTypeMutation().mutate(smiles);
-		System.out.println("Change Atom: "+ smiles);
-		new SMILESDeleteRingMutation().mutate(smiles);
-		System.out.println("Delete Ring: "+ smiles);
-		new SMILESAddRingMutation().mutate(smiles);
-		System.out.println("   Add Ring: "+ smiles);
+		Pair<Double, Double> pair = MoleculeMeltingAndBoilingPointProcess.smilesMeltingAndBoilingPoints(smiles);
+		System.out.println(smiles.getPhenotype() + "\nmelting point: "+pair.t1+"\nboiling point: "+pair.t2);
 		
-		terminateMutatorProcess();
+		MoleculeMutatorProcess.terminateMutatorProcess();
+		MoleculeMeltingAndBoilingPointProcess.terminateMelingBoilingPointProcess();
 	}
 }
