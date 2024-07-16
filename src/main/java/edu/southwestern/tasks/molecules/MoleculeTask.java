@@ -1,5 +1,6 @@
 package edu.southwestern.tasks.molecules;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -68,5 +69,11 @@ public class MoleculeTask<T> extends NoisyLonerTask<T> {
 		return new Pair<double[],double[]>(ArrayUtil.doubleArrayFromList(fitnesses), otherScores);
 	}
 	
-	
+	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
+		MMNEAT.main(("runNumber:1 randomSeed:1 watch:false trials:1 mu:100 base:molecules log:Molecules-TargetMeltingBoiling "+
+					 "saveTo:TargetMeltingBoiling maxGens:500 io:true netio:true mating:false "+
+				 	 "task:edu.southwestern.tasks.molecules.MoleculeTask cleanFrequency:-1 saveAllChampions:true "+
+					 "genotype:edu.southwestern.evolution.genotypes.SMILESStringGenotype "+
+				 	 "smilesTargetMeltingPoint:179.44000148773193 smilesTargetBoilingPoint:379.65999603271484").split(" "));
+	}
 }

@@ -41,17 +41,20 @@ public class SMILESStringGenotype implements Genotype<String> {
 	private ArrayList<Long> parents;
 	private long id = EvolutionaryHistory.nextGenotypeId();
 	
-	private static ArrayList<SMILESMutation> mutationOperators;
+	private static ArrayList<SMILESMutation> mutationOperators = null;
 	
-	static {
-		mutationOperators = new ArrayList<>(NUM_SMILES_MUTATION_TYPES);
-		mutationOperators.add(new SMILESChangeBondTypeMutation());
-		mutationOperators.add(new SMILESInsertNewAtomMutation());
-		mutationOperators.add(new SMILESBranchNewAtomMutation());
-		mutationOperators.add(new SMILESDeleteAtomMutation());
-		mutationOperators.add(new SMILESChangeAtomTypeMutation());
-		mutationOperators.add(new SMILESDeleteRingMutation());
-		mutationOperators.add(new SMILESAddRingMutation());
+	private static ArrayList<SMILESMutation> getMutationOperators() {
+		if(mutationOperators == null) {
+			mutationOperators = new ArrayList<>(NUM_SMILES_MUTATION_TYPES);
+			mutationOperators.add(new SMILESChangeBondTypeMutation());
+			mutationOperators.add(new SMILESInsertNewAtomMutation());
+			mutationOperators.add(new SMILESBranchNewAtomMutation());
+			mutationOperators.add(new SMILESDeleteAtomMutation());
+			mutationOperators.add(new SMILESChangeAtomTypeMutation());
+			mutationOperators.add(new SMILESDeleteRingMutation());
+			mutationOperators.add(new SMILESAddRingMutation());
+		} 
+		return mutationOperators;
 	}
 	
 	public SMILESStringGenotype() {
@@ -89,7 +92,7 @@ public class SMILESStringGenotype implements Genotype<String> {
 		sb.append(this.getId());
 		sb.append(" ");
 
-		for(SMILESMutation mut : mutationOperators) {
+		for(SMILESMutation mut : getMutationOperators()) {
 			mut.go(this, sb);
 		}
 	}
