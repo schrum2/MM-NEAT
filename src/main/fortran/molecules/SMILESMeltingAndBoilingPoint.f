@@ -4,9 +4,13 @@ C
 
 C READ SIZE OF MOLECULE AND SMILES STRING
 C
+C JACOB: Using GOTO for the loop, which starts at 10
 
-      READ(5,*) MAX
-C      WRITE(6,*) MAX
+10      READ(5,*) MAX
+
+C JACOB: Special negative input triggers loop exit
+        IF (MAX .LE. 0) GO TO 20  ! Exit loop if IMUT <= 0
+
       READ(5,'(100A1)') (XSTRING(J),J=1,MAX)
 C      WRITE(6,'(100A1)') (XSTRING(J),J=1,MAX)
 
@@ -18,6 +22,13 @@ C WRITE "X" IF THERE IS AN ERROR
 C        WRITE(6,*) MAX,VAL
 C        WRITE(6,'(100A1)') (XSTRING(J),J=1,MAX)
       ENDIF
+      
+      
+C JACOB: Ending the "loop" that uses GOTO
+      GO TO 10  ! Loop back to the beginning
+20    CONTINUE  ! End of loop      
+      
+      
       END
 C
       SUBROUTINE PROCESS(MAX,XSTRING,VAL)
