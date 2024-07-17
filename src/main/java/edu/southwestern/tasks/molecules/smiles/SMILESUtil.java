@@ -120,12 +120,13 @@ public class SMILESUtil {
 	
 	/**
 	 * Indicates if SMILES string contains a ring.
-	 * Currently done by checking for character '1' but
-	 * could a different number be used? TODO
+	 * 
+	 * TODO: I saw a result that verified that a molecule can
+	 *       contain multiple rings, for example: C(-N(=C2))(-O)(-N(-N1))-C21-C
+	 * 
+	 * 
 	 * @param smiles SMILES string
-	 * @return true if string has a ring (contains '1')
+	 * @return true if string has a ring 
 	 */
-	public static boolean containsRing(String smiles) {
-		return smiles.contains("1"); // Is this the only way?
-	}
+
 }
