@@ -12,6 +12,7 @@ import edu.southwestern.evolution.mutation.smiles.SMILESDeleteAtomMutation;
 import edu.southwestern.evolution.mutation.smiles.SMILESDeleteRingMutation;
 import edu.southwestern.evolution.mutation.smiles.SMILESInsertNewAtomMutation;
 import edu.southwestern.evolution.mutation.smiles.SMILESMutation;
+import edu.southwestern.evolution.mutation.smiles.SMILESMutationOptions;
 import edu.southwestern.util.random.RandomNumbers;
 
 /**
@@ -36,27 +37,10 @@ import edu.southwestern.util.random.RandomNumbers;
  */
 public class SMILESStringGenotype implements Genotype<String> {
 
-	private static final int NUM_SMILES_MUTATION_TYPES = 7;
 	private String smilesString;
 	private ArrayList<Long> parents;
 	private long id = EvolutionaryHistory.nextGenotypeId();
-	
-	private static transient ArrayList<SMILESMutation> mutationOperators = null;
-	
-	private static ArrayList<SMILESMutation> getMutationOperators() {
-		if(mutationOperators == null) {
-			mutationOperators = new ArrayList<>(NUM_SMILES_MUTATION_TYPES);
-			mutationOperators.add(new SMILESChangeBondTypeMutation());
-			mutationOperators.add(new SMILESInsertNewAtomMutation());
-			mutationOperators.add(new SMILESBranchNewAtomMutation());
-			mutationOperators.add(new SMILESDeleteAtomMutation());
-			mutationOperators.add(new SMILESChangeAtomTypeMutation());
-			mutationOperators.add(new SMILESDeleteRingMutation());
-			mutationOperators.add(new SMILESAddRingMutation());
-		} 
-		return mutationOperators;
-	}
-	
+		
 	public SMILESStringGenotype() {
 		this(staticNewSMILESString());
 	}
@@ -92,7 +76,7 @@ public class SMILESStringGenotype implements Genotype<String> {
 		sb.append(this.getId());
 		sb.append(" ");
 
-		for(SMILESMutation mut : getMutationOperators()) {
+		for(SMILESMutation mut : SMILESMutationOptions.getMutationOperators()) {
 			mut.go(this, sb);
 		}
 	}
