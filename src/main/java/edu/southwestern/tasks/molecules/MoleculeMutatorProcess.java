@@ -15,6 +15,7 @@ public class MoleculeMutatorProcess extends MoleculeProcess {
 
 	private static MoleculeMutatorProcess mutatorProcess;
 	private static final boolean DEBUG = true;
+	private static final int RANDOM_SEED_CEILING = 256; // Large numbers could cause problems
 	
 	private static synchronized MoleculeMutatorProcess getMoleculeMutatorProcess() {
 		if(mutatorProcess == null) {
@@ -23,8 +24,8 @@ public class MoleculeMutatorProcess extends MoleculeProcess {
 			
 			try {
 				// Send two random seeds that are themselves random numbers (change to be parameters?)
-				String seeds = RandomNumbers.randomGenerator.nextInt()+" "+RandomNumbers.randomGenerator.nextInt();
-				if(DEBUG) System.out.println("seeds are: "+seeds);
+				String seeds = RandomNumbers.randomGenerator.nextInt(RANDOM_SEED_CEILING)+" "+RandomNumbers.randomGenerator.nextInt(RANDOM_SEED_CEILING);
+				if(DEBUG) System.out.println("MoleculeMutatorProcess random seeds are: "+seeds);
 				mutatorProcess.commSend(seeds);
 			} catch (IOException e) {
 				e.printStackTrace();
