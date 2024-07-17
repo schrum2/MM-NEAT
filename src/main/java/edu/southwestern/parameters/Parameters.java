@@ -897,7 +897,7 @@ public class Parameters {
 		doubleOptions.add("smilesInsertNewAtomMutationRate", 0.1, "SMILES rate for inserting a new random atom along the main backbone of the string");
 		doubleOptions.add("smilesBranchNewAtomMutationRate", 0.1, "SMILES rate for inserting a new random atom on a branch off of the main backbone");
 		doubleOptions.add("smilesDeleteAtomMutationRate", 0.1, "SMILES rate for deleting an atom from the string");
-		doubleOptions.add("smilesAtomTypeMutationRate", 0.0, "SMILES rate for changing an atom type");
+		doubleOptions.add("smilesAtomTypeMutationRate", 0.1, "SMILES rate for changing an atom type");
 		doubleOptions.add("smilesDeleteRingMutationRate", 0.0, "SMILES rate for deleting a ring from a string");
 		doubleOptions.add("smilesAddRingMutationRate", 0.0, "SMILES rate for adding a ring to a string");
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");

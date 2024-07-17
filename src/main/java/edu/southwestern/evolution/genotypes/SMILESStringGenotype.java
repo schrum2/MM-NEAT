@@ -4,13 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.southwestern.evolution.EvolutionaryHistory;
-import edu.southwestern.evolution.mutation.smiles.SMILESAddRingMutation;
-import edu.southwestern.evolution.mutation.smiles.SMILESBranchNewAtomMutation;
-import edu.southwestern.evolution.mutation.smiles.SMILESChangeAtomTypeMutation;
-import edu.southwestern.evolution.mutation.smiles.SMILESChangeBondTypeMutation;
-import edu.southwestern.evolution.mutation.smiles.SMILESDeleteAtomMutation;
-import edu.southwestern.evolution.mutation.smiles.SMILESDeleteRingMutation;
-import edu.southwestern.evolution.mutation.smiles.SMILESInsertNewAtomMutation;
 import edu.southwestern.evolution.mutation.smiles.SMILESMutation;
 import edu.southwestern.evolution.mutation.smiles.SMILESMutationOptions;
 import edu.southwestern.util.random.RandomNumbers;
