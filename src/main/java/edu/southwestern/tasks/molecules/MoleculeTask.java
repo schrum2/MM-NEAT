@@ -67,6 +67,13 @@ public class MoleculeTask<T> extends NoisyLonerTask<T> {
 		double meltingPoint = pair.t1;
 		double boilingPoint = pair.t2;
 		
+		if(MMNEAT.usingDiversityBinningScheme) {
+			behaviorCharacteristics.put("MeltingPoint", meltingPoint);
+			behaviorCharacteristics.put("BoilingPoint", boilingPoint);
+			
+			
+		}
+		
 		if(Parameters.parameters.booleanParameter("moleculeTargetMeltingAndBoilingPointFitness")) {
 			double targetMeltingPoint = Parameters.parameters.doubleParameter("smilesTargetMeltingPoint");
 			double targetBoilingPoint = Parameters.parameters.doubleParameter("smilesTargetBoilingPoint");
@@ -103,10 +110,16 @@ public class MoleculeTask<T> extends NoisyLonerTask<T> {
 //					 "moleculeTargetMeltingAndBoilingPointFitness:true").split(" "));
 		
 		// TODO: Make into MAP Elites
-		MMNEAT.main(("runNumber:1 randomSeed:1 watch:true trials:1 mu:1000 base:molecules log:Molecules-TargetMeltingBoiling "+
-				 "saveTo:TargetMeltingBoiling maxGens:50 io:true netio:true mating:false "+
+		MMNEAT.main(("runNumber:1 randomSeed:1 watch:false trials:1 mu:10 base:molecules log:Molecules-TargetTypeCounts "+
+				 "saveTo:TargetTypeCounts maxGens:50000 io:true netio:true mating:false "+
 			 	 "task:edu.southwestern.tasks.molecules.MoleculeTask cleanFrequency:-1 saveAllChampions:true "+
 				 "genotype:edu.southwestern.evolution.genotypes.SMILESStringGenotype "+
+			 	 
+				 "ea:edu.southwestern.evolution.mapelites.MAPElites "+
+				 "experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment "+
+				 "steadyStateIndividualsPerGeneration:100 "+
+				 "mapElitesBinLabels:edu.southwestern.tasks.????.*BinLabels"+
+			 	 
 			 	 "smilesTargetMeltingPoint:179.44000148773193 smilesTargetBoilingPoint:379.65999603271484 "+
 				 "moleculeTargetMeltingAndBoilingPointFitness:true").split(" "));
 
