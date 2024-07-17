@@ -94,8 +94,8 @@ public class MoleculeTask<T> extends NoisyLonerTask<T> {
 	}
 	
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
-		MMNEAT.main(("runNumber:1 randomSeed:1 watch:true trials:1 mu:100 base:molecules log:Molecules-TargetMeltingBoiling "+
-					 "saveTo:TargetMeltingBoiling maxGens:500 io:true netio:true mating:false "+
+		MMNEAT.main(("runNumber:1 randomSeed:1 watch:true trials:1 mu:1000 base:molecules log:Molecules-TargetMeltingBoiling "+
+					 "saveTo:TargetMeltingBoiling maxGens:50 io:true netio:true mating:false "+
 				 	 "task:edu.southwestern.tasks.molecules.MoleculeTask cleanFrequency:-1 saveAllChampions:true "+
 					 "genotype:edu.southwestern.evolution.genotypes.SMILESStringGenotype "+
 				 	 "smilesTargetMeltingPoint:179.44000148773193 smilesTargetBoilingPoint:379.65999603271484 "+
