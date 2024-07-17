@@ -68,16 +68,6 @@ public class MoleculeTask extends NoisyLonerTask<String> {
 		double meltingPoint = pair.t1;
 		double boilingPoint = pair.t2;
 		
-		if(MMNEAT.usingDiversityBinningScheme) {
-			behaviorCharacteristics.put("MeltingPoint", meltingPoint);
-			behaviorCharacteristics.put("BoilingPoint", boilingPoint);
-			
-			String smilesString = individual.getPhenotype();
-			behaviorCharacteristics.put("Carbon Count", SMILESUtil.carbonCount(smilesString));
-			behaviorCharacteristics.put("Oxygen Count", SMILESUtil.oxygenCount(smilesString));
-			behaviorCharacteristics.put("Nitrogen Count", SMILESUtil.nitrogenCount(smilesString));
-		}
-		
 		if(Parameters.parameters.booleanParameter("moleculeTargetMeltingAndBoilingPointFitness")) {
 			double targetMeltingPoint = Parameters.parameters.doubleParameter("smilesTargetMeltingPoint");
 			double targetBoilingPoint = Parameters.parameters.doubleParameter("smilesTargetBoilingPoint");
@@ -90,6 +80,19 @@ public class MoleculeTask extends NoisyLonerTask<String> {
 		}
 		
 		double[] otherScores = new double[] {meltingPoint, boilingPoint};
+		
+		if(MMNEAT.usingDiversityBinningScheme) {
+			behaviorCharacteristics.put("MeltingPoint", meltingPoint);
+			behaviorCharacteristics.put("BoilingPoint", boilingPoint);
+			
+			String smilesString = individual.getPhenotype();
+			behaviorCharacteristics.put("Carbon Count", SMILESUtil.carbonCount(smilesString));
+			behaviorCharacteristics.put("Oxygen Count", SMILESUtil.oxygenCount(smilesString));
+			behaviorCharacteristics.put("Nitrogen Count", SMILESUtil.nitrogenCount(smilesString));
+			
+			// Assume there is just one fitness score at index 0
+			behaviorCharacteristics.put("binScore", fitnesses.get(0));
+		}
 		
 		if(CommonConstants.watch) {
 			System.out.println(individual + " has MP " + meltingPoint + " and BP " + boilingPoint + " and fitness " + fitnesses + ":" + behaviorCharacteristics);
