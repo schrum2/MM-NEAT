@@ -163,11 +163,12 @@ C          WRITE(6,*) "DUPLICATE RING FOUND",ITEMP
           RETURN
         ENDIF
 C END OF RING
+C RINGS IN SMILES ARE SINGLE BONDS
         IF(IRING(ITEMP).GT.0.AND.JRING(ITEMP).EQ.0) THEN
           NPAIR=NPAIR+1
           PAIR(NPAIR,1)=IRING(ITEMP)
           PAIR(NPAIR,2)=NATOM
-          PAIR(NPAIR,3)=BTYPE
+          PAIR(NPAIR,3)=1     ! JACOB: I copied this over from evol.f
           JRING(ITEMP)=NATOM
         ENDIF
 C NEW RING STARTS
