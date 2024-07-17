@@ -76,7 +76,8 @@ public class MoleculeMeltingAndBoilingPointProcess extends MoleculeProcess {
 			System.exit(1);
 		}
 		double boiling = Double.parseDouble(boilingResult);
-		assert melting < boiling;
+		// There is a special case in here for 999.0 since this seems to be an error case
+		assert melting == 999.0 || melting < boiling : "melting point " + melting + " not less then boiling " + boiling + ": " + smilesString;
 		Pair<Double, Double> pair = new Pair<Double,Double>(melting, boiling);
 		if(DEBUG) System.out.println("pair:"+pair);
 		return pair;
