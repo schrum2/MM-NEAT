@@ -10,10 +10,11 @@ import edu.southwestern.evolution.genotypes.SMILESStringGenotype;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.NoisyLonerTask;
+import edu.southwestern.tasks.molecules.smiles.SMILESUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
 
-public class MoleculeTask<T> extends NoisyLonerTask<T> {
+public class MoleculeTask extends NoisyLonerTask<String> {
 
 	private int numFitnessFunctions;
 	private static final int NUM_OTHER_SCORES = 2;
@@ -57,7 +58,7 @@ public class MoleculeTask<T> extends NoisyLonerTask<T> {
 	}
 
 	@Override
-	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num, HashMap<String,Object> behaviorCharacteristics) {
+	public Pair<double[], double[]> oneEval(Genotype<String> individual, int num, HashMap<String,Object> behaviorCharacteristics) {
 		
 		ArrayList<Double> fitnesses = new ArrayList<>(numFitnessFunctions);
 		
@@ -71,7 +72,10 @@ public class MoleculeTask<T> extends NoisyLonerTask<T> {
 			behaviorCharacteristics.put("MeltingPoint", meltingPoint);
 			behaviorCharacteristics.put("BoilingPoint", boilingPoint);
 			
-			
+			String smilesString = individual.getPhenotype();
+			behaviorCharacteristics.put("Carbon Count", SMILESUtil.carbonCount(smilesString));
+			behaviorCharacteristics.put("Oxygen Count", SMILESUtil.oxygenCount(smilesString));
+			behaviorCharacteristics.put("Nitrogen Count", SMILESUtil.nitrogenCount(smilesString));
 		}
 		
 		if(Parameters.parameters.booleanParameter("moleculeTargetMeltingAndBoilingPointFitness")) {
@@ -114,12 +118,12 @@ public class MoleculeTask<T> extends NoisyLonerTask<T> {
 				 "saveTo:TargetTypeCounts maxGens:50000 io:true netio:true mating:false "+
 			 	 "task:edu.southwestern.tasks.molecules.MoleculeTask cleanFrequency:-1 saveAllChampions:true "+
 				 "genotype:edu.southwestern.evolution.genotypes.SMILESStringGenotype "+
-			 	 
+			 	 // MAP Elites settings added here
 				 "ea:edu.southwestern.evolution.mapelites.MAPElites "+
 				 "experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment "+
 				 "steadyStateIndividualsPerGeneration:100 "+
-				 "mapElitesBinLabels:edu.southwestern.tasks.????.*BinLabels"+
-			 	 
+				 "mapElitesBinLabels:edu.southwestern.tasks.molecules.smiles.MoleculeAtomTypeCountsBinLabels "+
+			 	 // Fitness related
 			 	 "smilesTargetMeltingPoint:179.44000148773193 smilesTargetBoilingPoint:379.65999603271484 "+
 				 "moleculeTargetMeltingAndBoilingPointFitness:true").split(" "));
 
