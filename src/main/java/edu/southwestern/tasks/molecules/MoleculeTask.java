@@ -116,7 +116,7 @@ public class MoleculeTask extends NoisyLonerTask<String> {
 //				 	 "smilesTargetMeltingPoint:179.44000148773193 smilesTargetBoilingPoint:379.65999603271484 "+
 //					 "moleculeTargetMeltingAndBoilingPointFitness:true").split(" "));
 		
-		// TODO: Make into MAP Elites
+		// MAP Elites
 		MMNEAT.main(("runNumber:1 randomSeed:1 watch:false trials:1 mu:10 base:molecules log:Molecules-TargetTypeCounts "+
 				 "saveTo:TargetTypeCounts maxGens:50000 io:true netio:true mating:false "+
 			 	 "task:edu.southwestern.tasks.molecules.MoleculeTask cleanFrequency:-1 saveAllChampions:true "+
