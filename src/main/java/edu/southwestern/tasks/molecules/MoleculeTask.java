@@ -92,7 +92,7 @@ public class MoleculeTask extends NoisyLonerTask<String> {
 		double[] otherScores = new double[] {meltingPoint, boilingPoint};
 		
 		if(CommonConstants.watch) {
-			System.out.println(individual + " has MP " + meltingPoint + " and BP " + boilingPoint + " and fitness " + fitnesses);
+			System.out.println(individual + " has MP " + meltingPoint + " and BP " + boilingPoint + " and fitness " + fitnesses + ":" + behaviorCharacteristics);
 		}
 		
 		return new Pair<double[],double[]>(ArrayUtil.doubleArrayFromList(fitnesses), otherScores);
@@ -114,7 +114,7 @@ public class MoleculeTask extends NoisyLonerTask<String> {
 //					 "moleculeTargetMeltingAndBoilingPointFitness:true").split(" "));
 		
 		// TODO: Make into MAP Elites
-		MMNEAT.main(("runNumber:1 randomSeed:1 watch:false trials:1 mu:10 base:molecules log:Molecules-TargetTypeCounts "+
+		MMNEAT.main(("runNumber:1 randomSeed:1 watch:true trials:1 mu:10 base:molecules log:Molecules-TargetTypeCounts "+
 				 "saveTo:TargetTypeCounts maxGens:50000 io:true netio:true mating:false "+
 			 	 "task:edu.southwestern.tasks.molecules.MoleculeTask cleanFrequency:-1 saveAllChampions:true "+
 				 "genotype:edu.southwestern.evolution.genotypes.SMILESStringGenotype "+
