@@ -14,6 +14,7 @@ import edu.southwestern.util.datastructures.Pair;
 public class MoleculeMeltingAndBoilingPointProcess extends MoleculeProcess {
 
 	private static MoleculeMeltingAndBoilingPointProcess meltingBoilingProcess;
+	private static final boolean DEBUG = false;
 	
 	private static synchronized MoleculeMeltingAndBoilingPointProcess getMeltingBoilingPointProcess() {
 		if(meltingBoilingProcess == null) {
@@ -48,6 +49,7 @@ public class MoleculeMeltingAndBoilingPointProcess extends MoleculeProcess {
 	public static synchronized Pair<Double,Double> smilesMeltingAndBoilingPoints(SMILESStringGenotype smiles) {
 		MoleculeMeltingAndBoilingPointProcess process = getMeltingBoilingPointProcess();
 		String smilesString = smiles.getPhenotype();
+		if(DEBUG) System.out.println(smilesString);
 		try {
 			process.commSend(""+smilesString.length());
 			process.commSend(smilesString);	
@@ -57,6 +59,7 @@ public class MoleculeMeltingAndBoilingPointProcess extends MoleculeProcess {
 			System.exit(1);
 		}
 		String meltingResult = process.commRecv();
+		if(DEBUG) System.out.println("meltingResult:"+meltingResult);
 		if(meltingResult.trim().contains(" ")) {
 			System.out.println("The melting point process returned bad results");
 			System.out.println("meltingResult = "+meltingResult);
@@ -65,15 +68,18 @@ public class MoleculeMeltingAndBoilingPointProcess extends MoleculeProcess {
 		}
 		double melting = Double.parseDouble(meltingResult);
 		String boilingResult = process.commRecv();
+		if(DEBUG) System.out.println("boilingResult:"+boilingResult);
 		if(boilingResult.trim().contains(" ")) {
 			System.out.println("The boiling point process returned bad results");
 			System.out.println("boilingResult = "+boilingResult);
 			// Need more error information here
 			System.exit(1);
 		}
-		double boiling = Double.parseDouble(process.commRecv());
+		double boiling = Double.parseDouble(boilingResult);
 		assert melting < boiling;
-		return new Pair<Double,Double>(melting, boiling);
+		Pair<Double, Double> pair = new Pair<Double,Double>(melting, boiling);
+		if(DEBUG) System.out.println("pair:"+pair);
+		return pair;
 	}
 	
 	public static void main(String[] args) {
@@ -81,6 +87,7 @@ public class MoleculeMeltingAndBoilingPointProcess extends MoleculeProcess {
 		String[] examples = {"C-C-C(=C)-O", "C-C-N-C(=C)-O", "C(#C)-C-N-C(=C)-O", "C-C(-C)-N-C(-C)-O", "N-C-N=C-C-O", "C1-C-N-C(=C1)-N"};
 		
 		for(String exampleSMILES : examples) {
+			System.out.println(exampleSMILES);
 			SMILESStringGenotype smiles = new SMILESStringGenotype(exampleSMILES);
 			Pair<Double, Double> pair = MoleculeMeltingAndBoilingPointProcess.smilesMeltingAndBoilingPoints(smiles);
 			System.out.println(smiles.getPhenotype() + "\nmelting point: "+pair.t1+"\nboiling point: "+pair.t2);
