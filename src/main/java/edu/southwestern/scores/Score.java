@@ -473,6 +473,8 @@ public class Score<T> {
 		if(map != null && map.containsKey("binScore")) {
 			oneMAPEliteMap = map;
 			mapElitesSoleBinQualityScore = (double) map.get("binScore");
+		} else if(map != null && map.size() > 0 && !map.containsKey("binScore")) {
+			throw new IllegalArgumentException("Each behavior map is also expected to store the fitness score under a label called binScore");
 		}
 	}
 	
