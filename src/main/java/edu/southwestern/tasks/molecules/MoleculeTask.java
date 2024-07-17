@@ -18,6 +18,9 @@ public class MoleculeTask extends NoisyLonerTask<String> {
 
 	private int numFitnessFunctions;
 	private static final int NUM_OTHER_SCORES = 2;
+	private static final double MIN_CELSIUS = -273.15;
+	private static final double WORST_TARGET_FITNESS = -1500;
+	private static final double BAD_RESULT = 999.0;
 	
 	public MoleculeTask() {
 		numFitnessFunctions = 0;
@@ -26,8 +29,8 @@ public class MoleculeTask extends NoisyLonerTask<String> {
 			numFitnessFunctions++;
 		}
 		
-		MMNEAT.registerFitnessFunction("meltingPoint",false);
-		MMNEAT.registerFitnessFunction("boilingPoint",false);
+		MMNEAT.registerFitnessFunction("meltingPoint",null,false,0,MIN_CELSIUS);
+		MMNEAT.registerFitnessFunction("boilingPoint",null,false,0,MIN_CELSIUS);
 	}
 	
 	@Override
@@ -37,7 +40,7 @@ public class MoleculeTask extends NoisyLonerTask<String> {
 	
 	public double[] minScores() {
 		if(Parameters.parameters.booleanParameter("moleculeTargetMeltingAndBoilingPointFitness")) {
-			return new double[] {-1500};
+			return new double[] {WORST_TARGET_FITNESS};
 		}
 		throw new IllegalStateException("No fitness defined");
 	}
@@ -69,14 +72,19 @@ public class MoleculeTask extends NoisyLonerTask<String> {
 		double boilingPoint = pair.t2;
 		
 		if(Parameters.parameters.booleanParameter("moleculeTargetMeltingAndBoilingPointFitness")) {
-			double targetMeltingPoint = Parameters.parameters.doubleParameter("smilesTargetMeltingPoint");
-			double targetBoilingPoint = Parameters.parameters.doubleParameter("smilesTargetBoilingPoint");
 			
-			double meltDifference = targetMeltingPoint - meltingPoint;
-			double boilDifference = targetBoilingPoint - boilingPoint;
-			double differenceFromTarget = Math.sqrt(meltDifference*meltDifference + boilDifference*boilDifference);
-			// Negated since the goal is a value of 0
-			fitnesses.add(-differenceFromTarget);
+			if(meltingPoint == BAD_RESULT && boilingPoint == BAD_RESULT) {
+				fitnesses.add(WORST_TARGET_FITNESS);
+			} else {
+				double targetMeltingPoint = Parameters.parameters.doubleParameter("smilesTargetMeltingPoint");
+				double targetBoilingPoint = Parameters.parameters.doubleParameter("smilesTargetBoilingPoint");
+				
+				double meltDifference = targetMeltingPoint - meltingPoint;
+				double boilDifference = targetBoilingPoint - boilingPoint;
+				double differenceFromTarget = Math.sqrt(meltDifference*meltDifference + boilDifference*boilDifference);
+				// Negated since the goal is a value of 0
+				fitnesses.add(-differenceFromTarget);
+			}
 		}
 		
 		double[] otherScores = new double[] {meltingPoint, boilingPoint};
@@ -126,6 +134,7 @@ public class MoleculeTask extends NoisyLonerTask<String> {
 				 "experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment "+
 				 "steadyStateIndividualsPerGeneration:100 "+
 				 "mapElitesBinLabels:edu.southwestern.tasks.molecules.smiles.MoleculeAtomTypeCountsBinLabels "+
+				 "steadyStateArchetypeSaving:false "+
 			 	 // Fitness related
 			 	 "smilesTargetMeltingPoint:179.44000148773193 smilesTargetBoilingPoint:379.65999603271484 "+
 				 "moleculeTargetMeltingAndBoilingPointFitness:true").split(" "));
