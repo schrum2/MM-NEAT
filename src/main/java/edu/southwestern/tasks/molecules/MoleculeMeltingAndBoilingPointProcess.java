@@ -15,6 +15,7 @@ public class MoleculeMeltingAndBoilingPointProcess extends MoleculeProcess {
 
 	private static MoleculeMeltingAndBoilingPointProcess meltingBoilingProcess;
 	private static final boolean DEBUG = false;
+	public static final double BAD_RESULT = 999.0;
 	
 	private static synchronized MoleculeMeltingAndBoilingPointProcess getMeltingBoilingPointProcess() {
 		if(meltingBoilingProcess == null) {
@@ -76,8 +77,11 @@ public class MoleculeMeltingAndBoilingPointProcess extends MoleculeProcess {
 			System.exit(1);
 		}
 		double boiling = Double.parseDouble(boilingResult);
-		// There is a special case in here for 999.0 since this seems to be an error case
-		assert melting == 999.0 || melting < boiling : "melting point " + melting + " not less then boiling " + boiling + ": " + smilesString;
+		if(melting >= boiling) {
+			// This is not physically possible, and indicates a case where the calculation model is inaccurate
+			melting = BAD_RESULT;
+			boiling = BAD_RESULT;
+		}
 		Pair<Double, Double> pair = new Pair<Double,Double>(melting, boiling);
 		if(DEBUG) System.out.println("pair:"+pair);
 		return pair;

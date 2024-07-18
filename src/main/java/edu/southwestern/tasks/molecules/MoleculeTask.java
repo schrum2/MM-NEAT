@@ -17,10 +17,9 @@ import edu.southwestern.util.datastructures.Pair;
 public class MoleculeTask extends NoisyLonerTask<String> {
 
 	private int numFitnessFunctions;
-	private static final int NUM_OTHER_SCORES = 2;
+	private static final int NUM_OTHER_SCORES = 3;
 	private static final double MIN_CELSIUS = -273.15;
 	private static final double WORST_TARGET_FITNESS = -1500;
-	private static final double BAD_RESULT = 999.0;
 	
 	public MoleculeTask() {
 		numFitnessFunctions = 0;
@@ -29,6 +28,7 @@ public class MoleculeTask extends NoisyLonerTask<String> {
 			numFitnessFunctions++;
 		}
 		
+		MMNEAT.registerFitnessFunction("moleculeTargetMeltingAndBoilingPointFitness",null,false,0,WORST_TARGET_FITNESS);
 		MMNEAT.registerFitnessFunction("meltingPoint",null,false,0,MIN_CELSIUS);
 		MMNEAT.registerFitnessFunction("boilingPoint",null,false,0,MIN_CELSIUS);
 	}
@@ -71,22 +71,26 @@ public class MoleculeTask extends NoisyLonerTask<String> {
 		double meltingPoint = pair.t1;
 		double boilingPoint = pair.t2;
 		
-		if(Parameters.parameters.booleanParameter("moleculeTargetMeltingAndBoilingPointFitness")) {
-			
-			if(meltingPoint == BAD_RESULT && boilingPoint == BAD_RESULT) {
-				fitnesses.add(WORST_TARGET_FITNESS);
-			} else {
-				double targetMeltingPoint = Parameters.parameters.doubleParameter("smilesTargetMeltingPoint");
-				double targetBoilingPoint = Parameters.parameters.doubleParameter("smilesTargetBoilingPoint");
-				
-				double meltDifference = targetMeltingPoint - meltingPoint;
-				double boilDifference = targetBoilingPoint - boilingPoint;
-				double differenceFromTarget = Math.sqrt(meltDifference*meltDifference + boilDifference*boilDifference);
-				// Negated since the goal is a value of 0
-				fitnesses.add(-differenceFromTarget);
-			}
+		double targetFitness;
+		if(meltingPoint == MoleculeMeltingAndBoilingPointProcess.BAD_RESULT && boilingPoint == MoleculeMeltingAndBoilingPointProcess.BAD_RESULT) {
+			targetFitness = WORST_TARGET_FITNESS;
+		} else {
+			double targetMeltingPoint = Parameters.parameters.doubleParameter("smilesTargetMeltingPoint");
+			double targetBoilingPoint = Parameters.parameters.doubleParameter("smilesTargetBoilingPoint");
+
+			double meltDifference = targetMeltingPoint - meltingPoint;
+			double boilDifference = targetBoilingPoint - boilingPoint;
+			double differenceFromTarget = Math.sqrt(meltDifference*meltDifference + boilDifference*boilDifference);
+			// Negated since the goal is a value of 0
+			targetFitness = -differenceFromTarget;
 		}
-		
+
+		if(Parameters.parameters.booleanParameter("moleculeTargetMeltingAndBoilingPointFitness")) {
+			fitnesses.add(targetFitness);
+		} else {
+			throw new IllegalStateException("There needs to be some kind of fitness function");
+		}
+
 		double[] otherScores = new double[] {meltingPoint, boilingPoint};
 		
 		if(MMNEAT.usingDiversityBinningScheme) {

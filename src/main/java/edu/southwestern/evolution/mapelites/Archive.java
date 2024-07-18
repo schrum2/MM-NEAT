@@ -206,14 +206,24 @@ public class Archive<T> {
 			return newElites > 0;
 		} else if(candidate.usesMAPElitesMapSpecification() && !getBinMapping().discard(candidate.MAPElitesBehaviorMap())) {
 			int oneD = getBinMapping().oneDimensionalIndex(candidate.MAPElitesBehaviorMap());
-			boolean result = false;
-			synchronized(this) { // Make sure elite at the index does not change while considering replacement
-				// Synchronizing on the whole archive seems unnecessary ... maybe just the index? How?
-				Score<T> currentBinOccupant = getElite(oneD);
-				result = replaceIfBetter(candidate, oneD, currentBinOccupant);
+			try {
+				boolean result = false;
+				synchronized(this) { // Make sure elite at the index does not change while considering replacement
+					// Synchronizing on the whole archive seems unnecessary ... maybe just the index? How?
+					Score<T> currentBinOccupant = getElite(oneD);
+					result = replaceIfBetter(candidate, oneD, currentBinOccupant);
+				}
+				return result;
+			} catch(ArrayIndexOutOfBoundsException e) {
+				System.out.println("The bin mapping scheme for these BinLabels must be incorrect.");
+				System.out.println("Mapping: " + getBinMapping());
+				System.out.println("Behavior Map: "+ candidate.MAPElitesBehaviorMap());
+				System.out.println("Genotype: " + candidate.individual);
+				System.out.println("oneD: " + oneD);
+				System.out.println("multiD: " + Arrays.toString(getBinMapping().multiDimensionalIndices(candidate.MAPElitesBehaviorMap())));
+				
+				throw e;
 			}
-			return result;
-			
 			
 			// TODO: Why are we inserting if the binning scheme says to discard it?
 		} else if(candidate.usesMAPElitesBinSpecification()) {
