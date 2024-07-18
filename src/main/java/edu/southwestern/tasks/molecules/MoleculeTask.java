@@ -1,12 +1,16 @@
 package edu.southwestern.tasks.molecules;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.SMILESStringGenotype;
+import edu.southwestern.evolution.mapelites.Archive;
+import edu.southwestern.evolution.mapelites.BinLabels;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.NoisyLonerTask;
@@ -104,6 +108,28 @@ public class MoleculeTask extends NoisyLonerTask<String> {
 			
 			// Assume there is just one fitness score at index 0
 			behaviorCharacteristics.put("binScore", fitnesses.get(0));
+			
+			
+			if(CommonConstants.netio) {
+				// Assumes we are using target fitness to evolve to a goal of 0.0
+				if(fitnesses.get(0) == 0.0) {
+					@SuppressWarnings("unchecked")
+					Archive<String> archive = MMNEAT.getArchive();
+					BinLabels binLabels = MMNEAT.getArchiveBinLabelsClass();
+					int dim1D = binLabels.oneDimensionalIndex(behaviorCharacteristics);
+					String label = binLabels.binLabels().get(dim1D);
+					String filename = "CHAMPION-" + label +".txt";
+					String fullPath = archive.getArchiveDirectory() + File.separator + filename;
+					try {
+						PrintStream ps = new PrintStream(new File(fullPath));
+						ps.println(smilesString);
+						ps.close();
+					} catch (FileNotFoundException e) {
+						System.err.println("Problem saving "+fullPath);
+						e.printStackTrace();
+					}
+				}
+			}
 		}
 		
 		if(CommonConstants.watch) {
@@ -130,7 +156,7 @@ public class MoleculeTask extends NoisyLonerTask<String> {
 		
 		// MAP Elites
 		MMNEAT.main(("runNumber:1 randomSeed:1 watch:false trials:1 mu:10 base:molecules log:Molecules-TargetTypeCounts "+
-				 "saveTo:TargetTypeCounts maxGens:50000 io:true netio:true mating:false "+
+				 "saveTo:TargetTypeCounts maxGens:20000 io:true netio:true mating:false "+
 			 	 "task:edu.southwestern.tasks.molecules.MoleculeTask cleanFrequency:-1 saveAllChampions:true "+
 				 "genotype:edu.southwestern.evolution.genotypes.SMILESStringGenotype "+
 			 	 // MAP Elites settings added here
