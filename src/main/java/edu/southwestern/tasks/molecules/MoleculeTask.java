@@ -156,7 +156,7 @@ public class MoleculeTask extends NoisyLonerTask<String> {
 		
 		// MAP Elites
 		MMNEAT.main(("runNumber:1 randomSeed:1 watch:false trials:1 mu:10 base:molecules log:Molecules-TargetTypeCounts "+
-				 "saveTo:TargetTypeCounts maxGens:20000 io:true netio:true mating:false "+
+				 "saveTo:TargetTypeCounts maxGens:50000 io:true netio:true mating:false "+
 			 	 "task:edu.southwestern.tasks.molecules.MoleculeTask cleanFrequency:-1 saveAllChampions:true "+
 				 "genotype:edu.southwestern.evolution.genotypes.SMILESStringGenotype "+
 			 	 // MAP Elites settings added here
