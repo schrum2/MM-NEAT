@@ -8,7 +8,7 @@ import edu.southwestern.evolution.mapelites.BaseBinLabels;
 
 public class MoleculeAtomTypeCountsBinLabels extends BaseBinLabels {
 
-	private static final int MAX_ATOMS = 10;
+	private static final int MAX_ATOMS = 15;
 	private static final int TOTAL_BINS = (MAX_ATOMS+1) * (MAX_ATOMS+1) * (MAX_ATOMS+1);
 	List<String> labels = null;
 	
@@ -38,9 +38,10 @@ public class MoleculeAtomTypeCountsBinLabels extends BaseBinLabels {
 
 	@Override
 	public int[] multiDimensionalIndices(HashMap<String, Object> keys) {
-		int carbons = (Integer) keys.get("Carbon Count");
-		int oxygens = (Integer) keys.get("Oxygen Count");
-		int nitrogens = (Integer) keys.get("Nitrogen Count");
+		// If actual atom count exceeds the "max" then bin together
+		int carbons = Math.min(MAX_ATOMS, (Integer) keys.get("Carbon Count"));
+		int oxygens = Math.min(MAX_ATOMS, (Integer) keys.get("Oxygen Count"));
+		int nitrogens = Math.min(MAX_ATOMS, (Integer) keys.get("Nitrogen Count"));
 		return new int[] {carbons, oxygens, nitrogens};
 	}
 

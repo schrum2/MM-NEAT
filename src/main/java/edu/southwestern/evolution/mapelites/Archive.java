@@ -215,12 +215,12 @@ public class Archive<T> {
 				}
 				return result;
 			} catch(ArrayIndexOutOfBoundsException e) {
-				System.out.println("The bin mapping scheme for these BinLabels must be incorrect.");
-				System.out.println("Mapping: " + getBinMapping());
-				System.out.println("Behavior Map: "+ candidate.MAPElitesBehaviorMap());
-				System.out.println("Genotype: " + candidate.individual);
-				System.out.println("oneD: " + oneD);
-				System.out.println("multiD: " + Arrays.toString(getBinMapping().multiDimensionalIndices(candidate.MAPElitesBehaviorMap())));
+				System.err.println("The bin mapping scheme for these BinLabels must be incorrect.");
+				System.err.println("Mapping: " + getBinMapping());
+				System.err.println("Behavior Map: "+ candidate.MAPElitesBehaviorMap());
+				System.err.println("Genotype: " + candidate.individual);
+				System.err.println("oneD: " + oneD);
+				System.err.println("multiD: " + Arrays.toString(getBinMapping().multiDimensionalIndices(candidate.MAPElitesBehaviorMap())));
 				
 				throw e;
 			}
@@ -373,6 +373,7 @@ public class Archive<T> {
 				for(Double score : candidate.getTraditionalDomainSpecificBehaviorVector()) {
 					ps.println(score);
 				}
+				ps.close();
 			} catch (FileNotFoundException e) {
 				System.out.println("Could not write scores for " + candidate.individual.getId() + ":" + candidate.getTraditionalDomainSpecificBehaviorVector());
 				e.printStackTrace();
