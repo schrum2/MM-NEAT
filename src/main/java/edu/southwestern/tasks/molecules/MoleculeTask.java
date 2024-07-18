@@ -91,7 +91,7 @@ public class MoleculeTask extends NoisyLonerTask<String> {
 			throw new IllegalStateException("There needs to be some kind of fitness function");
 		}
 
-		double[] otherScores = new double[] {meltingPoint, boilingPoint};
+		double[] otherScores = new double[] {targetFitness, meltingPoint, boilingPoint};
 		
 		if(MMNEAT.usingDiversityBinningScheme) {
 			behaviorCharacteristics.put("MeltingPoint", meltingPoint);
