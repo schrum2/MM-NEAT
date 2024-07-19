@@ -1,9 +1,11 @@
 package edu.southwestern.tasks.molecules.smiles;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.mapelites.BaseBinLabels;
 
 public class MoleculeBondTypeCountsBinLabels extends BaseBinLabels {
@@ -21,7 +23,7 @@ public class MoleculeBondTypeCountsBinLabels extends BaseBinLabels {
 			for(int s = 0; s <= MAX_SINGLE_BONDS; s++) {
 				for(int d = 0; d <= MAX_DOUBLE_BONDS; d++) {
 					for(int t = 0; t <= MAX_TRIPLE_BONDS; t++) {
-						labels.add("-"+s+"="+d+"#"+t);
+						labels.add("S"+s+"D"+d+"T"+t);
 					}
 				}
 			}
@@ -57,4 +59,20 @@ public class MoleculeBondTypeCountsBinLabels extends BaseBinLabels {
 		return new int[] {MAX_SINGLE_BONDS+1,MAX_DOUBLE_BONDS+1,MAX_TRIPLE_BONDS+1};
 	}
 
+	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
+		MMNEAT.main(("runNumber:1 randomSeed:1 watch:false trials:1 mu:10 base:molecules log:Molecules-TargetBondCounts "+
+				 "saveTo:TargetBondCounts maxGens:50000 io:true netio:true mating:false "+
+			 	 "task:edu.southwestern.tasks.molecules.MoleculeTask cleanFrequency:-1 saveAllChampions:true "+
+				 "genotype:edu.southwestern.evolution.genotypes.SMILESStringGenotype "+
+			 	 // MAP Elites settings added here
+				 "ea:edu.southwestern.evolution.mapelites.MAPElites "+
+				 "experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment "+
+				 "steadyStateIndividualsPerGeneration:100 "+
+				 "mapElitesBinLabels:edu.southwestern.tasks.molecules.smiles.MoleculeBondTypeCountsBinLabels "+
+				 "steadyStateArchetypeSaving:false "+
+			 	 // Fitness related
+			 	 "smilesTargetMeltingPoint:179.44000148773193 smilesTargetBoilingPoint:379.65999603271484 "+
+				 "moleculeTargetMeltingAndBoilingPointFitness:true").split(" "));		
+	}
+	
 }
