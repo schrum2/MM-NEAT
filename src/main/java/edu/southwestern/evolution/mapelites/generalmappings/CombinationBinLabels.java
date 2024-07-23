@@ -66,7 +66,7 @@ public class CombinationBinLabels extends BaseBinLabels {
 
 	@Override
 	public String[] dimensions() {
-		return new String[] {first+"", second+""};
+		return new String[] {first.getClass().getSimpleName()+"", second.getClass().getSimpleName()+""};
 	}
 
 	@Override
