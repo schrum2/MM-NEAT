@@ -116,12 +116,14 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			int numberOfOtherStats = MMNEAT.getNumberOtherStatsForPopulation(0);
 			ArrayList<MMNEATLog> otherStatsLogsList = null;
 			if(numberOfOtherStats > 0) {
-				otherStatsLogsList = new ArrayList<>();
-				otherStatsLogs = new MMNEATLog[numberOfOtherStats];			
-				//map elites can only have one fitness function, so everything beyond that is an other stat
-				for (int i = 0; i < numberOfOtherStats; i++) {
-					otherStatsLogs[i] = new MMNEATLog(infix+"_otherStat_"+i+"_" +MMNEAT.getFitnessFunctionName(i+1), false, false, false, true);
-					otherStatsLogsList.add(otherStatsLogs[i]);
+				if() {
+					otherStatsLogsList = new ArrayList<>();
+					otherStatsLogs = new MMNEATLog[numberOfOtherStats];			
+					//map elites can only have one fitness function, so everything beyond that is an other stat
+					for (int i = 0; i < numberOfOtherStats; i++) {
+						otherStatsLogs[i] = new MMNEATLog(infix+"_otherStat_"+i+"_" +MMNEAT.getFitnessFunctionName(i+1), false, false, false, true);
+						otherStatsLogsList.add(otherStatsLogs[i]);
+					}
 				}
 				otherStatsFillLog = new MMNEATLog(infix+"_otherStatsFillLog", false, false, false, true);
 				if(Parameters.parameters.booleanParameter("mapElitesLogsOtherScoreHypervolume")) {

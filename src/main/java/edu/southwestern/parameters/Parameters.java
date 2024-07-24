@@ -415,6 +415,7 @@ public class Parameters {
 		longOptions.add("shortTimeBetweenMinecraftReads", 1000L, "The amount of time that change center of mass fitness function waits before reading in the area again");
 
 		// Boolean parameters 
+		booleanOptions.add("qdFullLoggingForEachOtherStat", true, "Create extensive logs for each otherScore/Stat when using MAP Elites");
 		booleanOptions.add("qdScoreForJustOneBin", false, "Every individual with QD will exist in only one archive bin and therefore have just one fitness score");
 		booleanOptions.add("moleculeTargetMeltingAndBoilingPointFitness", true, "Use Steve Alexander's original fitness based on target melting and boiling points");
 		booleanOptions.add("turnOffRestrictionsDuringInit", true, "Whether MAP Elites should turn off restricted bin ranges during initialization.");
