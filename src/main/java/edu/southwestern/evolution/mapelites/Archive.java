@@ -369,9 +369,16 @@ public class Archive<T> {
 			Serialization.save(candidate.individual, binPath + "-elite");
 			// Write scores as simple text file (less to write than xml)
 			try {
+				boolean outputMultiple = Parameters.parameters.booleanParameter("qdScoreForJustOneBin");
 				PrintStream ps = new PrintStream(new File(binPath + "-scores.txt"));
 				for(Double score : candidate.getTraditionalDomainSpecificBehaviorVector()) {
-					ps.println(score);
+					if(score.isInfinite() && score < 0) {
+						if(outputMultiple) { // If there is only one score, then don't waste space
+							ps.println("X"); // less file space than -Infinity
+						}
+					} else {
+						ps.println(score);
+					}
 				}
 				ps.close();
 			} catch (FileNotFoundException e) {
