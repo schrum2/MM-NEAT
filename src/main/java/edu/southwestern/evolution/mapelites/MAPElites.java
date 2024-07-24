@@ -116,7 +116,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			int numberOfOtherStats = MMNEAT.getNumberOtherStatsForPopulation(0);
 			ArrayList<MMNEATLog> otherStatsLogsList = null;
 			if(numberOfOtherStats > 0) {
-				if() {
+				if(Parameters.parameters.booleanParameter("qdFullLoggingForEachOtherStat")) {
 					otherStatsLogsList = new ArrayList<>();
 					otherStatsLogs = new MMNEATLog[numberOfOtherStats];			
 					//map elites can only have one fitness function, so everything beyond that is an other stat
