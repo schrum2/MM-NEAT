@@ -267,7 +267,9 @@ public class Parameters {
 		integerOptions.add("maxPause", 500, "Maximum pause length between each iteraton of animation in AnimationBreeder");
 		integerOptions.add("maxRemixImageWindow", 100, "Maximum size of window being remixed by CPPN in Picture Remixer");
 		integerOptions.add("maxTrials", Integer.MAX_VALUE, "Max trials allowed by individual when using increasing trials");
-		integerOptions.add("maxAtomsForAtomTypeBinLabels", 15, "Used by MoleculeAtomTypeCountsBinLabels to restrict archive dimensions");
+		integerOptions.add("maxCarbonForAtomTypeBinLabels", 10, "Used by MoleculeAtomTypeCountsBinLabels to restrict archive dimensions");
+		integerOptions.add("maxOxygenForAtomTypeBinLabels", 7, "Used by MoleculeAtomTypeCountsBinLabels to restrict archive dimensions");
+		integerOptions.add("maxNitrogenForAtomTypeBinLabels", 7, "Used by MoleculeAtomTypeCountsBinLabels to restrict archive dimensions");
 		integerOptions.add("maxSingleBondsForBinLabels", 15, "Used by MoleculeBondTypeCountsBinLabels to restrict archive dimensions");
 		integerOptions.add("maxDoubleBondsForBinLabels", 10, "Used by MoleculeBondTypeCountsBinLabels to restrict archive dimensions");
 		integerOptions.add("maxTripleBondsForBinLabels", 5, "Used by MoleculeBondTypeCountsBinLabels to restrict archive dimensions");

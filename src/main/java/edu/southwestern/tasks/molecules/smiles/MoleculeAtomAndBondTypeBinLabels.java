@@ -34,7 +34,7 @@ public class MoleculeAtomAndBondTypeBinLabels extends CombinationBinLabels {
 				"ea:edu.southwestern.evolution.mapelites.MAPElites qdFullLoggingForEachOtherStat:false "+
 				"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 "+
 				"mapElitesBinLabels:edu.southwestern.tasks.molecules.smiles.MoleculeAtomAndBondTypeBinLabels "+
-				"maxAtomsForAtomTypeBinLabels:10 maxSingleBondsForBinLabels:10 maxDoubleBondsForBinLabels:7 steadyStateArchetypeSaving:false "+
+				"maxSingleBondsForBinLabels:10 maxDoubleBondsForBinLabels:7 steadyStateArchetypeSaving:false "+
 				"genotype:edu.southwestern.evolution.genotypes.SMILESStringGenotype moleculeTargetMeltingAndBoilingPointFitness:true "+
 				"smilesTargetMeltingPoint:351.05000209808350 smilesTargetBoilingPoint:436.09000205993652").split(" "));
 	}	

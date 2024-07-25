@@ -9,7 +9,9 @@ import edu.southwestern.parameters.Parameters;
 
 public class MoleculeAtomTypeCountsBinLabels extends BaseBinLabels {
 
-	private static int maxAtoms = -1;
+	private static int maxCarbonAtoms = -1;
+	private static int maxOxygenAtoms = -1;
+	private static int maxNitrogenAtoms = -1;
 	private static int totalBins = -1;
 	private static List<String> labels = null;
 	
@@ -17,13 +19,16 @@ public class MoleculeAtomTypeCountsBinLabels extends BaseBinLabels {
 	public List<String> binLabels() {
 		if(labels == null) {
 			
-			maxAtoms = Parameters.parameters.integerParameter("maxAtomsForAtomTypeBinLabels");
-			totalBins = (maxAtoms+1) * (maxAtoms+1) * (maxAtoms+1);
+			maxCarbonAtoms = Parameters.parameters.integerParameter("maxCarbonForAtomTypeBinLabels");
+			maxOxygenAtoms = Parameters.parameters.integerParameter("maxOxygenForAtomTypeBinLabels");
+			maxNitrogenAtoms = Parameters.parameters.integerParameter("maxNitrogenForAtomTypeBinLabels");
+			
+			totalBins = (maxCarbonAtoms+1) * (maxOxygenAtoms+1) * (maxNitrogenAtoms+1);
 			
 			labels = new ArrayList<String>(totalBins);
-			for(int c = 0; c <= maxAtoms; c++) {
-				for(int o = 0; o <= maxAtoms; o++) {
-					for(int n = 0; n <= maxAtoms; n++) {
+			for(int c = 0; c <= maxCarbonAtoms; c++) {
+				for(int o = 0; o <= maxOxygenAtoms; o++) {
+					for(int n = 0; n <= maxNitrogenAtoms; n++) {
 						labels.add("C"+c+"O"+o+"N"+n);
 					}
 				}
@@ -37,16 +42,16 @@ public class MoleculeAtomTypeCountsBinLabels extends BaseBinLabels {
 		int carbonAtoms = multi[0];
 		int oxygenAtoms = multi[1];
 		int nitrogenAtoms = multi[2];
-		int binIndex = nitrogenAtoms + (oxygenAtoms + carbonAtoms*(maxAtoms+1))*(maxAtoms+1);
+		int binIndex = nitrogenAtoms + (oxygenAtoms + carbonAtoms*(maxOxygenAtoms+1))*(maxNitrogenAtoms+1);
 		return binIndex;
 	}
 
 	@Override
 	public int[] multiDimensionalIndices(HashMap<String, Object> keys) {
 		// If actual atom count exceeds the "max" then bin together
-		int carbons = Math.min(maxAtoms, (Integer) keys.get("Carbon Count"));
-		int oxygens = Math.min(maxAtoms, (Integer) keys.get("Oxygen Count"));
-		int nitrogens = Math.min(maxAtoms, (Integer) keys.get("Nitrogen Count"));
+		int carbons = Math.min(maxCarbonAtoms, (Integer) keys.get("Carbon Count"));
+		int oxygens = Math.min(maxOxygenAtoms, (Integer) keys.get("Oxygen Count"));
+		int nitrogens = Math.min(maxNitrogenAtoms, (Integer) keys.get("Nitrogen Count"));
 		return new int[] {carbons, oxygens, nitrogens};
 	}
 
@@ -57,7 +62,7 @@ public class MoleculeAtomTypeCountsBinLabels extends BaseBinLabels {
 
 	@Override
 	public int[] dimensionSizes() {
-		return new int[] {maxAtoms+1,maxAtoms+1,maxAtoms+1};
+		return new int[] {maxCarbonAtoms+1,maxOxygenAtoms+1,maxNitrogenAtoms+1};
 	}
 
 }
