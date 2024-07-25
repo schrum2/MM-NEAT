@@ -29,7 +29,7 @@ public class MoleculeAtomAndBondTypeBinLabels extends CombinationBinLabels {
 		
 		MMNEAT.main(("runNumber:1 randomSeed:1 watch:false trials:1 mu:10 base:molecules "+
 				"log:Molecules-AtomBondComboTargetMelting351Boiling436C saveTo:AtomBondComboTargetMelting351Boiling436C "+
-				"maxGens:10000 io:true netio:true mating:false task:edu.southwestern.tasks.molecules.MoleculeTask "+
+				"maxGens:20000 io:true netio:true mating:false task:edu.southwestern.tasks.molecules.MoleculeTask "+
 				"cleanFrequency:-1 saveAllChampions:true qdScoreForJustOneBin:true mapElitesLogsOtherScoreHypervolume:false "+
 				"ea:edu.southwestern.evolution.mapelites.MAPElites qdFullLoggingForEachOtherStat:false "+
 				"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 "+
