@@ -130,7 +130,7 @@ public class MoleculeTask extends NoisyLonerTask<String> {
 					BinLabels binLabels = MMNEAT.getArchiveBinLabelsClass();
 					int dim1D = binLabels.oneDimensionalIndex(behaviorCharacteristics);
 					String label = binLabels.binLabels().get(dim1D);
-					String filename = "CHAMPION-"+fitnesses.get(0)+"-"+label+".txt";
+					String filename = "CHAMPION-F"+fitnesses.get(0)+"-"+label+".txt";
 					String fullPath = archive.getArchiveDirectory() + File.separator + filename;
 					try {
 						PrintStream ps = new PrintStream(new File(fullPath));
