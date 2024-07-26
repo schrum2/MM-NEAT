@@ -25,11 +25,19 @@ public class MoleculeTask extends NoisyLonerTask<String> {
 	private static final double MIN_CELSIUS = -273.15;
 	private static final double WORST_TARGET_FITNESS = -1500;
 	
+	private double bestFitnessEver;
+	
 	public MoleculeTask() {
 		numFitnessFunctions = 0;
 		if(Parameters.parameters.booleanParameter("moleculeTargetMeltingAndBoilingPointFitness")) {
 			MMNEAT.registerFitnessFunction("moleculeTargetMeltingAndBoilingPointFitness");
 			numFitnessFunctions++;
+		}
+		
+		if(numFitnessFunctions == 1) { 
+			bestFitnessEver = WORST_TARGET_FITNESS;
+		} else {
+			throw new UnsupportedOperationException("The molecule task is not set up to handle multiobjective evolution yet, and should have exactly one fitness function.");
 		}
 		
 		MMNEAT.registerFitnessFunction("moleculeTargetMeltingAndBoilingPointFitness",null,false,0,WORST_TARGET_FITNESS);
@@ -116,13 +124,13 @@ public class MoleculeTask extends NoisyLonerTask<String> {
 			
 			if(CommonConstants.netio) {
 				// Assumes we are using target fitness to evolve to a goal of 0.0
-				if(fitnesses.get(0) == 0.0) {
+				if(fitnesses.get(0) > bestFitnessEver) {
 					@SuppressWarnings("unchecked")
 					Archive<String> archive = MMNEAT.getArchive();
 					BinLabels binLabels = MMNEAT.getArchiveBinLabelsClass();
 					int dim1D = binLabels.oneDimensionalIndex(behaviorCharacteristics);
 					String label = binLabels.binLabels().get(dim1D);
-					String filename = "CHAMPION-" + label +".txt";
+					String filename = "CHAMPION-"+fitnesses.get(0)+"-"+label+".txt";
 					String fullPath = archive.getArchiveDirectory() + File.separator + filename;
 					try {
 						PrintStream ps = new PrintStream(new File(fullPath));
@@ -136,6 +144,10 @@ public class MoleculeTask extends NoisyLonerTask<String> {
 			}
 		}
 		
+		if(fitnesses.get(0) > bestFitnessEver) {
+			bestFitnessEver = fitnesses.get(0);
+		}
+				
 		if(CommonConstants.watch) {
 			System.out.println(individual + " has MP " + meltingPoint + " and BP " + boilingPoint + " and fitness " + fitnesses + ":" + behaviorCharacteristics);
 		}
