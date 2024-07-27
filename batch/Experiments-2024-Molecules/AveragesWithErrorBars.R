@@ -72,6 +72,21 @@ for(d in directories) {
 }
 
 
+type <- "AtomBranchBondCombo"
+directories <- list.files(".",pattern=paste("^",base,type,"\\d*", sep = ""))
+for(d in directories) {
+    # Read each individual file
+    temp <- read.table(file = paste(d,"/","Molecules","-",d,"_Fill_log.txt", sep = ""), sep = '\t', header = FALSE)
+    # Rename relevant column
+    colnames(temp)[4] <- "score"
+    # Add data
+    evolutionData <- rbind(evolutionData, data.frame(generation = temp$V1 / 2, # Scale to match with objective evolution (scale different from other MAP Elites)
+                                       type = paste("AtomBondCombo",sep=""),
+                                       run = substring(d,nchar(paste0(base,type))+1), # Get the number following the type
+                                       score = c(temp[4])))
+}
+
+
 maxScore = max(evolutionData$score)
 maxGeneration = max(evolutionData$generation)
 
