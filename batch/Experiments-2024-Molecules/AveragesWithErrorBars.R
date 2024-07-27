@@ -20,7 +20,7 @@ if (length(args) < 1) {
 base <- args[1]
 
 # Determine the different experimental conditions
-types <- list("Elitism", "AtomBondCombo")
+types <- list("Elitism", "AtomTypeCount", "AtomBondCombo")
 
 # Initialize empty data
 evolutionData <- data.frame(generation = integer(), score = double())
@@ -114,6 +114,8 @@ evolutionStats <- evolutionData %>%
 spaceForTests <- maxScore / 6
 spacePerComparison <- spaceForTests / length(comparisonList)
   
+minFitness <- -15.0
+
 saveFile <- paste("AVG-",base,".png",sep="")
 png(saveFile, width=2000, height=1000)
 v <- ggplot(evolutionStats, aes(x = generation, y = avgScore, color = type)) +
@@ -131,7 +133,7 @@ v <- ggplot(evolutionStats, aes(x = generation, y = avgScore, color = type)) +
   # For separate plots
   #facet_wrap(~type) + 
   ggtitle("Fitness-based Evolution vs. Quality Diversity") +
-  coord_cartesian(ylim=c(-10.0,0.0), xlim=c(0,49)) +
+  coord_cartesian(ylim=c(minFitness,0.0), xlim=c(0,49)) +
   scale_color_discrete(breaks=types) +
   guides(size = FALSE, alpha = FALSE) +
   ylab("Average Score") +
