@@ -273,6 +273,7 @@ public class Parameters {
 		integerOptions.add("maxSingleBondsForBinLabels", 15, "Used by MoleculeBondTypeCountsBinLabels to restrict archive dimensions");
 		integerOptions.add("maxDoubleBondsForBinLabels", 10, "Used by MoleculeBondTypeCountsBinLabels to restrict archive dimensions");
 		integerOptions.add("maxTripleBondsForBinLabels", 5, "Used by MoleculeBondTypeCountsBinLabels to restrict archive dimensions");
+		integerOptions.add("maxBranchesForBinLabels", 6, "Used by MoleculeBranchCountsBinLabels to restrict archive dimensions");
 		integerOptions.add("minAnimationLength", 10, "Minimum length of animation in AnimationBreeder");
 		integerOptions.add("minAnimationLength", 10, "Minimum length of animation in AnimationBreeder");
 		integerOptions.add("minEdibleTime", Constants.EDIBLE_TIME, "What edible time is reduced to across generations");
