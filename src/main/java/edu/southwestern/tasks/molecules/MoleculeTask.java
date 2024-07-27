@@ -117,6 +117,8 @@ public class MoleculeTask extends NoisyLonerTask<String> {
 			behaviorCharacteristics.put("Single Bond Count", SMILESUtil.singleBondCount(smilesString));
 			behaviorCharacteristics.put("Double Bond Count", SMILESUtil.doubleBondCount(smilesString));
 			behaviorCharacteristics.put("Triple Bond Count", SMILESUtil.tripleBondCount(smilesString));
+
+			behaviorCharacteristics.put("Branch Count", SMILESUtil.branchCount(smilesString));
 			
 			// Assume there is just one fitness score at index 0
 			behaviorCharacteristics.put("binScore", fitnesses.get(0));

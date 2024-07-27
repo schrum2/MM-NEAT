@@ -119,14 +119,19 @@ public class SMILESUtil {
 	}
 	
 	/**
-	 * Indicates if SMILES string contains a ring.
-	 * 
-	 * TODO: I saw a result that verified that a molecule can
-	 *       contain multiple rings, for example: C(-N(=C2))(-O)(-N(-N1))-C21-C
-	 * 
+	 * Number of branches in SMILES string, sort of.
+	 * The concept of a branch is a bit nebulous, and
+	 * the SMILES representation allows some redundancies.
+	 * I've added code that eliminates certain redundancies,
+	 * but some still remain. Regardless, counting the
+	 * number of '(' characters in the SMILES string still
+	 * says something about its structure.
 	 * 
 	 * @param smiles SMILES string
-	 * @return true if string has a ring 
+	 * @return count number of ( characters
 	 */
+	public static int branchCount(String smiles) {
+		return countCharacters(smiles, c -> c == '(');
+	}
 
 }
