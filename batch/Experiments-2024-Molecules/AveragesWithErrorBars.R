@@ -26,7 +26,8 @@ types <- list("Elitism", "AtomBondCombo")
 evolutionData <- data.frame(generation = integer(), score = double())
 # Each experimental condition
 
-firstPattern <- paste0("^",base,"Elitism","\\d*")
+type <- "Elitism"
+firstPattern <- paste0("^",base,type,"\\d*")
 directories <- list.files(".",pattern=firstPattern)
 
 for(d in directories) {
@@ -37,11 +38,27 @@ for(d in directories) {
     # Add data
     evolutionData <- rbind(evolutionData, data.frame(generation = temp$V1, 
                                        type = paste("Elitism",sep=""),
-                                       run = substring(d,nchar("Melting147Boiling336Elitism")+1), # Get the number following the type
+                                       run = substring(d,nchar(paste0(base,type))+1), # Get the number following the type
                                        score = c(temp[4])))
 }
 
-directories <- list.files(".",pattern=paste("^",base ,"AtomBondCombo","\\d*", sep = ""))
+type <- "AtomTypeCount"
+directories <- list.files(".",pattern=paste("^",base,type,"\\d*", sep = ""))
+for(d in directories) {
+    # Read each individual file
+    temp <- read.table(file = paste(d,"/","Molecules","-",d,"_Fill_log.txt", sep = ""), sep = '\t', header = FALSE)
+    # Rename relevant column
+    colnames(temp)[4] <- "score"
+    # Add data
+    evolutionData <- rbind(evolutionData, data.frame(generation = temp$V1 / 10, # Scale to match with objective evolution
+                                       type = paste("AtomTypeCount",sep=""),
+                                       run = substring(d,nchar(paste0(base,type))+1), # Get the number following the type
+                                       score = c(temp[4])))
+}
+
+
+type <- "AtomBondCombo"
+directories <- list.files(".",pattern=paste("^",base,type,"\\d*", sep = ""))
 for(d in directories) {
     # Read each individual file
     temp <- read.table(file = paste(d,"/","Molecules","-",d,"_Fill_log.txt", sep = ""), sep = '\t', header = FALSE)
@@ -50,9 +67,10 @@ for(d in directories) {
     # Add data
     evolutionData <- rbind(evolutionData, data.frame(generation = temp$V1 / 10, # Scale to match with objective evolution
                                        type = paste("AtomBondCombo",sep=""),
-                                       run = substring(d,nchar("Melting147Boiling336AtomBondCombo")+1), # Get the number following the type
+                                       run = substring(d,nchar(paste0(base,type))+1), # Get the number following the type
                                        score = c(temp[4])))
 }
+
 
 maxScore = max(evolutionData$score)
 maxGeneration = max(evolutionData$generation)
