@@ -10,16 +10,19 @@ import java.util.*;
 import edu.southwestern.util.random.RandomNumbers;
 
 public class SmilesMutator {
-    private static final Random random = new Random();
+    private static final Random random = RandomNumbers.randomGenerator;
     private static final char[] ATOMS = {'C', 'O', 'N'};
     private static final char[] BONDS = {'-', '=', '#'};
     private static final char[] RING_NUMBERS = {'1', '2', '3'};
     private static final int MAX_RINGS = 3;
-    private static final Map<Character, Integer> MAX_BONDS = Map.of(
-        'C', 4,  // Carbon: up to 4 bonds
-        'O', 2,  // Oxygen: up to 2 bonds
-        'N', 3   // Nitrogen: up to 3 bonds
-    );
+    private static final Map<Character, Integer> MAX_BONDS;
+    
+    static {
+    	MAX_BONDS = new HashMap<>(3);
+    	MAX_BONDS.put('C', 4);  // Carbon: up to 4 bonds
+    	MAX_BONDS.put('O', 2);  // Oxygen: up to 2 bonds
+    	MAX_BONDS.put('N', 3);   // Nitrogen: up to 3 bonds
+    }
 
     public enum MutationType {
         CHANGE_BOND(1),
@@ -69,30 +72,31 @@ public class SmilesMutator {
     /**
      * Main mutation method that delegates to specific mutation types
      */
-    public String mutate(String smiles, MutationType type) {
+    public static String mutate(String smiles, MutationType type) {
         if (!isValidMolecule(smiles)) {
             return "X";
         }
 
         try {
-            return switch (type) {
-                case CHANGE_BOND -> mutateBond(smiles);
-                case ADD_ATOM -> addAtom(smiles);
-                case ADD_BRANCH -> addBranch(smiles);
-                case DELETE_ATOM -> deleteAtom(smiles);
-                case CHANGE_ATOM -> changeAtom(smiles);
-                case DELETE_RING -> deleteRing(smiles);
-                case ADD_RING -> addRing(smiles);
-            };
+	        switch (type) {
+	        	case CHANGE_BOND: return mutateBond(smiles);
+	            case ADD_ATOM: return addAtom(smiles);
+	            case ADD_BRANCH: return addBranch(smiles);
+	            case DELETE_ATOM: return deleteAtom(smiles);
+	            case CHANGE_ATOM: return changeAtom(smiles);
+	            case DELETE_RING: return deleteRing(smiles);
+	            case ADD_RING: return addRing(smiles);
+	        } 
         } catch (Exception e) {
             return "X";
         }
+        return "X";
     }
 
-    /**
+	/**
      * Changes a random bond type in the molecule
      */
-    private String mutateBond(String smiles) {
+    private static String mutateBond(String smiles) {
         char[] chars = smiles.toCharArray();
         List<Integer> bondPositions = new ArrayList<>();
         
@@ -123,7 +127,7 @@ public class SmilesMutator {
     /**
      * Adds a new atom to the existing molecule
      */
-    private String addAtom(String smiles) {
+    private static String addAtom(String smiles) {
         char[] chars = smiles.toCharArray();
         List<Integer> atomPositions = findValidAtomPositions(chars);
         
@@ -144,7 +148,7 @@ public class SmilesMutator {
     /**
      * Adds a new branched atom to the molecule
      */
-    private String addBranch(String smiles) {
+    private static String addBranch(String smiles) {
         char[] chars = smiles.toCharArray();
         List<Integer> atomPositions = findValidAtomPositions(chars);
         
@@ -165,7 +169,7 @@ public class SmilesMutator {
     /**
      * Deletes an atom from the molecule
      */
-    private String deleteAtom(String smiles) {
+    private static String deleteAtom(String smiles) {
         MoleculeStructure structure = parseMolecule(smiles);
         if (structure.atoms.size() <= 1) {
             return "X";
@@ -199,9 +203,17 @@ public class SmilesMutator {
     }
 
     /**
+     * Indicate if the atom at position i is inside of a ring
+     */
+    private static boolean isInRing(String smiles, int i) {
+    	// Position after the atom is a number indicating the ring it matches with
+		return i+1 < smiles.length() && Character.isDigit(smiles.charAt(i+1));
+	}
+
+	/**
      * Changes an atom type in the molecule
      */
-    private String changeAtom(String smiles) {
+    private static String changeAtom(String smiles) {
         char[] chars = smiles.toCharArray();
         List<Integer> atomPositions = findValidAtomPositions(chars);
         
@@ -226,7 +238,7 @@ public class SmilesMutator {
     /**
      * Deletes a ring from the molecule
      */
-    private String deleteRing(String smiles) {
+    private static String deleteRing(String smiles) {
         // Count rings in molecule
         Map<Character, List<Integer>> ringPositions = findRingPositions(smiles);
         if (ringPositions.isEmpty()) {
@@ -253,7 +265,7 @@ public class SmilesMutator {
     /**
      * Adds a new ring to the molecule
      */
-    private String addRing(String smiles) {
+    private static String addRing(String smiles) {
         // Check existing rings
         Map<Character, List<Integer>> existingRings = findRingPositions(smiles);
         if (existingRings.size() >= MAX_RINGS) {
@@ -302,7 +314,7 @@ public class SmilesMutator {
     /**
      * Parses SMILES string into a molecular structure
      */
-    private MoleculeStructure parseMolecule(String smiles) {
+    private static MoleculeStructure parseMolecule(String smiles) {
         MoleculeStructure structure = new MoleculeStructure();
         Stack<Atom> atomStack = new Stack<>();
         Atom currentAtom = null;
@@ -328,7 +340,11 @@ public class SmilesMutator {
             } else if (c == ')') {
                 currentAtom = atomStack.pop();
             } else if (Character.isDigit(c)) {
-                int[] ringAtoms = structure.rings.computeIfAbsent(c, k -> new int[2]);
+            	int[] ringAtoms = structure.rings.get(c);
+            	if (ringAtoms == null) {
+            	    ringAtoms = new int[2];
+            	    structure.rings.put(c, ringAtoms);
+            	}
                 if (ringAtoms[0] == 0) {
                     ringAtoms[0] = structure.atoms.indexOf(currentAtom);
                 } else {
@@ -343,7 +359,7 @@ public class SmilesMutator {
     /**
      * Validates if a given SMILES string represents a valid molecule
      */
-    private boolean isValidMolecule(String smiles) {
+    private static boolean isValidMolecule(String smiles) {
         if (smiles == null || smiles.isEmpty() || smiles.equals("X")) {
             return false;
         }
@@ -396,15 +412,15 @@ public class SmilesMutator {
     }
 
     // Helper methods
-    private boolean isAtom(char c) {
+    private static boolean isAtom(char c) {
         return c == 'C' || c == 'O' || c == 'N';
     }
 
-    private boolean isBond(char c) {
+    private static boolean isBond(char c) {
         return c == '-' || c == '=' || c == '#';
     }
 
-    private List<Integer> findValidAtomPositions(char[] chars) {
+    private static List<Integer> findValidAtomPositions(char[] chars) {
         List<Integer> positions = new ArrayList<>();
         for (int i = 0; i < chars.length; i++) {
             if (isAtom(chars[i])) {
@@ -414,18 +430,23 @@ public class SmilesMutator {
         return positions;
     }
 
-    private Map<Character, List<Integer>> findRingPositions(String smiles) {
+    private static Map<Character, List<Integer>> findRingPositions(String smiles) {
         Map<Character, List<Integer>> ringPositions = new HashMap<>();
         for (int i = 0; i < smiles.length(); i++) {
             char c = smiles.charAt(i);
             if (Character.isDigit(c)) {
-                ringPositions.computeIfAbsent(c, k -> new ArrayList<>()).add(i);
+            	List<Integer> positions = ringPositions.get(c);
+            	if (positions == null) {
+            	    positions = new ArrayList<>();
+            	    ringPositions.put(c, positions);
+            	}
+            	positions.add(i);
             }
         }
         return ringPositions;
     }
 
-    private int findNthAtom(String smiles, int n) {
+    private static int findNthAtom(String smiles, int n) {
         int count = 0;
         for (int i = 0; i < smiles.length(); i++) {
             if (isAtom(smiles.charAt(i))) {
@@ -435,3 +456,4 @@ public class SmilesMutator {
         }
         return -1;
     }
+}
