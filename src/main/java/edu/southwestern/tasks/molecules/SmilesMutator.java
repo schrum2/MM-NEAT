@@ -7,6 +7,17 @@ package edu.southwestern.tasks.molecules;
  * a SMILES string representation of a molecule.
  */
 import java.util.*;
+
+import edu.southwestern.evolution.genotypes.SMILESStringGenotype;
+import edu.southwestern.evolution.mutation.smiles.SMILESAddRingMutation;
+import edu.southwestern.evolution.mutation.smiles.SMILESBranchNewAtomMutation;
+import edu.southwestern.evolution.mutation.smiles.SMILESChangeAtomTypeMutation;
+import edu.southwestern.evolution.mutation.smiles.SMILESChangeBondTypeMutation;
+import edu.southwestern.evolution.mutation.smiles.SMILESDeleteAtomMutation;
+import edu.southwestern.evolution.mutation.smiles.SMILESDeleteRingMutation;
+import edu.southwestern.evolution.mutation.smiles.SMILESInsertNewAtomMutation;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.random.RandomNumbers;
 
 public class SmilesMutator {
@@ -456,4 +467,38 @@ public class SmilesMutator {
         }
         return -1;
     }
+    
+	public static void main(String[] args) {
+		for(int i = 0; i < 1000; i++) {
+			System.out.println("Attempt " + i);
+			
+			String exampleSMILES = "C-C-N-C(=C)-O";
+			String temp = exampleSMILES;
+			System.out.println("      Start: "+ exampleSMILES);
+			temp = mutateBond(exampleSMILES);
+			exampleSMILES = temp.equals("X") ? exampleSMILES : temp;
+			System.out.println("Change Bond: "+ exampleSMILES);
+			temp = addAtom(exampleSMILES);
+			exampleSMILES = temp.equals("X") ? exampleSMILES : temp;
+			System.out.println("Insert Atom: "+ exampleSMILES);
+			temp = addBranch(exampleSMILES);
+			exampleSMILES = temp.equals("X") ? exampleSMILES : temp;
+			System.out.println("Branch Atom: "+ exampleSMILES);
+			temp = deleteAtom(exampleSMILES);
+			exampleSMILES = temp.equals("X") ? exampleSMILES : temp;
+			System.out.println("Delete Atom: "+ exampleSMILES);
+			temp = changeAtom(exampleSMILES);
+			exampleSMILES = temp.equals("X") ? exampleSMILES : temp;
+			System.out.println("Change Atom: "+ exampleSMILES);
+			temp = deleteRing(exampleSMILES);
+			exampleSMILES = temp.equals("X") ? exampleSMILES : temp;
+			System.out.println("Delete Ring: "+ exampleSMILES);
+			temp = addRing(exampleSMILES);
+			exampleSMILES = temp.equals("X") ? exampleSMILES : temp;
+			System.out.println("   Add Ring: "+ exampleSMILES);
+			
+			MiscUtil.waitForReadStringAndEnterKeyPress();
+			
+		}
+	}
 }
