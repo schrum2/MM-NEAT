@@ -173,7 +173,12 @@ public class SmilesMutator {
 	 * @return
 	 */
 	public static int bondCount(char bond) {
-		return bond == '-' ? 1 : (bond == '=' ? 2 : 3);
+	    switch (bond) {
+        case '-': return 1; // Single bond
+        case '=': return 2; // Double bond
+        case '#': return 3; // Triple bond
+        default: throw new IllegalArgumentException("Not a bond character: " + bond);
+	    }
 	}
 
     /**
@@ -206,6 +211,10 @@ public class SmilesMutator {
         char[] chars = smiles.toCharArray();
         List<Integer> atomPositions = findValidAtomPositions(chars, new char[] {'O'}); // cannot branch off of Oxygen (only 2 bonds)
         
+        // Go through supposedly valid positions and remove those whose atom is already engaged in the max number of bonds
+        atomPositions.removeIf(pos -> getAtomBondCount(smiles, pos) >= MAX_BONDS.get(chars[pos]));
+
+        
         if (atomPositions.isEmpty()) {
         	throw new InvalidMoleculeException(smiles);
             //return "X";
@@ -235,6 +244,36 @@ public class SmilesMutator {
         return isValidMolecule(result.toString()) ? result.toString() : "X";
     }
 
+    private static int getAtomBondCount(String smiles, int position) {
+        int bondCount = 0;
+        if(position > 0) {
+        	int precedingBondCount = bondCount(smiles.charAt(position - 1));
+        	bondCount += precedingBondCount;
+        }
+
+        int after = position+1;
+        if(Character.isDigit(smiles.charAt(after))) {
+        	bondCount += 1; // Add for ring connection (assuming these are always single bonds)
+        	after++;
+        }
+        
+        if(smiles.charAt(after) == '(') { // atom connected to branch
+        	int branchBoundCount = bondCount(smiles.charAt(after + 1));
+        	bondCount += branchBoundCount;
+        	after += 3; // skip after first branch bond and atom
+        	// find where branch ends
+        	while(smiles.charAt(after) != ')') after++;
+        	after++; // position after branch closes
+        }
+
+        if(after < smiles.length()) {
+        	int followingBondCount = bondCount(smiles.charAt(after));
+        	bondCount += followingBondCount;
+        }
+
+        return bondCount;
+    }    
+    
     /**
      * Deletes an atom from the molecule
      */
