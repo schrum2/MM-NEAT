@@ -205,6 +205,18 @@ public class SmilesMutator {
         
         int position = atomPositions.get(random.nextInt(atomPositions.size()));
         char newAtom = ATOMS[random.nextInt(ATOMS.length)];
+        
+        if(newAtom == 'O') {
+        	// There may be restrictions depending on the surrounding bonds
+        	if(position+1 < smiles.length()) {
+        		if(smiles.charAt(position+1) == '=') {
+        			newAtom = RandomNumbers.coinFlip() ? 'C' : 'N';
+        		} else if(smiles.charAt(position+1) == '#') {
+        			newAtom = 'C';
+        		}
+        	}
+        }
+        
         // Always add with single bonds to discourage bad SMILES strings. Other mutations can change
         // the bonds later.
         char newBond = '-'; //BONDS[random.nextInt(BONDS.length)];
