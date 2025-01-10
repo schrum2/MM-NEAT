@@ -296,7 +296,12 @@ public class SmilesMutator {
         }
         
         StringBuilder result = new StringBuilder(smiles);
-        result.insert(position + 1, "(" + newBond + newAtom + ")");
+        if(position == 0) {
+        	// A branch off the first atom is actually equivalent to an atom added to the front
+        	result.insert(0, newAtom + newBond);
+        } else {
+        	result.insert(position + 1, "(" + newBond + newAtom + ")");
+        }
         int openBeforeNew = result.substring(0,position).lastIndexOf("(");
         int closeBeforeNew = result.substring(0,position).lastIndexOf(")");
         if(openBeforeNew > -1 && // There is an open ( before the new branch 
