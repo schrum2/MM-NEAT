@@ -84,7 +84,7 @@ public class SmilesMutator {
         }
         
 		public int bondCount() {
-			return type == '#' ? 3 : (type == '=' ? 2 : 1);
+			return SmilesMutator.bondCount(type);
 		}
     }
 
@@ -187,6 +187,11 @@ public class SmilesMutator {
     private static String addAtom(String smiles) {
         char[] chars = smiles.toCharArray();
         List<Integer> atomPositions = findValidAtomPositions(chars);
+        
+        // Don't add before a branch
+        atomPositions.removeIf(pos -> pos+1 < smiles.length() && smiles.charAt(pos+1) == '(');
+        // Also consider branches involved in rings
+        atomPositions.removeIf(pos -> pos+2 < smiles.length() && Character.isDigit(smiles.charAt(pos+1)) && smiles.charAt(pos+2) == '(');
         
         if (atomPositions.isEmpty()) {
             return "X";
