@@ -271,7 +271,8 @@ public class SmilesMutator {
         	after++; // position after branch closes
         }
 
-        if(after < smiles.length()) {
+        // Make sure we were not looking at the last atom, and also not the last atom within a branch
+        if(after < smiles.length() && smiles.charAt(after) != ')') {
         	int followingBondCount = bondCount(smiles.charAt(after));
         	bondCount += followingBondCount;
         }
