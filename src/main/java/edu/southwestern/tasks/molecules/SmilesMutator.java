@@ -227,7 +227,8 @@ public class SmilesMutator {
         
         int position = atomPositions.get(random.nextInt(atomPositions.size()));
         char newAtom = ATOMS[random.nextInt(ATOMS.length)];
-        char newBond = BONDS[random.nextInt(BONDS.length)];
+        // Just initialize these to single bonds to be safe. Later mutations can change to higher bond counts
+        char newBond = '-'; // BONDS[random.nextInt(BONDS.length)];
         
         // if position is an atom in a ring, then the new branch must come after the ring number
         if(position + 1 < smiles.length()) {
@@ -257,26 +258,29 @@ public class SmilesMutator {
         }
 
         int after = position+1;
-        if(Character.isDigit(smiles.charAt(after))) {
-        	bondCount += 1; // Add for ring connection (assuming these are always single bonds)
-        	after++;
-        }
-        
-        if(smiles.charAt(after) == '(') { // atom connected to branch
-        	int branchBoundCount = bondCount(smiles.charAt(after + 1));
-        	bondCount += branchBoundCount;
-        	after += 3; // skip after first branch bond and atom
-        	// find where branch ends
-        	while(smiles.charAt(after) != ')') after++;
-        	after++; // position after branch closes
-        }
+        if(after < smiles.length()) {
+        	if(Character.isDigit(smiles.charAt(after))) {
+        		bondCount += 1; // Add for ring connection (assuming these are always single bonds)
+        		after++;
+        	}
 
-        // Make sure we were not looking at the last atom, and also not the last atom within a branch
-        if(after < smiles.length() && smiles.charAt(after) != ')') {
-        	int followingBondCount = bondCount(smiles.charAt(after));
-        	bondCount += followingBondCount;
-        }
+        	if(after < smiles.length()) {
+        		if(smiles.charAt(after) == '(') { // atom connected to branch
+        			int branchBoundCount = bondCount(smiles.charAt(after + 1));
+        			bondCount += branchBoundCount;
+        			after += 3; // skip after first branch bond and atom
+        			// find where branch ends
+        			while(smiles.charAt(after) != ')') after++;
+        			after++; // position after branch closes
+        		}
 
+        		// Make sure we were not looking at the last atom, and also not the last atom within a branch
+        		if(after < smiles.length() && smiles.charAt(after) != ')') {
+        			int followingBondCount = bondCount(smiles.charAt(after));
+        			bondCount += followingBondCount;
+        		}
+        	}
+        }
         return bondCount;
     }    
     
@@ -477,20 +481,26 @@ public class SmilesMutator {
             //return "X";
         }
 
-        // Select two different positions for ring attachment
+        // Select the first position for ring attachment randomly
         int atomPos1 = random.nextInt(atomPositions.size());
         int pos1 = atomPositions.get(atomPos1);
-        int pos2;
-        int atomPos2;
-        int attempts = 0;
-        do {
-            if(attempts++ > 5) {
-            	throw new InvalidMoleculeException(smiles);
-            	//return "X"; // Give up if trying too many times
+
+        // Filter the atomPositions to exclude invalid options for the second position
+        List<Integer> validPositions = new ArrayList<>();
+        for (int i = 0; i < atomPositions.size(); i++) {
+            if (Math.abs(i - atomPos1) >= 2) {
+                validPositions.add(atomPositions.get(i));
             }
-        	atomPos2 = random.nextInt(atomPositions.size());
-            pos2 = atomPositions.get(atomPos2);
-        } while (atomPos2 == atomPos1 || Math.abs(atomPos2 - atomPos1) < 2); // Ensure minimum ring size
+        }
+
+        // Check if there are any valid positions left
+        if (validPositions.isEmpty()) {
+            //throw new InvalidMoleculeException(smiles);
+            return "X"; // Fail immediately if no valid positions are found
+        }
+
+        // Select the second position for ring attachment randomly from the filtered list
+        int pos2 = validPositions.get(random.nextInt(validPositions.size()));
 
         StringBuilder result = new StringBuilder(smiles);
         // Add ring numbers from back to front to maintain correct positions
@@ -669,7 +679,7 @@ public class SmilesMutator {
 
             return true;
         } catch (Exception e) {
-        	System.out.println("isValidMolecule");
+        	System.out.println("isValidMolecule:"+smiles);
             throw e;
         	//return false;
         }
