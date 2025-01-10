@@ -142,27 +142,29 @@ public class SmilesMutator {
             }
         }
         
-        String result = "X";
-        if (!bondPositions.isEmpty()) {
-	        
-	        int bondListPos = random.nextInt(bondPositions.size());
-	        int maxBondAllowed = maxAllowed.get(bondListPos);
-			int position = bondPositions.get(bondListPos);
-	        char currentBond = chars[position];
-	        char newBond;
-	        
-	        do {
-	            newBond = BONDS[random.nextInt(BONDS.length)];
-	        } while (newBond == currentBond || bondCount(newBond) > maxBondAllowed);
-	        
-	        chars[position] = newBond;
-	        result = new String(chars);
-	        if(!isValidMolecule(result)) {
-	        	result = "X";
-	        }
-        } else {
-        	throw new InvalidMoleculeException(result);
+        if (bondPositions.isEmpty()) {
+        	System.out.println(bondPositions);
+        	System.out.println(maxAllowed);
+        	throw new InvalidMoleculeException(smiles);
+        	// return "X";
         }
+        
+        int bondListPos = random.nextInt(bondPositions.size());
+        int maxBondAllowed = maxAllowed.get(bondListPos);
+        int position = bondPositions.get(bondListPos);
+        char currentBond = chars[position];
+        char newBond;
+
+        do {
+        	newBond = BONDS[random.nextInt(BONDS.length)];
+        } while (newBond == currentBond || bondCount(newBond) > maxBondAllowed);
+
+        chars[position] = newBond;
+        String result = new String(chars);
+        if(!isValidMolecule(result)) {
+        	result = "X";
+        }
+
         return result;
     }
 
@@ -187,13 +189,9 @@ public class SmilesMutator {
         
         int position = atomPositions.get(random.nextInt(atomPositions.size()));
         char newAtom = ATOMS[random.nextInt(ATOMS.length)];
-        char newBond = BONDS[random.nextInt(BONDS.length)];
-
-        // Always add Oxygen with single bonds.
-        // Won't solve problems with branches, but should work in other cases.
-        if(newAtom == 'O') {
-        	newBond = '-';
-        }
+        // Always add with single bonds to discourage bad SMILES strings. Other mutations can change
+        // the bonds later.
+        char newBond = '-'; //BONDS[random.nextInt(BONDS.length)];
         
         StringBuilder result = new StringBuilder(smiles);
         result.insert(position + 1, newBond).insert(position + 2, newAtom);
