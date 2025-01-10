@@ -254,48 +254,54 @@ public class SmilesMutator {
     }
 
     private static int getAtomBondCount(String smiles, int position) {
-        int bondCount = 0;
-        if(position > 0) {
-        	int precedingBondCount = bondCount(smiles.charAt(position - 1));
-        	bondCount += precedingBondCount;
-        }
+    	assert isAtom(smiles.charAt(position));
+    	try {
+    		int bondCount = 0;
+    		if(position > 0) {
+    			int precedingBondCount = bondCount(smiles.charAt(position - 1));
+    			bondCount += precedingBondCount;
+    		}
 
-        int after = position+1;
-        if(after < smiles.length()) {
-        	if(Character.isDigit(smiles.charAt(after))) {
-        		bondCount += 1; // Add for ring connection (assuming these are always single bonds)
-        		after++;
-        	}
+    		int after = position+1;
+    		if(after < smiles.length()) {
+    			if(Character.isDigit(smiles.charAt(after))) {
+    				bondCount += 1; // Add for ring connection (assuming these are always single bonds)
+    				after++;
+    			}
 
-        	if(after < smiles.length()) {
-        		if(smiles.charAt(after) == '(') { // atom connected to branch
-        			int branchBoundCount = bondCount(smiles.charAt(after + 1));
-        			bondCount += branchBoundCount;
-        			after += 3; // skip after first branch bond and atom
-        			// find where branch ends
-        			while(smiles.charAt(after) != ')') after++;
-        			after++; // position after branch closes
-        			
-        			// There could be a second branch here
-        			if(after == '(') {
-        				int nextBranchBoundCount = bondCount(smiles.charAt(after + 1));
-            			bondCount += nextBranchBoundCount;
-            				
-            			after += 3; // skip after first branch bond and atom
-            			// find where branch ends
-            			while(smiles.charAt(after) != ')') after++;
-            			after++; // position after branch closes
-        			}
-        		}
+    			if(after < smiles.length()) {
+    				if(smiles.charAt(after) == '(') { // atom connected to branch
+    					int branchBoundCount = bondCount(smiles.charAt(after + 1));
+    					bondCount += branchBoundCount;
+    					after += 3; // skip after first branch bond and atom
+    					// find where branch ends
+    					while(smiles.charAt(after) != ')') after++;
+    					after++; // position after branch closes
 
-        		// Make sure we were not looking at the last atom, and also not the last atom within a branch
-        		if(after < smiles.length() && smiles.charAt(after) != ')') {
-        			int followingBondCount = bondCount(smiles.charAt(after));
-        			bondCount += followingBondCount;
-        		}
-        	}
-        }
-        return bondCount;
+    					// There could be a second branch here
+    					if(smiles.charAt(after) == '(') {
+    						int nextBranchBoundCount = bondCount(smiles.charAt(after + 1));
+    						bondCount += nextBranchBoundCount;
+
+    						after += 3; // skip after first branch bond and atom
+    						// find where branch ends
+    						while(smiles.charAt(after) != ')') after++;
+    						after++; // position after branch closes
+    					}
+    				}
+
+    				// Make sure we were not looking at the last atom, and also not the last atom within a branch
+    				if(after < smiles.length() && smiles.charAt(after) != ')') {
+    					int followingBondCount = bondCount(smiles.charAt(after));
+    					bondCount += followingBondCount;
+    				}
+    			}
+    		}
+			return bondCount;
+    	} catch(Exception e) {
+    		System.out.println(smiles + " position " + position);
+    		throw e;
+    	}
     }    
     
     /**
