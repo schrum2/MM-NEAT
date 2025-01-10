@@ -323,8 +323,10 @@ public class SmilesMutator {
         	if(atomPos > 1 && smiles.charAt(atomPos - 2) == '(') {
         		// Deletes one and only atom in branch
         		result.delete(atomPos - 2, atomPos + 2);
+        		System.out.println("1:"+result);
         	} else {
         		result.delete(atomPos - 1, atomPos + 1);
+        		System.out.println("2:"+result);
         	}
         	
         	collapseBranchAtEnd(result);
@@ -483,8 +485,7 @@ public class SmilesMutator {
             .collect(Collectors.toList());
 
         if (atomPositions.size() <= 2) {
-        	throw new InvalidMoleculeException(smiles);
-            //return "X";
+        	return "X";
         }
 
         // Select the first position for ring attachment randomly
@@ -677,10 +678,11 @@ public class SmilesMutator {
                 	}
                 }
                 
-                if(current == ')' && next == '(') {
-                	throw new InvalidMoleculeException(smiles);
-                	//return false; // don't allow multiple branches like this
-                }
+                // It actually is allowed to have two branches, as long as there are sufficient bonds
+                //if(current == ')' && next == '(') {
+                //	throw new InvalidMoleculeException(smiles);
+                //	//return false; // don't allow multiple branches like this
+                //}
             }
 
             return true;
