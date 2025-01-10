@@ -192,6 +192,9 @@ public class SmilesMutator {
         atomPositions.removeIf(pos -> pos+1 < smiles.length() && smiles.charAt(pos+1) == '(');
         // Also consider branches involved in rings
         atomPositions.removeIf(pos -> pos+2 < smiles.length() && Character.isDigit(smiles.charAt(pos+1)) && smiles.charAt(pos+2) == '(');
+
+        // Cannot add next to oxygen with double bond at the end
+        if(atomPositions.get(atomPositions.size() - 1) == smiles.length() - 1 && smiles.substring(smiles.length() - 2).equals("=O")) atomPositions.remove(atomPositions.size() - 1);
         
         if (atomPositions.isEmpty()) {
             return "X";
@@ -325,8 +328,11 @@ public class SmilesMutator {
         	}
         	
         	collapseBranchAtEnd(result);
-        } else { // deleting first atom, and the bond after it
+        } else if(atomPos == 0) { // deleting first atom, and the bond after it
             result.delete(atomPos, atomPos + 2);
+        } else {
+        	throw new InvalidMoleculeException(smiles + ": want to delete " + atomPos);
+            //return "X";
         }
 
         return isValidMolecule(result.toString()) ? result.toString() : "X";
