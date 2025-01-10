@@ -168,13 +168,27 @@ public class SmilesMutator {
         
         int bondListPos = random.nextInt(bondPositions.size());
         int maxBondAllowed = maxAllowed.get(bondListPos);
+        assert maxBondAllowed > 0 : bondPositions.get(bondListPos) +" in " + smiles + ": pos " + bondListPos + " in " + bondPositions + " where max is " + maxAllowed +": maxBondAllowed="+maxBondAllowed + ", currentBond = "+chars[bondPositions.get(bondListPos)];
         int position = bondPositions.get(bondListPos);
         char currentBond = chars[position];
         char newBond;
-
-        do {
-        	newBond = BONDS[random.nextInt(BONDS.length)];
-        } while (newBond == currentBond || bondCount(newBond) > maxBondAllowed);
+        
+        if(maxBondAllowed == 2) {
+        	if(currentBond == '=') newBond = '-';
+        	else if(currentBond == '-') newBond = '=';
+        	else throw new InvalidMoleculeException(position +" in " + smiles + ": pos " + bondListPos + " in " + bondPositions + " where max is " + maxAllowed +": maxBondAllowed="+maxBondAllowed + ", currentBond = "+currentBond);
+        } else if(maxBondAllowed == 3) {
+        	if(currentBond == '=') newBond = RandomNumbers.coinFlip() ? '-' : '#';
+        	else if(currentBond == '-') newBond = RandomNumbers.coinFlip() ? '=' : '#';
+        	else if(currentBond == '#') newBond = RandomNumbers.coinFlip() ? '=' : '-';
+        	else throw new InvalidMoleculeException(position +" in " + smiles + ": pos " + bondListPos + " in " + bondPositions + " where max is " + maxAllowed +": maxBondAllowed="+maxBondAllowed + ", currentBond = "+currentBond);
+        } else throw new InvalidMoleculeException(position +" in " + smiles + ": pos " + bondListPos + " in " + bondPositions + " where max is " + maxAllowed +": maxBondAllowed="+maxBondAllowed + ", currentBond = "+currentBond);
+        
+//        int attempts = 0;
+//        do {
+//        	if(attempts++ > 10) throw new InvalidMoleculeException(position +" in " + smiles + ": pos " + bondListPos + " in " + bondPositions + " where max is " + maxAllowed +": maxBondAllowed="+maxBondAllowed + ", currentBond = "+currentBond);
+//        	newBond = BONDS[random.nextInt(BONDS.length)];
+//        } while (newBond == currentBond || bondCount(newBond) > maxBondAllowed);
 
         chars[position] = newBond;
         String result = new String(chars);
