@@ -189,7 +189,7 @@ public class SmilesMutator {
         for (int i = 0; i < structure.atoms.size(); i++) {
             Atom atom = structure.atoms.get(i);
             // Don't delete atoms that are part of rings or have multiple branches
-            if (atom.bonds.size() == 1 && !isInRing(smiles, i)) {
+            if (atom.bonds.size() == 1 && !isInRing(structure, i)) {
                 deletableAtoms.add(i);
             }
         }
@@ -219,6 +219,23 @@ public class SmilesMutator {
         return isValidMolecule(result.toString()) ? result.toString() : "X";
     }
 
+    /**
+     * Checks if a given atom index is part of a ring in the molecular structure.
+     * 
+     * @param structure The parsed molecular structure.
+     * @param atomIndex The index of the atom to check.
+     * @return true if the atom is part of a ring, false otherwise.
+     */
+    private static boolean isInRing(MoleculeStructure structure, int atomIndex) {
+        for (Map.Entry<Character, int[]> ring : structure.rings.entrySet()) {
+            int[] ringAtoms = ring.getValue();
+            if (ringAtoms[0] == atomIndex || ringAtoms[1] == atomIndex) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 	/**
 	 * If the SMILES string now ends with an unnecessary branch, remove the parentheses
 	 * @param result
@@ -240,13 +257,7 @@ public class SmilesMutator {
 		}
 	}
 
-    /**
-     * Indicate if the atom at position i is inside of a ring
-     */
-    private static boolean isInRing(String smiles, int i) {
-    	// Position after the atom is a number indicating the ring it matches with
-		return i+1 < smiles.length() && Character.isDigit(smiles.charAt(i+1));
-	}
+
 
 	/**
      * Changes an atom type in the molecule
