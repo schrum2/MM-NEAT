@@ -88,7 +88,7 @@ public class SmilesMutator {
             return "X";
         }
 
-        try {
+        //try {
 	        switch (type) {
 	        	case CHANGE_BOND: return mutateBond(smiles);
 	            case ADD_ATOM: return addAtom(smiles);
@@ -98,9 +98,9 @@ public class SmilesMutator {
 	            case DELETE_RING: return deleteRing(smiles);
 	            case ADD_RING: return addRing(smiles);
 	        } 
-        } catch (Exception e) {
-            return "X";
-        }
+        //} catch (Exception e) {
+        //    return "X";
+        //}
         return "X";
     }
 
@@ -173,7 +173,14 @@ public class SmilesMutator {
         
         StringBuilder result = new StringBuilder(smiles);
         result.insert(position + 1, "(" + newBond + newAtom + ")");
-        collapseBranchAtEnd(result);
+        int openBeforeNew = result.substring(0,position).lastIndexOf("(");
+        int closeBeforeNew = result.substring(0,position).lastIndexOf(")");
+        if(openBeforeNew > -1 && // There is an open ( before the new branch 
+           closeBeforeNew < openBeforeNew) { // and there is no close ), or if there is, it is to the left of the open (
+        	collapseBranchAt(result,position + 4); // 4 characters were just added
+        } else {
+        	collapseBranchAtEnd(result); // Never let branches persist at the end
+        }
         return isValidMolecule(result.toString()) ? result.toString() : "X";
     }
 
@@ -225,10 +232,18 @@ public class SmilesMutator {
 	 * @param result
 	 */
 	private static void collapseBranchAtEnd(StringBuilder result) {
+		collapseBranchAt(result,result.length() - 1);
+	}
+	/**
+	 * The superfluous branch could be inside of another branch, in the middle.
+	 * @param result StringBuilder of original SMILES string
+	 * @param closingParenPos place where a closing paren might be
+	 */
+	private static void collapseBranchAt(StringBuilder result, int closingParenPos) {
 		// What if the string now ends with a branch? In that case, it's not really a branch
-		if(result.charAt(result.length() - 1) == ')') {
-			int openingParenPos = result.lastIndexOf("(");
-			result.deleteCharAt(result.length() - 1); // deletes )
+		if(result.charAt(closingParenPos) == ')') {
+			int openingParenPos = result.substring(0,closingParenPos).lastIndexOf("(");
+			result.deleteCharAt(closingParenPos);     // deletes )
 			result.deleteCharAt(openingParenPos);     // deletes (
 		}
 	}
@@ -496,28 +511,41 @@ public class SmilesMutator {
 			
 			String temp = exampleSMILES;
 			System.out.println("        Start: "+ exampleSMILES);
-			temp = mutateBond(exampleSMILES);
-			exampleSMILES = temp.equals("X") ? exampleSMILES : temp;
-			System.out.println((temp.equals("X") ? "X " : "  ") + "Change Bond: "+ exampleSMILES);
-			temp = addAtom(exampleSMILES);
-			exampleSMILES = temp.equals("X") ? exampleSMILES : temp;
-			System.out.println((temp.equals("X") ? "X " : "  ") + "Insert Atom: "+ exampleSMILES);
-			temp = addBranch(exampleSMILES);
-			exampleSMILES = temp.equals("X") ? exampleSMILES : temp;
-			System.out.println((temp.equals("X") ? "X " : "  ") + "Branch Atom: "+ exampleSMILES);
-			temp = deleteAtom(exampleSMILES);
-			exampleSMILES = temp.equals("X") ? exampleSMILES : temp;
-			System.out.println((temp.equals("X") ? "X " : "  ") + "Delete Atom: "+ exampleSMILES);
-			temp = changeAtom(exampleSMILES);
-			exampleSMILES = temp.equals("X") ? exampleSMILES : temp;
-			System.out.println((temp.equals("X") ? "X " : "  ") + "Change Atom: "+ exampleSMILES);
-			temp = deleteRing(exampleSMILES);
-			exampleSMILES = temp.equals("X") ? exampleSMILES : temp;
-			System.out.println((temp.equals("X") ? "X " : "  ") + "Delete Ring: "+ exampleSMILES);
-			temp = addRing(exampleSMILES);
-			exampleSMILES = temp.equals("X") ? exampleSMILES : temp;
-			System.out.println((temp.equals("X") ? "X " : "  ") + "   Add Ring: "+ exampleSMILES);
-			
+			if(RandomNumbers.randomGenerator.nextBoolean()) {
+				temp = mutateBond(exampleSMILES);
+				exampleSMILES = temp.equals("X") ? exampleSMILES : temp;
+				System.out.println((temp.equals("X") ? "X " : "  ") + "Change Bond: "+ exampleSMILES);
+			}
+			if(RandomNumbers.randomGenerator.nextBoolean()) {
+				temp = addAtom(exampleSMILES);
+				exampleSMILES = temp.equals("X") ? exampleSMILES : temp;
+				System.out.println((temp.equals("X") ? "X " : "  ") + "Insert Atom: "+ exampleSMILES);
+			}
+			if(RandomNumbers.randomGenerator.nextBoolean()) {
+				temp = addBranch(exampleSMILES);
+				exampleSMILES = temp.equals("X") ? exampleSMILES : temp;
+				System.out.println((temp.equals("X") ? "X " : "  ") + "Branch Atom: "+ exampleSMILES);
+			}
+			if(RandomNumbers.randomGenerator.nextBoolean()) {
+				temp = deleteAtom(exampleSMILES);
+				exampleSMILES = temp.equals("X") ? exampleSMILES : temp;
+				System.out.println((temp.equals("X") ? "X " : "  ") + "Delete Atom: "+ exampleSMILES);
+			}
+			if(RandomNumbers.randomGenerator.nextBoolean()) {
+				temp = changeAtom(exampleSMILES);
+				exampleSMILES = temp.equals("X") ? exampleSMILES : temp;
+				System.out.println((temp.equals("X") ? "X " : "  ") + "Change Atom: "+ exampleSMILES);
+			}
+			if(RandomNumbers.randomGenerator.nextBoolean()) {
+				temp = deleteRing(exampleSMILES);
+				exampleSMILES = temp.equals("X") ? exampleSMILES : temp;
+				System.out.println((temp.equals("X") ? "X " : "  ") + "Delete Ring: "+ exampleSMILES);
+			}
+			if(RandomNumbers.randomGenerator.nextBoolean()) {
+				temp = addRing(exampleSMILES);
+				exampleSMILES = temp.equals("X") ? exampleSMILES : temp;
+				System.out.println((temp.equals("X") ? "X " : "  ") + "   Add Ring: "+ exampleSMILES);
+			}
 			MiscUtil.waitForReadStringAndEnterKeyPress();
 			
 		}
