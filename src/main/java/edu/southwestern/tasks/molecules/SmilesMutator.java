@@ -128,13 +128,21 @@ public class SmilesMutator {
             		while(chars[atomPosBefore] != '(') atomPosBefore--;
             		atomPosBefore--;
             	}
+            	if(chars[atomPosBefore] == ')') {
+            		while(chars[atomPosBefore] != '(') atomPosBefore--;
+            		atomPosBefore--;
+            	}
+            	// there should not be more than two branches
             	if(chars[atomPosBefore] == '(') atomPosBefore--;
-            	if(Character.isDigit(chars[atomPosBefore])) atomPosBefore--;
-            	assert isAtom(chars[atomPosBefore]) : smiles + " at " + atomPosBefore + " not an atom";
+            	if(chars[atomPosBefore] == ')') { // when leaving the second branch, the end of the first may need to be dealt with
+            		while(chars[atomPosBefore] != '(') atomPosBefore--;
+            		atomPosBefore--;
+            	}            	if(Character.isDigit(chars[atomPosBefore])) atomPosBefore--;
+            	assert isAtom(chars[atomPosBefore]) : smiles + " at " + atomPosBefore + " not an atom. Starting from "+i;
             	int atomBondsBefore = getAtomBondCount(smiles, atomPosBefore);
 
             	int atomPosAfter = i+1;
-            	assert isAtom(chars[atomPosAfter]) : smiles + " at " + atomPosAfter + " not an atom";;
+            	assert isAtom(chars[atomPosAfter]) : smiles + " at " + atomPosAfter + " not an atom. Starting from "+i;
             	int atomBondsAfter = getAtomBondCount(smiles, atomPosAfter);
             	
             	int leftWiggleRoom = MAX_BONDS.get(chars[atomPosBefore]) - atomBondsBefore;  
