@@ -372,6 +372,10 @@ public class SmilesMutator {
     private static String changeAtom(String smiles) {
         char[] chars = smiles.toCharArray();
         List<Integer> atomPositions = findValidAtomPositions(chars);
+
+        // Cannot change a Carbon atom if it is already maxed out on bonds
+        atomPositions.removeIf(pos -> smiles.charAt(pos) == 'C' && getAtomBondCount(smiles,pos) == MAX_BONDS.get('C'));
+        // Other atom types might have restrictions on what they can change to, but can still change to something
         
         if (atomPositions.isEmpty()) {
         	throw new InvalidMoleculeException(smiles);
@@ -380,12 +384,29 @@ public class SmilesMutator {
         
         int position = atomPositions.get(random.nextInt(atomPositions.size()));
         char currentAtom = chars[position];
+        
+        int currentBonds = getAtomBondCount(smiles,position);
+        int bondsAllowed = MAX_BONDS.get(currentAtom);
+        int diff = bondsAllowed - currentBonds;
+
         char newAtom;
         
-        do {
-            newAtom = ATOMS[random.nextInt(ATOMS.length)];
-        } while (newAtom == currentAtom);
-        
+        if(diff == 0) {
+        	if(currentAtom == 'N') newAtom = 'C'; // only valid option
+        	else if(currentAtom == 'O') newAtom = RandomNumbers.coinFlip() ? 'N' : 'C';
+        	else throw new IllegalStateException("smiles = "+smiles+", currentAtom = "+currentAtom+", currentBonds = "+currentBonds+", bondsAllowed = "+bondsAllowed);
+        } else if(diff == 1) {
+        	if(currentAtom == 'N') newAtom = RandomNumbers.coinFlip() ? 'O' : 'C';
+        	else if(currentAtom == 'O') newAtom = RandomNumbers.coinFlip() ? 'N' : 'C';
+        	else if(currentAtom == 'C') newAtom = 'N'; // only valid option
+        	else throw new IllegalStateException("smiles = "+smiles+", currentAtom = "+currentAtom+", currentBonds = "+currentBonds+", bondsAllowed = "+bondsAllowed);
+        } else { // diff >= 2
+        	if(currentAtom == 'N') newAtom = RandomNumbers.coinFlip() ? 'O' : 'C';
+        	else if(currentAtom == 'O') newAtom = RandomNumbers.coinFlip() ? 'N' : 'C';
+        	else if(currentAtom == 'C') newAtom = RandomNumbers.coinFlip() ? 'N' : 'O';
+        	else throw new IllegalStateException("smiles = "+smiles+", currentAtom = "+currentAtom+", currentBonds = "+currentBonds+", bondsAllowed = "+bondsAllowed);
+        }
+                
         chars[position] = newAtom;
         String result = new String(chars);
         
