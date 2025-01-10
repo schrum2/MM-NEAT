@@ -173,7 +173,7 @@ public class SmilesMutator {
         
         StringBuilder result = new StringBuilder(smiles);
         result.insert(position + 1, "(" + newBond + newAtom + ")");
-        
+        collapseBranchAtEnd(result);
         return isValidMolecule(result.toString()) ? result.toString() : "X";
     }
 
@@ -211,12 +211,27 @@ public class SmilesMutator {
         	} else {
         		result.delete(atomPos - 1, atomPos + 1);
         	}
+        	
+        	collapseBranchAtEnd(result);
         } else { // Can/should this ever happen?
             result.deleteCharAt(atomPos);
         }
 
         return isValidMolecule(result.toString()) ? result.toString() : "X";
     }
+
+	/**
+	 * If the SMILES string now ends with an unnecessary branch, remove the parentheses
+	 * @param result
+	 */
+	private static void collapseBranchAtEnd(StringBuilder result) {
+		// What if the string now ends with a branch? In that case, it's not really a branch
+		if(result.charAt(result.length() - 1) == ')') {
+			int openingParenPos = result.lastIndexOf("(");
+			result.deleteCharAt(result.length() - 1); // deletes )
+			result.deleteCharAt(openingParenPos);     // deletes (
+		}
+	}
 
     /**
      * Indicate if the atom at position i is inside of a ring
@@ -474,12 +489,13 @@ public class SmilesMutator {
     }
     
 	public static void main(String[] args) {
+
+		String exampleSMILES = "C-C-N-C(=C)-O";
 		for(int i = 0; i < 1000; i++) {
 			System.out.println("Attempt " + i);
 			
-			String exampleSMILES = "C-C-N-C(=C)-O";
 			String temp = exampleSMILES;
-			System.out.println("      Start: "+ exampleSMILES);
+			System.out.println("        Start: "+ exampleSMILES);
 			temp = mutateBond(exampleSMILES);
 			exampleSMILES = temp.equals("X") ? exampleSMILES : temp;
 			System.out.println((temp.equals("X") ? "X " : "  ") + "Change Bond: "+ exampleSMILES);
