@@ -482,25 +482,25 @@ public class SmilesMutator {
 			System.out.println("      Start: "+ exampleSMILES);
 			temp = mutateBond(exampleSMILES);
 			exampleSMILES = temp.equals("X") ? exampleSMILES : temp;
-			System.out.println("Change Bond: "+ exampleSMILES);
+			System.out.println((temp.equals("X") ? "X " : "  ") + "Change Bond: "+ exampleSMILES);
 			temp = addAtom(exampleSMILES);
 			exampleSMILES = temp.equals("X") ? exampleSMILES : temp;
-			System.out.println("Insert Atom: "+ exampleSMILES);
+			System.out.println((temp.equals("X") ? "X " : "  ") + "Insert Atom: "+ exampleSMILES);
 			temp = addBranch(exampleSMILES);
 			exampleSMILES = temp.equals("X") ? exampleSMILES : temp;
-			System.out.println("Branch Atom: "+ exampleSMILES);
+			System.out.println((temp.equals("X") ? "X " : "  ") + "Branch Atom: "+ exampleSMILES);
 			temp = deleteAtom(exampleSMILES);
 			exampleSMILES = temp.equals("X") ? exampleSMILES : temp;
-			System.out.println("Delete Atom: "+ exampleSMILES);
+			System.out.println((temp.equals("X") ? "X " : "  ") + "Delete Atom: "+ exampleSMILES);
 			temp = changeAtom(exampleSMILES);
 			exampleSMILES = temp.equals("X") ? exampleSMILES : temp;
-			System.out.println("Change Atom: "+ exampleSMILES);
+			System.out.println((temp.equals("X") ? "X " : "  ") + "Change Atom: "+ exampleSMILES);
 			temp = deleteRing(exampleSMILES);
 			exampleSMILES = temp.equals("X") ? exampleSMILES : temp;
-			System.out.println("Delete Ring: "+ exampleSMILES);
+			System.out.println((temp.equals("X") ? "X " : "  ") + "Delete Ring: "+ exampleSMILES);
 			temp = addRing(exampleSMILES);
 			exampleSMILES = temp.equals("X") ? exampleSMILES : temp;
-			System.out.println("   Add Ring: "+ exampleSMILES);
+			System.out.println((temp.equals("X") ? "X " : "  ") + "   Add Ring: "+ exampleSMILES);
 			
 			MiscUtil.waitForReadStringAndEnterKeyPress();
 			
