@@ -200,7 +200,7 @@ public class SmilesMutator {
      */
     private static String addBranch(String smiles) {
         char[] chars = smiles.toCharArray();
-        List<Integer> atomPositions = findValidAtomPositions(chars);
+        List<Integer> atomPositions = findValidAtomPositions(chars, new char[] {'O'}); // cannot branch off of Oxygen (only 2 bonds)
         
         if (atomPositions.isEmpty()) {
         	throw new InvalidMoleculeException(smiles);
@@ -615,13 +615,25 @@ public class SmilesMutator {
     }
 
     private static List<Integer> findValidAtomPositions(char[] chars) {
+    	return findValidAtomPositions(chars, new char[0]);
+    }
+    private static List<Integer> findValidAtomPositions(char[] chars, char[] exclude) {
         List<Integer> positions = new ArrayList<>();
         for (int i = 0; i < chars.length; i++) {
-            if (isAtom(chars[i])) {
+            if (isAtom(chars[i]) && !isExcluded(chars[i], exclude)) {
                 positions.add(i);
             }
         }
         return positions;
+    }
+    
+    private static boolean isExcluded(char c, char[] exclude) {
+        for (char ex : exclude) {
+            if (c == ex) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static Map<Character, List<Integer>> findRingPositions(String smiles) {
