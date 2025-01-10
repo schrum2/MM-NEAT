@@ -117,19 +117,28 @@ public class SmilesMutator {
      * Changes a random bond type in the molecule
      */
     private static String mutateBond(String smiles) {
-        MoleculeStructure structure = parseMolecule(smiles);
         char[] chars = smiles.toCharArray();
         List<Integer> bondPositions = new ArrayList<>();
         List<Integer> maxAllowed = new ArrayList<>();
         
         for (int i = 0; i < chars.length; i++) {
             if (isBond(chars[i])) {
-            	int precedingAtomPosition = bondPositions.size();
-            	int followingAtomPosition = bondPositions.size()+1;
-            	Atom before = structure.atoms.get(precedingAtomPosition);
-            	Atom after = structure.atoms.get(followingAtomPosition);
-            	int leftWiggleRoom = MAX_BONDS.get(before.type) - before.getTotalBondCount();  
-            	int rightWiggleRoom = MAX_BONDS.get(after.type) - after.getTotalBondCount();
+            	int atomPosBefore = i-1;
+            	if(chars[atomPosBefore] == ')') {
+            		while(chars[atomPosBefore] != '(') atomPosBefore--;
+            		atomPosBefore--;
+            	}
+            	if(chars[atomPosBefore] == '(') atomPosBefore--;
+            	if(Character.isDigit(chars[atomPosBefore])) atomPosBefore--;
+            	assert isAtom(chars[atomPosBefore]) : smiles + " at " + atomPosBefore + " not an atom";
+            	int atomBondsBefore = getAtomBondCount(smiles, atomPosBefore);
+
+            	int atomPosAfter = i+1;
+            	assert isAtom(chars[atomPosAfter]) : smiles + " at " + atomPosAfter + " not an atom";;
+            	int atomBondsAfter = getAtomBondCount(smiles, atomPosAfter);
+            	
+            	int leftWiggleRoom = MAX_BONDS.get(chars[atomPosBefore]) - atomBondsBefore;  
+            	int rightWiggleRoom = MAX_BONDS.get(chars[atomPosAfter]) - atomBondsAfter;
             	int wiggleRoom = Math.min(leftWiggleRoom, rightWiggleRoom);	
             	char bond = chars[i];
             	int current = bondCount(bond);
