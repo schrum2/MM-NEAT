@@ -321,8 +321,8 @@ public class SmilesMutator {
         	}
         	
         	collapseBranchAtEnd(result);
-        } else { // Can/should this ever happen?
-            result.deleteCharAt(atomPos);
+        } else { // deleting first atom, and the bond after it
+            result.delete(atomPos, atomPos + 2);
         }
 
         return isValidMolecule(result.toString()) ? result.toString() : "X";
