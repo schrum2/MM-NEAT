@@ -13,6 +13,13 @@ import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.random.RandomNumbers;
 
 public class SmilesMutator {
+	
+	private static class InvalidMoleculeException extends IllegalStateException {
+		public InvalidMoleculeException(String smiles) {
+			super("Invalid: "+smiles);
+		}
+	}
+	
     private static final Random random = RandomNumbers.randomGenerator;
     private static final char[] ATOMS = {'C', 'O', 'N'};
     private static final char[] BONDS = {'-', '=', '#'};
@@ -54,7 +61,7 @@ public class SmilesMutator {
         }
         
         int getTotalBondCount() {
-            return bonds.stream().mapToInt(b -> b.type == '#' ? 3 : (b.type == '=' ? 2 : 1)).sum();
+            return bonds.stream().mapToInt(b -> b.bondCount()).sum();
         }
 
 		public void setBranchPoint() {
@@ -75,6 +82,10 @@ public class SmilesMutator {
             this.from = from;
             this.to = to;
         }
+        
+		public int bondCount() {
+			return type == '#' ? 3 : (type == '=' ? 2 : 1);
+		}
     }
 
     /**
@@ -96,7 +107,8 @@ public class SmilesMutator {
 	            case ADD_RING: return addRing(smiles);
 	        } 
         } catch (Exception e) {
-            return "X";
+            throw e;
+        	//return "X";
         }
         return "X";
     }
@@ -105,32 +117,62 @@ public class SmilesMutator {
      * Changes a random bond type in the molecule
      */
     private static String mutateBond(String smiles) {
+        MoleculeStructure structure = parseMolecule(smiles);
         char[] chars = smiles.toCharArray();
         List<Integer> bondPositions = new ArrayList<>();
+        List<Integer> maxAllowed = new ArrayList<>();
         
         for (int i = 0; i < chars.length; i++) {
             if (isBond(chars[i])) {
-                bondPositions.add(i);
+            	int precedingAtomPosition = bondPositions.size();
+            	int followingAtomPosition = bondPositions.size()+1;
+            	Atom before = structure.atoms.get(precedingAtomPosition);
+            	Atom after = structure.atoms.get(followingAtomPosition);
+            	int leftWiggleRoom = MAX_BONDS.get(before.type) - before.getTotalBondCount();  
+            	int rightWiggleRoom = MAX_BONDS.get(after.type) - after.getTotalBondCount();
+            	int wiggleRoom = Math.min(leftWiggleRoom, rightWiggleRoom);	
+            	char bond = chars[i];
+            	int current = bondCount(bond);
+                int maxBondsAllowedInPosition = wiggleRoom + current;  	            		
+                
+                if(wiggleRoom != 0 || current != 1) {
+                    bondPositions.add(i);
+                    maxAllowed.add(maxBondsAllowedInPosition);
+                }
             }
         }
         
-        if (bondPositions.isEmpty()) {
-            return "X";
+        String result = "X";
+        if (!bondPositions.isEmpty()) {
+	        
+	        int bondListPos = random.nextInt(bondPositions.size());
+	        int maxBondAllowed = maxAllowed.get(bondListPos);
+			int position = bondPositions.get(bondListPos);
+	        char currentBond = chars[position];
+	        char newBond;
+	        
+	        do {
+	            newBond = BONDS[random.nextInt(BONDS.length)];
+	        } while (newBond == currentBond || bondCount(newBond) > maxBondAllowed);
+	        
+	        chars[position] = newBond;
+	        result = new String(chars);
+	        if(!isValidMolecule(result)) {
+	        	result = "X";
+	        }
+        } else {
+        	throw new InvalidMoleculeException(result);
         }
-        
-        int position = bondPositions.get(random.nextInt(bondPositions.size()));
-        char currentBond = chars[position];
-        char newBond;
-        
-        do {
-            newBond = BONDS[random.nextInt(BONDS.length)];
-        } while (newBond == currentBond);
-        
-        chars[position] = newBond;
-        String result = new String(chars);
-        
-        return isValidMolecule(result) ? result : "X";
+        return result;
     }
+
+	/**
+	 * @param bond
+	 * @return
+	 */
+	public static int bondCount(char bond) {
+		return bond == '-' ? 1 : (bond == '=' ? 2 : 3);
+	}
 
     /**
      * Adds a new atom to the existing molecule
@@ -161,7 +203,8 @@ public class SmilesMutator {
         List<Integer> atomPositions = findValidAtomPositions(chars);
         
         if (atomPositions.isEmpty()) {
-            return "X";
+        	throw new InvalidMoleculeException(smiles);
+            //return "X";
         }
         
         int position = atomPositions.get(random.nextInt(atomPositions.size()));
@@ -194,7 +237,8 @@ public class SmilesMutator {
     private static String deleteAtom(String smiles) {
         MoleculeStructure structure = parseMolecule(smiles);
         if (structure.atoms.size() <= 1) {
-            return "X";
+        	throw new InvalidMoleculeException(smiles);
+            //return "X";
         }
 
         List<Integer> deletableAtoms = new ArrayList<>();
@@ -210,7 +254,8 @@ public class SmilesMutator {
         }
 
         if (deletableAtoms.isEmpty()) {
-            return "X";
+        	throw new InvalidMoleculeException(smiles);
+            //return "X";
         }
 
         int atomToDelete = deletableAtoms.get(random.nextInt(deletableAtoms.size()));
@@ -272,8 +317,6 @@ public class SmilesMutator {
 		}
 	}
 
-
-
 	/**
      * Changes an atom type in the molecule
      */
@@ -282,7 +325,8 @@ public class SmilesMutator {
         List<Integer> atomPositions = findValidAtomPositions(chars);
         
         if (atomPositions.isEmpty()) {
-            return "X";
+        	throw new InvalidMoleculeException(smiles);
+            //return "X";
         }
         
         int position = atomPositions.get(random.nextInt(atomPositions.size()));
@@ -333,7 +377,8 @@ public class SmilesMutator {
         // Check existing rings
         Map<Character, List<Integer>> existingRings = findRingPositions(smiles);
         if (existingRings.size() >= MAX_RINGS) {
-            return "X";
+        	throw new InvalidMoleculeException(smiles);
+            //return "X";
         }
 
         // Find next available ring number
@@ -348,7 +393,8 @@ public class SmilesMutator {
         // Find valid positions for ring attachment
         List<Integer> atomPositions = findValidAtomPositions(smiles.toCharArray());
         if (atomPositions.size() < 2) {
-            return "X";
+        	throw new InvalidMoleculeException(smiles);
+        	//return "X";
         }
 
         // Filter positions to avoid parentheses and bond indicators
@@ -357,7 +403,8 @@ public class SmilesMutator {
             .collect(Collectors.toList());
 
         if (atomPositions.size() <= 2) {
-            return "X";
+        	throw new InvalidMoleculeException(smiles);
+            //return "X";
         }
 
         // Select two different positions for ring attachment
@@ -367,7 +414,10 @@ public class SmilesMutator {
         int atomPos2;
         int attempts = 0;
         do {
-            if(attempts++ > 5) return "X"; // Give up if trying too many times
+            if(attempts++ > 5) {
+            	throw new InvalidMoleculeException(smiles);
+            	//return "X"; // Give up if trying too many times
+            }
         	atomPos2 = random.nextInt(atomPositions.size());
             pos2 = atomPositions.get(atomPos2);
         } while (atomPos2 == atomPos1 || Math.abs(atomPos2 - atomPos1) < 2); // Ensure minimum ring size
@@ -475,13 +525,15 @@ public class SmilesMutator {
      */
     private static boolean isValidMolecule(String smiles) {
         if (smiles == null || smiles.isEmpty() || smiles.equals("X")) {
-            return false;
+        	throw new InvalidMoleculeException(smiles);
+            //return false;
         }
 
         try {
             // Check first character is an atom
             if (!isAtom(smiles.charAt(0))) {
-                return false;
+            	throw new InvalidMoleculeException(smiles);
+                //return false;
             }
 
             MoleculeStructure structure = parseMolecule(smiles);
@@ -490,7 +542,8 @@ public class SmilesMutator {
             for (Atom atom : structure.atoms) {
                 int bondCount = atom.getTotalBondCount();
                 if (bondCount > MAX_BONDS.get(atom.type)) {
-                    return false;
+                	throw new InvalidMoleculeException(smiles);
+                    //return false;
                 }
             }
 
@@ -499,14 +552,23 @@ public class SmilesMutator {
             for (char c : smiles.toCharArray()) {
                 if (c == '(') parenthesesCount++;
                 if (c == ')') parenthesesCount--;
-                if (parenthesesCount < 0) return false;
+                if (parenthesesCount < 0) {
+                	throw new InvalidMoleculeException(smiles);
+                	//return false;
+                }
             }
-            if (parenthesesCount != 0) return false;
+            if (parenthesesCount != 0) {
+            	throw new InvalidMoleculeException(smiles);
+            	//return false;
+            }
 
             // Validate rings
             Map<Character, List<Integer>> ringPositions = findRingPositions(smiles);
             for (List<Integer> positions : ringPositions.values()) {
-                if (positions.size() != 2) return false;
+                if (positions.size() != 2) {
+                	throw new InvalidMoleculeException(smiles);
+                	//return false;
+                }
             }
 
             // Validate bond-atom patterns
@@ -515,22 +577,31 @@ public class SmilesMutator {
                 char next = smiles.charAt(i + 1);
                 
                 if (isBond(current)) {
-                    if (!isAtom(next) && next != '(') return false;
+                    if (!isAtom(next) && next != '(') {
+                    	throw new InvalidMoleculeException(smiles);
+                    	//return false;
+                    }
                 }
                 
                 if(Character.isDigit(next)) {
                 	// Ring number
-                	if(!isAtom(current)) return false; // ring number can only come after atom
+                	if(!isAtom(current)) {
+                		throw new InvalidMoleculeException(smiles);
+                		//return false; // ring number can only come after atom
+                	}
                 }
                 
                 if(current == ')' && next == '(') {
-                	return false; // don't allow multiple branches like this
+                	throw new InvalidMoleculeException(smiles);
+                	//return false; // don't allow multiple branches like this
                 }
             }
 
             return true;
         } catch (Exception e) {
-            return false;
+        	System.out.println("isValidMolecule");
+            throw e;
+        	//return false;
         }
     }
 
