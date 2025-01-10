@@ -188,6 +188,12 @@ public class SmilesMutator {
         int position = atomPositions.get(random.nextInt(atomPositions.size()));
         char newAtom = ATOMS[random.nextInt(ATOMS.length)];
         char newBond = BONDS[random.nextInt(BONDS.length)];
+
+        // Always add Oxygen with single bonds.
+        // Won't solve problems with branches, but should work in other cases.
+        if(newAtom == 'O') {
+        	newBond = '-';
+        }
         
         StringBuilder result = new StringBuilder(smiles);
         result.insert(position + 1, newBond).insert(position + 2, newAtom);
