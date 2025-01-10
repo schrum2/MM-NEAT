@@ -47,6 +47,7 @@ public class SmilesMutator {
     private static class Atom {
         char type;
         List<Bond> bonds = new ArrayList<>();
+        boolean isBranchPoint = false;
         
         Atom(char type) {
             this.type = type;
@@ -55,6 +56,10 @@ public class SmilesMutator {
         int getTotalBondCount() {
             return bonds.stream().mapToInt(b -> b.type == '#' ? 3 : (b.type == '=' ? 2 : 1)).sum();
         }
+
+		public void setBranchPoint() {
+			isBranchPoint = true;
+		}
     }
 
     /**
@@ -80,7 +85,7 @@ public class SmilesMutator {
             return "X";
         }
 
-        //try {
+        try {
 	        switch (type) {
 	        	case CHANGE_BOND: return mutateBond(smiles);
 	            case ADD_ATOM: return addAtom(smiles);
@@ -90,9 +95,9 @@ public class SmilesMutator {
 	            case DELETE_RING: return deleteRing(smiles);
 	            case ADD_RING: return addRing(smiles);
 	        } 
-        //} catch (Exception e) {
-        //    return "X";
-        //}
+        } catch (Exception e) {
+            return "X";
+        }
         return "X";
     }
 
@@ -198,8 +203,8 @@ public class SmilesMutator {
             // Don't delete atoms that are part of rings or have multiple branches
             //if (atom.bonds.size() == 1 && !isInRing(structure, i)) {
             
-            // Allow deletion despite multiple branches
-            if (!isInRing(structure, i)) {
+        	// Don't delete atoms that are part of rings or have branches
+            if (!isInRing(structure, i) && !structure.atoms.get(i).isBranchPoint) {
                 deletableAtoms.add(i);
             }
         }
@@ -444,6 +449,7 @@ public class SmilesMutator {
                 
                 currentAtom = newAtom;
             } else if (c == '(') {
+            	currentAtom.setBranchPoint();
                 atomStack.push(currentAtom);
             } else if (c == ')') {
                 currentAtom = atomStack.pop();
@@ -515,6 +521,10 @@ public class SmilesMutator {
                 if(Character.isDigit(next)) {
                 	// Ring number
                 	if(!isAtom(current)) return false; // ring number can only come after atom
+                }
+                
+                if(current == ')' && next == '(') {
+                	return false; // don't allow multiple branches like this
                 }
             }
 
@@ -613,7 +623,7 @@ public class SmilesMutator {
 				exampleSMILES = temp.equals("X") ? exampleSMILES : temp;
 				System.out.println((temp.equals("X") ? "X " : "  ") + "   Add Ring: "+ exampleSMILES);
 			}
-			MiscUtil.waitForReadStringAndEnterKeyPress();
+			//MiscUtil.waitForReadStringAndEnterKeyPress();
 			
 		}
 	}
