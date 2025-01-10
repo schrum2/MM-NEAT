@@ -205,8 +205,13 @@ public class SmilesMutator {
         // Find and remove the atom and its associated bond
         int atomPos = findNthAtom(smiles, atomToDelete);
         if (atomPos > 0 && isBond(smiles.charAt(atomPos - 1))) {
-            result.delete(atomPos - 1, atomPos + 1);
-        } else {
+        	if(atomPos > 1 && smiles.charAt(atomPos - 2) == '(') {
+        		// Deletes one and only atom in branch
+        		result.delete(atomPos - 2, atomPos + 2);
+        	} else {
+        		result.delete(atomPos - 1, atomPos + 1);
+        	}
+        } else { // Can/should this ever happen?
             result.deleteCharAt(atomPos);
         }
 
