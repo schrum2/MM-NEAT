@@ -7,16 +7,8 @@ package edu.southwestern.tasks.molecules;
  * a SMILES string representation of a molecule.
  */
 import java.util.*;
+import java.util.stream.Collectors;
 
-import edu.southwestern.evolution.genotypes.SMILESStringGenotype;
-import edu.southwestern.evolution.mutation.smiles.SMILESAddRingMutation;
-import edu.southwestern.evolution.mutation.smiles.SMILESBranchNewAtomMutation;
-import edu.southwestern.evolution.mutation.smiles.SMILESChangeAtomTypeMutation;
-import edu.southwestern.evolution.mutation.smiles.SMILESChangeBondTypeMutation;
-import edu.southwestern.evolution.mutation.smiles.SMILESDeleteAtomMutation;
-import edu.southwestern.evolution.mutation.smiles.SMILESDeleteRingMutation;
-import edu.southwestern.evolution.mutation.smiles.SMILESInsertNewAtomMutation;
-import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.random.RandomNumbers;
 
@@ -333,12 +325,24 @@ public class SmilesMutator {
             return "X";
         }
 
+        // Filter positions to avoid parentheses and bond indicators
+        atomPositions = atomPositions.stream()
+            .filter(pos -> isValidInsertionPoint(smiles, pos))
+            .collect(Collectors.toList());
+
+        if (atomPositions.size() <= 2) {
+            return "X";
+        }
+
         // Select two different positions for ring attachment
-        int pos1 = atomPositions.get(random.nextInt(atomPositions.size()));
+        int atomPos1 = random.nextInt(atomPositions.size());
+        int pos1 = atomPositions.get(atomPos1);
         int pos2;
+        int atomPos2;
         do {
-            pos2 = atomPositions.get(random.nextInt(atomPositions.size()));
-        } while (pos2 == pos1 || Math.abs(pos2 - pos1) < 2); // Ensure minimum ring size
+        	atomPos2 = random.nextInt(atomPositions.size());
+            pos2 = atomPositions.get(atomPos2);
+        } while (atomPos2 == atomPos1 || Math.abs(atomPos2 - atomPos1) < 2); // Ensure minimum ring size
 
         StringBuilder result = new StringBuilder(smiles);
         // Add ring numbers from back to front to maintain correct positions
@@ -346,6 +350,41 @@ public class SmilesMutator {
         result.insert(Math.min(pos1, pos2) + 1, ringNumber);
 
         return isValidMolecule(result.toString()) ? result.toString() : "X";
+    }
+
+    /**
+     * Checks if a given position in the SMILES string is valid for ring number insertion.
+     * Valid positions are not inside parentheses or adjacent to bond indicators (e.g., =, #).
+     */
+    private static boolean isValidInsertionPoint(String smiles, int pos) {
+        // Ensure position is within bounds
+        if (pos < 0 || pos >= smiles.length()) {
+            return false;
+        }
+
+        // Check the current character
+        char current = smiles.charAt(pos);
+        if (current == '(' || current == ')' || current == '=' || current == '#') {
+            return false;
+        }
+
+        // Check the previous character
+        if (pos > 0) {
+            char prev = smiles.charAt(pos - 1);
+            if (prev == '(' || prev == '=' || prev == '#') {
+                return false;
+            }
+        }
+
+        // Check the next character
+        if (pos < smiles.length() - 1) {
+            char next = smiles.charAt(pos + 1);
+            if (next == ')' || next == '=' || next == '#' || Character.isDigit(next)) { // Do not attach a ring where there already is one
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
