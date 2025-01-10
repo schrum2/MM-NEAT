@@ -163,6 +163,13 @@ public class SmilesMutator {
         char newAtom = ATOMS[random.nextInt(ATOMS.length)];
         char newBond = BONDS[random.nextInt(BONDS.length)];
         
+        // if position is an atom in a ring, then the new branch must come after the ring number
+        if(position + 1 < smiles.length()) {
+        	if(Character.isDigit(smiles.charAt(position+1))) {
+        		position++; // add branch after the ring number
+        	}
+        }
+        
         StringBuilder result = new StringBuilder(smiles);
         result.insert(position + 1, "(" + newBond + newAtom + ")");
         int openBeforeNew = result.substring(0,position).lastIndexOf("(");
@@ -187,9 +194,12 @@ public class SmilesMutator {
 
         List<Integer> deletableAtoms = new ArrayList<>();
         for (int i = 0; i < structure.atoms.size(); i++) {
-            Atom atom = structure.atoms.get(i);
+            //Atom atom = structure.atoms.get(i);
             // Don't delete atoms that are part of rings or have multiple branches
-            if (atom.bonds.size() == 1 && !isInRing(structure, i)) {
+            //if (atom.bonds.size() == 1 && !isInRing(structure, i)) {
+            
+            // Allow deletion despite multiple branches
+            if (!isInRing(structure, i)) {
                 deletableAtoms.add(i);
             }
         }
@@ -350,7 +360,9 @@ public class SmilesMutator {
         int pos1 = atomPositions.get(atomPos1);
         int pos2;
         int atomPos2;
+        int attempts = 0;
         do {
+            if(attempts++ > 5) return "X"; // Give up if trying too many times
         	atomPos2 = random.nextInt(atomPositions.size());
             pos2 = atomPositions.get(atomPos2);
         } while (atomPos2 == atomPos1 || Math.abs(atomPos2 - atomPos1) < 2); // Ensure minimum ring size
@@ -498,6 +510,11 @@ public class SmilesMutator {
                 
                 if (isBond(current)) {
                     if (!isAtom(next) && next != '(') return false;
+                }
+                
+                if(Character.isDigit(next)) {
+                	// Ring number
+                	if(!isAtom(current)) return false; // ring number can only come after atom
                 }
             }
 
