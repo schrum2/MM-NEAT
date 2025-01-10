@@ -195,6 +195,9 @@ public class SmilesMutator {
 
         // Cannot add next to oxygen with double bond at the end
         if(atomPositions.get(atomPositions.size() - 1) == smiles.length() - 1 && smiles.substring(smiles.length() - 2).equals("=O")) atomPositions.remove(atomPositions.size() - 1);
+        // or a double-bonded oxygen at the end of a branch
+        atomPositions.removeIf(pos -> pos > 0 && pos+2 < smiles.length() && smiles.substring(pos-1,pos+2).equals("=O)"));
+
         
         if (atomPositions.isEmpty()) {
             return "X";
