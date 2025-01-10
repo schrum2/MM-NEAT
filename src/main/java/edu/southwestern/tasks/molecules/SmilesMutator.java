@@ -275,6 +275,17 @@ public class SmilesMutator {
         			// find where branch ends
         			while(smiles.charAt(after) != ')') after++;
         			after++; // position after branch closes
+        			
+        			// There could be a second branch here
+        			if(after == '(') {
+        				int nextBranchBoundCount = bondCount(smiles.charAt(after + 1));
+            			bondCount += nextBranchBoundCount;
+            				
+            			after += 3; // skip after first branch bond and atom
+            			// find where branch ends
+            			while(smiles.charAt(after) != ')') after++;
+            			after++; // position after branch closes
+        			}
         		}
 
         		// Make sure we were not looking at the last atom, and also not the last atom within a branch
@@ -459,8 +470,7 @@ public class SmilesMutator {
         // Check existing rings
         Map<Character, List<Integer>> existingRings = findRingPositions(smiles);
         if (existingRings.size() >= MAX_RINGS) {
-        	throw new InvalidMoleculeException(smiles);
-            //return "X";
+        	return "X";
         }
 
         // Find next available ring number
@@ -474,11 +484,7 @@ public class SmilesMutator {
 
         // Find valid positions for ring attachment
         List<Integer> atomPositions = findValidAtomPositions(smiles.toCharArray());
-        if (atomPositions.size() < 2) {
-        	throw new InvalidMoleculeException(smiles);
-        	//return "X";
-        }
-
+        
         // Filter positions to avoid parentheses and bond indicators
         atomPositions = atomPositions.stream()
             .filter(pos -> isValidInsertionPoint(smiles, pos))
@@ -548,6 +554,12 @@ public class SmilesMutator {
                 return false;
             }
         }
+        
+        if(!isAtom(current)) return false;
+        
+        // Must be an atom
+        int bonds = getAtomBondCount(smiles, pos);
+        if(bonds >= MAX_BONDS.get(current)) return false; // no room for a ring bond
 
         return true;
     }
