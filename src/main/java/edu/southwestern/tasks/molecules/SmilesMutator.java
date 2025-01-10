@@ -143,10 +143,10 @@ public class SmilesMutator {
         }
         
         if (bondPositions.isEmpty()) {
-        	System.out.println(bondPositions);
-        	System.out.println(maxAllowed);
-        	throw new InvalidMoleculeException(smiles);
-        	// return "X";
+//        	System.out.println(bondPositions);
+//        	System.out.println(maxAllowed);
+//        	throw new InvalidMoleculeException(smiles);
+        	return "X";
         }
         
         int bondListPos = random.nextInt(bondPositions.size());
@@ -331,13 +331,13 @@ public class SmilesMutator {
         // Find and remove the atom and its associated bond
         int atomPos = findNthAtom(smiles, atomToDelete);
         if (atomPos > 0 && isBond(smiles.charAt(atomPos - 1))) {
-        	if(atomPos > 1 && smiles.charAt(atomPos - 2) == '(') {
+        	if(atomPos > 1 && smiles.charAt(atomPos - 2) == '(' && smiles.charAt(atomPos + 1) == ')') {
         		// Deletes one and only atom in branch
         		result.delete(atomPos - 2, atomPos + 2);
-        		System.out.println("1:"+result);
+        		System.out.println("            1: "+result + " atomPos = " + atomPos);
         	} else {
         		result.delete(atomPos - 1, atomPos + 1);
-        		System.out.println("2:"+result);
+        		System.out.println("            2: "+result + " atomPos = " + atomPos);
         	}
         	
         	collapseBranchAtEnd(result);
