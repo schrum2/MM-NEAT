@@ -234,6 +234,15 @@ public class SmilesMutator {
         	}
         }
         
+        if(newAtom == 'N') {
+        	// There may be restrictions depending on the surrounding bonds
+        	if(position+1 < smiles.length()) {
+        		if(smiles.charAt(position+1) == '#') {
+        			newAtom = 'C';
+        		}
+        	}
+        }
+        
         // Always add with single bonds to discourage bad SMILES strings. Other mutations can change
         // the bonds later.
         char newBond = '-'; //BONDS[random.nextInt(BONDS.length)];
