@@ -355,10 +355,13 @@ public class SmilesMutator {
         	if(atomPos > 1 && smiles.charAt(atomPos - 2) == '(' && smiles.charAt(atomPos + 1) == ')') {
         		// Deletes one and only atom in branch
         		result.delete(atomPos - 2, atomPos + 2);
-        		System.out.println("            1: "+result + " atomPos = " + atomPos);
+        		//System.out.println("            1: "+result + " atomPos = " + atomPos);
         	} else {
         		result.delete(atomPos - 1, atomPos + 1);
-        		System.out.println("            2: "+result + " atomPos = " + atomPos);
+        		//System.out.println("            2: "+result + " atomPos = " + atomPos);
+        		if(atomPos - 1 < result.length() && (result.charAt(atomPos - 1) == '#' || result.charAt(atomPos - 1) == '=')) { // the bond after what was deleted
+        			result.setCharAt(atomPos - 1, '-'); // Just make it a single bond to avoid problems
+        		}
         	}
         	
         	collapseBranchAtEnd(result);
