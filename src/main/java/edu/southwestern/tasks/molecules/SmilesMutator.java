@@ -275,13 +275,26 @@ public class SmilesMutator {
         }
         char newAtom = ATOMS[random.nextInt(ATOMS.length)];
         
+        StringBuilder result = new StringBuilder(smiles);
+        
         if(newAtom == 'O') {
         	// There may be restrictions depending on the surrounding bonds
-        	if(position+1 < smiles.length()) {
+        	if(position+1 < smiles.length() && smiles.charAt(position+1) != ')') {
         		if(smiles.charAt(position+1) == '=') {
         			newAtom = RandomNumbers.coinFlip() ? 'C' : 'N';
         		} else if(smiles.charAt(position+1) == '#') {
         			newAtom = 'C';
+        		}
+        	} 
+        	
+        	if(position+1 == smiles.length() || smiles.charAt(position+1) == ')') {
+        		// Is last atom, but what bonds come before?
+        		if(smiles.charAt(position) == 'N' && smiles.charAt(position-1) == '#') {
+        			// Adding anything to the right of the N would result in too many bonds, so lower the # to =
+        			result.setCharAt(position-1,'=');
+        		} else if(smiles.charAt(position) == 'O' && smiles.charAt(position-1) == '=') {
+        			// Adding anything to the right of the O would result in too many bonds, so lower the = to -
+        			result.setCharAt(position-1,'-');
         		}
         	}
         }
@@ -299,7 +312,6 @@ public class SmilesMutator {
         // the bonds later.
         char newBond = '-'; //BONDS[random.nextInt(BONDS.length)];
         
-        StringBuilder result = new StringBuilder(smiles);
         result.insert(position + 1, newBond).insert(position + 2, newAtom);
         
         return isValidMolecule(result.toString()) ? result.toString() : "X";
@@ -514,7 +526,19 @@ public class SmilesMutator {
 	private static void collapseBranchAt(StringBuilder result, int closingParenPos) {
 		// What if the string now ends with a branch? In that case, it's not really a branch
 		if(result.charAt(closingParenPos) == ')') {
-			int openingParenPos = result.substring(0,closingParenPos).lastIndexOf("(");
+			int openingParenPos = closingParenPos - 1;
+			boolean done = result.charAt(openingParenPos) == '(';
+			int nesting = 0;
+			while(!done) {
+				openingParenPos--;
+				if(result.charAt(openingParenPos) == '(' && nesting == 0) {
+					done = true;
+				} else if(result.charAt(openingParenPos) == '(') {
+					nesting--;
+				} else if(result.charAt(openingParenPos) == ')') {
+					nesting++;
+				}
+			}
 			result.deleteCharAt(closingParenPos);     // deletes )
 			result.deleteCharAt(openingParenPos);     // deletes (
 		}
@@ -773,7 +797,7 @@ public class SmilesMutator {
             for (Atom atom : structure.atoms) {
                 int bondCount = atom.getTotalBondCount();
                 if (bondCount > MAX_BONDS.get(atom.type)) {
-                	throw new InvalidMoleculeException(smiles +": invalid bond count of "+bondCount+" for "+atom.type+" at "+pos);
+                	throw new InvalidMoleculeException(smiles +": invalid bond count of "+bondCount+" for "+atom.type+" at atom pos "+pos);
                     //return false;
                 }
                 pos++;
