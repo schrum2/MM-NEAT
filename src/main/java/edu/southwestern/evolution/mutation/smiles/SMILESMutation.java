@@ -3,7 +3,7 @@ package edu.southwestern.evolution.mutation.smiles;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.SMILESStringGenotype;
 import edu.southwestern.evolution.mutation.Mutation;
-import edu.southwestern.tasks.molecules.MoleculeMutatorProcess;
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.molecules.SmilesMutator;
 import edu.southwestern.tasks.molecules.SmilesMutator.MutationType;
 import edu.southwestern.util.random.RandomNumbers;
@@ -41,5 +41,30 @@ public class SMILESMutation extends Mutation<String> {
 		}
 	}
 	
-	
+	public static void main(String[] args) {
+		for(int i = 0; i < 1000; i++) {
+			System.out.println("Attempt " + i);
+			
+			Parameters.initializeParameterCollections(new String[0]);
+			String exampleSMILES = "C-C-N-C(=C)-O";
+			SMILESStringGenotype smiles = new SMILESStringGenotype(exampleSMILES);
+			
+			System.out.println("      Start: "+ exampleSMILES);
+			new SMILESChangeBondTypeMutation().mutate(smiles);
+			System.out.println("Change Bond: "+ smiles);
+			new SMILESInsertNewAtomMutation().mutate(smiles);
+			System.out.println("Insert Atom: "+ smiles);
+			new SMILESBranchNewAtomMutation().mutate(smiles);
+			System.out.println("Branch Atom: "+ smiles);
+			new SMILESDeleteAtomMutation().mutate(smiles);
+			System.out.println("Delete Atom: "+ smiles);
+			new SMILESChangeAtomTypeMutation().mutate(smiles);  // Is this the problem?
+			System.out.println("Change Atom: "+ smiles);
+			new SMILESDeleteRingMutation().mutate(smiles);
+			System.out.println("Delete Ring: "+ smiles);
+			new SMILESAddRingMutation().mutate(smiles);
+			System.out.println("   Add Ring: "+ smiles);
+			
+		}
+	}
 }
