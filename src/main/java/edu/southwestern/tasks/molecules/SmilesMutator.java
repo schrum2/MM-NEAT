@@ -116,7 +116,7 @@ public class SmilesMutator {
 	/**
      * Changes a random bond type in the molecule
      */
-    private static String mutateBond(String smiles) {
+    static String mutateBond(String smiles) {
         char[] chars = smiles.toCharArray();
         List<Integer> bondPositions = new ArrayList<>();
         List<Integer> maxAllowed = new ArrayList<>();
@@ -125,19 +125,54 @@ public class SmilesMutator {
             if (isBond(chars[i])) {
             	int atomPosBefore = i-1;
             	if(chars[atomPosBefore] == ')') {
-            		while(chars[atomPosBefore] != '(') atomPosBefore--;
+            		boolean done = chars[atomPosBefore] == '(';
+            		int nesting = 0;
+            		while(!done) {
+            			atomPosBefore--;
+            			if(chars[atomPosBefore] == '(' && nesting  == 0) {
+            				done = true;
+            			} else if(chars[atomPosBefore] == '(') {
+            				nesting--;
+            			} else if(chars[atomPosBefore] == ')') {
+            				nesting++;
+            			}
+            		}
             		atomPosBefore--;
             	}
+            	// There could be two branches off of one atom
             	if(chars[atomPosBefore] == ')') {
-            		while(chars[atomPosBefore] != '(') atomPosBefore--;
+            		boolean done = chars[atomPosBefore] == '(';
+            		int nesting = 0;
+            		while(!done) {
+            			atomPosBefore--;
+            			if(chars[atomPosBefore] == '(' && nesting  == 0) {
+            				done = true;
+            			} else if(chars[atomPosBefore] == '(') {
+            				nesting--;
+            			} else if(chars[atomPosBefore] == ')') {
+            				nesting++;
+            			}
+            		}
             		atomPosBefore--;
             	}
             	// there should not be more than two branches
             	if(chars[atomPosBefore] == '(') atomPosBefore--;
             	if(chars[atomPosBefore] == ')') { // when leaving the second branch, the end of the first may need to be dealt with
-            		while(chars[atomPosBefore] != '(') atomPosBefore--;
+            		boolean done = chars[atomPosBefore] == '(';
+            		int nesting = 0;
+            		while(!done) {
+            			atomPosBefore--;
+            			if(chars[atomPosBefore] == '(' && nesting  == 0) {
+            				done = true;
+            			} else if(chars[atomPosBefore] == '(') {
+            				nesting--;
+            			} else if(chars[atomPosBefore] == ')') {
+            				nesting++;
+            			}
+            		}
             		atomPosBefore--;
-            	}            	if(Character.isDigit(chars[atomPosBefore])) atomPosBefore--;
+            	}            	
+            	if(Character.isDigit(chars[atomPosBefore])) atomPosBefore--;
             	assert isAtom(chars[atomPosBefore]) : smiles + " at " + atomPosBefore + " not an atom. Starting from "+i;
             	int atomBondsBefore = getAtomBondCount(smiles, atomPosBefore);
 
@@ -215,7 +250,7 @@ public class SmilesMutator {
     /**
      * Adds a new atom to the existing molecule
      */
-    private static String addAtom(String smiles) {
+    static String addAtom(String smiles) {
         char[] chars = smiles.toCharArray();
         List<Integer> atomPositions = findValidAtomPositions(chars);
         
@@ -270,7 +305,7 @@ public class SmilesMutator {
     /**
      * Adds a new branched atom to the molecule
      */
-    private static String addBranch(String smiles) {
+    static String addBranch(String smiles) {
         char[] chars = smiles.toCharArray();
         List<Integer> atomPositions = findValidAtomPositions(chars, new char[] {'O'}); // cannot branch off of Oxygen (only 2 bonds)
         
@@ -319,7 +354,7 @@ public class SmilesMutator {
         return isValidMolecule(result.toString()) ? result.toString() : "X";
     }
 
-    private static int getAtomBondCount(String smiles, int position) {
+    static int getAtomBondCount(String smiles, int position) {
     	assert isAtom(smiles.charAt(position));
     	try {
     		int bondCount = 0;
@@ -391,7 +426,7 @@ public class SmilesMutator {
     /**
      * Deletes an atom from the molecule
      */
-    private static String deleteAtom(String smiles) {
+    static String deleteAtom(String smiles) {
         MoleculeStructure structure = parseMolecule(smiles);
         if (structure.atoms.size() <= 1) {
         	throw new InvalidMoleculeException(smiles);
@@ -485,7 +520,7 @@ public class SmilesMutator {
 	/**
      * Changes an atom type in the molecule
      */
-    private static String changeAtom(String smiles) {
+    static String changeAtom(String smiles) {
         char[] chars = smiles.toCharArray();
         List<Integer> atomPositions = findValidAtomPositions(chars);
 
@@ -532,7 +567,7 @@ public class SmilesMutator {
     /**
      * Deletes a ring from the molecule
      */
-    private static String deleteRing(String smiles) {
+    static String deleteRing(String smiles) {
         // Count rings in molecule
         Map<Character, List<Integer>> ringPositions = findRingPositions(smiles);
         if (ringPositions.isEmpty()) {
@@ -559,7 +594,7 @@ public class SmilesMutator {
     /**
      * Adds a new ring to the molecule
      */
-    private static String addRing(String smiles) {
+    static String addRing(String smiles) {
         // Check existing rings
         Map<Character, List<Integer>> existingRings = findRingPositions(smiles);
         if (existingRings.size() >= MAX_RINGS) {
@@ -620,7 +655,7 @@ public class SmilesMutator {
      * Checks if a given position in the SMILES string is valid for ring number insertion.
      * Valid positions are not inside parentheses or adjacent to bond indicators (e.g., =, #).
      */
-    private static boolean isValidInsertionPoint(String smiles, int pos) {
+    static boolean isValidInsertionPoint(String smiles, int pos) {
         // Ensure position is within bounds
         if (pos < 0 || pos >= smiles.length()) {
             return false;
@@ -715,7 +750,7 @@ public class SmilesMutator {
     /**
      * Validates if a given SMILES string represents a valid molecule
      */
-    private static boolean isValidMolecule(String smiles) {
+    static boolean isValidMolecule(String smiles) {
         if (smiles == null || smiles.isEmpty() || smiles.equals("X")) {
         	throw new InvalidMoleculeException(smiles);
             //return false;
@@ -731,12 +766,14 @@ public class SmilesMutator {
             MoleculeStructure structure = parseMolecule(smiles);
 
             // Validate bond counts
+            int pos = 0;
             for (Atom atom : structure.atoms) {
                 int bondCount = atom.getTotalBondCount();
                 if (bondCount > MAX_BONDS.get(atom.type)) {
-                	throw new InvalidMoleculeException(smiles +": invalid bond count of "+bondCount+" for "+atom);
+                	throw new InvalidMoleculeException(smiles +": invalid bond count of "+bondCount+" for "+atom.type+" at "+pos);
                     //return false;
                 }
+                pos++;
             }
 
             // Validate parentheses
@@ -807,10 +844,10 @@ public class SmilesMutator {
         return c == '-' || c == '=' || c == '#';
     }
 
-    private static List<Integer> findValidAtomPositions(char[] chars) {
+    static List<Integer> findValidAtomPositions(char[] chars) {
     	return findValidAtomPositions(chars, new char[0]);
     }
-    private static List<Integer> findValidAtomPositions(char[] chars, char[] exclude) {
+    static List<Integer> findValidAtomPositions(char[] chars, char[] exclude) {
         List<Integer> positions = new ArrayList<>();
         for (int i = 0; i < chars.length; i++) {
             if (isAtom(chars[i]) && !isExcluded(chars[i], exclude)) {
@@ -829,7 +866,7 @@ public class SmilesMutator {
         return false;
     }
 
-    private static Map<Character, List<Integer>> findRingPositions(String smiles) {
+    static Map<Character, List<Integer>> findRingPositions(String smiles) {
         Map<Character, List<Integer>> ringPositions = new HashMap<>();
         for (int i = 0; i < smiles.length(); i++) {
             char c = smiles.charAt(i);
