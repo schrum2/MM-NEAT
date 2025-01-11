@@ -716,7 +716,7 @@ public class SmilesMutator {
             for (Atom atom : structure.atoms) {
                 int bondCount = atom.getTotalBondCount();
                 if (bondCount > MAX_BONDS.get(atom.type)) {
-                	throw new InvalidMoleculeException(smiles);
+                	throw new InvalidMoleculeException(smiles +": invalid bond count of "+bondCount+" for "+atom);
                     //return false;
                 }
             }
