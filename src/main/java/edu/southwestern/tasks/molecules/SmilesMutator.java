@@ -9,7 +9,6 @@ package edu.southwestern.tasks.molecules;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.random.RandomNumbers;
 
 public class SmilesMutator {
@@ -367,10 +366,10 @@ public class SmilesMutator {
         //   closeBeforeNew < openBeforeNew) { // and there is no close ), or if there is, it is to the left of the open (
         //	collapseBranchAt(result,position + 4); // 4 characters were just added
         if(doubleClose > -1) {
-        	System.out.println("doubleClose: "+doubleClose+" : "+result);
+        	//System.out.println("doubleClose: "+doubleClose+" : "+result);
         	collapseBranchAt(result,doubleClose);
     	} else {
-        	System.out.println("collapse end : "+result);
+        	//System.out.println("collapse end : "+result);
         	collapseBranchAtEnd(result); // Never let branches persist at the end
         }
         return isValidMolecule(result.toString()) ? result.toString() : "X";

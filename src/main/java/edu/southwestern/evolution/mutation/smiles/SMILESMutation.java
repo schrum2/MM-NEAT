@@ -4,6 +4,8 @@ import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.SMILESStringGenotype;
 import edu.southwestern.evolution.mutation.Mutation;
 import edu.southwestern.tasks.molecules.MoleculeMutatorProcess;
+import edu.southwestern.tasks.molecules.SmilesMutator;
+import edu.southwestern.tasks.molecules.SmilesMutator.MutationType;
 import edu.southwestern.util.random.RandomNumbers;
 
 public class SMILESMutation extends Mutation<String> {
@@ -31,7 +33,12 @@ public class SMILESMutation extends Mutation<String> {
 	
 	@Override
 	public void mutate(Genotype<String> genotype) {
-		MoleculeMutatorProcess.smilesMutation((SMILESStringGenotype) genotype, mutationType);
+		//MoleculeMutatorProcess.smilesMutation((SMILESStringGenotype) genotype, mutationType);
+		String smilesString = genotype.getPhenotype();
+		String modified = SmilesMutator.mutate(smilesString, MutationType.values()[mutationType - 1]);
+		if(!modified.equals("X")) {
+			((SMILESStringGenotype) genotype).updateSMILESString(modified);
+		}
 	}
 	
 	
