@@ -15,6 +15,9 @@ import edu.southwestern.util.random.RandomNumbers;
 public class SmilesMutator {
 	
 	private static class InvalidMoleculeException extends IllegalStateException {
+
+		private static final long serialVersionUID = 1L;
+
 		public InvalidMoleculeException(String smiles) {
 			super("Invalid: "+smiles);
 		}
@@ -107,8 +110,7 @@ public class SmilesMutator {
 	            case ADD_RING: return addRing(smiles);
 	        } 
         } catch (Exception e) {
-            throw e;
-        	//return "X";
+            return "X";
         }
         return "X";
     }
