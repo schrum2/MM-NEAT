@@ -298,7 +298,7 @@ public class SmilesMutator {
         StringBuilder result = new StringBuilder(smiles);
         if(position == 0) {
         	// A branch off the first atom is actually equivalent to an atom added to the front
-        	result.insert(0, newAtom + newBond);
+        	result.insert(0, "" + newAtom + newBond);
         } else {
         	result.insert(position + 1, "(" + newBond + newAtom + ")");
         }
