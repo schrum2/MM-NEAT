@@ -341,7 +341,16 @@ public class SmilesMutator {
     					bondCount += branchBoundCount;
     					after += 3; // skip after first branch bond and atom
     					// find where branch ends
-    					while(smiles.charAt(after) != ')') after++;
+    					boolean done = smiles.charAt(after) == ')';
+    					int nesting = 0;
+    					while(!done) {
+    						if(smiles.charAt(after) == '(') nesting++;
+    						after++;
+    						if(smiles.charAt(after) == ')') {
+    							if(nesting == 0) done = true;
+    							else nesting--;
+    						}
+    					}
     					after++; // position after branch closes
 
     					// There could be a second branch here
@@ -351,7 +360,16 @@ public class SmilesMutator {
 
     						after += 3; // skip after first branch bond and atom
     						// find where branch ends
-    						while(smiles.charAt(after) != ')') after++;
+    						done = smiles.charAt(after) == ')';
+        					nesting = 0;
+        					while(!done) {
+        						if(smiles.charAt(after) == '(') nesting++;
+        						after++;
+        						if(smiles.charAt(after) == ')') {
+        							if(nesting == 0) done = true;
+        							else nesting--;
+        						}
+        					}
     						after++; // position after branch closes
     					}
     				}
@@ -838,6 +856,8 @@ public class SmilesMutator {
         return -1;
     }
     
+    // Consider unit tests with this nasty SMILES string:
+    // O-C(-O-O)(-C)-C(=C(-N(-O)-O)-C(-C))-N=C1-N(-O)-N2-C(-N(-O)-N3-O)-C(-C(-O)(-O)-C-C)(-O-C(-N)(-C3(-C1-C(-N)-C)-C=O)-N(-C)-N-N(-C)-O-C2-C)-O
 	public static void main(String[] args) {
 
 		String exampleSMILES = "C-C-N-C(=C)-O";
