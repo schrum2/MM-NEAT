@@ -286,17 +286,6 @@ public class SmilesMutator {
         			newAtom = 'C';
         		}
         	} 
-        	
-        	if(position+1 == smiles.length() || smiles.charAt(position+1) == ')') {
-        		// Is last atom, but what bonds come before?
-        		if(smiles.charAt(position) == 'N' && smiles.charAt(position-1) == '#') {
-        			// Adding anything to the right of the N would result in too many bonds, so lower the # to =
-        			result.setCharAt(position-1,'=');
-        		} else if(smiles.charAt(position) == 'O' && smiles.charAt(position-1) == '=') {
-        			// Adding anything to the right of the O would result in too many bonds, so lower the = to -
-        			result.setCharAt(position-1,'-');
-        		}
-        	}
         }
         
         if(newAtom == 'N') {
@@ -307,6 +296,17 @@ public class SmilesMutator {
         		}
         	}
         }
+        
+    	if(position+1 == smiles.length() || smiles.charAt(position+1) == ')') {
+    		// Is last atom, but what bonds come before?
+    		if(smiles.charAt(position) == 'N' && smiles.charAt(position-1) == '#') {
+    			// Adding anything to the right of the N would result in too many bonds, so lower the # to =
+    			result.setCharAt(position-1,'=');
+    		} else if(smiles.charAt(position) == 'O' && smiles.charAt(position-1) == '=') {
+    			// Adding anything to the right of the O would result in too many bonds, so lower the = to -
+    			result.setCharAt(position-1,'-');
+    		}
+    	}
         
         // Always add with single bonds to discourage bad SMILES strings. Other mutations can change
         // the bonds later.
