@@ -270,6 +270,9 @@ public class SmilesMutator {
         }
         
         int position = atomPositions.get(random.nextInt(atomPositions.size()));
+        if(Character.isDigit(smiles.charAt(position))) { // atom is part of a ring. It's bond is one position over
+        	position++;
+        }
         char newAtom = ATOMS[random.nextInt(ATOMS.length)];
         
         if(newAtom == 'O') {
