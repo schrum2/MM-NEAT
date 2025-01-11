@@ -302,12 +302,18 @@ public class SmilesMutator {
         } else {
         	result.insert(position + 1, "(" + newBond + newAtom + ")");
         }
-        int openBeforeNew = result.substring(0,position).lastIndexOf("(");
-        int closeBeforeNew = result.substring(0,position).lastIndexOf(")");
-        if(openBeforeNew > -1 && // There is an open ( before the new branch 
-           closeBeforeNew < openBeforeNew) { // and there is no close ), or if there is, it is to the left of the open (
-        	collapseBranchAt(result,position + 4); // 4 characters were just added
-        } else {
+        int doubleClose = result.indexOf("))");
+        
+        //int openBeforeNew = result.substring(0,position).lastIndexOf("(");
+        //int closeBeforeNew = result.substring(0,position).lastIndexOf(")");
+        //if(openBeforeNew > -1 && // There is an open ( before the new branch 
+        //   closeBeforeNew < openBeforeNew) { // and there is no close ), or if there is, it is to the left of the open (
+        //	collapseBranchAt(result,position + 4); // 4 characters were just added
+        if(doubleClose > -1) {
+        	System.out.println("doubleClose: "+doubleClose+" : "+result);
+        	collapseBranchAt(result,doubleClose);
+    	} else {
+        	System.out.println("collapse end : "+result);
         	collapseBranchAtEnd(result); // Never let branches persist at the end
         }
         return isValidMolecule(result.toString()) ? result.toString() : "X";
