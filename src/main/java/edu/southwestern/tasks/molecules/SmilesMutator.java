@@ -271,6 +271,12 @@ public class SmilesMutator {
         
         int position = atomPositions.get(random.nextInt(atomPositions.size()));
         if(position+1 < smiles.length() && Character.isDigit(smiles.charAt(position+1))) { // atom is part of a ring. It's bond is one position over
+        	
+        	if(smiles.charAt(position) == 'O') {
+        		// if O is in a ring, then it has to be at the start of end of the string or branch, and nothing can be added after it
+        		return "X";
+        	}
+        	
         	position++;
         }
         char newAtom = ATOMS[random.nextInt(ATOMS.length)];
@@ -329,8 +335,7 @@ public class SmilesMutator {
 
         
         if (atomPositions.isEmpty()) {
-        	throw new InvalidMoleculeException(smiles);
-            //return "X";
+        	return "X";
         }
         
         int position = atomPositions.get(random.nextInt(atomPositions.size()));
