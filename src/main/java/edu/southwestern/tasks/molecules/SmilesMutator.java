@@ -404,7 +404,7 @@ public class SmilesMutator {
     					after++; // position after branch closes
 
     					// There could be a second branch here
-    					if(smiles.charAt(after) == '(') {
+    					if(after < smiles.length() && smiles.charAt(after) == '(') {
     						int nextBranchBoundCount = bondCount(smiles.charAt(after + 1));
     						bondCount += nextBranchBoundCount;
 
