@@ -16,7 +16,9 @@ C      WRITE(6,'(100A1)') (XSTRING(J),J=1,MAX)
 
 C WRITE "X" IF THERE IS AN ERROR
       IF(MAX.EQ.1) THEN
-        WRITE(6,'(100A1)') "X"
+C JACOB: Write X then X if there is an error
+        WRITE(6,*) "X"
+        WRITE(6,*) "X"
       ELSE
         CALL PROCESS(MAX,XSTRING,VAL)
 C        WRITE(6,*) MAX,VAL
@@ -44,7 +46,7 @@ C
       DATA MAXRING /3/
       DATA NUMBER /'1','2','3'/
       DATA MAXB /4,2,3/
-      LOGICAL BADRING
+      LOGICAL BADSMILES
 C NATOM IS THE NUMBER OF ATOMS (MAX=50)
 C ATOM CONTAINS THE TYPE OF EACH ATOM (1=C,2=O,3=N)
 C NPAIR IS THE NUMBER OF PAIRS AN ATOM HAS
@@ -58,7 +60,7 @@ C
 C CHECK IF XSTRING IS A VALID MOLECULE
 C IF IT IS, CALCULATE ITS VALUE
 C
-      BADRING=.FALSE.
+      BADSMILES=.FALSE.
       VAL=999.0
       IF(MAX.EQ.0) RETURN
       IF(MAX.GT.50) RETURN
@@ -88,7 +90,11 @@ C
         IF(CHAR.EQ.'N') ATOM(NATOM)=3
       ELSE
 C        WRITE(6,*) "FIRST CHARACTER IS NOT AN ATOM"
-        RETURN
+C JACOB: Consider this a failure case. Make it so X and X will be printed below
+         BADSMILES=.TRUE.
+         VAL1=0
+         VAL2=0
+C        RETURN
       ENDIF
 C
 C LOOP OVER ALL OTHER CHARACTERS
@@ -205,16 +211,30 @@ C
 310   CONTINUE
       IF(NBOND.GT.MAXB(ATOM(I))) THEN
 C        WRITE(6,*) "TOO MANY BONDS",I
-        RETURN
+C JACOB: Consider this a failure case. Make it so X and X will be printed below
+         BADSMILES=.TRUE.
+         VAL1=0
+         VAL2=0
+C        RETURN
       ENDIF
-      IF(NBOND.LT.1) RETURN
+      IF(NBOND.LT.1) THEN
+C JACOB: Consider this a failure case. Make it so X and X will be printed below
+         BADSMILES=.TRUE.
+         VAL1=0
+         VAL2=0
+C        RETURN
+      END IF
 300   CONTINUE
 C
 C NUMBER OF ( AND ) MUST MATCH (BRANCH=1)
 C
       IF(BRANCH.NE.1) THEN
 C        WRITE(6,*) "PARENTHESES DO NOT MATCH"
-        RETURN
+C JACOB: Consider this a failure case. Make it so X and X will be printed below
+         BADSMILES=.TRUE.
+         VAL1=0
+         VAL2=0
+C        RETURN
       ENDIF
 C
 C CHECK THAT THE RING SIZE = 4, 5 OR 6
@@ -244,12 +264,16 @@ C      WRITE(6,*) (RSIZE(I),I=1,NUMCYC)
 C      WRITE(6,*) (RATOM(I),I=1,NATOM)
       IF(NRING.NE.NUMCYC) THEN
 C        WRITE(6,*) "NUMBER OF RINGS DOESN'T MATCH"
-        RETURN
+C JACOB: Consider this a failure case. Make it so X and X will be printed below
+         BADSMILES=.TRUE.
+         VAL1=0
+         VAL2=0
+C        RETURN
       ENDIF
       DO 420 I=1,NUMCYC
       IF(RSIZE(I).LT.4.OR.RSIZE(I).GT.6) THEN
 C JACOB: Consider this a failure case. Make it so X and X will be printed below
-         BADRING=.TRUE.
+         BADSMILES=.TRUE.
          VAL1=0
          VAL2=0
 C        WRITE(6,*) "WRONG SIZE RING"
@@ -259,7 +283,7 @@ C        RETURN
 C
 C WE HAVE A VALID MOLECULE SO CALCULATE ITS PROPERTIES
 C
-      IF(.NOT. BADRING) THEN
+      IF(.NOT. BADSMILES) THEN
          CALL PROP(NATOM,ATOM,ADJ,RATOM,VAL1,VAL2)
       END IF
 
