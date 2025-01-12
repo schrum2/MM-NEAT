@@ -62,8 +62,18 @@ C IF IT IS, CALCULATE ITS VALUE
 C
       BADSMILES=.FALSE.
       VAL=999.0
-      IF(MAX.EQ.0) RETURN
-      IF(MAX.GT.50) RETURN
+      IF(MAX.EQ.0) THEN
+C JACOB: Write X then X if there is an error
+        WRITE(6,*) "X"
+        WRITE(6,*) "X"       
+        RETURN
+      END IF
+      IF(MAX.GT.50) THEN
+C JACOB: Write X then X if there is an error
+        WRITE(6,*) "X"
+        WRITE(6,*) "X"       
+        RETURN
+      END IF
 C
       DO 20 I=1,50
       HEAD(I)=-1
