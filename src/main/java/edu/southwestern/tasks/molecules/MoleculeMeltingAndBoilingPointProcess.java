@@ -14,7 +14,7 @@ import edu.southwestern.util.datastructures.Pair;
 public class MoleculeMeltingAndBoilingPointProcess extends MoleculeProcess {
 
 	private static MoleculeMeltingAndBoilingPointProcess meltingBoilingProcess;
-	private static final boolean DEBUG = false;
+	private static final boolean DEBUG = true;
 	public static final double BAD_RESULT = 999.0;
 	
 	private static synchronized MoleculeMeltingAndBoilingPointProcess getMeltingBoilingPointProcess() {
@@ -68,7 +68,7 @@ public class MoleculeMeltingAndBoilingPointProcess extends MoleculeProcess {
 			// Need more error information here
 			System.exit(1);
 		}
-		double melting = Double.parseDouble(meltingResult);
+		double melting = meltingResult.trim().equals("X") ? BAD_RESULT : Double.parseDouble(meltingResult);
 		String boilingResult = process.commRecv();
 		if(DEBUG) System.out.println("MMB:"+"boilingResult:"+boilingResult);
 		if(boilingResult.trim().contains(" ")) {
@@ -77,7 +77,7 @@ public class MoleculeMeltingAndBoilingPointProcess extends MoleculeProcess {
 			// Need more error information here
 			System.exit(1);
 		}
-		double boiling = Double.parseDouble(boilingResult);
+		double boiling = boilingResult.trim().equals("X") ? BAD_RESULT : Double.parseDouble(boilingResult);
 		if(melting >= boiling) {
 			// This is not physically possible, and indicates a case where the calculation model is inaccurate
 			melting = BAD_RESULT;
