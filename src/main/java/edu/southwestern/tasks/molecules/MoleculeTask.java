@@ -172,19 +172,7 @@ public class MoleculeTask extends NoisyLonerTask<String> {
 //					 "moleculeTargetMeltingAndBoilingPointFitness:true").split(" "));
 		
 		// MAP Elites
-		MMNEAT.main(("runNumber:1 randomSeed:1 watch:false trials:1 mu:10 base:molecules log:Molecules-TargetTypeCounts "+
-				 "saveTo:TargetTypeCounts maxGens:50000 io:true netio:true mating:false "+
-			 	 "task:edu.southwestern.tasks.molecules.MoleculeTask cleanFrequency:-1 saveAllChampions:true "+
-				 "genotype:edu.southwestern.evolution.genotypes.SMILESStringGenotype "+
-			 	 // MAP Elites settings added here
-				 "ea:edu.southwestern.evolution.mapelites.MAPElites "+
-				 "experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment "+
-				 "steadyStateIndividualsPerGeneration:100 "+
-				 "mapElitesBinLabels:edu.southwestern.tasks.molecules.smiles.MoleculeAtomTypeCountsBinLabels "+
-				 "steadyStateArchetypeSaving:false "+
-			 	 // Fitness related
-			 	 "smilesTargetMeltingPoint:179.44000148773193 smilesTargetBoilingPoint:379.65999603271484 "+
-				 "moleculeTargetMeltingAndBoilingPointFitness:true").split(" "));
+		MMNEAT.main(("runNumber:1 randomSeed:1 watch:true trials:1 mu:1000 base:molecules log:Molecules-Melting147Boiling336Elitism saveTo:Melting147Boiling336Elitism maxGens:50 io:true netio:true mating:false task:edu.southwestern.tasks.molecules.MoleculeTask cleanFrequency:-1 saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.SMILESStringGenotype moleculeTargetMeltingAndBoilingPointFitness:true smilesTargetMeltingPoint:147.67 smilesTargetBoilingPoint:336.51").split(" "));
 
 	}
 }

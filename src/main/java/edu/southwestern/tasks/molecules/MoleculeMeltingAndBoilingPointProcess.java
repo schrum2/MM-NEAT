@@ -50,7 +50,7 @@ public class MoleculeMeltingAndBoilingPointProcess extends MoleculeProcess {
 	public static synchronized Pair<Double,Double> smilesMeltingAndBoilingPoints(SMILESStringGenotype smiles) {
 		MoleculeMeltingAndBoilingPointProcess process = getMeltingBoilingPointProcess();
 		String smilesString = smiles.getPhenotype();
-		if(DEBUG) System.out.println(smilesString);
+		if(DEBUG) System.out.println("MMB:"+smilesString);
 		try {
 			process.commSend(""+smilesString.length());
 			process.commSend(smilesString);	
@@ -59,8 +59,9 @@ public class MoleculeMeltingAndBoilingPointProcess extends MoleculeProcess {
 			System.out.println("MoleculeMeltingAndBoilingPointProcess failed");
 			System.exit(1);
 		}
+		if(DEBUG) System.out.println("MMB:about to receive");
 		String meltingResult = process.commRecv();
-		if(DEBUG) System.out.println("meltingResult:"+meltingResult);
+		if(DEBUG) System.out.println("MMB:"+"meltingResult:"+meltingResult);
 		if(meltingResult.trim().contains(" ")) {
 			System.out.println("The melting point process returned bad results");
 			System.out.println("meltingResult = "+meltingResult);
@@ -69,7 +70,7 @@ public class MoleculeMeltingAndBoilingPointProcess extends MoleculeProcess {
 		}
 		double melting = Double.parseDouble(meltingResult);
 		String boilingResult = process.commRecv();
-		if(DEBUG) System.out.println("boilingResult:"+boilingResult);
+		if(DEBUG) System.out.println("MMB:"+"boilingResult:"+boilingResult);
 		if(boilingResult.trim().contains(" ")) {
 			System.out.println("The boiling point process returned bad results");
 			System.out.println("boilingResult = "+boilingResult);
@@ -83,7 +84,7 @@ public class MoleculeMeltingAndBoilingPointProcess extends MoleculeProcess {
 			boiling = BAD_RESULT;
 		}
 		Pair<Double, Double> pair = new Pair<Double,Double>(melting, boiling);
-		if(DEBUG) System.out.println("pair:"+pair);
+		if(DEBUG) System.out.println("MMB:"+"pair:"+pair);
 		return pair;
 	}
 	
@@ -100,4 +101,6 @@ public class MoleculeMeltingAndBoilingPointProcess extends MoleculeProcess {
 		
 		MoleculeMeltingAndBoilingPointProcess.terminateMelingBoilingPointProcess();
 	}
+	
+	
 }
