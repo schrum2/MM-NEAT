@@ -159,7 +159,6 @@ public class MoleculeTask extends NoisyLonerTask<String> {
 	
 	public void finalCleanup() {
 		// Close the Fortran programs running in the background
-		MoleculeMutatorProcess.terminateMutatorProcess();
 		MoleculeMeltingAndBoilingPointProcess.terminateMelingBoilingPointProcess();
 	}
 	
