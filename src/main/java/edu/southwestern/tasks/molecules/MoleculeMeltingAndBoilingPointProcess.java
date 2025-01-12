@@ -14,7 +14,7 @@ import edu.southwestern.util.datastructures.Pair;
 public class MoleculeMeltingAndBoilingPointProcess extends MoleculeProcess {
 
 	private static MoleculeMeltingAndBoilingPointProcess meltingBoilingProcess;
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 	public static final double BAD_RESULT = 999.0;
 	
 	private static synchronized MoleculeMeltingAndBoilingPointProcess getMeltingBoilingPointProcess() {
