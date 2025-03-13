@@ -91,10 +91,21 @@ public class MinecraftBlockEvaluateExperiment implements Experiment{
 					} while(tryAgain);
 				}
 			} else {
-				throw new UnsupportedOperationException("Does not actually work with single files. Load a directory instead");
+				//throw new UnsupportedOperationException("Does not actually work with single files. Load a directory instead");
 				// Is a single text file
-//				MinecraftClient.clearAreaAroundPostEvaluationCorner();
-//				MinecraftBlockRenderExperiment.generateOneShapeFromFile(file);
+				try {
+					List<Block> shiftedBlocks = MinecraftBlockRenderExperiment.shiftBlocks(file);
+					System.out.println("Evaluate shape " + shiftedBlocks);
+					double[] fitnessScores = MinecraftShapeTask.calculateFitnessScores(MinecraftClient.POST_EVALUATION_SHAPE_CORNER, fitnessFunctions, shiftedBlocks).t1;
+
+					for(int j = 0; j < fitnessFunctions.size(); j++) {
+						System.out.print(fitnessFunctions.get(j).getClass().getSimpleName() + ": ");
+						System.out.println(fitnessScores[j]);
+					}
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+					System.exit(1);
+				}
 			}
 //		} catch (FileNotFoundException e) {
 //			e.printStackTrace();
