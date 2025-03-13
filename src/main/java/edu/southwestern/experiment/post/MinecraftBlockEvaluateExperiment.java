@@ -9,13 +9,21 @@ import java.util.HashSet;
 import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype;
+import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.experiment.Experiment;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
+import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
+import edu.southwestern.tasks.evocraft.blocks.BlockSet;
+import edu.southwestern.tasks.evocraft.blocks.MachineBlockSet;
 import edu.southwestern.tasks.evocraft.MinecraftShapeTask;
 import edu.southwestern.tasks.evocraft.fitness.MinecraftFitnessFunction;
+import edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator;
 import edu.southwestern.util.MiscUtil;
+import edu.southwestern.util.file.Serialization;
+import wox.serial.Easy;
 
 /**
  * Based off of MinecraftBlockRenderExperiment.java
@@ -30,89 +38,97 @@ import edu.southwestern.util.MiscUtil;
  */
 public class MinecraftBlockEvaluateExperiment implements Experiment{
 
-	
+
 	private static ArrayList<MinecraftFitnessFunction> fitnessFunctions;
-	private static String dir; 
+	private static String fileOrDirectory; 
 	private static HashSet<List<Block>> seen;
-	
-	
+
+
 	@Override
 	public void init() {
-		dir = Parameters.parameters.stringParameter("minecraftBlockListTextFile");
+		fileOrDirectory = Parameters.parameters.stringParameter("minecraftBlockListTextFile");
 		fitnessFunctions = MinecraftShapeTask.defineFitnessFromParameters();
-		System.out.println("Load: "+ dir);
+		System.out.println("Load: "+ fileOrDirectory);
 	}
 
 	@Override
 	public void run() {
-//		try {
-			seen = new HashSet<>();
-			HashMap<List<Block>, String> fileNames = new HashMap<>();
-			File file = new File(dir);
-			if(file.isDirectory()) {
-				int count = 0;
-				String[] files = file.list();
-				for(String individual : files) {
-					if(individual.endsWith(".txt")) {
-						System.out.println((count++) + " of " + files.length);
-						//System.out.println(individual);
-						try {
-							List<Block> shiftedBlocks = MinecraftBlockRenderExperiment.shiftBlocks(new File(dir + File.separator + individual));
-							seen.add(shiftedBlocks); // Won't add duplicates
-							fileNames.put(shiftedBlocks, individual);
-						} catch(Exception e) {
-							System.out.println("Error adding/reading "+individual);
-							e.printStackTrace();
-						}
+		//		try {
+		seen = new HashSet<>();
+		HashMap<List<Block>, String> fileNames = new HashMap<>();
+		File file = new File(fileOrDirectory);
+		if(file.isDirectory()) {
+			int count = 0;
+			String[] files = file.list();
+			for(String individual : files) {
+				if(individual.endsWith(".txt")) {
+					System.out.println((count++) + " of " + files.length);
+					//System.out.println(individual);
+					try {
+						List<Block> shiftedBlocks = MinecraftBlockRenderExperiment.shiftBlocks(new File(fileOrDirectory + File.separator + individual));
+						seen.add(shiftedBlocks); // Won't add duplicates
+						fileNames.put(shiftedBlocks, individual);
+					} catch(Exception e) {
+						System.out.println("Error adding/reading "+individual);
+						e.printStackTrace();
 					}
 				}
-				@SuppressWarnings("unchecked")
-				List<Block>[] seenList = (List<Block>[]) new List[seen.size()]; 
-				seenList = seen.toArray(seenList);
-				System.out.println("Discard "+Parameters.parameters.integerParameter("minecraftBlockLoadSkip"));
+			}
+			@SuppressWarnings("unchecked")
+			List<Block>[] seenList = (List<Block>[]) new List[seen.size()]; 
+			seenList = seen.toArray(seenList);
+			System.out.println("Discard "+Parameters.parameters.integerParameter("minecraftBlockLoadSkip"));
 
-				for(int i = Parameters.parameters.integerParameter("minecraftBlockLoadSkip"); i < seenList.length; i++) {
-					List<Block> shiftedBlocks = seenList[i];
-					boolean tryAgain = false;
-					do {
-						System.out.println("Evaluate shape " + i + " of " + seenList.length);
-						double[] fitnessScores = MinecraftShapeTask.calculateFitnessScores(MinecraftClient.POST_EVALUATION_SHAPE_CORNER, fitnessFunctions, shiftedBlocks).t1;
-
-						for(int j = 0; j < fitnessFunctions.size(); j++) {
-							System.out.print(fitnessFunctions.get(j).getClass().getSimpleName() + ": ");
-							System.out.println(fitnessScores[j]);
-						}
-						System.out.println("Currently watching: "+fileNames.get(seenList[i]));
-						System.out.println("Press enter to continue, 'b' to go back, 'r' to repeat");
-						String input = MiscUtil.waitForReadStringAndEnterKeyPress();
-						if(input.equals("b")) i-=2;
-						else if(input.equals("r")) i--;
-						
-					} while(tryAgain);
-				}
-			} else {
-				//throw new UnsupportedOperationException("Does not actually work with single files. Load a directory instead");
-				// Is a single text file
-				try {
-					List<Block> shiftedBlocks = MinecraftBlockRenderExperiment.shiftBlocks(file);
-					System.out.println("Evaluate shape " + shiftedBlocks);
+			for(int i = Parameters.parameters.integerParameter("minecraftBlockLoadSkip"); i < seenList.length; i++) {
+				List<Block> shiftedBlocks = seenList[i];
+				boolean tryAgain = false;
+				do {
+					System.out.println("Evaluate shape " + i + " of " + seenList.length);
 					double[] fitnessScores = MinecraftShapeTask.calculateFitnessScores(MinecraftClient.POST_EVALUATION_SHAPE_CORNER, fitnessFunctions, shiftedBlocks).t1;
 
 					for(int j = 0; j < fitnessFunctions.size(); j++) {
 						System.out.print(fitnessFunctions.get(j).getClass().getSimpleName() + ": ");
 						System.out.println(fitnessScores[j]);
 					}
+					System.out.println("Currently watching: "+fileNames.get(seenList[i]));
+					System.out.println("Press enter to continue, 'b' to go back, 'r' to repeat");
+					String input = MiscUtil.waitForReadStringAndEnterKeyPress();
+					if(input.equals("b")) i-=2;
+					else if(input.equals("r")) i--;
+
+				} while(tryAgain);
+			}
+		} else {
+			//throw new UnsupportedOperationException("Does not actually work with single files. Load a directory instead");
+			List<Block> shiftedBlocks = null;
+			if(fileOrDirectory.endsWith(".txt")) {
+				// Is a single text file
+				System.out.println("Load from text description");
+				try {
+					shiftedBlocks = MinecraftBlockRenderExperiment.shiftBlocks(file);
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
 					System.exit(1);
 				}
+			} else if(fileOrDirectory.endsWith(".xml")) {
+				// Is xml genome
+				System.out.println("Load from BoundedRealValuedGenotype with MachineBlockSet");
+				BoundedRealValuedGenotype genotype = (BoundedRealValuedGenotype) Serialization.load(fileOrDirectory);
+				VectorToVolumeGenerator generator = new VectorToVolumeGenerator();
+				shiftedBlocks = generator.generateShape(genotype, MinecraftClient.POST_EVALUATION_SHAPE_CORNER, new MachineBlockSet()); // TODO: MachineBlockSet will not always be appropriate
 			}
-//		} catch (FileNotFoundException e) {
-//			e.printStackTrace();
-//		}
+			System.out.println("Evaluate shape " + shiftedBlocks);
+			double[] fitnessScores = MinecraftShapeTask.calculateFitnessScores(MinecraftClient.POST_EVALUATION_SHAPE_CORNER, fitnessFunctions, shiftedBlocks).t1;
+
+			for(int j = 0; j < fitnessFunctions.size(); j++) {
+				System.out.print(fitnessFunctions.get(j).getClass().getSimpleName() + ": ");
+				System.out.println(fitnessScores[j]);
+			}
+
+		}
 	}
 
-	
+
 	@Override
 	public boolean shouldStop() {
 		return false;
