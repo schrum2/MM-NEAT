@@ -10,20 +10,16 @@ import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype;
-import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.experiment.Experiment;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
-import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
-import edu.southwestern.tasks.evocraft.blocks.BlockSet;
-import edu.southwestern.tasks.evocraft.blocks.MachineBlockSet;
 import edu.southwestern.tasks.evocraft.MinecraftShapeTask;
+import edu.southwestern.tasks.evocraft.blocks.MachineBlockSet;
 import edu.southwestern.tasks.evocraft.fitness.MinecraftFitnessFunction;
 import edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.file.Serialization;
-import wox.serial.Easy;
 
 /**
  * Based off of MinecraftBlockRenderExperiment.java
@@ -124,7 +120,7 @@ public class MinecraftBlockEvaluateExperiment implements Experiment{
 				System.out.print(fitnessFunctions.get(j).getClass().getSimpleName() + ": ");
 				System.out.println(fitnessScores[j]);
 			}
-
+			MinecraftClient.terminateClientScriptProcess();
 		}
 	}
 
