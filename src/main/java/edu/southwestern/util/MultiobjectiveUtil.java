@@ -84,7 +84,7 @@ public class MultiobjectiveUtil {
 			for (int j = 0; j < scoresArrayForHypervolume[i].length; j++) {		//this should subtract the minimum score value for each objective from its score
 				scoresArrayForHypervolume[i][j] -= minScoreForEachObjective[j]; //before passing to hypervolume, adjust scores for the minimum 
 				scoresArrayForHypervolume[i][j] += Parameters.parameters.doubleParameter("hypervolumeMinimumOffset"); // small boost to all scores
-				assert scoresArrayForHypervolume[i][j] >= 0 : "scoresArrayForHypervolume["+i+"]["+j+"]= "+scoresArrayForHypervolume[i][j]+", minScoreForEachObjective="+Arrays.toString(minScoreForEachObjective);
+				if( !(scoresArrayForHypervolume[i][j] >= 0) ) throw new IllegalStateException( "scoresArrayForHypervolume["+i+"]["+j+"]= "+scoresArrayForHypervolume[i][j]+", minScoreForEachObjective="+Arrays.toString(minScoreForEachObjective) );
 			}
 			i++;
 		}

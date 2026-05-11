@@ -1,0 +1,3 @@
+cd ..
+cd ..
+java -jar target/MM-NEAT-0.0.1-SNAPSHOT.jar runNumber:%1 randomSeed:%1 watch:true trials:1 mu:1000 base:molecules log:Molecules-TargetMelting351Boiling436C saveTo:TargetMelting351Boiling436C maxGens:50 io:true netio:true mating:false task:edu.southwestern.tasks.molecules.MoleculeTask cleanFrequency:-1 saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.SMILESStringGenotype moleculeTargetMeltingAndBoilingPointFitness:true smilesTargetMeltingPoint:351.05000209808350 smilesTargetBoilingPoint:436.09000205993652 

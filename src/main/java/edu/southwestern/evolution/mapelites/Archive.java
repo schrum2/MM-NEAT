@@ -206,14 +206,24 @@ public class Archive<T> {
 			return newElites > 0;
 		} else if(candidate.usesMAPElitesMapSpecification() && !getBinMapping().discard(candidate.MAPElitesBehaviorMap())) {
 			int oneD = getBinMapping().oneDimensionalIndex(candidate.MAPElitesBehaviorMap());
-			boolean result = false;
-			synchronized(this) { // Make sure elite at the index does not change while considering replacement
-				// Synchronizing on the whole archive seems unnecessary ... maybe just the index? How?
-				Score<T> currentBinOccupant = getElite(oneD);
-				result = replaceIfBetter(candidate, oneD, currentBinOccupant);
+			try {
+				boolean result = false;
+				synchronized(this) { // Make sure elite at the index does not change while considering replacement
+					// Synchronizing on the whole archive seems unnecessary ... maybe just the index? How?
+					Score<T> currentBinOccupant = getElite(oneD);
+					result = replaceIfBetter(candidate, oneD, currentBinOccupant);
+				}
+				return result;
+			} catch(ArrayIndexOutOfBoundsException e) {
+				System.err.println("The bin mapping scheme for these BinLabels must be incorrect.");
+				System.err.println("Mapping: " + getBinMapping());
+				System.err.println("Behavior Map: "+ candidate.MAPElitesBehaviorMap());
+				System.err.println("Genotype: " + candidate.individual);
+				System.err.println("oneD: " + oneD);
+				System.err.println("multiD: " + Arrays.toString(getBinMapping().multiDimensionalIndices(candidate.MAPElitesBehaviorMap())));
+				
+				throw e;
 			}
-			return result;
-			
 			
 			// TODO: Why are we inserting if the binning scheme says to discard it?
 		} else if(candidate.usesMAPElitesBinSpecification()) {
@@ -359,10 +369,18 @@ public class Archive<T> {
 			Serialization.save(candidate.individual, binPath + "-elite");
 			// Write scores as simple text file (less to write than xml)
 			try {
+				boolean outputMultiple = !Parameters.parameters.booleanParameter("qdScoreForJustOneBin");
 				PrintStream ps = new PrintStream(new File(binPath + "-scores.txt"));
 				for(Double score : candidate.getTraditionalDomainSpecificBehaviorVector()) {
-					ps.println(score);
+					if(score.isInfinite() && score < 0) {
+						if(outputMultiple) { // If there is only one score, then don't waste space
+							ps.println("X"); // less file space than -Infinity
+						}
+					} else {
+						ps.println(score);
+					}
 				}
+				ps.close();
 			} catch (FileNotFoundException e) {
 				System.out.println("Could not write scores for " + candidate.individual.getId() + ":" + candidate.getTraditionalDomainSpecificBehaviorVector());
 				e.printStackTrace();

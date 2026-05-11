@@ -142,6 +142,7 @@ public abstract class TimedEvaluationMinecraftFitnessFunction extends MinecraftF
 			}
 			// Read the blocks in the evaluation area and remove air blocks
 			newShapeReadingBlockList = MinecraftUtilClass.filterOutBlock(MinecraftClient.getMinecraftClient().readCube(evaluationCorner,endEvaluationCorner),BlockType.AIR);
+			if(CommonConstants.watch) System.out.println("DELTA: length: "+ history.size() + ":" + MinecraftUtilClass.getCenterOfMass(history.get(history.size() - 1).t2).distance(MinecraftUtilClass.getCenterOfMass(newShapeReadingBlockList)));
 			history.add(new Pair<Long,List<Block>>(System.currentTimeMillis() - startTime,newShapeReadingBlockList));
 			if(CommonConstants.watch) System.out.println("Block update: "+newShapeReadingBlockList);
 

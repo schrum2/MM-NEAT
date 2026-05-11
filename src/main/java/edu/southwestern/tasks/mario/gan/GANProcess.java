@@ -5,11 +5,8 @@ import static edu.southwestern.tasks.gvgai.zelda.ZeldaGANUtil.ZELDA_GAN_EXPANDED
 import static edu.southwestern.tasks.gvgai.zelda.ZeldaGANUtil.ZELDA_GAN_ORIGINAL_TILE_NUMBER;
 import static edu.southwestern.tasks.gvgai.zelda.ZeldaGANUtil.ZELDA_GAN_REDUCED_TILE_NUMBER;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
 import java.lang.ProcessBuilder.Redirect;
 
 import edu.southwestern.parameters.Parameters;
@@ -223,20 +220,6 @@ public class GANProcess extends Comm {
 		}
 	}
 
-	/**
-	 * Buffers used for communicating with process via stdin and stdout
-	 */
-	@Override
-	public void initBuffers() {
-		//Initialize input and output
-		if (this.process != null) {
-			this.reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-			this.writer = new PrintStream(this.process.getOutputStream());
-			System.out.println("Process buffers initialized");
-		} else {
-			printErrorMsg("GANProcess:initBuffers:Null process!");
-		}
-	}
 
 	/**
 	 * GAN process running in background, ready to accept latent vectors

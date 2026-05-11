@@ -17,10 +17,8 @@ public abstract class Mutation<T> {
 	 * Mutates the genotype if the perform() test passes. The perform() test is
 	 * generally probabilistic.
 	 * 
-	 * @param genotype
-	 *            will potentially be mutated
-	 * @param infoTracking
-	 *            Accumulates a String of information about mutation for logs
+	 * @param genotype Will potentially be mutated
+	 * @param infoTracking Accumulates a String of information about mutation for logs
 	 * @return Whether the mutation actually occurred
 	 */
 	public boolean go(Genotype<T> genotype, StringBuilder infoTracking) {
@@ -44,8 +42,7 @@ public abstract class Mutation<T> {
 	/**
 	 * Modifies the genotype. Called if perform() test passes.
 	 *
-	 * @param genotype
-	 *            to modify
+	 * @param genotype to modify
 	 */
 	public abstract void mutate(Genotype<T> genotype);
 }

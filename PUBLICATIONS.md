@@ -77,3 +77,7 @@ This file contains full citations for all known publications that make use of MM
   https://arxiv.org/abs/2105.12960  
   Simplified version of code at: https://github.com/schrum2/GameGAN   
   Batch files for experiments in: [batch/Experiments-2022-ToG-CPPNThenDirect2GAN](https://github.com/schrum2/MM-NEAT/tree/master/batch/Experiments-2022-ToG-CPPNThenDirect2GAN)
+
+* Alejandro Medina, Melanie Richey, Mark Mueller, and Jacob Schrum (2023). Evolving Flying Machines in Minecraft Using Quality Diversity, Proceedings of the Genetic and Evolutionary Computation Conference (GECCO 2023).
+  https://arxiv.org/abs/2302.00782
+  Batch files for experiments in: [batch/Experiments-2023-GECCO-MinecraftFlyingMachines](https://github.com/schrum2/MM-NEAT/tree/master/batch/Experiments-2023-GECCO-MinecraftFlyingMachines)

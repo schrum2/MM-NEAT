@@ -267,6 +267,13 @@ public class Parameters {
 		integerOptions.add("maxPause", 500, "Maximum pause length between each iteraton of animation in AnimationBreeder");
 		integerOptions.add("maxRemixImageWindow", 100, "Maximum size of window being remixed by CPPN in Picture Remixer");
 		integerOptions.add("maxTrials", Integer.MAX_VALUE, "Max trials allowed by individual when using increasing trials");
+		integerOptions.add("maxCarbonForAtomTypeBinLabels", 10, "Used by MoleculeAtomTypeCountsBinLabels to restrict archive dimensions");
+		integerOptions.add("maxOxygenForAtomTypeBinLabels", 7, "Used by MoleculeAtomTypeCountsBinLabels to restrict archive dimensions");
+		integerOptions.add("maxNitrogenForAtomTypeBinLabels", 7, "Used by MoleculeAtomTypeCountsBinLabels to restrict archive dimensions");
+		integerOptions.add("maxSingleBondsForBinLabels", 15, "Used by MoleculeBondTypeCountsBinLabels to restrict archive dimensions");
+		integerOptions.add("maxDoubleBondsForBinLabels", 10, "Used by MoleculeBondTypeCountsBinLabels to restrict archive dimensions");
+		integerOptions.add("maxTripleBondsForBinLabels", 5, "Used by MoleculeBondTypeCountsBinLabels to restrict archive dimensions");
+		integerOptions.add("maxBranchesForBinLabels", 6, "Used by MoleculeBranchCountsBinLabels to restrict archive dimensions");
 		integerOptions.add("minAnimationLength", 10, "Minimum length of animation in AnimationBreeder");
 		integerOptions.add("minAnimationLength", 10, "Minimum length of animation in AnimationBreeder");
 		integerOptions.add("minEdibleTime", Constants.EDIBLE_TIME, "What edible time is reduced to across generations");
@@ -411,6 +418,9 @@ public class Parameters {
 		longOptions.add("shortTimeBetweenMinecraftReads", 1000L, "The amount of time that change center of mass fitness function waits before reading in the area again");
 
 		// Boolean parameters 
+		booleanOptions.add("qdFullLoggingForEachOtherStat", true, "Create extensive logs for each otherScore/Stat when using MAP Elites");
+		booleanOptions.add("qdScoreForJustOneBin", false, "Every individual with QD will exist in only one archive bin and therefore have just one fitness score");
+		booleanOptions.add("moleculeTargetMeltingAndBoilingPointFitness", true, "Use Steve Alexander's original fitness based on target melting and boiling points");
 		booleanOptions.add("turnOffRestrictionsDuringInit", true, "Whether MAP Elites should turn off restricted bin ranges during initialization.");
 		booleanOptions.add("discardFromBinOutsideRestrictedRange", false, "Whether MAP Elites should do range checks on bins to see if an elite should be discarded.");
 		booleanOptions.add("steadyStateArchetypeSaving", true, "Steady state evolution updates the NN archetype. Turn off to increase speed, but lose ability to resume from crash.");
@@ -890,6 +900,15 @@ public class Parameters {
 		booleanOptions.add("minecraftSequentialChangeCenterOfMassThenMissileFitness", false, "Uses ChangeCenterOfMass, but adds Missile once shapes can fly");
 		
 		// Double parameters
+		doubleOptions.add("smilesTargetMeltingPoint", 179.44000148773193, "Target melting point for fitness calculation");
+		doubleOptions.add("smilesTargetBoilingPoint", 379.65999603271484, "Target boiling point for fitness calculation");
+		doubleOptions.add("smilesBondTypeMutationRate", 0.1, "SMILES rate for changing a bond type (e.g. single to double or double to single)");
+		doubleOptions.add("smilesInsertNewAtomMutationRate", 0.1, "SMILES rate for inserting a new random atom along the main backbone of the string");
+		doubleOptions.add("smilesBranchNewAtomMutationRate", 0.1, "SMILES rate for inserting a new random atom on a branch off of the main backbone");
+		doubleOptions.add("smilesDeleteAtomMutationRate", 0.1, "SMILES rate for deleting an atom from the string");
+		doubleOptions.add("smilesAtomTypeMutationRate", 0.1, "SMILES rate for changing an atom type");
+		doubleOptions.add("smilesDeleteRingMutationRate", 0.1, "SMILES rate for deleting a ring from a string");
+		doubleOptions.add("smilesAddRingMutationRate", 0.1, "SMILES rate for adding a ring to a string");
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
 		doubleOptions.add("backpropLearningRate", 0.1, "Rate backprop learning for neural networks");
 		doubleOptions.add("campPercentOfTrials", 1.0, "What percentage trials should be based on camps");

@@ -1,0 +1,42 @@
+package edu.southwestern.tasks.molecules.smiles;
+
+import java.io.FileNotFoundException;
+
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.mapelites.generalmappings.CombinationBinLabels;
+
+public class MoleculeAtomAndBondTypeBinLabels extends CombinationBinLabels {
+
+	public MoleculeAtomAndBondTypeBinLabels() {
+		super(new MoleculeAtomTypeCountsBinLabels(), new MoleculeBondTypeCountsBinLabels());
+	}
+
+	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
+//		MMNEAT.main(("runNumber:2 randomSeed:2 watch:false trials:1 mu:10 base:molecules log:Molecules-TargetAtomAndBondCounts "+
+//				 "saveTo:TargetAtomAndBondCounts maxGens:50000 io:true netio:true mating:false "+
+//			 	 "task:edu.southwestern.tasks.molecules.MoleculeTask cleanFrequency:-1 saveAllChampions:true "+
+//				 "genotype:edu.southwestern.evolution.genotypes.SMILESStringGenotype "+
+//			 	 // MAP Elites settings added here
+//				 "ea:edu.southwestern.evolution.mapelites.MAPElites "+
+//				 "experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment "+
+//				 "steadyStateIndividualsPerGeneration:100 "+
+//				 "mapElitesBinLabels:edu.southwestern.tasks.molecules.smiles.MoleculeAtomAndBondTypeBinLabels "+
+//				 "steadyStateArchetypeSaving:false "+
+//			 	 // Fitness related
+//			 	 "smilesTargetMeltingPoint:179.44000148773193 smilesTargetBoilingPoint:379.65999603271484 "+
+//				 "moleculeTargetMeltingAndBoilingPointFitness:true").split(" "));		
+		
+		
+		MMNEAT.main(("runNumber:1 randomSeed:1 watch:false trials:1 mu:10 base:molecules "+
+				"log:Molecules-AtomBondComboTargetMelting351Boiling436C saveTo:AtomBondComboTargetMelting351Boiling436C "+
+				"maxGens:20000 io:true netio:true mating:false task:edu.southwestern.tasks.molecules.MoleculeTask "+
+				"cleanFrequency:-1 saveAllChampions:true qdScoreForJustOneBin:true mapElitesLogsOtherScoreHypervolume:false "+
+				"ea:edu.southwestern.evolution.mapelites.MAPElites qdFullLoggingForEachOtherStat:false "+
+				"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment steadyStateIndividualsPerGeneration:100 "+
+				"mapElitesBinLabels:edu.southwestern.tasks.molecules.smiles.MoleculeAtomAndBondTypeBinLabels "+
+				"maxSingleBondsForBinLabels:10 maxDoubleBondsForBinLabels:7 steadyStateArchetypeSaving:false "+
+				"genotype:edu.southwestern.evolution.genotypes.SMILESStringGenotype moleculeTargetMeltingAndBoilingPointFitness:true "+
+				"smilesTargetMeltingPoint:351.05000209808350 smilesTargetBoilingPoint:436.09000205993652").split(" "));
+	}	
+	
+}

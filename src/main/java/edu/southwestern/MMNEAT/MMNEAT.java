@@ -109,7 +109,7 @@ public class MMNEAT {
 	public static ArrayList<Double> fitnessMinimums;
 	@SuppressWarnings("rawtypes") // applies to any population type
 	public static PerformanceLog performanceLog;
-	private static ArrayList<Integer> actualFitnessFunctions;
+	public static ArrayList<Integer> actualFitnessFunctions;
 	public static EvalLog evalReport = null;
 	public static RandomGenerator weightPerturber = null;
 	public static MMNEATLog ghostLocationsOnPowerPillEaten = null;
@@ -561,6 +561,7 @@ public class MMNEAT {
 		task = null;
 		metaheuristics = null;
 		fitnessFunctions = null;
+		actualFitnessFunctions = null;
 		aggregationOverrides = null;
 		fitnessMinimums = null;
 		ea = null;

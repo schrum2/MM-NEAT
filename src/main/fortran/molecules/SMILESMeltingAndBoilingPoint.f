@@ -1,0 +1,781 @@
+C
+      IMPLICIT DOUBLE PRECISION (A-H,O-Z)
+      CHARACTER*1 XSTRING(100)
+
+C READ SIZE OF MOLECULE AND SMILES STRING
+C
+C JACOB: Using GOTO for the loop, which starts at 10
+
+10      READ(5,*) MAX
+
+C JACOB: Special negative input triggers loop exit
+        IF (MAX .LE. 0) GO TO 20  ! Exit loop if IMUT <= 0
+
+      READ(5,'(100A1)') (XSTRING(J),J=1,MAX)
+C      WRITE(6,'(100A1)') (XSTRING(J),J=1,MAX)
+
+C WRITE "X" IF THERE IS AN ERROR
+      IF(MAX.EQ.1) THEN
+C JACOB: Write X then X if there is an error
+        WRITE(6,*) "X"
+        WRITE(6,*) "X"
+      ELSE
+        CALL PROCESS(MAX,XSTRING,VAL)
+C        WRITE(6,*) MAX,VAL
+C        WRITE(6,'(100A1)') (XSTRING(J),J=1,MAX)
+      ENDIF
+      
+      
+C JACOB: Ending the "loop" that uses GOTO
+      GO TO 10  ! Loop back to the beginning
+20    CONTINUE  ! End of loop      
+      
+      
+      END
+C
+      SUBROUTINE PROCESS(MAX,XSTRING,VAL)
+      IMPLICIT DOUBLE PRECISION(A-H,O-Z)
+      CHARACTER*1 XSTRING(100),CHAR,CHAR2
+      CHARACTER*1 NUMBER(3)
+      INTEGER NATOM,ATOM(50),RSIZE(3),RATOM(100)
+      INTEGER NPAIR,PAIR(50,3),BTYPE
+      INTEGER BRANCH,HEAD(50),NRING
+      INTEGER MAXB(3),ADJ(50,50),MAXRING
+      INTEGER IRING(3),JRING(3),RING(100),NEXT(100),IPOINT(100)
+      INTEGER INODE(100),JNODE(100),FWDARC(100),ARCFIR(100),NCYC(100)
+      DATA MAXRING /3/
+      DATA NUMBER /'1','2','3'/
+      DATA MAXB /4,2,3/
+      LOGICAL BADSMILES
+C NATOM IS THE NUMBER OF ATOMS (MAX=50)
+C ATOM CONTAINS THE TYPE OF EACH ATOM (1=C,2=O,3=N)
+C NPAIR IS THE NUMBER OF PAIRS AN ATOM HAS
+C PAIR CONTAINS WHICH ATOMS ARE BONDED AND THE TYPE OF BOND
+C BTYPE IS THE TYPE OF BOND (1=S,2=D,3=T)
+C BRANCH IS THE CURRENT LEVEL
+C HEAD IS THE LAST ATOM (STARTING ATOM IN BOND)
+C ADJ CONTAINS THE CONNECTIONS BETWEEN THE ATOMS
+C ARRAY MAXB CONTAINS THE MAXIMUM NUMBER OF BONDS OF EACH TYPE OF ATOM
+C
+C CHECK IF XSTRING IS A VALID MOLECULE
+C IF IT IS, CALCULATE ITS VALUE
+C
+      BADSMILES=.FALSE.
+      VAL=999.0
+      IF(MAX.EQ.0) THEN
+C JACOB: Write X then X if there is an error
+        WRITE(6,*) "X"
+        WRITE(6,*) "X"       
+        RETURN
+      END IF
+      IF(MAX.GT.50) THEN
+C JACOB: Write X then X if there is an error
+        WRITE(6,*) "X"
+        WRITE(6,*) "X"       
+        RETURN
+      END IF
+C
+      DO 20 I=1,50
+      HEAD(I)=-1
+      RING(I)=0
+20    CONTINUE
+      DO 25 I=1,MAXRING
+      IRING(I)=0
+      JRING(I)=0
+25    CONTINUE
+      NRING=0
+C
+C FIRST CHARACTER MUST BE AN ATOM
+C
+      NATOM=0
+      NPAIR=0
+      BTYPE=1
+      HEAD(1)=1
+      BRANCH=1
+      CHAR=XSTRING(1)
+      IF(CHAR.EQ.'C'.OR.CHAR.EQ.'N'.OR.CHAR.EQ.'O') THEN
+        NATOM=NATOM+1
+        IF(CHAR.EQ.'C') ATOM(NATOM)=1
+        IF(CHAR.EQ.'O') ATOM(NATOM)=2
+        IF(CHAR.EQ.'N') ATOM(NATOM)=3
+      ELSE
+C        WRITE(6,*) "FIRST CHARACTER IS NOT AN ATOM"
+C JACOB: Consider this a failure case. Make it so X and X will be printed below
+         BADSMILES=.TRUE.
+         VAL1=0
+         VAL2=0
+C        RETURN
+      ENDIF
+C
+C LOOP OVER ALL OTHER CHARACTERS
+C
+      DO 100 I=2,MAX
+C      WRITE(6,*) "STRING POSITION",I
+      CHAR=XSTRING(I)
+      CHAR2=XSTRING(I+1)
+C      WRITE(6,'(100A1)') CHAR,CHAR2
+C
+C CHAR IS AN ATOM
+C
+      IF(CHAR.EQ.'C'.OR.CHAR.EQ.'N'.OR.CHAR.EQ.'O') THEN
+        NATOM=NATOM+1
+C        WRITE(6,*) "ATOM",NATOM
+        IF(CHAR.EQ.'C') ATOM(NATOM)=1
+        IF(CHAR.EQ.'O') ATOM(NATOM)=2
+        IF(CHAR.EQ.'N') ATOM(NATOM)=3
+        NPAIR=NPAIR+1
+        PAIR(NPAIR,1)=HEAD(BRANCH)
+        IF(HEAD(BRANCH).EQ.-1) PAIR(NPAIR,1)=HEAD(BRANCH-1)
+        PAIR(NPAIR,2)=NATOM
+        PAIR(NPAIR,3)=BTYPE
+        HEAD(BRANCH)=NATOM
+      ENDIF
+C
+C CHAR IS A BOND
+C NEXT CHAR MUST BE AN ATOM
+C
+      IF(CHAR.EQ.'-') THEN
+        BTYPE=1
+        IF(CHAR2.NE.'C'.AND.CHAR2.NE.'N'.AND.CHAR2.NE.'O') RETURN
+      ENDIF
+      IF(CHAR.EQ.'=') THEN
+        BTYPE=2
+        IF(CHAR2.NE.'C'.AND.CHAR2.NE.'N'.AND.CHAR2.NE.'O') RETURN
+      ENDIF
+      IF(CHAR.EQ.'#') THEN
+        BTYPE=3
+        IF(CHAR2.NE.'C'.AND.CHAR2.NE.'N'.AND.CHAR2.NE.'O') RETURN
+      ENDIF
+C
+C CHAR IS A LEFT PARENTHESIS "("
+C NEXT CHAR MUST BE A BOND
+C
+      IF(CHAR.EQ.'(') THEN
+        BRANCH=BRANCH+1
+C        WRITE(6,*) "BRANCH (",BRANCH
+        IF(CHAR2.NE.'-'.AND.CHAR2.NE.'='.AND.CHAR2.NE.'#') RETURN
+      ENDIF
+C
+C CHAR IS A RIGHT PARENTHESIS ")"
+C
+      IF(CHAR.EQ.')') THEN
+        HEAD(BRANCH)=-1
+        BRANCH=BRANCH-1
+C        WRITE(6,*) "BRANCH )",BRANCH
+      ENDIF
+C
+C CHAR IS A NUMBER
+C ASSUME THAT EACH RING HAS A UNIQUE NUMBER
+C ASSUME THAT EACH RING IS ON A SINGLE BRANCH
+C ASSUME THAT EACH RING CONTAINS 3 OR MORE ATOMS
+C
+      ITEMP=0
+      DO 110 II=1,MAXRING
+      IF(CHAR.EQ.NUMBER(II)) ITEMP=II
+110   CONTINUE
+      IF(ITEMP.GT.NRING) NRING=ITEMP
+      IF(ITEMP.GT.0) THEN
+C TWO RINGS FOUND WITH THE SAME NUMBER
+        IF(IRING(ITEMP).GT.0.AND.JRING(ITEMP).GT.0) THEN
+C          WRITE(6,*) "DUPLICATE RING FOUND",ITEMP
+          RETURN
+        ENDIF
+C END OF RING
+C RINGS IN SMILES ARE SINGLE BONDS
+        IF(IRING(ITEMP).GT.0.AND.JRING(ITEMP).EQ.0) THEN
+          NPAIR=NPAIR+1
+          PAIR(NPAIR,1)=IRING(ITEMP)
+          PAIR(NPAIR,2)=NATOM
+          PAIR(NPAIR,3)=1     ! JACOB: I copied this over from evol.f
+          JRING(ITEMP)=NATOM
+        ENDIF
+C NEW RING STARTS
+        IF(IRING(ITEMP).EQ.0.AND.JRING(ITEMP).EQ.0) THEN
+          IRING(ITEMP)=NATOM
+        ENDIF
+      ENDIF
+100   CONTINUE
+C      WRITE(6,*) "NRING",NRING
+C
+C CREATE ADJ MATRIX
+C
+      DO 200 I=1,NATOM
+      DO 200 J=1,NATOM
+      ADJ(I,J)=0
+200   CONTINUE
+      DO 210 K=1,NPAIR
+      ADJ(PAIR(K,1),PAIR(K,2))=PAIR(K,3)
+      ADJ(PAIR(K,2),PAIR(K,1))=PAIR(K,3)
+210   CONTINUE
+C      DO 220 I=1,NATOM
+C      WRITE(6,*) (ADJ(I,J),J=1,NATOM)
+C220   CONTINUE
+C      WRITE(6,*) (ATOM(I),I=1,NATOM)
+C
+C CHECK THAT EACH ATOM DOESN'T HAVE TOO MANY BONDS
+C
+      DO 300 I=1,NATOM
+      NBOND=0
+      DO 310 J=1,NATOM
+      NBOND=NBOND+ADJ(I,J)
+310   CONTINUE
+      IF(NBOND.GT.MAXB(ATOM(I))) THEN
+C        WRITE(6,*) "TOO MANY BONDS",I
+C JACOB: Consider this a failure case. Make it so X and X will be printed below
+         BADSMILES=.TRUE.
+         VAL1=0
+         VAL2=0
+C        RETURN
+      ENDIF
+      IF(NBOND.LT.1) THEN
+C JACOB: Consider this a failure case. Make it so X and X will be printed below
+         BADSMILES=.TRUE.
+         VAL1=0
+         VAL2=0
+C        RETURN
+      END IF
+300   CONTINUE
+C
+C NUMBER OF ( AND ) MUST MATCH (BRANCH=1)
+C
+      IF(BRANCH.NE.1) THEN
+C        WRITE(6,*) "PARENTHESES DO NOT MATCH"
+C JACOB: Consider this a failure case. Make it so X and X will be printed below
+         BADSMILES=.TRUE.
+         VAL1=0
+         VAL2=0
+C        RETURN
+      ENDIF
+C
+C CHECK THAT THE RING SIZE = 4, 5 OR 6
+C
+      M=0
+      DO 400 I=1,NATOM
+      DO 400 J=I,NATOM
+      IF(ADJ(I,J).NE.0) THEN
+        INODE(M+1)=I
+        JNODE(M+1)=J
+        INODE(M+2)=J
+        JNODE(M+2)=I
+        M=M+2
+      ENDIF
+400   CONTINUE
+      DO 410 I=1,NATOM
+      RATOM(I)=0
+410   CONTINUE
+C      WRITE(6,*) NATOM,M
+C      WRITE(6,*) (INODE(JJJ),JJJ=1,M)
+C      WRITE(6,*) (JNODE(JJJ),JJJ=1,M)
+C
+      CALL FCYCLE(NATOM,M,INODE,JNODE,NUMCYC,NUMCMP,NCYC,
+     1  FWDARC,ARCFIR,NEXT,IPOINT,RSIZE,RATOM)
+C      WRITE(6,*) "NUMBER OF RINGS ",NUMCYC
+C      WRITE(6,*) (RSIZE(I),I=1,NUMCYC)
+C      WRITE(6,*) (RATOM(I),I=1,NATOM)
+      IF(NRING.NE.NUMCYC) THEN
+C        WRITE(6,*) "NUMBER OF RINGS DOESN'T MATCH"
+C JACOB: Consider this a failure case. Make it so X and X will be printed below
+         BADSMILES=.TRUE.
+         VAL1=0
+         VAL2=0
+C        RETURN
+      ENDIF
+      DO 420 I=1,NUMCYC
+      IF(RSIZE(I).LT.4.OR.RSIZE(I).GT.6) THEN
+C JACOB: Consider this a failure case. Make it so X and X will be printed below
+         BADSMILES=.TRUE.
+         VAL1=0
+         VAL2=0
+C        WRITE(6,*) "WRONG SIZE RING"
+C        RETURN
+      ENDIF
+420   CONTINUE
+C
+C WE HAVE A VALID MOLECULE SO CALCULATE ITS PROPERTIES
+C
+      IF(.NOT. BADSMILES) THEN
+         CALL PROP(NATOM,ATOM,ADJ,RATOM,VAL1,VAL2)
+      END IF
+
+      IF(VAL1.GT.0) THEN
+C JACOB: Changing this. Don't want the fitness, but rather the calculated MP and BP
+C        VAL=SQRT((VAL1-BVAL1)**2+(VAL2-BVAL2)**2)
+C        WRITE(6,*) "VAL = ",VAL,VAL1,VAL2
+C JACOB: Write Melting point first (VAL2), then Boiling point (VAL1)
+         WRITE(6,*) VAL2
+         WRITE(6,*) VAL1
+      ELSE
+C JACOB: Write X then X if there is an error
+        WRITE(6,*) "X"
+        WRITE(6,*) "X"
+      ENDIF
+      RETURN
+      END
+C
+      SUBROUTINE PROP(NATOM,ATOM,ADJ,RING,TBP,TMP)
+      IMPLICIT DOUBLE PRECISION (A-H,O-Z)
+      INTEGER NATOM,ATOM(50),ADJ(50,50),RING(50)
+      INTEGER NS(50),ND(50),NT(50)
+      LOGICAL TEMP
+C
+C CALCULATE THE BOILING AND MELTING POINT OF A MOLECULE (CON NO RINGS)
+C ATOM LISTS THE TYPE OF EACH ATOM
+C ADJ LISTS WHICH ATOM ARE CONNECTED AND THE TYPE OF BOND
+C RING LISTS WHICH ATOMS ARE CONNECTED BY RINGS
+C
+      TBP=198.0
+      TMP=122.0
+C
+      DO 100 I=1,NATOM
+      NS(I)=0
+      ND(I)=0
+      NT(I)=0
+      DO 110 J=1,NATOM
+      IF(ADJ(I,J).EQ.1) NS(I)=NS(I)+1
+      IF(ADJ(I,J).EQ.2) ND(I)=ND(I)+1
+      IF(ADJ(I,J).EQ.3) NT(I)=NT(I)+1
+110   CONTINUE
+C      WRITE(6,*) "NS,ND,NT",I,ATOM(I),NS(I),ND(I),NT(I)
+C
+C ONE BOND CARBON CASES
+C
+      TEMP=ATOM(I).EQ.1.AND.NS(I).EQ.1.AND.ND(I).EQ.0.AND.NT(I).EQ.0
+C -CH3 (NONRING) [1]
+      IF(TEMP.AND.RING(I).EQ.0) THEN
+        TBP=TBP+23.58
+        TMP=TMP-5.10
+C        WRITE(6,*) "ICON1",I,TBP,TMP
+        GO TO 100
+      ENDIF
+      TEMP=ATOM(I).EQ.1.AND.NS(I).EQ.0.AND.ND(I).EQ.1.AND.NT(I).EQ.0
+C =CH2 (NONRING) [5]
+      IF(TEMP.AND.RING(I).EQ.0) THEN
+        TBP=TBP+18.18
+        TMP=TMP-4.32
+C        WRITE(6,*) "ICON5",I,TBP,TMP
+        GO TO 100
+      ENDIF
+      TEMP=ATOM(I).EQ.1.AND.NS(I).EQ.0.AND.ND(I).EQ.0.AND.NT(I).EQ.1
+C #C (NONRING) [9]
+      IF(TEMP.AND.RING(I).EQ.0) THEN
+        TBP=TBP+9.20
+        TMP=TMP-11.18
+C        WRITE(6,*) "ICON9",I,TBP,TMP
+        GO TO 100
+      ENDIF
+C
+C TWO BOND CARBON CASES
+C
+      TEMP=ATOM(I).EQ.1.AND.NS(I).EQ.2.AND.ND(I).EQ.0.AND.NT(I).EQ.0
+C >CH2 (NONRING) [2]
+      IF(TEMP.AND.RING(I).EQ.0) THEN
+        TBP=TBP+22.88
+        TMP=TMP+11.27
+C        WRITE(6,*) "ICON2",I,TBP,TMP
+        GO TO 100
+      ENDIF
+C >CH2 (RING) [11]
+      IF(TEMP.AND.RING(I).EQ.1) THEN
+        TBP=TBP+27.15
+        TMP=TMP+7.75
+C        WRITE(6,*) "ICON11",I,TBP,TMP
+        GO TO 100
+      ENDIF
+      TEMP=ATOM(I).EQ.1.AND.NS(I).EQ.1.AND.ND(I).EQ.1.AND.NT(I).EQ.0
+C =CH- (NONRING) [6]
+      IF(TEMP.AND.RING(I).EQ.0) THEN
+        TBP=TBP+24.96
+        TMP=TMP+8.73
+C        WRITE(6,*) "ICON6",I,TBP,TMP
+        GO TO 100
+      ENDIF
+C =CH- (RING) [14]
+      IF(TEMP.AND.RING(I).EQ.1) THEN
+        TBP=TBP+26.73
+        TMP=TMP+8.13
+C        WRITE(6,*) "ICON14",I,TBP,TMP
+        GO TO 100
+      ENDIF
+      TEMP=ATOM(I).EQ.1.AND.NS(I).EQ.0.AND.ND(I).EQ.2.AND.NT(I).EQ.0
+C =C= (NONRING) [8]
+      IF(TEMP.AND.RING(I).EQ.0) THEN
+        TBP=TBP+26.15
+        TMP=TMP+17.78
+C        WRITE(6,*) "ICON8",I,TBP,TMP
+        GO TO 100
+      ENDIF
+      TEMP=ATOM(I).EQ.1.AND.NS(I).EQ.1.AND.ND(I).EQ.0.AND.NT(I).EQ.1
+C #C- (NONRING) [10]
+      IF(TEMP.AND.RING(I).EQ.0) THEN
+        TBP=TBP+27.38
+        TMP=TMP+64.32
+C        WRITE(6,*) "ICON10",I,TBP,TMP
+        GO TO 100
+      ENDIF
+C
+C THREE BOND CARBON CASES
+C
+      TEMP=ATOM(I).EQ.1.AND.NS(I).EQ.3.AND.ND(I).EQ.0.AND.NT(I).EQ.0
+C >CH- (NONRING) [3]
+      IF(TEMP.AND.RING(I).EQ.0) THEN
+        TBP=TBP+21.74
+        TMP=TMP+12.64
+C        WRITE(6,*) "ICON3",I,TBP,TMP
+        GO TO 100
+      ENDIF
+C >CH- (RING) [12]
+      IF(TEMP.AND.RING(I).EQ.1) THEN
+        TBP=TBP+21.78
+        TMP=TMP+19.88
+C        WRITE(6,*) "ICON12",I,TBP,TMP
+        GO TO 100
+      ENDIF
+      TEMP=ATOM(I).EQ.1.AND.NS(I).EQ.2.AND.ND(I).EQ.1.AND.NT(I).EQ.0
+C =C< (NONRING) [7]
+      IF(TEMP.AND.RING(I).EQ.0) THEN
+        TBP=TBP+24.14
+        TMP=TMP+11.14
+C        WRITE(6,*) "ICON7",I,TBP,TMP
+        GO TO 100
+      ENDIF
+C =C< (RING) [15]
+      IF(TEMP.AND.RING(I).EQ.1) THEN
+        TBP=TBP+31.01
+        TMP=TMP+37.02
+C        WRITE(6,*) "ICON15",I,TBP,TMP
+        GO TO 100
+      ENDIF
+C
+C FOUR BOND CARBON CASES
+C
+      TEMP=ATOM(I).EQ.1.AND.NS(I).EQ.4.AND.ND(I).EQ.0.AND.NT(I).EQ.0
+C >C< (NONRING) [4]
+      IF(TEMP.AND.RING(I).EQ.0) THEN
+        TBP=TBP+18.25
+        TMP=TMP+46.43
+C        WRITE(6,*) "ICON4",I,TBP,TMP
+        GO TO 100
+      ENDIF
+C >C< (RING) [13]
+      IF(TEMP.AND.RING(I).EQ.1) THEN
+        TBP=TBP+21.32
+        TMP=TMP+60.15
+C        WRITE(6,*) "ICON13",I,TBP,TMP
+        GO TO 100
+      ENDIF
+C
+C ONE BOND OXYGEN CASES
+C
+      TEMP=ATOM(I).EQ.2.AND.NS(I).EQ.1.AND.ND(I).EQ.0.AND.NT(I).EQ.0
+C -OH (ALCOHOL) [16]
+      IF(TEMP.AND.RING(I).EQ.0) THEN
+        TBP=TBP+92.88
+        TMP=TMP+44.45
+C        WRITE(6,*) "ICON16",I,TBP,TMP
+        GO TO 100
+      ENDIF
+      TEMP=ATOM(I).EQ.2.AND.NS(I).EQ.0.AND.ND(I).EQ.1.AND.NT(I).EQ.0
+C =O [25]
+      IF(TEMP.AND.RING(I).EQ.0) THEN
+        TBP=TBP-10.50
+        TMP=TMP+2.08
+C        WRITE(6,*) "ICON25",I,TBP,TMP
+        GO TO 100
+      ENDIF
+C
+C TWO BOND OXYGEN CASES
+C
+      TEMP=ATOM(I).EQ.2.AND.NS(I).EQ.2.AND.ND(I).EQ.0.AND.NT(I).EQ.0
+C -O- (NONRING) [18]
+      IF(TEMP.AND.RING(I).EQ.0) THEN
+        TBP=TBP+22.42
+        TMP=TMP+22.23
+C        WRITE(6,*) "ICON18",I,TBP,TMP
+        GO TO 100
+      ENDIF
+      IF(TEMP.AND.RING(I).EQ.1) THEN
+C -O- (RING) [19]
+        TBP=TBP+31.22
+        TMP=TMP+23.05
+C        WRITE(6,*) "ICON19",I,TBP,TMP
+        GO TO 100
+       ENDIF
+C
+C ONE BOND NITROGEN CASES
+C
+      TEMP=ATOM(I).EQ.3.AND.NS(I).EQ.1.AND.ND(I).EQ.0.AND.NT(I).EQ.0
+C -NH2 [26]
+      IF(TEMP.AND.RING(I).EQ.0) THEN
+        TBP=TBP+73.23
+        TMP=TMP+66.89
+C        WRITE(6,*) "ICON26",I,TBP,TMP
+        GO TO 100
+      ENDIF
+      TEMP=ATOM(I).EQ.3.AND.NS(I).EQ.0.AND.ND(I).EQ.0.AND.NT(I).EQ.1
+C #N (NOT A VALID JOBECK GROUP BUT PART OF [32])
+      IF(TEMP.AND.RING(I).EQ.0) THEN
+        TBP=TBP+0.0
+        TMP=TMP+0.0
+C        WRITE(6,*) "ICON32",I,TBP,TMP
+        GO TO 100
+      ENDIF
+C
+C TWO BOND NITROGEN CASES
+C
+      TEMP=ATOM(I).EQ.3.AND.NS(I).EQ.2.AND.ND(I).EQ.0.AND.NT(I).EQ.0
+C >NH (NONRING) [27]
+      IF(TEMP.AND.RING(I).EQ.0) THEN
+        TBP=TBP+50.17
+        TMP=TMP+52.66
+C        WRITE(6,*) "ICON27",I,TBP,TMP
+        GO TO 100
+      ENDIF
+C >NH (RING) [28]
+      IF(TEMP.AND.RING(I).EQ.1) THEN
+        TBP=TBP+52.82
+        TMP=TMP+101.51
+C        WRITE(6,*) "ICON28",I,TBP,TMP
+        GO TO 100
+      ENDIF
+      TEMP=ATOM(I).EQ.3.AND.NS(I).EQ.1.AND.ND(I).EQ.1.AND.NT(I).EQ.0
+C -N= (NONRING) [30]
+      IF(TEMP.AND.RING(I).EQ.0) THEN
+        TBP=TBP+74.60
+        TMP=TMP+0.0
+C        WRITE(6,*) "ICON30",I,TBP,TMP
+        GO TO 100
+      ENDIF
+C -N= (RING) [31]
+      IF(TEMP.AND.RING(I).EQ.1) THEN
+        TBP=TBP+57.55
+        TMP=TMP+68.40
+C        WRITE(6,*) "ICON31",I,TBP,TMP
+        GO TO 100
+      ENDIF
+C
+C THREE BOND NITROGEN CASES
+C
+      TEMP=ATOM(I).EQ.3.AND.NS(I).EQ.3.AND.ND(I).EQ.0.AND.NT(I).EQ.0
+C >N- (NONRING) [29]
+      IF(TEMP.AND.RING(I).EQ.0) THEN
+        TBP=TBP+11.74
+        TMP=TMP+48.84
+C        WRITE(6,*) "ICON29",I,TBP,TMP
+        GO TO 100
+      ENDIF
+C
+C      WRITE(6,*) "NO VALID GROUP FOUND"
+      TBP=999.0
+      TMP=999.0
+      RETURN
+100   CONTINUE
+C
+C IDENTIFY GROUPS WITH MULTIPLE ATOMS
+C NEED TO ADJUST FOR ALL CONTRIBUTIONS
+C
+      DO 200 I=1,NATOM
+      ITYPE1=0
+      ITYPE2=0
+      ITYPE3=0
+      ITYPE4=0
+C LOOK FOR GROUPS ATTACHED TO A CARBON ATOM
+      IF(ATOM(I).EQ.1) THEN
+        DO 210 J=1,NATOM
+        IF(ADJ(I,J).GT.0) THEN
+C C-OH
+          IF(ATOM(J).EQ.2.AND.NS(J).EQ.1) ITYPE1=1
+C C-O-
+          IF(ATOM(J).EQ.2.AND.NS(J).EQ.2) ITYPE2=1
+C C=O
+          IF(ATOM(J).EQ.2.AND.ND(J).EQ.1) ITYPE3=1
+C C#N
+          IF(ATOM(J).EQ.3.AND.NT(J).EQ.1) ITYPE4=1
+        ENDIF
+210     CONTINUE
+C FOUND >C=O (NONRING) (TYPE 20) (BREAK INTO >C= AND =O)
+        IF(ITYPE1.EQ.0.AND.ITYPE2.EQ.0.AND.ITYPE3.EQ.1.AND.
+     1    NS(I).EQ.2.AND.ND(I).EQ.1.AND.RING(I).EQ.0) THEN
+          TBP=TBP+76.75-24.14+10.50
+          TMP=TMP+61.20-11.14-2.08
+C          WRITE(6,*) "ICON20",I,TBP,TMP
+          GO TO 200
+        ENDIF
+C FOUND >C=O (RING) (TYPE 21) (BREAK INTO >C= AND =O)
+        IF(ITYPE1.EQ.0.AND.ITYPE2.EQ.0.AND.ITYPE3.EQ.1.AND.
+     1    NS(I).EQ.2.AND.ND(I).EQ.1.AND.RING(I).EQ.1) THEN
+          TBP=TBP+94.97-31.01+10.50
+          TMP=TMP+75.97-37.02-2.08
+C          WRITE(6,*) "ICON21",I,TBP,TMP
+          GO TO 200
+        ENDIF
+C FOUND -CH=O (TYPE 22) (BREAK -C= AND =O)
+        IF(ITYPE1.EQ.0.AND.ITYPE2.EQ.0.AND.ITYPE3.EQ.1.AND.
+     1    NS(I).EQ.1.AND.ND(I).EQ.1) THEN
+          TBP=TBP+72.24-24.96+10.50
+          TMP=TMP+36.90-8.73-2.08
+C          WRITE(6,*) "ICON22",I,TBP,TMP
+          GO TO 200
+        ENDIF
+C FOUND -C(=O)-OH (TYPE 23) (BREAK INTO >C=, =O and -O)
+        IF(ITYPE1.EQ.1.AND.ITYPE3.EQ.1.AND.NS(I).EQ.2.AND.
+     1    ND(I).EQ.1) THEN
+          TBP=TBP+169.09-24.14+10.50-92.88
+          TMP=TMP+155.50-11.14-2.08-44.45
+C          WRITE(6,*) "ICON23",I,TBP,TMP
+          GO TO 200
+        ENDIF
+C FOUND -C(=O)-O- (TYPE 24) (BREAK INTO >C=, =O AND >O)
+        IF(ITYPE2.EQ.1.AND.ITYPE3.EQ.1.AND.NS(I).EQ.2.AND.
+     1    ND(I).EQ.1) THEN
+          TBP=TBP+81.10-24.14+10.50-22.42
+          TMP=TMP+53.60-11.14-2.08-22.23
+C          WRITE(6,*) "ICON24",I,TBP,TMP
+          GO TO 200
+        ENDIF
+C FOUND -C#N (TYPE 32) (BREAK INTO -C# AND #N)
+        IF(ITYPE4.EQ.1.AND.NS(I).EQ.1.AND.ND(I).EQ.0.AND.
+     1    NT(I).EQ.1) THEN
+          TBP=TBP+125.66-27.38
+          TMP=TMP+59.89-64.32
+C          WRITE(6,*) "ICON32",I,TBP,TMP
+          GO TO 200
+        ENDIF
+      ENDIF
+C LOOK FOR GROUPS ATTACHED TO A NITROGEN ATOM
+      IF(ATOM(I).EQ.3) THEN
+        DO 230 J=1,NATOM
+        IF(ADJ(I,J).GT.0) THEN
+C N-O-
+          IF(ATOM(J).EQ.2.AND.NS(J).EQ.2.AND.ND(J).EQ.0) ITYPE1=1
+C N=O
+          IF(ATOM(J).EQ.2.AND.NS(J).EQ.0.AND.ND(J).EQ.1) ITYPE2=1
+        ENDIF
+230     CONTINUE
+C FOUND -O-N=O (TYPE 33) (BREAK INTO >O, -N= AND =O)
+        IF(ITYPE1.EQ.1.AND.ITYPE2.EQ.1) THEN
+          TBP=TBP+152.54-22.42-74.60+10.50
+          TMP=TMP+127.24-22.23-0-2.08
+C          WRITE(6,*) "ICON33",I,TBP,TMP
+          GO TO 200
+        ENDIF
+      ENDIF
+200   CONTINUE
+      RETURN
+      END
+C
+      SUBROUTINE FCYCLE(N,M,INODE,JNODE,NUMCYC,NUMCMP,NCYC,
+     1  FWDARC,ARCFIR,NEXT,IPOINT,RSIZE,RATOM)
+      INTEGER INODE(100),JNODE(100),NCYC(100),FWDARC(100),ARCFIR(100),
+     1  NEXT(100),IPOINT(100)
+      INTEGER RSIZE(3),RATOM(100)
+      LOGICAL JOIN
+C
+C FIND A FUNDAMENTAL SET OF CYCLES
+C REF: ALGORITHMS ON GRAPHS BY H.T. LAU
+C
+      N1=N-1
+      K=0
+      DO 20 I=1,N1
+      ARCFIR(I)=K+1
+      DO 10 J=1,M
+      NODEU=INODE(J)
+      NODEV=JNODE(J)
+      IF((NODEU.EQ.I).AND.(NODEU.LT.NODEV)) THEN
+        K=K+1
+        FWDARC(K)=NODEV
+      ELSE
+        IF((NODEV.EQ.I).AND.(NODEV.LT.NODEU)) THEN
+          K=K+1
+          FWDARC(K)=NODEU
+        ENDIF
+      ENDIF
+10    CONTINUE
+20    CONTINUE
+      ARCFIR(N)=M+1
+C
+      DO 30 IROOT=1,N
+      NEXT(IROOT)=0
+30    CONTINUE
+      NUMCMP=0
+      NUMCYC=0
+C
+      DO 100 IROOT=1,N
+      IF(NEXT(IROOT).EQ.0) THEN
+        NUMCMP=NUMCMP+1
+        NEXT(IROOT)=-1
+        INDEX=1
+        IPOINT(1)=IROOT
+        IEDGE=2
+C
+40      CONTINUE
+        NODE3=IPOINT(INDEX)
+        INDEX=INDEX-1
+        NEXT(NODE3)=-NEXT(NODE3)
+C
+        DO 90 NODE2=1,N
+        JOIN=.FALSE.
+        IF(NODE2.NE.NODE3) THEN
+          IF(NODE2.LT.NODE3) THEN
+            NODEU=NODE2
+            NODEV=NODE3
+          ELSE
+            NODEU=NODE3
+            NODEV=NODE2
+          ENDIF
+          LOW=ARCFIR(NODEU)
+          IUP=ARCFIR(NODEU+1)
+          IF(IUP.GT.LOW) THEN
+            IUP=IUP-1
+            DO 50 K=LOW,IUP
+            IF(FWDARC(K).EQ.NODEV) THEN
+              JOIN=.TRUE.
+              GO TO 60
+            ENDIF
+50          CONTINUE
+          ENDIF
+        ENDIF
+60      CONTINUE
+        IF(JOIN) THEN
+          NODE1=NEXT(NODE2)
+          IF(NODE1.EQ.0) THEN
+            NEXT(NODE2)=-NODE3
+            INDEX=INDEX+1
+            IPOINT(INDEX)=NODE2
+          ELSE
+C GENERATE NEXT CYCLE
+            IF(NODE1.LT.0) THEN
+              NUMCYC=NUMCYC+1
+              LEN=3
+              NODE1=-NODE1
+              NCYC(1)=NODE1
+              NCYC(2)=NODE2
+              NCYC(3)=NODE3
+              I=NODE3
+70            CONTINUE
+              J=NEXT(I)
+              IF(J.NE.NODE1) THEN
+                LEN=LEN+1
+                NCYC(LEN)=J
+                I=J
+                GO TO 70
+              ENDIF
+C OUTPUT A CYCLE
+C              WRITE(6,*) "RING NUMBER",NUMCYC
+C              WRITE(6,*) (NCYC(I),I=1,LEN)
+              RSIZE(NUMCYC)=LEN
+              DO 80 III=1,LEN
+              RATOM(NCYC(III))=1
+80            CONTINUE
+            ENDIF
+          ENDIF
+        ENDIF
+90      CONTINUE
+        IEDGE=IEDGE+1
+        IF((IEDGE.LE.N).AND.(INDEX.GT.0)) GO TO 40
+        NEXT(IROOT)=0
+        NODE3=IPOINT(1)
+        NEXT(NODE3)=IABS(NEXT(NODE3))
+      ENDIF
+100   CONTINUE
+      RETURN
+      END

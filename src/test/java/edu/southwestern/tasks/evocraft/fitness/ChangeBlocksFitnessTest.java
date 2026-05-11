@@ -56,6 +56,7 @@ public class ChangeBlocksFitnessTest {
 		
 		// Only terminate the server if no other tests will need it
 		if(MinecraftServerTestTracker.checkServerTestCount() == 0) {
+			System.out.println("TERMINATION THE MINECRAFT SERVER AFTER ALL TESTS");
 			long waitTime = Parameters.parameters.longParameter("minecraftMandatoryWaitTime");
 			Thread.sleep(waitTime);
 			

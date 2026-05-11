@@ -2,6 +2,7 @@ package edu.southwestern.tasks.mario.gan;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
 
 /**
@@ -28,7 +29,19 @@ public abstract class Comm extends Thread {
         this.end = false;
     }
 
-    public abstract void initBuffers();
+	/**
+	 * Buffers used for communicating with process via stdin and stdout
+	 */
+	public void initBuffers() {
+		//Initialize input and output
+		if (this.process != null) {
+			this.reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+			this.writer = new PrintStream(this.process.getOutputStream());
+			System.out.println("Process buffers initialized");
+		} else {
+			printErrorMsg("initBuffers:Null process!");
+		}
+	}
 
     /**
      * Sends a message

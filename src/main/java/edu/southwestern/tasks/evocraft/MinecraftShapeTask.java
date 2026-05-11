@@ -85,7 +85,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		CommonConstants.randomArgMaxTieBreak = false;
 
 		if(numSimulatedFitnessFunctions != 0) {			//launch server if using timed fitness functions
-			if(Parameters.parameters.booleanParameter("launchMinecraftServerFromJava")) {
+			if(!MinecraftServer.serverIsRunning() && Parameters.parameters.booleanParameter("launchMinecraftServerFromJava")) {
 				MinecraftServer.launchServer();
 			}
 
